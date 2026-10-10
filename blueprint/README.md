@@ -73,7 +73,13 @@ dependencies**, together with Lean's core libraries. This scope follows the
 sticky blueprint. It does not claim to compile the later general Kakeya
 development or the repository's unrelated comparison targets.
 
-The individual build steps, also used by Actions, are:
+Actions uses the same full build command as local development:
+
+```sh
+python blueprint/scripts/build.py
+```
+
+For debugging, its individual build steps are:
 
 ```sh
 python blueprint/scripts/check.py --lean
@@ -171,7 +177,10 @@ The [Blueprint workflow](../.github/workflows/blueprint.yml) builds the same
 artifact on pull requests and relevant pushes to `main`, including changes to
 Lean sources, toolchains, and Lake manifests. Every run compiles the blueprint
 imports, audits the declarations, and builds doc-gen4 before publishing the
-combined artifact. Only `main` deploys.
+combined artifact. The workflow installs the tools, runs the tests and the
+single full build command above, then uploads the site. Only `main` deploys.
+New pushes cancel an older run on the same branch. Lean and doc-gen4 use their
+default concurrency; the workflow does not override their thread counts.
 
 The cache covers `.lake` and `docbuild/.lake`, keyed by platform, toolchain,
 dependency manifests, and commit, with reuse from compatible earlier commits.
