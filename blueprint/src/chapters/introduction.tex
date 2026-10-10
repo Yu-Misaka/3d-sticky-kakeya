@@ -1,0 +1,112 @@
+\chapter{The theorem and the argument}
+\label{chap:introduction}
+
+A family of thin tubes can have small union because many of its members
+pass through the same points. The sticky Kakeya problem asks whether this
+overlap can persist at every scale when the family remains suitably spread
+out after rescaling. In three dimensions, Wang and Zahl showed that it
+cannot. This blueprint follows the finite-scale argument and its
+formalization in Lean.
+
+Our endpoint is Theorem~5.2 of \cite{WZ2}: a nonempty family of
+$\delta$-tubes satisfying the Convex Wolff Axioms at every scale, with a
+dense shading, has union of volume at least $\delta^\eps$. The allowed
+nonconcentration and density losses depend on $\eps$ and tend to zero
+with it. The hypotheses and their quantifier order are given explicitly
+in Theorem~\ref{thm:sticky}. This is the sticky estimate used in the
+project; the subsequent passage to the general three-dimensional Kakeya
+conjecture lies beyond the present account.
+
+We write WZ1 for \emph{Sticky Kakeya sets and the sticky Kakeya
+conjecture}~\cite{WZ1}, and WZ2 for \emph{The Assouad dimension of Kakeya
+sets in $\R^3$}~\cite{WZ2}. The numbering attached to statements below
+is the numbering of the cited paper, in addition to this document's own
+numbering. We use the October 2025 arXiv version of WZ1 and the April
+2025 arXiv version of WZ2. Free author manuscripts are used for the other
+references. A change of numbering between manuscripts and published
+articles is recorded where it matters.
+
+\section{The continuum statement}
+
+\begin{definition}[Sticky sets; WZ1, Definitions 1.1--1.2]
+\label{def:continuum-sticky}
+A compact set $K\subset\R^n$ is a sticky Kakeya set if there is a
+family $L$ of affine lines of packing dimension $n-1$, containing a
+line in every direction, such that $K\cap\ell$ contains a unit
+segment for every $\ell\in L$. More generally, $K$ is
+$\eta$-close to being sticky if such a family can be chosen with
+packing dimension at most $n-1+\eta$. Packing dimension is measured
+in the usual metric on the space of affine lines, equivalently in
+bounded line-parameter charts.
+\end{definition}
+
+\begin{theorem}[The sticky Kakeya theorem; WZ1, Theorem 1.1]
+\label{thm:wz1-continuum}
+\uses{def:continuum-sticky}
+Every sticky Kakeya set in $\R^3$ has Hausdorff dimension $3$.
+More quantitatively, for every $\eps>0$ there is $\eta>0$ such that
+every Kakeya set in $\R^3$ that is $\eta$-close to being sticky has
+Hausdorff dimension at least $3-\eps$; this is WZ1 Theorem 1.1$'$.
+\end{theorem}
+
+This is the continuum statement motivating the finite problem.
+Proposition~\ref{prop:wz1-dimension-reduction} explains the role of
+the WZ1 critical exponent. The final Lean declaration linked in this
+blueprint is the all-scale-CWA finite estimate, not a separate
+formalization of the continuum formulation above.
+
+\section{Why grain structure leads to a contradiction}
+
+Suppose the sticky estimate fails. One can then choose an exponent
+$\sigma>0$ and families whose shaded union has volume approximately
+$\delta^\sigma$, and for which this exponent cannot be improved. Wolff's
+hairbrush estimate places $\sigma$ strictly below $1$. Extremality has
+two consequences. First, both a coarse family and the rescaled fine
+family inside a typical coarse tube must themselves be extremal.
+Second, their multiplicities must be close to their largest permissible
+values. These observations make it possible to carry information from
+one scale to another.
+
+The multilinear Kakeya estimate forces the tubes through a typical point
+to lie approximately in a plane. Comparing these planes at successive
+scales produces a Lipschitz plane map and local grain structure. After
+a suitable choice of coordinates, the horizontal slices of the shaded
+union also have global grains, whose direction is described by a
+Lipschitz function $f(z)$. A projection theorem, proved using radial
+projections, improves this function to $C^2$.
+
+The next step is to show that $f$ cannot be nearly constant for too long.
+Otherwise a thin rectangular prism would contain too much of the tube
+family, contrary to the Convex Wolff Axioms. After an anisotropic
+rescaling, one obtains
+\[
+  1\leq |f'(z)|\leq 2,\qquad |f''(z)|\leq 1/100.
+\]
+Global grains make the twisted projection
+\[
+  \pi_f(x,y,z)=(x+f(z)y,z)
+\]
+small. On the other hand, the image of a line under $\pi_f$ is a curve
+in a cinematic family. A maximal estimate for these curves, combined
+with an iteration over scales, makes the same projection large. The
+two estimates contradict each other when the losses are chosen in the
+correct order.
+
+\section{Reading the formalization}
+
+The Lean links attached to statements lead to their declarations in the
+repository. Definitions, theorem statements, and proved implications
+play different roles. When a paper result is used only in a normalized
+or restricted form, the text states that form and explains the
+difference in a remark. In particular, a link to a proposition-valued
+definition does not by itself assert that the proposition has been
+proved. Completion marks are reserved for the mathematical formulation
+described at that node.
+
+The dependency graph records the mathematical uses described in the
+proofs. It omits routine implementation lemmas. Most of the numbered
+results in WZ1's structural and projection arguments and WZ2's sticky
+argument are included, together with the supporting numbered results
+from the projection and cinematic estimates. The correspondence chapter
+records the scope and the adjustments that affect the meaning of a
+statement.

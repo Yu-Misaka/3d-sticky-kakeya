@@ -1,0 +1,339 @@
+\chapter{Extremality and the sticky estimate}
+\label{chap:sticky}
+
+\begin{theorem}[Sticky Kakeya estimate; WZ2, Theorem 5.2]
+\label{thm:sticky}
+\lean{Kakeya.Assouad.PureWZ2Theorem5_2Statement,Kakeya.Assouad.PureWZ2Theorem5_2Unconditional}
+\leanok
+\uses{def:all-scale-cwa,def:shading}
+For every $\eps>0$ there are $\eta>0$ and $0<\delta_0\leq1$ such
+that the following holds for $0<\delta\leq\delta_0$. Let $\T$ be a
+nonempty finite family of $\delta$-tubes in $\R^3$ satisfying the Convex
+Wolff Axioms at every scale with error $\delta^{-\eta}$. If $Y$ is a
+$\delta^\eta$-dense shading, then
+\[
+                  |E_Y|\geq\delta^\eps.
+\]
+\end{theorem}
+
+\begin{remark}[The precise endpoint]
+\label{rem:endpoint}
+Nonemptiness, implicit in the paper's discussion of extremal families,
+is explicit here: the empty family would otherwise satisfy the density
+inequality and have empty union. There is no support-ball assumption
+in the public theorem. Bounded coordinate charts, cubical shadings,
+and regularity conditions are produced within the proof. In particular,
+none of the structural propositions below is an additional hypothesis
+of the final Lean declaration.
+\end{remark}
+
+\section{A critical exponent}
+
+\begin{definition}[The WZ1 family class; WZ1, Definitions 2.1 and 3.1]
+\label{def:wz1-extremal}
+For $s,t,\delta\in(0,1)$, let $M(s,t,\delta)$ be the infimum of
+$|E_Y|$ over the tube configurations in WZ1's bounded line chart
+satisfying the following conditions: the tubes are essentially
+distinct; at every $\rho\in[\delta,1]$ they have a cover by
+$\rho$-tubes with at most $\delta^{-t}$ members essentially parallel
+to any given $\rho$-tube; and $\mass(Y)\geq\delta^s$.
+Set
+\[
+ N(s,t)=\limsup_{\delta\to0^+}
+              \frac{\log M(s,t,\delta)}{\log\delta},\qquad
+ \sigma_n=\inf_{0<s,t<1}N(s,t).
+\]
+Monotonicity makes the latter infimum equal to the limit as both
+losses tend to zero. A WZ1 $\eps$-extremal pair
+satisfies these three conditions with $s=t=\eps$ and also
+$|E_Y|\leq\delta^{\sigma_n-\eps}$.
+\end{definition}
+
+\begin{proposition}[From the exponent to dimension; WZ1, Proposition 2.1]
+\label{prop:wz1-dimension-reduction}
+\uses{def:wz1-extremal,def:continuum-sticky}
+For every $\eps>0$ there is $\eta>0$ such that a Kakeya set
+$K\subset\R^n$ that is $\eta$-close to being sticky satisfies
+$\dim_H K\geq n-\sigma_n-\eps$. In particular, a sticky Kakeya set
+has Hausdorff dimension at least $n-\sigma_n$.
+\end{proposition}
+\begin{proof}
+\uses{lem:packing-to-stickiness}
+Pass to a positive-measure set of directions with quantitative line
+covering bounds. A small-dimensional Hausdorff cover of $K$, followed
+by pigeonholing its scales, gives a tube shading satisfying the
+definition of $M(s,t,\delta)$. The resulting upper volume estimate
+would contradict the defining lower estimate for $\sigma_n$.
+\end{proof}
+
+\begin{lemma}[Quantitative stickiness from packing dimension; WZ1, Lemma 2.2]
+\label{lem:packing-to-stickiness}
+Let $L$ be a family in a bounded line chart whose directions have
+positive surface measure. If $t>\dim_P L-(n-1)$, there are
+$L'\subset L$ and $\rho>0$ such that the directions of $L'$ still
+have positive measure and, for every $0<\delta<\rho$ and direction
+$v$,
+\[
+ \left|\{p\in\R^{n-1}:(p,v)\in N_\delta(L')\}\right|
+                                     \leq\delta^{n-1-t}.
+\]
+Here $(p,v)$ are intercept-direction coordinates for lines. This is
+the class denoted by $\operatorname{QStick}(n,t,\rho)$ in WZ1.
+\end{lemma}
+\begin{proof}
+Use the countable-cover characterization of packing dimension to find
+a piece with controlled upper box dimension and a positive-measure
+set of directions. Discard directions with unusually large fibres
+at each sufficiently small dyadic scale. Summability of the losses
+retains positive measure and gives the uniform fibre bound.
+\end{proof}
+
+\begin{lemma}[WZ1 extremizers; WZ1, Lemma 3.1]
+\label{lem:wz1-extremizers}
+\uses{def:wz1-extremal}
+For every $\eps>0$ and $\delta_0>0$, a WZ1 $\eps$-extremal
+configuration exists at some scale $0<\delta\leq\delta_0$.
+\end{lemma}
+\begin{proof}
+Choose losses below $\eps$, a scale realizing the defining limsup,
+and a configuration approximating the infimum for $M$ closely enough.
+The slack in the loss absorbs the approximation.
+\end{proof}
+
+Call an exponent $s$ admissible if, for every $\eta>0$ and every
+$\delta_0>0$, there is a nonempty all-scale-CWA configuration at some
+$0<\delta\leq\min(\delta_0,1)$ with error $\delta^{-\eta}$, shading
+density $\delta^\eta$, and $|E_Y|\leq\delta^s$. If the theorem fails,
+the set of admissible exponents contains a positive number. We use its
+supremum as the critical exponent $\sigma$.
+
+\begin{definition}[Extremal configurations; WZ2, Definition 6.1]
+\label{def:extremal}
+\lean{Kakeya.Assouad.PureWZ2Admissible,Kakeya.Assouad.WZ2PaperPureIsExtremal}
+\leanok
+\uses{def:all-scale-cwa,def:shading}
+For a fixed critical exponent $\sigma$, an $\eps$-extremal
+configuration $(\T,Y)_\delta$ is nonempty, satisfies CWA at every scale
+with error $\delta^{-\eps}$, has $\delta^\eps$-dense shading, and obeys
+\[
+                      |E_Y|\leq\delta^{\sigma-\eps}.
+\]
+\end{definition}
+
+\begin{lemma}[Existence and lower bound; WZ2, Section 6.2]
+\label{lem:critical-exponent}
+\lean{Kakeya.Assouad.pure_wz2_node02_critical_extraction}
+\leanok
+\uses{def:extremal}
+If the sticky estimate fails, there exists $0<\sigma<1$ with the
+following properties. For every loss $\eps>0$, extremal
+configurations exist at arbitrarily small scales. Conversely, given
+$a>0$ and a positive upper bound for the allowed structural loss,
+one can choose $\eta>0$ below that bound and $\delta_0>0$ so that
+every admissible nonempty configuration with error $\delta^{-\eta}$
+and density $\delta^\eta$ satisfies
+\[
+                         |E_Y|\geq\delta^{\sigma+a}
+                         \quad(0<\delta\leq\delta_0).
+\]
+\end{lemma}
+\begin{proof}
+\uses{thm:hairbrush}
+\leanok
+The hairbrush lower bound gives a nonadmissible exponent strictly below
+$1$, so the admissible exponents have a finite supremum below $1$.
+Failure of the theorem makes that supremum positive. Approximate the
+supremum from below to obtain extremal configurations. Since
+$\sigma+a$ is not admissible, negating admissibility gives a uniform
+small-scale lower bound. Weakening the structural loss then places it
+below any prescribed budget.
+\end{proof}
+
+\begin{remark}[The WZ1 critical exponent]
+\label{rem:wz1-extremality}
+WZ1 Definition 3.1 and Lemma 3.1 use a critical exponent $\sigma_n$
+defined through directional covering conditions and a normalization of
+the total shaded mass. WZ2 Definition 6.1 replaces that family class by
+all-scale CWA. The same extremal argument applies, but a WZ1 theorem
+must be transported to the WZ2 family class before it is used. In
+particular, the powers of the family cardinality in the next proposition
+are present in WZ2 and absent from the corresponding WZ1 display.
+\end{remark}
+
+\section{The structure at an intermediate scale}
+
+A refinement decreases the family and the individual shadings while
+retaining a polylogarithmic fraction of the original shaded mass.
+
+\begin{definition}[Balanced shaded covers; WZ2, Section 6.2]
+\label{def:balanced-cover}
+\lean{Kakeya.Assouad.PureWZ2BalancedCoverData}
+\leanok
+\uses{def:shading,def:partition-cover}
+A shaded cover $(\widetilde{\T},\widetilde Y)_\rho$ of
+$(\T,Y)_\delta$ covers every fine tube and satisfies
+$Y(T)\subset\widetilde Y(\widetilde T)$ whenever $\widetilde T$
+covers $T$. It is balanced if its shaded union is a union of
+retained $\rho$-cubes and there is a number $m>0$ such that
+\[
+             |E_Y\cap Q|=m
+\]
+for every retained coarse cube $Q$. Cubical boundaries are immaterial
+to this measure identity.
+\end{definition}
+
+\begin{remark}[Spatial balance and containment fibres]
+\label{rem:balanced-cover}
+Balance concerns the volume of the fine union in each coarse cube,
+not the sum of the individual fine shaded volumes. Comparable fibre
+cardinalities do not imply it. The structure
+\texttt{PureWZ2BalancedCoverData}, used by the closed proof, stores
+this equality with one common positive finite mass. The older
+\texttt{WZ2PaperPureBalancedCoverData} records only pointwise shading
+compatibility; its name alone should not be read as the full balance
+condition.
+\end{remark}
+
+\begin{proposition}[Multiscale extremality; WZ2, Proposition 6.2]
+\label{prop:sticky-structure}
+\lean{Kakeya.Assouad.PureWZ2PropStickyStatement,Kakeya.Assouad.pure_wz2_node03_prop_sticky}
+\leanok
+\uses{def:extremal,def:partition-cover,def:balanced-cover}
+Fix $\eps>0$. For sufficiently small $\eta>0$ and then sufficiently
+small $\delta>0$, let $(\T,Y)_\delta$ be $\eta$-extremal, and take
+$\delta^{1-\eps}\leq\rho\leq\delta^\eps$. After refinement, there
+is a balanced shaded cover $(\widetilde{\T},\widetilde Y)_\rho$ such
+that the coarse configuration and every unit-rescaled fine fibre are
+$\eps$-extremal. Moreover, for all $p$,
+\begin{align*}
+ \#\widetilde{\T}_{\widetilde Y}(p)
+   &\leq\rho^{2-\sigma-\eps}\#\widetilde{\T},\\
+ \#\T'_{Y'}[\widetilde T](p)
+   &\leq(\delta/\rho)^{2-\sigma-\eps}\#\T'[\widetilde T]
+       \qquad(\widetilde T\in\widetilde{\T}).
+\end{align*}
+Here the statement is read in the bounded cubical model reached from
+the public configuration by localization and rescaling.
+\end{proposition}
+\begin{proof}
+\uses{lem:multiscale-cwa,lem:critical-exponent}
+\leanok
+First retain tubes carrying comparable positive mass. The multiscale
+CWA condition supplies coarse tubes and rescaled fibres with the
+required nonconcentration. Pigeonhole the fine multiplicities, then
+the mass and multiplicity of the induced coarse shading. Apply the
+critical lower bound inside each rescaled fibre and to the coarse
+configuration. This gives upper bounds for both multiplicities. Their
+product must also be large, since the original shaded union is small.
+Consequently both bounds are nearly attained, which restores
+extremality at the two scales. The retained cells and their full
+containment fibres are balanced together throughout these refinements.
+\end{proof}
+
+\begin{proposition}[The directional version; WZ1, Proposition 3.2]
+\label{prop:wz1-sticky}
+\uses{def:wz1-extremal,def:partition-cover}
+In the WZ1 normalization, the analogous conclusion gives an
+$\eps$-extremal balanced coarse cover and $\eps$-extremal rescaled
+fibres. Its pointwise multiplicity bounds are
+\[
+ \#\widetilde{\T}_{\widetilde Y}(p)\leq\rho^{-\sigma_n-\eps},
+ \qquad
+ \#\T'_{Y'}[\widetilde T](p)
+       \leq(\delta/\rho)^{-\sigma_n-\eps}.
+\]
+The source pair is $\eta$-extremal and
+$\rho\in[\delta^{1-\eps},\delta^\eps]$, with $\eta$ and the fine
+scale chosen after $\eps$.
+\end{proposition}
+\begin{proof}
+The proof is the same mass and multiplicity argument, with WZ1's
+directional covering estimates in place of all-scale CWA. The present
+formalization uses the cardinality-weighted WZ2 version in the main
+chain. This node records the original paper statement for comparison.
+\end{proof}
+
+\begin{lemma}[A rescaled fibre; WZ1, Lemma 3.3]
+\label{lem:wz1-rescaled-fibre}
+\uses{def:unit-rescaling}
+Let a WZ1 tube family be covered by a $\rho$-tube, with
+$\rho\in[\delta^{1-\eps},1]$. Assume its directional separation and
+all-scale directional covering hypotheses with loss $\eta$, and
+\[
+                 \sum_T|Y(T)|\geq\delta^\eta\rho^{n-1}.
+\]
+For sufficiently small $\eta$ and $\delta$, there is a refinement
+whose unit rescaling satisfies WZ1's defining hypotheses with loss
+$\eps$ at scale $\delta/\rho$. It also satisfies
+$\#\T'_{Y'}(p)\leq(\rho/\delta)^{\sigma_n+\eps}$ for every $p$.
+\end{lemma}
+\begin{proof}
+Rescale the containing tube, separate the image tubes, and restore
+uniformity by pigeonholing. Apply the lower bound defining the critical
+exponent to the portion of the shading where the multiplicity is large.
+Deleting that portion gives the pointwise upper bound.
+\end{proof}
+
+\begin{lemma}[Robust transversality; WZ1, Lemma 3.4]
+\label{lem:robust-transversality}
+\lean{Kakeya.Assouad.WZ1RobustCloseCountFromBalancedConclusion}
+\uses{def:extremal}
+After refining a sufficiently extremal WZ1 configuration, for every
+point $p$ and every direction $v\in S^{n-1}$,
+\[
+ \#\{T\in\T_Y(p):\angle(v,\dir T)<\delta^\eps\}
+       \leq\delta^{-\sigma_n+\eps\sigma_n/2}.
+\]
+In the WZ2 version the corresponding bound is expressed relative to
+the family cardinality and obtained from a balanced cover.
+\end{lemma}
+\begin{proof}
+\uses{prop:sticky-structure}
+At the angular scale, group the fine tubes through $p$ into coarse
+tubes. The coarse directional packing bound controls the number of
+groups, and the fine multiplicity estimate controls each group. The
+source loss is chosen small enough to leave the displayed gain.
+\end{proof}
+
+\begin{lemma}[Mild rescaling; WZ1, Lemma 3.5]
+\label{lem:mild-rescaling}
+\uses{def:unit-rescaling,def:extremal}
+Let $(\T,Y)_\delta$ be $\eta$-extremal. Suppose an axis-parallel
+rectangular prism $Q\subset[-1,1]^n$ contains shaded mass at least
+$\delta^\eta$. Let $\phi$ be a translation followed by a diagonal
+linear map with factors $r_i\in[\delta^\eta,\delta^{-\eta}]$, and
+assume $\phi(Q)\subset[-1,1]^n$. For suitable $\eta$ and small
+$\delta$, the image can be represented by an $\eps$-extremal family
+at some $\delta\leq\rho\leq\delta^{1-\eta}$. Its coaxial lines are
+images of source coaxial lines, and its shadings are formed from the
+$\rho$-cubes meeting the transformed source shading.
+\end{lemma}
+\begin{proof}
+The determinant bounds the change in shaded mass. A bounded number
+of standard tubes cover each transformed tube at the chosen radius.
+Select a separated subfamily and retain the corresponding induced
+shading. The losses in nonconcentration, density, and volume are powers
+of $\delta^{O(\eta)}$, which fit inside $\eps$.
+\end{proof}
+
+\section{Closing the proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:sticky}]
+\proves{thm:sticky}
+\uses{lem:critical-exponent,lem:small-twisted-projection,thm:twisted-parameter}
+\leanok
+Assume the conclusion fails, and choose $0<\sigma<1$ as in
+Lemma~\ref{lem:critical-exponent}. The grain and large-slope arguments
+give configurations at arbitrarily small scales whose twisted
+projection has area at most $\delta^{\sigma-a}$, where $a>0$ may be
+chosen as small as needed. The same selected configuration satisfies
+the parameter nonconcentration required by
+Theorem~\ref{thm:twisted-parameter}. Choose its output loss $b>0$ and
+the structural loss $a>0$ so that $a+b<\sigma$, and take the fine
+scale below the threshold in that theorem. It gives
+\[
+          \delta^b\leq |\pi_f(E_Y)|\leq\delta^{\sigma-a}.
+\]
+Since $0<\delta<1$ and $b<\sigma-a$, these inequalities are
+incompatible. This proves the sticky estimate.
+\end{proof}

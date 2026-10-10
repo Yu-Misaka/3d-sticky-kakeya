@@ -1,0 +1,442 @@
+\chapter{Radial projections and the slope dichotomy}
+\label{chap:radial}
+
+We give the numbered ingredients of WZ1 Section 8. Its principal
+external input is the thin-tube improvement of Orponen, Shmerkin,
+and Wang~\cite{OSW}. WZ1 calls it Lemma 2.9 of that paper; in the
+available September 2022 arXiv manuscript the corresponding bootstrap
+is Lemma 2.8. WZ1 Proposition 8.6 records the precise version used
+here.
+
+\section{Uniform graphs and Frostman sets}
+
+\begin{definition}[Frostman sets; WZ1, Definition 8.1]
+\label{def:wz1-frostman}
+\uses{def:kt-frostman}
+A union $E$ of $\delta$-cubes in $\R^n$ is a
+$(\delta,\alpha,C)_n$-Frostman set if
+\[
+                 |E\cap B(x,r)|\leq Cr^\alpha|E|
+                 \quad(r\geq\delta).
+\]
+For subsets of $S^1$, use unions of $\delta$-arcs. The finite-point
+model replaces these volumes by cardinalities of separated
+representatives and keeps the normalization by total cardinality.
+\end{definition}
+
+\begin{definition}[Fibres and uniform density; WZ1, Definitions 8.2--8.4]
+\label{def:uniform-hypergraph}
+\lean{Kakeya.Assouad.wz1HypergraphFiber,Kakeya.Assouad.WZ1UniformHypergraphDensity}
+\leanok
+Let $H\subset A_1\times\cdots\times A_k$. For a coordinate set
+$I\subset\{1,\ldots,k\}$ and a projected vertex $a_I$, let
+$n_H[a_I]$ be the edges agreeing with $a_I$ on $I$, and let
+$\pi_I$ be the coordinate projection. The graph is uniformly
+$c$-dense if, for every $h\in H$ and every $I$,
+\[
+                    \#n_H[\pi_Ih]\geq c\prod_{i\notin I}\#A_i.
+\]
+The empty and full coordinate sets are included.
+\end{definition}
+
+\begin{lemma}[Hypergraph refinement; WZ1, Lemma 8.1]
+\label{lem:hypergraph-refinement}
+\lean{Kakeya.Assouad.WZ1HypergraphRefinementStatement,Kakeya.Assouad.wz1_hypergraph_refinement}
+\leanok
+\uses{def:uniform-hypergraph}
+If $H$ has density $d=\#H/\prod_i\#A_i$ and $0<\eps<1$,
+then it has a uniformly $2^{-k}\eps d$-dense subgraph $H'$ with
+$\#H'\geq(1-\eps)\#H$.
+\end{lemma}
+\begin{proof}
+\leanok
+For each coordinate projection delete fibres smaller than the
+prescribed threshold. Charge the removed edges to their projected
+vertices. There are $2^k$ coordinate sets, so the sum of all the
+charges is at most $\eps\#H$.
+\end{proof}
+
+\begin{theorem}[Robust Kaufman projection; WZ1, Theorem 8.2]
+\label{thm:robust-kaufman}
+\uses{def:wz1-frostman}
+Let $0<\alpha\leq\beta\leq1$ and $\eps>0$.
+For sufficiently small $\delta$, suppose $F\subset\R^2$ and
+$\Lambda\subset S^1$ are $(\delta,\alpha,C)$- and
+$(\delta,\beta,C)$-Frostman sets. Let $H\subset\Lambda\times F$
+have density $d$. There is $\Lambda'\subset\Lambda$ with
+$|\Lambda'|\gtrsim d|\Lambda|$ such that
+\[
+                 |\theta\cdot F_\theta|
+                       \gtrsim C^{-2}d^3\delta^{1-\alpha+\eps}
+                 \quad(\theta\in\Lambda'),
+\]
+where $F_\theta=\{x:(\theta,x)\in H\}$.
+\end{theorem}
+\begin{proof}
+\uses{thm:kaufman-energy,lem:frostman-energy,lem:energy-frostman}
+Discard directions with small fibres or excessive projected energy.
+The averaged energy estimate bounds the second exceptional set,
+and the density hypothesis controls the first. Cauchy--Schwarz on
+each surviving fibre yields the projection lower bound. Choosing
+the energy exponent just below $\alpha$ accounts for $\delta^\eps$.
+\end{proof}
+
+\section{Thin tubes and improvement of the exponent}
+
+\begin{definition}[Thin tubes; OSW, Definition 2.1; WZ1, Definition 8.5]
+\label{def:thin-tubes}
+\lean{HasMeasureThinTubes}
+\leanok
+The ordered pair of probability measures $(\nu_1,\nu_2)$ has
+$(\beta,K,1-c)$-thin tubes if there is a Borel relation
+$E\subset\supp\nu_1\times\supp\nu_2$ of product measure at
+least $1-c$ such that, for every $b_1\in\supp\nu_1$, every line
+$\ell$ through $b_1$, and every $r>0$,
+\[
+          \nu_2\{b_2\in N_r(\ell):(b_1,b_2)\in E\}\leq Kr^\beta.
+\]
+The reverse ordered pair is a separate condition.
+\end{definition}
+
+\begin{definition}[Discrete thin tubes; WZ1, Definition $8.5'$]
+\label{def:discrete-thin-tubes}
+\lean{Kakeya.Assouad.HasDiscreteThinTubes}
+\leanok
+For nonempty finite sets $G_1,G_2$, use a relation
+$E\subset G_1\times G_2$ with
+$\#E\geq(1-c)\#G_1\#G_2$, and require
+\[
+ \#\{b_2\in G_2\cap N_r(\ell):(b_1,b_2)\in E\}
+                                  \leq Kr^\beta\#G_2
+                                  \quad(r\geq\delta).
+\]
+For unions of cells the paper writes the same condition using
+Lebesgue measure and a relation that is a union of product cells.
+\end{definition}
+
+\begin{lemma}[Returning from smoothed measures; WZ1, Lemma 8.3, comparison]
+\label{lem:unsmooth-thin-tubes}
+\lean{Kakeya.Assouad.WZ1SmoothedToDiscreteThinTubesStatement}
+\uses{def:thin-tubes,def:discrete-thin-tubes}
+In the finite-point implementation, smooth each probability measure
+at radius $\delta/10$. If these smoothed measures have
+$(\beta,K,1-c)$-thin tubes, $0\leq\beta\leq1$ and $2c<1$,
+then the original finite sets have discrete
+$(\beta,20K,1-2c)$-thin tubes at scale $\delta$.
+\end{lemma}
+\begin{proof}
+Retain a pair of centres when at least half the mass of its product
+smoothing cell lies in the good relation. Markov's inequality loses
+at most $2c$ of the pairs. Average the measure-level tube estimate
+over the source smoothing cell. Moving the centres increases the
+tube radius by at most $2\delta/10$, and the half-mass threshold
+costs another factor of two; the constant $20$ covers both effects.
+\end{proof}
+
+\begin{remark}[The exceptional fraction in Lemma 8.3]
+\label{rem:thin-tube-loss}
+The paper states a cellwise conversion with constant $4^\beta K/c$
+and the same retained fraction $1-c$. Its displayed thresholding
+argument, starting with a relation of mass $1-c$ and discarding cells
+whose relative good mass is below $c$, bounds the discarded fraction
+by $c/(1-c)$, rather than by $c$. The formalized smoothed conversion
+uses the explicit loss $2c$ above. Its constants are propagated through
+the bootstrap. For uniform measures on an already finite relation,
+the direct measure-to-count conversion is a different operation and
+does not require this smoothing loss.
+\end{remark}
+
+\begin{proposition}[The radial bootstrap; WZ1, Proposition 8.6]
+\label{prop:radial-bootstrap}
+\lean{radial_bootstrapping_measure_thin_tubes}
+\leanok
+\uses{def:thin-tubes}
+Given $\beta,\eps>0$, there are $\tau=\tau(\beta,\eps)>0$
+and $M=M(\beta,\eps)\geq1$ with the following property.
+Let $\sigma\in[\beta,1-\eps]$, $0<c<1/10$, and $K,C\geq1$.
+Let $\nu_1,\nu_2$ be probability measures supported in the unit
+ball of $\R^2$, with support separation at least $1/2$, and
+$\nu_i(B(x,r))\leq Cr$ for every positive $r$.
+If both ordered pairs have $(\sigma,K,1-c)$-thin tubes, then both
+have $(\sigma+\tau,K',1-3c)$-thin tubes, where
+\[
+                     K'=\max\{K,C^2M/c\}^{M}.
+\]
+\end{proposition}
+\begin{proof}
+\uses{thm:os-discretized}
+\leanok
+If no exponent improvement were possible, choose a scale at which
+too many pairs concentrate near lines. The initial thin-tube bounds
+make the resulting line families nonconcentrated. A two-ends
+alternative separates pairs that spread along their tubes from those
+that cluster near one endpoint. In the spread case the discretised
+Furstenberg estimate gives too many lines; in the concentrated case
+double counting gives a ball with too much measure. The gains are
+uniform for $\sigma$ in the prescribed compact interval.
+\end{proof}
+
+\begin{remark}[Support normalization in the bootstrap]
+\label{rem:radial-support}
+The public Lean theorem includes support in the unit ball, whereas
+WZ1 Proposition 8.6 writes only the separation and ball-growth
+conditions. The original OSW bootstrap is stated in a bounded
+normalized region. The application normalizes the two supports
+together and tracks the change in their Frostman and thin-tube
+constants before invoking it.
+\end{remark}
+
+\begin{corollary}[Iterating from exponent $1/4$; WZ1, Corollary 8.7]
+\label{cor:thin-tube-iteration}
+\uses{def:discrete-thin-tubes}
+For every $\eps>0$, a bounded number $N=N(\eps)$ of bootstrap
+steps improves discrete $1/4$-thin tubes to $(1-\eps)$-thin tubes
+for separated one-dimensional Frostman sets. In the paper's
+normalization, initial constants $K,C$ and exceptional fraction $c$
+give final exceptional fraction $3^Nc$ and
+\[
+       K'=\max\{4K/(3c),\,4C^2N/(3c^2)\}^{N}.
+\]
+At radii $r\geq\delta$, this implies $1$-thin tubes with
+constant $\delta^{-\eps}K'$.
+\end{corollary}
+\begin{proof}
+\uses{prop:radial-bootstrap,lem:unsmooth-thin-tubes}
+The gain is bounded away from zero while the exponent remains
+between $1/4$ and $1-\eps$. Choose the initial exceptional fraction
+small enough for every step, and propagate both that fraction and
+the growing constant. Finally use
+$r^{1-\eps}\leq\delta^{-\eps}r$ for $r\geq\delta$.
+In the smoothed formalization the recurrence includes the explicit
+conversion losses of Lemma~\ref{lem:unsmooth-thin-tubes}.
+\end{proof}
+
+\begin{lemma}[Starting at exponent $1/4$; WZ1, Lemma 8.8]
+\label{lem:quarter-thin-tubes}
+\lean{Kakeya.Assouad.WZ1QuarterThinTubesStatement,Kakeya.Assouad.wz1_quarter_thin_tubes}
+\leanok
+\uses{def:wz1-frostman,def:discrete-thin-tubes}
+Fix $\lambda,\zeta,\alpha>0$. For sufficiently small $\delta$,
+let $G_1,G_2$ be separated $(\delta,1,\delta^{-\lambda})$-Frostman
+sets in a bounded region, with mutual distance at least $1/2$.
+Assume, for every line $\ell$ and $r\geq\delta$,
+\[
+            |G_2\cap N_r(\ell)|
+                       \leq(\delta^{-\lambda}r)^\zeta|G_2|.
+\]
+Then $(G_1,G_2)$ has discrete
+$(1/4,\delta^{-3\alpha/\zeta-\lambda},1-\delta^\alpha)$-thin
+tubes.
+\end{lemma}
+\begin{proof}
+\leanok
+Remove pairs lying in excessively populated tubes at a dyadic scale.
+The line nonconcentration of $G_2$ and the ball Frostman bounds
+control the removed pairs. Sum over the scales and absorb the
+logarithm in the chosen power of $\delta$. If the displayed
+constant is already large enough for the trivial bound, no removal
+is needed.
+\end{proof}
+
+\section{Dot differences and separated endpoints}
+
+\begin{definition}[Standard separation; WZ1, Definition 8.6]
+\label{def:standard-separation}
+\lean{Kakeya.Assouad.WZ1StandardSeparation}
+\leanok
+The sets $F,G_1,G_2$ have standard separation if each has diameter
+at most $1/10$, $\dist(G_1,G_2)\geq1/2$, and
+$\dist(F,0)\geq1/2$. They are also placed in a fixed bounded chart.
+\end{definition}
+
+\begin{lemma}[Thin tubes give many dot differences; WZ1, Lemma 8.4]
+\label{lem:thin-tubes-dots}
+\lean{Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement,Kakeya.Assouad.wz1_thin_tubes_large_dot_product}
+\leanok
+\uses{def:standard-separation,def:uniform-hypergraph,def:discrete-thin-tubes}
+Let $F,G_1,G_2$ be $(\delta,1,K)$-Frostman sets with standard
+separation, and assume $(G_1,G_2)$ has discrete
+$(1,K,1-c)$-thin tubes. If $H\subset F\times G_1\times G_2$
+is uniformly $2c$-dense, then, for sufficiently small $\delta$,
+\[
+ \cE_\delta\{a\cdot(b_1-b_2):(a,b_1,b_2)\in H\}
+                       \gtrsim_\eps c^5K^{-2}\delta^{\eps-1}.
+\]
+\end{lemma}
+\begin{proof}
+\uses{thm:robust-kaufman}
+\leanok
+The thin-tube relation ensures that many endpoint pairs give a
+nonconcentrated set of directions $b_1-b_2$. Uniform graph density
+keeps substantial coefficient fibres over these pairs. Apply the
+robust Kaufman estimate, or its discrete energy proof, and use
+standard separation to compare directions with actual differences.
+\end{proof}
+
+\begin{proposition}[Line nonconcentration gives a large projection; WZ1, Proposition 8.5]
+\label{prop:line-nonconcentration}
+\lean{Kakeya.Assouad.wz1_line_nonconcentration_projection}
+\uses{def:standard-separation,def:uniform-hypergraph}
+For $0<\eps,\zeta<1$, there are $\lambda=\lambda(\eps)>0$
+and $\alpha=\alpha(\eps,\zeta)>0$ such that the following holds
+at sufficiently small $\delta$. Let $F,G_1,G_2$ be
+$(\delta,1,\delta^{-\lambda})$-Frostman sets with standard
+separation, and suppose both endpoint sets satisfy
+\[
+              |G_i\cap N_r(\ell)|
+                    \leq(\delta^{-\lambda}r)^\zeta|G_i|
+                    \quad(r\geq\delta).
+\]
+For every uniformly $\delta^\alpha$-dense graph
+$H\subset F\times G_1\times G_2$,
+\[
+       \cE_\delta\{a\cdot(b_1-b_2):(a,b_1,b_2)\in H\}
+                                             \geq\delta^{\eps-1}.
+\]
+\end{proposition}
+\begin{proof}
+\uses{lem:quarter-thin-tubes,cor:thin-tube-iteration,lem:thin-tubes-dots}
+Start with $1/4$-thin tubes in both orders, bootstrap close to
+exponent one, and convert to a discrete relation with sufficiently
+small exceptional fraction. Choose its fraction below the graph
+density, then apply the dot-difference estimate. The choices of
+$\lambda$ and $\alpha$ absorb all the constant and exponent losses.
+\end{proof}
+
+\begin{proposition}[The separated projection alternative; WZ1, Proposition 8.9]
+\label{prop:wz1-separated}
+\lean{Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion,Kakeya.Assouad.wz1_well_separated_projection_union}
+\leanok
+\uses{def:standard-separation,def:uniform-hypergraph}
+For every $\eps>0$, sufficiently small $\eta$ and $\delta$ have
+the following property. Let $F,G_1,G_2$ be
+$(\delta,1,\delta^{-\eta})$-Frostman sets with standard
+separation, and let $H\subset F\times G_1\times G_2$ be uniformly
+$\delta^\eta$-dense. In the formalized form used for the common
+endpoint application, either an affine line $\ell$ and its
+perpendicular line $\ell^\perp$ through zero satisfy
+\[
+ |F\cap N_\delta(\ell^\perp)|_\delta\geq\delta^{\eps-1},
+ \qquad
+ |G_i\cap N_\delta(\ell)|_\delta\geq\delta^{\eps-1}
+ \quad\text{for at least one }i\in\{1,2\},
+\]
+or the dot-difference set has the long-interval covering lower
+bound in Theorem~\ref{thm:wz1-projection}.
+\end{proposition}
+\begin{proof}
+\uses{lem:two-ends-strip,lem:anisotropic-frostman,prop:line-nonconcentration,
+  lem:strip-localization,lem:hypergraph-refinement}
+\leanok
+Apply the two-ends reduction to the endpoint sets, restoring uniform
+graph density after each restriction. If the selected strips are
+wide, rescale and invoke the line-nonconcentration projection result.
+If a strip is narrow, use the localization alternative. The resulting
+affine-strip concentration is transported to an active endpoint
+class, while the other alternative gives the required long projection.
+\end{proof}
+
+\begin{remark}[One endpoint versus two]
+\label{rem:endpoint-union}
+The printed Proposition 8.9 asks for line concentration in both
+$G_1$ and $G_2$ and uses the orientation discussed in
+Remark~\ref{rem:projection-orientation}. The closed Lean theorem
+linked here returns concentration in at least one endpoint class,
+together with concentration of $F$ in the orthogonal line through
+zero. This is sufficient in Lemma 5.3, where the endpoint classes
+come from one ambient graph. It is a weaker conclusion for
+arbitrary independent endpoint sets and is recorded as such.
+\end{remark}
+
+\begin{lemma}[Two-ends restriction to a strip; WZ1, Lemma 8.10]
+\label{lem:two-ends-strip}
+\lean{Kakeya.Assouad.two_ends_reduction}
+Let $E\subset[0,1]^2$ be a nonempty union of $\delta$-squares,
+and $0<\zeta\leq1/4$. There are a width $w>0$ and a line
+$\ell$ such that $E'=E\cap N_w(\ell)$ has
+$|E'|\geq\tfrac12 w^\zeta|E|$, while
+\[
+                    |E'\cap N_r(\ell')|
+                       \leq(r/w)^\zeta|E'|
+\]
+for all lines $\ell'$ and $0<r\leq1$, with harmless fixed
+comparison constants in the discrete model.
+\end{lemma}
+\begin{proof}
+Choose a strip nearly maximizing $w^{-\zeta}|E\cap N_w(\ell)|$.
+If a narrower strip captured too much of the retained set, it
+would contradict this near-maximality. The factor $1/2$ allows
+selection without assuming that the supremum is attained.
+\end{proof}
+
+\begin{lemma}[Anisotropic Frostman rescaling; WZ1, Lemma 8.11]
+\label{lem:anisotropic-frostman}
+\lean{Kakeya.Assouad.wz1_anisotropic_frostman_rescaling}
+\uses{def:wz1-frostman}
+For sufficiently small $\delta$, let
+$w\in[\delta^{1-\eps},1]$, and let $E$ be a
+$(\delta,1,C)$-Frostman set inside a $1\times w$ rectangle $R$.
+If $\phi$ maps $R$ affinely to the unit square, there is
+$E'\subset E$ retaining at least $(\delta/w)^\eps$ of its
+measure such that the occupied $\delta/w$-squares of $\phi(E')$
+form a $(\delta/w,1,(w/\delta)^\eps C)$-Frostman set.
+Their intersections with $\phi(E')$ have comparable measure.
+\end{lemma}
+\begin{proof}
+Pigeonhole the masses of the transformed fine cells. Bound the
+preimage of a ball by a controlled collection of original-scale
+balls, and apply the Frostman condition before normalizing by
+the retained mass.
+\end{proof}
+
+\begin{lemma}[Frostman coarsening; WZ1, Lemma 8.12]
+\label{lem:frostman-coarsening}
+\lean{Kakeya.Assouad.wz1_frostman_coarsening}
+\uses{def:wz1-frostman}
+For $\delta\leq\rho\leq1$, a
+$(\delta,\alpha,C)$-Frostman set has a subset retaining a
+fraction $\gtrsim(1+\log(1/\delta))^{-1}$ whose occupied
+$\rho$-cells form a $(\rho,\alpha,C')$-Frostman set, with
+$C'\lesssim C(1+\log(1/\delta))$.
+\end{lemma}
+\begin{proof}
+Group occupied $\rho$-cells by their fine mass and retain a
+populous dyadic class. Comparable cell masses let the fine
+Frostman estimate be converted into a coarse cell count.
+\end{proof}
+
+\begin{lemma}[Localization inside a strip; WZ1, Lemma 8.13]
+\label{lem:strip-localization}
+\lean{Kakeya.Assouad.WZ1StripLocalizationDichotomyStatement}
+\uses{def:standard-separation,def:uniform-hypergraph}
+For every $\eps>0$, choose $\eta$ and $\delta$ sufficiently
+small. Suppose $F,G_1,G_2$ are
+$(\delta,1,\delta^{-\eta})$-Frostman sets with standard separation,
+$H$ is uniformly $\delta^\eta$-dense, and
+$G_1\subset N_w(\ell)$, $w\geq\delta$. Then either
+\[
+ \pi_{G_2}H\subset N_{\delta^{-\eps}w}(\ell),\qquad
+ \pi_FH\subset N_{\delta^{-\eps}w}(\ell^\perp),
+\]
+where $\ell^\perp$ passes through zero, or the dot-difference set
+has the long-interval lower bound of Theorem~\ref{thm:wz1-projection}.
+\end{lemma}
+\begin{proof}
+\uses{thm:robust-kaufman,lem:anisotropic-frostman,lem:frostman-coarsening}
+If an active endpoint or coefficient lies outside the proposed
+strips, its separation yields a nondegenerate projection scale.
+Rescale the common active strip, coarsen with controlled Frostman
+loss, and apply Kaufman's projection estimate to the resulting
+directions. Transport that lower bound back to the original
+dot-difference graph.
+\end{proof}
+
+\begin{remark}[Active vertices]
+\label{rem:active-vertices}
+The first alternative concerns vertices occurring in $H$. Unused
+members of the ambient $F,G_1,G_2$ need not lie in either strip.
+The code measures the common strip width on the active coordinate
+projections and truncates it below by $\delta$. This matches the
+surjective-projection reduction in the paper and prevents unrelated
+ambient points from changing the rescaling factor.
+\end{remark}

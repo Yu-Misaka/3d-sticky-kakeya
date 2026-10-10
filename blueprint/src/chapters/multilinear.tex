@@ -1,0 +1,386 @@
+\chapter{Multilinear Kakeya and the hairbrush bound}
+\label{chap:multilinear}
+
+Two older estimates enter the structural argument. Wolff's hairbrush
+bound prevents the critical exponent from reaching $1$, while
+multilinear Kakeya forces a nearly extremal family to be almost planar
+at a typical shaded point. We give the statements needed for these
+uses and the numbered ingredients of the free manuscript of Carbery
+and Valdimarsson~\cite{CV}. Their argument works in arbitrary dimension;
+the completed Lean interfaces used here specialize to dimension three.
+
+\section{The endpoint multilinear estimate}
+
+\begin{theorem}[Multilinear Kakeya; CV, Theorem 1]
+\label{thm:cv-general}
+Let $2\leq d\leq n$, and let $\T_1,\ldots,\T_d$ be finite indexed
+families of unit neighbourhoods of complete lines in $\R^n$. Write
+$e(T)$ for a unit direction and
+$v_1\wedge\cdots\wedge v_d$ for the unsigned volume of the
+parallelepiped spanned by these vectors. For nonnegative weights $a_T$,
+\[
+ \int_{\R^n}
+ \left(\sum_{T_j\in\T_j}
+     \prod_{j=1}^d a_{T_j}\one_{T_j}(x)
+     \;e(T_1)\wedge\cdots\wedge e(T_d)\right)^{1/(d-1)}dx
+ \leq C_{n,d}\prod_{j=1}^d
+                  \left(\sum_{T\in\T_j}a_T\right)^{1/(d-1)}.
+\]
+\end{theorem}
+\begin{proof}
+\uses{prop:cv-reduction,thm:cv-mollified-visibility,lem:cv-mollified}
+Apply polynomial visibility to a normalized weight on the unit cubes.
+Directional surface areas give a factorization of the wedge weight;
+the cylinder estimate bounds each column sum. The finite reduction
+then gives the integral inequality. Integer multiplicities, homogeneity,
+and approximation recover general nonnegative coefficients.
+\end{proof}
+
+\begin{theorem}[The shaded three-dimensional estimate; WZ1, Theorem 4.2]
+\label{thm:multilinear-kakeya}
+\lean{Kakeya.CV.MultilinearKakeyaThreeStatement,Kakeya.CV.multilinear_kakeya_three}
+\leanok
+\uses{def:tube,def:shading}
+For $0<\delta\leq1$, any finite indexed family $\T$ of
+$\delta$-tubes and any measurable shading satisfy
+\[
+ \int_{\R^3}
+  \left(\sum_{T_1,T_2,T_3\in\T}
+    \prod_{j=1}^3\one_{Y(T_j)}(x)
+    |\det(e(T_1),e(T_2),e(T_3))|\right)^{1/2}dx
+       \lesssim (\delta^2\#\T)^{3/2}.
+\]
+\end{theorem}
+\begin{proof}
+\uses{thm:cv-general}
+\leanok
+Take three copies of the same family, enlarge each finite tube to
+the neighbourhood of its complete axis, and rescale by $\delta$.
+Restriction to the shading decreases the integrand. The Jacobian
+contributes $\delta^3$, which is exactly the power on the right.
+\end{proof}
+
+\begin{proposition}[Finite factorization; CV, Proposition 2]
+\label{prop:cv-reduction}
+\lean{Kakeya.CV.multilinear_kakeya_preliminary_reduction}
+It suffices for Theorem~\ref{thm:cv-general} to construct, for every
+finitely supported $M\geq0$ with $\sum_Q M(Q)^n=1$, nonnegative
+numbers $S_j(Q,T)$ such that
+\[
+ e(T_1)\wedge\cdots\wedge e(T_d)\,M(Q)^n
+       \lesssim\prod_{j=1}^d S_j(Q,T_j),
+ \qquad
+ \sum_{Q:Q\cap T\ne\varnothing}S_j(Q,T)\lesssim1,
+\]
+where the first inequality is required when all the tubes meet $Q$.
+The linked finite inequality is its three-dimensional specialization.
+\end{proposition}
+\begin{proof}
+Let $F(Q)$ be the sum of the wedge weights over incident tuples.
+Choose $M(Q)^n$ proportional to $F(Q)^{1/(d-1)}$, first on a finite
+set of cubes. Sum the factorization and apply H\"older's inequality
+and the column bounds. Rearrangement gives the desired bound for
+$\sum_Q F(Q)^{1/(d-1)}$; exhaust the lattice by finite subsets.
+\end{proof}
+
+\section{Visibility and polynomial surfaces}
+
+\begin{definition}[Directional area and visibility; CV, Section 3]
+\label{def:visibility}
+For a hypersurface $Z$ with unit normal $n_Z$ almost everywhere, put
+\begin{align*}
+ \operatorname{surf}_e(Z)&=\int_Z|e\cdot n_Z|\,d\cH^{n-1},\\
+ K(Z)&=\left\{u\in B(0,1):
+                    \int_Z|u\cdot n_Z|\,d\cH^{n-1}\leq1\right\},\\
+ \operatorname{vis}(Z)&=|K(Z)|^{-1/n}.
+\end{align*}
+The body $K(Z)$ is convex and centrally symmetric. For a polynomial
+$p$, write $Z_p=\{p=0\}$. A mollified directional area averages the
+area functional over nearby polynomial parameters; its associated
+body and visibility are denoted by $K_\tau$ and
+$\operatorname{vis}_\tau$.
+\end{definition}
+
+\begin{lemma}[Cylinder estimate; CV, Lemma 1]
+\label{lem:cv-cylinder}
+\lean{Kakeya.CV.polynomial_cylinder_estimate}
+\uses{def:visibility}
+If $T$ is a unit neighbourhood of a line and $p\ne0$ has degree at
+most $k$, then
+\[
+                \operatorname{surf}_{e(T)}(Z_p\cap T)\lesssim_n k.
+\]
+\end{lemma}
+\begin{proof}
+Project onto the hyperplane perpendicular to $e(T)$. Almost every
+fibre meets the zero set at most $k$ times. Integrating this count
+over a bounded cross-section proves the estimate.
+\end{proof}
+
+\begin{lemma}[Visibility from directional areas; CV, Lemma 2]
+\label{lem:cv-directions}
+\lean{Kakeya.CV.visibility_directional_surface_bound}
+\uses{def:visibility}
+Suppose $1\lesssim\operatorname{surf}_e(Z)\lesssim D$ for every
+unit $e$. For unit vectors $v_1,\ldots,v_d$, $1\leq d\leq n$,
+\[
+ (v_1\wedge\cdots\wedge v_d)^{1/n}\operatorname{vis}(Z)
+   \lesssim D^{(n-d)/n}
+              \prod_{j=1}^d\operatorname{surf}_{v_j}(Z)^{1/n}.
+\]
+\end{lemma}
+\begin{proof}
+Complete the vectors to a basis using an orthonormal basis of their
+orthogonal complement. The convex hull of the points
+$\pm c v_j/\operatorname{surf}_{v_j}(Z)$ lies in $K(Z)$.
+Its volume gives the inequality. The Lean link proves this convex
+body argument for three vectors in $\R^3$.
+\end{proof}
+
+\begin{lemma}[A low-area direction bounds visibility; CV, Lemma 3]
+\label{lem:cv-degree}
+\lean{Kakeya.CV.visibility_degree_bound}
+\uses{def:visibility}
+If $Q$ is a unit cube, $p\ne0$, and
+$\operatorname{surf}_e(Z_p\cap Q)\lesssim1$ for some unit $e$,
+then
+\[
+             \operatorname{vis}(Z_p\cap Q)^{n/(n-1)}
+                          \lesssim 1+\deg p.
+\]
+\end{lemma}
+\begin{proof}
+\uses{lem:cv-cylinder}
+The John ellipsoid of $K(Z_p\cap Q)$ has one axis bounded below.
+Its volume then forces another axis to be short when visibility is
+large. The corresponding directional area is large, and the cylinder
+estimate bounds it by the degree.
+\end{proof}
+
+\begin{remark}[Zero degree and singular polynomial presentations]
+\label{rem:cv-polynomial}
+CV writes $\deg p$ in Lemma 3. For a nonzero constant polynomial the
+zero set is empty, but $K(\varnothing)=B(0,1)$ and visibility is
+positive. One must require a positive degree bound $k\geq1$, as in
+the Lean interface, or write $1+\deg p$ as above. The later application
+uses a positive degree bound. The formal directional area is defined
+using a polynomial normal and therefore keeps an explicit negligible
+singular-set hypothesis. Squarefree reduction and genericity supply
+this hypothesis before the estimate is applied; an arbitrary repeated
+factor presentation must not be substituted without that step.
+\end{remark}
+
+\begin{lemma}[Mollified estimates; CV, Lemmas 4--6]
+\label{lem:cv-mollified}
+\uses{lem:cv-cylinder,lem:cv-directions,lem:cv-degree}
+For polynomials in a fixed normalized parameter space of degree at
+most $k\geq1$, the cylinder, directional visibility, and low-area
+visibility bounds remain valid after mollification. Their constants
+are independent of the sufficiently small mollification radius.
+\end{lemma}
+\begin{proof}
+Average the cylinder bound. The averaged area remains an even
+sublinear function of the direction, so its unit body is convex.
+The convex-geometric proofs of the other two estimates apply to this
+body without change.
+\end{proof}
+
+\begin{theorem}[Polynomial visibility; CV, Theorems 2--3]
+\label{thm:cv-mollified-visibility}
+\lean{Kakeya.CV.PolynomialVisibilityStatement,Kakeya.CV.polynomial_visibility_complete}
+\leanok
+\uses{def:visibility}
+For finitely many unit cubes in $\R^3$ and nonnegative weights $M(Q)$,
+there are a degree bound $k$, a nonzero normalized polynomial of
+degree at most $k$, and a mollification radius $\tau>0$ such that
+\[
+       k\lesssim\left(\sum_Q M(Q)^3\right)^{1/3},\qquad
+       \operatorname{vis}_\tau(Z_p\cap Q)\gtrsim M(Q)
+       \quad\hbox{for every }Q.
+\]
+CV Theorem 2 introduces the unmollified assertion in dimension $n$;
+Theorem 3 is the mollified version used in the proof. The displayed
+statement is the completed finite, three-dimensional version.
+\end{theorem}
+\begin{proof}
+\uses{lem:cv-antipodal,lem:cv-colouring,lem:cv-bisections,
+  lem:cv-stability}
+\leanok
+For each cube, decompose the polynomials with insufficient visibility
+by the size and shape of their visibility body. A finite colouring
+chooses ellipsoids with a stability margin. Pack each cube with small
+translates of the chosen ellipsoid. The bisection estimate leaves
+one translate on which a bad polynomial has a strict sign imbalance.
+These signs separate each bad set from the closure of its antipode.
+The total number of such pairs is controlled by $\sum_Q M(Q)^3$.
+Borsuk--Ulam leaves a polynomial outside all the bad sets once the
+parameter-space dimension is chosen large enough.
+\end{proof}
+
+\begin{proposition}[Prescribing surface area; CV, Proposition 1]
+\label{prop:cv-surface-area}
+\uses{def:visibility}
+If $M$ is finitely supported on the unit cubes of $\R^n$ and each
+nonzero $M(Q)$ is at least $1$, there is a nonzero polynomial with
+\[
+ \deg p\lesssim\left(\sum_Q M(Q)^n\right)^{1/n},\qquad
+ \cH^{n-1}(Z_p\cap Q)\gtrsim M(Q)
+ \quad(M(Q)>0).
+\]
+\end{proposition}
+\begin{proof}
+\uses{thm:borsuk-ulam,lem:cv-isoperimetric}
+Subdivide each relevant cube into approximately $M(Q)^n$ smaller
+cubes. Borsuk--Ulam gives a polynomial bisecting all of them.
+The relative isoperimetric lower bound in each small cube, followed
+by summation, gives the asserted surface area.
+\end{proof}
+
+\section{The topological construction}
+
+\begin{theorem}[Borsuk--Ulam; CV, Theorem 4]
+\label{thm:borsuk-ulam}
+If $J\leq N$, every continuous odd map $F:S^N\to\R^J$ has a zero.
+\end{theorem}
+
+\begin{lemma}[Antipodal covering; CV, Lemma 7]
+\label{lem:cv-antipodal}
+\lean{Kakeya.CV.polynomial_bad_set_cover}
+\leanok
+Let $A_1,\ldots,A_J\subset S^N$, with $J\leq N$. If
+$A_i\cap\overline{-A_i}=\varnothing$ for each $i$, the sets
+$A_i,-A_i$ do not cover the sphere.
+\end{lemma}
+\begin{proof}
+\uses{thm:borsuk-ulam}
+\leanok
+Apply Borsuk--Ulam to the odd differences of distance to the antipodal
+closures. A common zero cannot belong to any $A_i$ or $-A_i$.
+Empty sets can first be omitted.
+\end{proof}
+
+\begin{lemma}[A coloured ellipsoid net; CV, Lemma 8]
+\label{lem:cv-colouring}
+\lean{Kakeya.CV.stable_finite_colour_ellipsoid_net}
+There is a dimensional $\alpha>1$ and a family of centred ellipsoids
+with finitely many colours such that every centrally symmetric
+convex body $K$ is approximated by one of them:
+\[
+                    \alpha^{-1}K\subset E\subset\alpha K.
+\]
+The colours can be chosen so that same-colour ellipsoids which are
+$\alpha^3$-close must agree. In particular there is at most one
+approximating ellipsoid of a given colour.
+\end{lemma}
+\begin{proof}
+Take a separated net in the space of positive definite quadratic
+forms, with distance measured by logarithmic homothetic distortion.
+Colour its bounded-degree proximity graph. John's theorem then
+extends the covering property to centrally symmetric convex bodies.
+\end{proof}
+
+\begin{remark}[A margin in the colouring]
+\label{rem:cv-colouring}
+The stability argument needs separation stronger than mere uniqueness
+of the chosen approximation. The formal colouring explicitly retains
+the $\alpha^3$ margin. This accounts for the two approximation factors
+and the small change of the visibility body when the polynomial varies.
+\end{remark}
+
+\begin{lemma}[How many ellipsoids can be bisected; CV, Lemma 9]
+\label{lem:cv-bisections}
+\uses{def:visibility}
+Suppose $p$ lies in a bad visibility band at a cube $Q$, and its
+selected ellipsoid $E(p)$ has volume comparable to
+$2^{rn}M(Q)^{-n}$. For $0<\eta<1$, the zero set of $p$ can bisect
+at most
+\[
+                     C_n\eta^{-(n-1)}2^{-rn}M(Q)^n
+\]
+disjoint translates of $\eta E(p)$ inside $Q$. The assertion is used
+with a common sufficiently small mollification radius and a fixed
+finite collection of possible translates.
+\end{lemma}
+\begin{proof}
+\uses{lem:cv-isoperimetric,lem:cv-mollified}
+Each bisection contributes a fixed amount to the sum of the
+directional areas weighted by the principal semiaxes. Summing over
+disjoint translates and using the directional budgets bounds their
+number. Continuity of sign volumes replaces exact bisection by a
+fixed approximate bisection for nearby polynomials.
+\end{proof}
+
+\begin{lemma}[Stability of the selected ellipsoid; CV, Lemma 10]
+\label{lem:cv-stability}
+\lean{Kakeya.CV.ellipsoid_selection_stability}
+\uses{lem:cv-colouring,def:visibility}
+Fix a cube, a visibility band, a colour, and a mollification radius.
+If $p_m\to p$ within this class, then $E(p_m)=E(p)$ for all
+sufficiently large $m$. Every translate with a fixed label in the
+associated packing is eventually unchanged as well.
+\end{lemma}
+\begin{proof}
+Mollified directional areas vary continuously, hence the visibility
+bodies converge in homothetic distance. The colour separation margin
+forces their selected ellipsoids to coincide eventually.
+\end{proof}
+
+\begin{lemma}[Bisecting a ball; CV, Lemma 11]
+\label{lem:cv-isoperimetric}
+Let a nonzero polynomial divide the unit ball into sign regions of
+relative volumes $a,b$, where $a+b=1$. Then
+\[
+ \cH^{n-1}(Z_p\cap B)
+ \geq\frac12\left(a^{(n-1)/n}+b^{(n-1)/n}-1\right)
+                      \cH^{n-1}(S^{n-1}).
+\]
+In particular, a surface bisecting a ball has a dimensional positive
+lower bound for its area in that ball.
+\end{lemma}
+\begin{proof}
+Apply the isoperimetric inequality separately to the two sign regions.
+Their boundaries are contained in the union of the outer sphere and
+two copies of the separating surface. Subtract the sphere area and
+divide by two. The non-strict inequality includes the cases $a=0$
+and $b=0$; the printed strict inequality needs those degenerate cases
+excluded.
+\end{proof}
+
+\section{The subunit critical exponent}
+
+\begin{theorem}[The Wolff floor used in the sticky argument]
+\label{thm:hairbrush}
+\lean{Kakeya.Assouad.PureWZ2WolffVolumeFloor,Kakeya.Assouad.pure_wz2_direct_wolff_floor}
+\leanok
+\uses{def:all-scale-cwa,def:shading}
+For every $\eps>0$ there are $\eta>0$ and $\delta_0>0$ such that
+a nonempty family of $\delta$-tubes satisfying all-scale CWA with
+error $\delta^{-\eta}$, with $\delta^\eta$-dense shading, obeys
+\[
+                         |E_Y|\geq\delta^{1/2+\eps}
+                         \qquad(0<\delta\leq\delta_0).
+\]
+\end{theorem}
+\begin{proof}
+\leanok
+This is the form of Wolff's $5/2$-dimensional hairbrush bound used
+in WZ2 Section 6. The low-multiplicity case follows by integrating
+the shading multiplicity. In the high-multiplicity case, select a
+stem tube and the tubes meeting it. Angular decomposition separates
+the resulting hairbrush into nearly planar pieces; planar overlap
+bounds and the Wolff nonconcentration conditions give the square-root
+gain. Density pruning and the all-scale cover absorb fixed and
+logarithmic losses into $\eps$.
+\end{proof}
+
+\begin{remark}[Scope of the hairbrush statement]
+\label{rem:hairbrush}
+The displayed theorem records the closed consequence needed here,
+not the full maximal-function theorem of Wolff~\cite{Wolff95}.
+That article is not needed as an additional paid source for the
+blueprint. If an admissible exponent were greater than $1/2$, the
+floor with a smaller positive loss would contradict its defining
+upper bound at sufficiently small scales. The proof uses a convenient
+ceiling $3/4<1$ and the floor with loss $1/8$; sharpness of the
+ceiling is unnecessary.
+\end{remark}

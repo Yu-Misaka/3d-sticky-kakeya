@@ -1,0 +1,437 @@
+\chapter{Twisted projections and the final contradiction}
+\label{chap:twisted}
+
+\section{The slope cannot remain small}
+
+\begin{lemma}[A lower bound for the slope; WZ2, Lemma 6.6]
+\label{lem:large-slope}
+\lean{Kakeya.Assouad.LargeSlopeTechnicalStatement}
+\uses{prop:c2-grains,def:cwa}
+For each $\eps>0$, choose $\eta>0$ and the fine scale sufficiently
+small. Let a grain configuration satisfy Proposition~\ref{prop:c2-grains}
+with loss $\eta$. Suppose $J\subset[-1,1]$ satisfies
+$\sqrt\delta\leq |J|\leq\delta^\eps$,
+\[
+ \sum_{T\in\T}|Y(T)\cap(\R^2\times J)|\geq\delta^\eta|J|,
+\]
+and $E_Y\cap(\R^2\times J)$ is covered by at most
+$\delta^{-\eta}|J|^{-2+\sigma}$ cubes of side $|J|$.
+Then $|f'(z)|\geq |J|$ for $z\in J$.
+\end{lemma}
+\begin{proof}
+\uses{prop:sticky-structure}
+If $|f'|$ is smaller than $|J|$ somewhere, the $C^2$ bound keeps
+$f$ nearly constant across $J$. Global grains and the spatial covering
+hypothesis then concentrate many shaded tube pieces in a thin prism.
+The balanced-cover and multiplicity bounds turn shaded mass in that
+prism into a count of whole tubes in a slightly enlarged convex body.
+Its volume is too small for that count to satisfy CWA. The
+formalized argument retains the selected shading, its per-tube mass,
+and the actual enclosing prism throughout this step.
+\end{proof}
+
+\begin{proposition}[Nonsingular smooth grains; WZ2, Proposition 6.5]
+\label{prop:large-slope}
+\lean{Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement,Kakeya.Assouad.pure_wz2_node06_large_slope}
+\leanok
+\uses{def:extremal,def:ad-set,def:plane-map}
+For every $\eps,\delta_0>0$, there is an $\eps$-extremal
+configuration at some $0<\delta\leq\delta_0$ with the local grain
+property and a global grain slope $f\in C^2([-1,1])$ satisfying
+\[
+       1\leq|f'(z)|\leq2,\qquad |f''(z)|\leq1/100
+       \quad(-1\leq z\leq1).
+\]
+Every horizontal slice has the global AD bound of
+Proposition~\ref{prop:c2-grains}, with this same $f$ and the same
+shading.
+\end{proposition}
+\begin{proof}
+\uses{prop:c2-grains,lem:large-slope,lem:mild-rescaling}
+\leanok
+Choose a populated interval of heights whose spatial covering number
+has the required extremal bound. The preceding lemma gives a lower
+bound for the derivative there. Localize further so that the derivative
+has comparable magnitude, then rescale the height and transverse
+coordinates. A sufficiently short interval makes the second derivative
+small after normalization. Transport the family, shading, and both
+grain structures together through this rescaling.
+\end{proof}
+
+\begin{definition}[Twisted projection; WZ1, Definition 6.1]
+\label{def:twisted-projection}
+\lean{Kakeya.Assouad.twistedProjection,Kakeya.Assouad.twistedCurve}
+\leanok
+For $f:[-1,1]\to\R$, define
+\[
+ \pi_f(x,y,z)=(x+f(z)y,z).
+\]
+In a vertical coordinate chart, a line has the form
+$\ell_{a,b,c,d}(t)=(a+ct,b+dt,t)$, and its image is the graph of
+\[
+                   t\longmapsto a+ct+f(t)(b+dt).
+\]
+\end{definition}
+
+\begin{lemma}[A small twisted projection; WZ2, Lemma 6.7, corrected exponent]
+\label{lem:small-twisted-projection}
+\lean{Kakeya.Assouad.PureWZ2SmallTwistedProjectionData,Kakeya.Assouad.pure_wz2_node07_small_twisted_projection}
+\leanok
+\uses{def:twisted-projection,def:cwa,def:shading}
+Assume a positive critical exponent $\sigma$ exists. For every
+$a>0$ and every scale ceiling, there is a nonempty configuration
+below that ceiling, with CWA error $\delta^{-a}$, shading density
+$\delta^a$, and a nonsingular slope as above, such that
+\[
+                        |\pi_f(E_Y)|\leq\delta^{\sigma-a}.
+\]
+The final preparation can also supply, on the same selected
+configuration, the parameter-space hypotheses of
+Theorem~\ref{thm:twisted-parameter}.
+\end{lemma}
+\begin{proof}
+\uses{prop:large-slope}
+\leanok
+At each height, the global AD bound covers the horizontal projection
+by at most $O(\delta^{-(1-\sigma)-a})$ intervals of length $\delta$.
+The cubical, slabwise form of this statement bounds planar area by
+$O(\delta^{\sigma-a})$. Allocate a smaller source loss to absorb
+the fixed constants. The further analytic preparation retains this
+upper bound while producing separated representatives and the
+required indexed parameter counts.
+\end{proof}
+
+\begin{remark}[The sign in WZ2 Lemma 6.7]
+\label{rem:projection-sign}
+WZ2 prints $\delta^{\sigma+\eps}$ in this lemma. The grain estimate
+with covering loss $\delta^{-\eps}$ instead gives
+$\delta^{\sigma-\eps}$, and this is the exponent in
+\texttt{PureWZ2SmallTwistedProjectionData}. The corresponding WZ1
+Corollary 6.5 is formulated as an $L^{3/2}$ lower bound; the volume
+and covering losses in its derivation also have the latter sign.
+The plus sign would be a stronger assertion when $0<\delta<1$.
+The weaker, minus-sign estimate is sufficient: choose the lower-bound
+exponent strictly below $\sigma-a$ in the final contradiction.
+\end{remark}
+
+\section{The projection lower bound}
+
+\begin{proposition}[Convex Wolff version; WZ2, Proposition 6.8]
+\label{prop:twisted-cwa}
+\uses{def:cwa,def:shading,def:twisted-projection}
+For every $\eps>0$, the paper asserts that there are
+$\eta,\delta_0>0$ such that a nonempty $\delta$-tube configuration
+with CWA error $\delta^{-\eta}$ and a $\delta^\eta$-dense shading
+satisfies
+\[
+                         |\pi_f(E_Y)|\geq\delta^\eps
+\]
+for $0<\delta\leq\delta_0$ and every slope with
+$1\leq|f'|\leq2$, $|f''|\leq1/100$ on the height window.
+\end{proposition}
+
+\begin{proposition}[Tube Wolff version; WZ2, Proposition 7.1]
+\label{prop:twisted-tube-wolff}
+\uses{def:tube-frostman,def:shading,def:twisted-projection}
+The paper gives the same conclusion assuming the dimension-$2$
+Tube Wolff condition in place of CWA. In a bounded line chart the
+intended hypothesis controls the number of line parameters in every
+ball of radius $r\geq\delta$ by
+$\delta^{-\eta}r^2\#\T$.
+\end{proposition}
+
+\begin{remark}[The lower bound used by the formal proof]
+\label{rem:parameter-frostman}
+WZ2 Remark 7.4 identifies the Tube Wolff condition with Frostman
+nonconcentration in the space of line parameters. For the repository's
+ordinary unit-segment carriers these are distinct predicates:
+containment of a complete segment in a coarse tube does not, by itself,
+count every segment with nearby supporting-line parameters. Segments
+on the same line can have different longitudinal positions.
+The proof therefore supplies the indexed four-parameter Frostman
+bound explicitly. It also supplies a bounded chart and a cardinality
+upper bound. The next theorem is the actual proved specialization;
+the two preceding paper formulations are not marked as independently
+proved in their greater generality.
+\end{remark}
+
+\begin{theorem}[The parameter-Frostman specialization of WZ2, Proposition 7.1]
+\label{thm:twisted-parameter}
+\lean{Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement,Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound}
+\leanok
+\uses{def:twisted-projection,def:tube-frostman,def:shading}
+For every $\eps>0$, there are $0<\eta\leq\eps$ and
+$0<\delta_0<1$ with the following property. Let $\T$ be a nonempty
+family at $0<\delta\leq\delta_0$, represented in a vertical chart
+with tube bases of norm at most $4$ and vertical direction component
+of absolute value at least $1/2$. Assume analytic essential
+distinctness, the dimension-$2$ Tube Wolff bound with error
+$\delta^{-\eta}$, and the indexed parameter bound
+\[
+ \#\{T:\|(a_T,b_T,c_T,d_T)-(a_{T_0},b_{T_0},c_{T_0},d_{T_0})\|_\infty
+                  \leq r\}
+       \leq\delta^{-\eta}r^2\#\T
+       \quad(\delta\leq r\leq1).
+\]
+Assume also $\#\T\leq\delta^{-2-\eta/10}$.
+If $Y$ is $\delta^\eta$-dense and supported in $-1\leq z\leq1$,
+and $f(0)=0$, $1\leq|f'|\leq2$, $|f''|\leq1/100$, then
+\[
+                         |\pi_f(E_Y)|\geq\delta^\eps.
+\]
+\end{theorem}
+\begin{proof}
+\uses{lem:spacing,lem:block-replication,lem:projection-one-step,
+  thm:cinematic-l32,thm:os-discretized}
+\leanok
+Separate the parameters into blocks and regularize their branching
+over a finite sequence of scales. The spacing argument finds a
+block with sufficient local nonconcentration. Replicate this block
+and use the cinematic estimate to obtain the one-step comparison of
+fine projection area with coarse projection area. If that comparison
+does not yet give the desired lower bound, pass to a coarser scale
+and repeat. The scale increases by a controlled power at each step,
+so the procedure stops after a uniformly bounded number of steps.
+The successive area comparisons telescope. The scale schedule and
+the source loss are chosen so that the total loss is less than
+$\eps$.
+
+The iteration keeps the induced shading on the actual selected
+family. Clipping a thickened shading back to the height window costs
+an additive boundary term; this term is estimated before converting
+the mass bound into a density bound.
+\end{proof}
+
+\section{Discrete sets and scale selection}
+
+\begin{definition}[Katz--Tao and Frostman sets; WZ2, Definitions 7.2--7.3]
+\label{def:kt-frostman}
+\lean{Kakeya.Assouad.DiscreteSet.IsKatzTao,Kakeya.Assouad.DiscreteSet.IsFrostman}
+\leanok
+A nonempty bounded set $A\subset\R^n$ is a
+$(\delta,s,C)$-Katz--Tao set if
+\[
+       \cE_\delta(A\cap B(x,r))\leq C(r/\delta)^s
+       \quad(\delta\leq r\leq1).
+\]
+It is a $(\delta,s,C)$-Frostman set if the right-hand side is replaced
+by $Cr^s\cE_\delta(A)$. For separated finite sets the formalization
+uses point counts; they are comparable to covering numbers with a
+dimensional change of constant.
+\end{definition}
+
+\begin{remark}[A reversed quotient in Definition 7.2]
+\label{rem:kt-quotient}
+The April 2025 WZ2 manuscript prints $C(\delta/r)^s$. The inequality
+used in its arguments, and in the Lean predicate, has $C(r/\delta)^s$.
+For example, a separated set with $\asymp\delta^{-s}$ points in a
+unit ball cannot satisfy the printed formula at $r=1$ with bounded
+$C$. All Katz--Tao statements here use the latter quotient.
+\end{remark}
+
+\begin{lemma}[Frostman to Katz--Tao; WZ2, Lemma 7.6]
+\label{lem:frostman-to-kt}
+\lean{Kakeya.Assouad.FrostmanToKatzTaoStatement,Kakeya.Assouad.frostman_to_katz_tao}
+\uses{def:kt-frostman}
+A $(\delta,s,C)$-Frostman set in a bounded region has a
+$(\delta,s,100)$-Katz--Tao subset $A'$ with
+\[
+                \cE_\delta(A')\gtrsim_{n,s}
+                   C^{-1}\delta^{-s}(1+\log(1/\delta))^{-1}.
+\]
+The linked finite-set form assumes $\delta$-separation and
+$\#A\geq\delta^{-s}$ and writes the implicit dimensional constant
+explicitly as an existential constant.
+\end{lemma}
+\begin{proof}
+\uses{lem:content-to-kt}
+Use the Frostman bound to control the cost of coverings at each
+dyadic scale. A logarithmic pigeonhole produces a portion with
+enough finite-scale content. The content extraction lemma then
+gives a separated Katz--Tao set of the claimed size.
+\end{proof}
+
+\begin{lemma}[Content extraction; WZ2, Lemma 7.7]
+\label{lem:content-to-kt}
+\uses{def:kt-frostman}
+If $\cH^s_\infty(A)=\kappa>0$, there is a
+$(\delta,s,100)$-Katz--Tao subset $A'\subset A$ with
+$\cE_\delta(A')\gtrsim\kappa\delta^{-s}$.
+\end{lemma}
+\begin{proof}
+Discretize a Frostman measure at scale $\delta$, retaining at most a
+fixed amount of mass in each occupied cell. Select representatives
+by the usual dyadic pruning procedure. The mass distribution bound
+controls the number selected in every larger ball, and the total
+mass supplies the lower bound.
+\end{proof}
+
+\begin{definition}[Uniform branching; WZ2, Definition 7.8]
+\label{def:uniform-set}
+Fix a dyadic sequence $1=\Delta_0>\cdots>\Delta_m=\delta$.
+A set is uniform on these scales if the number of occupied
+$\Delta_{j+1}$-children is the same for every occupied
+$\Delta_j$-cube. Consequently the number of finest-scale cells in
+each occupied cube at a fixed level is the same. WZ2's
+$\eta$-uniformity allows comparability by a factor of $100$ and uses
+the scales $2^{-j/\eta}$.
+\end{definition}
+
+\begin{lemma}[Uniform refinement; WZ2, Lemma 7.9, in block notation]
+\label{lem:uniform-set}
+\uses{def:uniform-set}
+Let $\delta=2^{-mT}$ and $\Delta_j=2^{-jT}$, $0\leq j\leq m$.
+A set $A\subset[0,1)^n$ has a refinement $A'$ uniform on these
+scales and satisfying
+\[
+                   \cE_\delta(A')\geq (C_nT)^{-m}\cE_\delta(A).
+\]
+In particular, choosing $T$ large enough in terms of $\eps$ gives
+$\cE_\delta(A')\geq\delta^\eps\cE_\delta(A)$.
+\end{lemma}
+\begin{proof}
+At one level there are $O_n(T)$ dyadic possibilities for the number
+of occupied children. Retain the most populous class and then the
+same number of children at every surviving parent. Work from the
+bottom level upwards; earlier equalities are preserved because
+whole subtrees are retained. Multiplying the losses over the $m$
+levels proves the estimate.
+\end{proof}
+
+\begin{remark}[The two parameters in uniformization]
+\label{rem:uniform-parameters}
+WZ2 Lemma 7.9 writes $\delta=2^{-\eta^{-1}T}$ but gives retention
+$(2T)^{-\eta^{-1}}$, while Definition 7.8 selects scales separated
+by $2^{-\eta^{-1}}$. The block length and the number of levels are
+interchanged in these displays. The formulation above separates them:
+there are $m$ levels, each of length $T$ in logarithmic scale, and
+the loss is a power $m$ of the one-level factor. The formal
+uniform-tree construction keeps these two integers separately.
+\end{remark}
+
+\begin{lemma}[A scale with good spacing; WZ2, Lemma 7.10]
+\label{lem:spacing}
+\lean{Kakeya.Assouad.ScaleProfileCrossingStatement,Kakeya.Assouad.scale_profile_crossing}
+\uses{def:uniform-set,def:kt-frostman}
+For every $\eps>0$, choose a sufficiently fine uniform scale grid.
+If $A\subset[0,1)^n$ is uniform on this grid and
+$\cE_\delta(A)\geq\delta^{-s}$, then one can choose
+$\rho>\delta^{1-\eps}$ such that each occupied $\rho$-cube, after
+rescaling to unit size, has a
+$(\delta/\rho,s,(\delta/\rho)^{-4n\eps})$-Frostman bound.
+\end{lemma}
+\begin{proof}
+\uses{lem:uniform-set,prop:os-multiscale}
+Decompose the logarithmic scale interval into pieces on which the
+branching behaves like a fixed dimension $t_j$. Merge adjacent
+pieces whose dimensions are in decreasing order. The resulting
+dimensions increase, and their weighted average is at least
+$s-\eps^2$. Hence the first piece with $t_j\geq s-\eps$ starts
+before the terminal part of the scale interval. All subsequent pieces
+have dimension at least $s-\eps$. Combining their bounds gives the
+Frostman estimate in every surviving cube. The linked arithmetic
+lemma makes the early-crossing argument explicit; the geometric
+pruning and scale-selection results supply its hypotheses.
+\end{proof}
+
+\begin{lemma}[Replication of a parameter block; WZ2, Lemma 7.11]
+\label{lem:block-replication}
+\lean{Kakeya.Assouad.ParameterBlockAmplificationStatement,Kakeya.Assouad.parameter_block_amplification}
+\uses{def:kt-frostman}
+Let $A_0$ lie in a cube of side $\rho$ and be a
+$(\delta,s,C)$-Katz--Tao set, with
+$\cE_\delta(A_0)\gtrsim(\rho/\delta)^s$. One can place translated
+copies in a bounded region to obtain a
+$(\delta,s,O(C))$-Katz--Tao set $A$ with
+$\cE_\delta(A)\gtrsim\delta^{-s}$. Each selected replica cell
+contains one translated copy of $A_0$.
+\end{lemma}
+\begin{proof}
+Place about $\rho^{-s}$ copies on a grid of spacing comparable to
+$\rho^{s/n}$. For a ball of radius at most $\rho$, use the original
+Katz--Tao bound. Between $\rho$ and the grid spacing, only boundedly
+many copies are met. Above the grid spacing, count the grid cells
+and multiply by the size of one copy. Since $r^n\leq r^s$ for
+$r\leq1$ and $s\leq n$, the desired bound follows.
+\end{proof}
+
+\begin{remark}[The replication cells]
+\label{rem:replication}
+The proof of WZ2 Lemma 7.11 prints $\rho^{s/n}\leq\rho$ (with the
+dimension also denoted by $d$ there). The required inequality is
+$\rho^{s/n}\geq\rho$ for $0<\rho\leq1$ and $s\leq n$, which
+keeps the copies apart. Also, the assertion about translated copies
+refers to the chosen cells of the construction, not to every translated
+axis-parallel cube of side $\rho$: an arbitrarily shifted cube can
+cut a copy in two. The formalization carries explicit replica
+indices and disjointness data.
+\end{remark}
+
+\section{The one-step estimate and cinematic curves}
+
+\begin{lemma}[Fine area versus coarse area; WZ2, Lemma 7.12]
+\label{lem:projection-one-step}
+\uses{def:twisted-projection,def:tube-frostman}
+In the normalized setting of Theorem~\ref{thm:twisted-parameter},
+and with the source loss chosen sufficiently small, there are
+$\rho\in(\delta^{1-\eps^2},1)$ and a subshading $Y'$ of density
+at least $\delta^{4\eta}$ such that
+\[
+ |\pi_f(E_{Y'})|\geq(\delta/\rho)^\eps
+                         |N_\rho(\pi_f(E_{Y'}))|.
+\]
+\end{lemma}
+\begin{proof}
+\uses{lem:spacing,lem:block-replication,thm:cinematic-l32}
+Pigeonhole the multiplicity of the fibres of the twisted projection
+and regularize the projected set. In the line chart, select a narrow
+window in the parameter $c$. Removing its affine contribution
+leaves curves $a+f(t)(b+dt)$. Choose a well-spaced parameter block,
+replicate it, and apply the cinematic maximal estimate. H\"older's
+inequality converts the multiplicity bound into the area comparison.
+The density losses are paid on one common subshading.
+\end{proof}
+
+\begin{theorem}[Cinematic $L^{3/2}$ estimate; WZ2, Theorem 7.13]
+\label{thm:cinematic-l32}
+\lean{Kakeya.Cinematic.WZ2UniformC2Input,Kakeya.Cinematic.wz2_uniformC2_input}
+\leanok
+\uses{def:cinematic-family}
+Fix the cinematic and doubling constants, a uniform absolute $C^2$
+bound $M$, a Katz--Tao constant $C_0$, and a neighbourhood dilation
+$\lambda\geq1$. For every $\eps>0$, and all sufficiently small
+$\delta$, a $\delta$-separated finite subfamily $G$ satisfying
+\[
+       \#(G\cap B(g,r))\leq C_0(r/\delta)
+       \quad(r\geq\delta)
+\]
+obeys
+\[
+       \left\|\sum_{g\in G}\one_{N_{\lambda\delta}(\graph g)}
+       \right\|_{L^{3/2}(\R^2)}\leq\delta^{-\eps}.
+\]
+All the fixed constants, including $M$, precede the choice of the
+small-scale threshold.
+\end{theorem}
+\begin{proof}
+\uses{thm:pyz}
+\leanok
+Apply the cinematic maximal theorem on a bounded collection of
+coordinate strips, with an auxiliary loss smaller than the requested
+$\eps$. Sum the strip estimates, pass from the integral of the
+$3/2$ power to the $L^{3/2}$ norm, and absorb the fixed constants
+by decreasing the scale threshold.
+\end{proof}
+
+\begin{remark}[The normalized analytic formulation]
+\label{rem:cinematic-normalization}
+The paper states Theorem 7.13 for a fixed cinematic family and allows
+a small-power loss in the counting constant. The Lean interface
+above fixes a Katz--Tao constant, a graph-neighbourhood dilation, and
+an absolute $C^2$ bound before choosing the fine scale. This is the
+form used after selecting and rescaling the parameter blocks. The
+need to keep the absolute bound in a family-uniform version of the
+PYZ theorem is explained in Remark~\ref{rem:pyz-uniformity}.
+\end{remark}
+
+\input{chapters/wz1-twisted}

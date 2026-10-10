@@ -1,0 +1,375 @@
+\chapter{Cinematic functions and their maximal estimate}
+\label{chap:cinematic}
+
+This chapter follows Pramanik, Yang, and Zahl~\cite{PYZ}. The
+application to sticky Kakeya uses its maximal estimate for a
+bounded family of functions produced from the nonsingular slope.
+The metric on $C^2(I)$ is the maximum of the sup norms of a
+function and its first two derivatives.
+
+\section{The maximal estimate}
+
+\begin{definition}[One-dimensional sets and quasi-products; PYZ, Definitions 1.4--1.5]
+\label{def:quasi-product}
+\lean{Kakeya.Cinematic.IsDeltaSet,Kakeya.Cinematic.IsQuasiProduct}
+\leanok
+A $(\delta,\alpha;C)_1$-set $A\subset[0,1]$ is a union of
+intervals of length $\delta$ such that
+\[
+                         |A\cap I|\leq C\delta^{1-\alpha}|I|^\alpha
+\]
+for every interval $I\subset[0,1]$. A Borel set $E\subset[0,1]^2$
+is a $(\delta,\alpha;C)_1\times(\delta,\beta;C)_1$ quasi-product
+if $E=\bigcup_{a\in A}\{a\}\times B_a$, where $A$ and each
+$B_a$ have the respective one-dimensional conditions.
+\end{definition}
+
+\begin{definition}[Cinematic families; PYZ, Definition 1.6]
+\label{def:cinematic-family}
+\lean{Kakeya.Cinematic.IsCinematicFamily}
+\leanok
+A family $\cF\subset C^2(I)$ is cinematic with constants $K,D$
+if it has diameter at most $K$, is a doubling metric space with
+doubling constant at most $D$, and for all $f,g\in\cF$,
+\[
+ \inf_{t\in I}\bigl(|f(t)-g(t)|+|f'(t)-g'(t)|+|f''(t)-g''(t)|\bigr)
+                                      \geq K^{-1}\|f-g\|_{C^2}.
+\]
+\end{definition}
+
+\begin{theorem}[Cinematic maximal estimate; PYZ, Theorem 1.7, normalized formulation]
+\label{thm:pyz}
+\lean{Kakeya.Cinematic.Theorem1_7UniformC2Statement}
+\uses{def:cinematic-family,def:quasi-product}
+Fix $D,K\geq1$ and an absolute bound
+$\sup_{f\in\cF}\|f\|_{C^2}\leq M$. For every $\eps>0$,
+all sufficiently small $\delta>0$ have the following property.
+Let $0<\alpha\leq\zeta\leq1$, let $E$ be a
+$(\delta,\alpha;\delta^{-\eps})_1\times
+(\delta,\alpha;\delta^{-\eps})_1$ quasi-product, and let
+$F\subset\cF$ be finite with
+\[
+           \#(F\cap B(g,r))\leq\delta^{-\eps}(r/\delta)^\zeta
+           \quad(r\geq\delta).
+\]
+Writing $f^\delta=N_\delta(\graph f)$, one has
+\[
+       \int_E\left(\sum_{f\in F}\one_{f^\delta}\right)^{3/2}
+             \leq\delta^{2-\alpha/2-\zeta/2-C\eps}\#F,
+\]
+where $C$ depends only on $D$ and the small-scale threshold may
+also depend on $K,M,\eps$.
+\end{theorem}
+\begin{proof}
+\uses{lem:pyz-local-maximal,prop:bipartite-tangency}
+Reduce to a short interval, select a multiplicity level, and
+pigeonhole pairwise distances and tangency parameters. The
+two-ends selection prevents most functions from lying in a much
+smaller function-space ball. Assign common tangent rectangles to
+the remaining points. The bipartite rectangle estimate bounds
+their number, while the quasi-product condition bounds the mass
+inside each rectangle. Summing the multiplicity levels gives the
+$3/2$-moment estimate, and a finite interval covering gives the
+global result.
+\end{proof}
+
+\begin{remark}[Uniformity in the family]
+\label{rem:pyz-uniformity}
+The printed theorem says that the threshold depends only on
+$D,K,\eps$. The cinematic conditions control differences between
+functions, not their absolute $C^2$ norms. A singleton containing
+an arbitrarily rapidly oscillating function still has diameter
+zero and satisfies the pairwise condition. At a prescribed scale
+its Euclidean graph neighbourhood can cover a fixed part of the
+unit square. Thus a threshold uniform over all such singletons
+needs an additional absolute bound, or must depend on the family.
+The Lean formulation fixes $M$ before choosing $\delta_0$.
+
+The general normalized statement is retained as a proposition in
+the repository. The closed estimate consumed by sticky Kakeya is
+the $L^{3/2}$ interface of Theorem~\ref{thm:cinematic-l32}, proved
+in \texttt{wz2\_uniformC2\_input}; its fixed constants and
+quantifiers are recorded there. This distinction is why the full
+$\alpha,\zeta$ statement above has no proof-completion mark.
+\end{remark}
+
+\begin{proposition}[The curve-generated family; PYZ, Proposition 2.1]
+\label{prop:pyz-curve-family}
+\uses{def:quasi-product,def:cinematic-family}
+Let $\gamma:I\to S^2$ be $C^2$ with
+$\det(\gamma,\gamma',\gamma'')\ne0$ everywhere. Fix
+$0<\alpha\leq\zeta\leq1$ and $\eps>0$.
+For a $\delta$-separated set $Z\subset B(0,1)\subset\R^3$
+with $\#(Z\cap B(z,r))\leq\delta^{-\eps}(r/\delta)^\zeta$,
+put $\Gamma_z=\graph(t\mapsto z\cdot\gamma(t))$.
+At sufficiently small $\delta$, a quasi-product $E$ as in
+Theorem~\ref{thm:pyz} satisfies
+\[
+ \int_E\left(\sum_{z\in Z}\one_{N_\delta(\Gamma_z)}\right)^{3/2}
+              \leq\delta^{2-\alpha/2-\zeta/2-C\eps}\#Z.
+\]
+\end{proposition}
+\begin{proof}
+\uses{thm:pyz}
+The determinant condition makes the two-jet of
+$z\cdot\gamma$ quantitatively determine $z$. Thus the map into
+$C^2(I)$ is bi-Lipschitz on the bounded parameter set, with a
+uniform absolute $C^2$ bound supplied by $\gamma$. Apply the
+cinematic estimate after splitting into a fixed number of patches.
+\end{proof}
+
+\section{Geometry on a short interval}
+
+Fix a sufficiently short interval $J\subset I$, with its length
+controlled by $K$. In the statements below, $aJ$ is the interval
+with the same midpoint and $a$ times the length. Constants in
+geometric comparisons may depend on $K$.
+
+\begin{definition}[Curvilinear rectangles and tangency; PYZ, Definitions 3.1--3.4]
+\label{def:cinematic-rectangle}
+\lean{Kakeya.Cinematic.CurvilinearRectangle,Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent,Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable}
+\leanok
+For $0<\delta\leq t\leq1$, a $(\delta,t)$-rectangle is
+\[
+         f^\delta(L)=\{(\theta,y):\theta\in L, |y-f(\theta)|\leq\delta\},
+         \qquad |L|=\sqrt{\delta/t},
+\]
+with $f\in\cF$. Two rectangles are $\lambda$-comparable if
+their union lies in a $(\lambda\delta,t)$-rectangle. A rectangle
+is $\lambda$-tangent to $g$ if it lies in the vertical
+$\lambda\delta$-neighbourhood of $g$; unqualified tangency means
+$\lambda=5$. Two function sets $W,B$ are $t$-separated if
+$\|w-b\|_{C^2}\geq t$ for all $w\in W,b\in B$.
+\end{definition}
+
+\begin{lemma}[The short-interval dichotomy; PYZ, Lemma 3.5]
+\label{lem:cinematic-dichotomy}
+\lean{Kakeya.Cinematic.PreliminaryDichotomyStatement}
+\uses{def:cinematic-family}
+Let $L\subset J$ have length at most $(6K)^{-1}$. For
+$k=f-g$ or $k=f'-g'$, either $|k|<(3K)^{-1}\|f-g\|_{C^2}$
+everywhere on $L$, or
+$|k|\geq(6K)^{-1}\|f-g\|_{C^2}$ everywhere there.
+If the small alternative holds for both differences, the large
+alternative holds for $f''-g''$.
+\end{lemma}
+\begin{proof}
+The derivative of each of the first two differences is bounded by
+$\|f-g\|_{C^2}$. Hence it cannot vary by more than
+$(6K)^{-1}\|f-g\|_{C^2}$ on $L$. The final assertion follows
+from cinematic nondegeneracy.
+\end{proof}
+
+\begin{lemma}[At most two intersections; PYZ, Lemma 3.6]
+\label{lem:two-zeros}
+\lean{Kakeya.Cinematic.cinematic_difference_has_at_most_two_zeros}
+\leanok
+\uses{def:cinematic-family}
+For distinct $f,g\in\cF$, the difference $f-g$ has at most
+two zeros on $J$.
+\end{lemma}
+\begin{proof}
+\uses{lem:cinematic-dichotomy}
+\leanok
+Three zeros of $f-g$ would give two zeros of $f'-g'$ and a
+zero of $f''-g''$ by Rolle's theorem. The dichotomy and
+nondegeneracy exclude this.
+\end{proof}
+
+\begin{lemma}[Two derivative zeros; PYZ, Lemma 3.6, second assertion]
+\label{lem:two-derivative-zeros}
+\uses{def:cinematic-family}
+If $f'-g'$ has two distinct zeros on $J$, then
+$|f-g|\geq(6K)^{-1}\|f-g\|_{C^2}$ throughout $J$.
+\end{lemma}
+\begin{proof}
+\uses{lem:cinematic-dichotomy}
+Rolle's theorem gives a zero of $f''-g''$. The dichotomy forces
+$f'-g'$ into its small alternative. Nondegeneracy then excludes
+the small alternative for $f-g$. This additional assertion in the
+paper is not part of the linked Lean \texttt{TwoZerosStatement}.
+\end{proof}
+
+\begin{definition}[Tangency parameter; PYZ, Definition 3.7]
+\label{def:tangency-parameter}
+\lean{Kakeya.Cinematic.tangencyParameterOn}
+\leanok
+Set
+\[
+          \Delta(f,g)=\min_{\theta\in J/2}
+                        (|f-g|(\theta)+|f'-g'|(\theta)).
+\]
+The minimum exists by continuity on a compact interval.
+\end{definition}
+
+\begin{lemma}[Tangency and sublevel intervals; PYZ, Lemma 3.8]
+\label{lem:tangency-sublevels}
+\lean{Kakeya.Cinematic.TangencySublevelDiameterStatement,Kakeya.Cinematic.tangency_sublevel_diameter}
+\uses{def:tangency-parameter}
+Write $h=f-g$, $t=\|f-g\|_{C^2}>0$, and $\Delta=\Delta(f,g)$.
+If $\Delta\leq c_1(K)t$, there is a unique critical point
+$\theta_0\in3J/5$ with $|h(\theta_0)|\lesssim\Delta$.
+Outside $4J/5$ one has $|h|\gtrsim t$; if $h$ changes sign,
+its two zeros lie in $4J/5$ at distance
+$O(\sqrt{\Delta/t})$ from $\theta_0$.
+For $0<\delta\leq t/(6K)$, the set
+$\{\theta\in J/4:|h(\theta)|\leq\delta\}$ lies in an
+interval of length $O(\sqrt{(\Delta+\delta)/t})$ and has at
+most two interval components, each of length
+\[
+                         O\left(\frac{\delta}{\sqrt{(\Delta+\delta)t}}\right).
+\]
+A component containing a point where $|h|\leq\delta/2$ has
+the corresponding lower length bound, subject to the interior
+window in the construction.
+\end{lemma}
+\begin{proof}
+\uses{lem:cinematic-dichotomy,lem:two-zeros}
+The dichotomy reduces the problem to either a monotone difference
+with controlled first derivative or a strictly convex or concave
+difference with second derivative comparable to $t$.
+The linear and quadratic estimates in these cases give the
+location, diameter, and component-length bounds.
+\end{proof}
+
+\begin{lemma}[A common tangent rectangle; PYZ, Lemma 3.9]
+\label{lem:common-tangent}
+\lean{Kakeya.Cinematic.CommonTangentRectangleRobustStatement,Kakeya.Cinematic.common_tangent_rectangle_robust}
+\uses{def:cinematic-rectangle,def:tangency-parameter}
+If a $(\delta,t)$-rectangle over $J/4$ is tangent to both
+$f$ and $g$, then
+\[
+                         (\Delta(f,g)+\delta)\|f-g\|_{C^2}
+                                           \lesssim\delta t.
+\]
+For a general tangency dilation, the implicit constant is
+polynomial in that dilation.
+\end{lemma}
+\begin{proof}
+\uses{lem:tangency-sublevels}
+The common rectangle forces the sublevel set of $f-g$ to have
+length comparable to $\sqrt{\delta/t}$. Compare this with
+the component-length upper bound and rearrange.
+\end{proof}
+
+\begin{lemma}[Enlarging a small-value interval; PYZ, Lemma 3.10]
+\label{lem:cinematic-interval-growth}
+\uses{def:cinematic-family}
+If $L\subset J/4$, $0<\delta\leq\|f-g\|_{C^2}/(6K)$,
+and $|f-g|\leq\delta$ on $L$, then for $\lambda\geq1$,
+$|f-g|\lesssim\lambda^2\delta$ on $\lambda L\cap J$.
+\end{lemma}
+\begin{proof}
+\uses{lem:tangency-sublevels}
+Use the linear or quadratic description of the difference near
+its small-value interval. Enlarging the horizontal interval
+by $\lambda$ increases the controlling quadratic by at most
+a factor comparable to $\lambda^2$.
+\end{proof}
+
+\begin{definition}[Dilation of a rectangle; PYZ, Definition 3.11]
+\label{def:rectangle-dilation}
+For $R=f^\delta(L)$ define
+$\lambda R=f^{\lambda\delta}(\lambda L\cap J)$.
+This dilation enlarges the vertical and horizontal parameters
+separately; it is not Euclidean homothety about a point.
+\end{definition}
+
+\begin{lemma}[Comparable rectangles; PYZ, Lemma 3.12]
+\label{lem:comparable-rectangles}
+\lean{Kakeya.Cinematic.ComparableRectanglesStatement,Kakeya.Cinematic.comparable_rectangles_have_close_graphs}
+\uses{def:cinematic-rectangle}
+If $f^\delta(L)$ and $g^\delta(L')$ are
+$\lambda$-comparable $(\delta,t)$-rectangles over $J/4$,
+the convex hull $L''$ of $L\cup L'$ has length at most
+$\sqrt{\lambda\delta/t}$ and
+$|f-g|\lesssim\lambda^3\delta$ on $L''$.
+\end{lemma}
+\begin{proof}
+\uses{lem:cinematic-interval-growth}
+The containing rectangle bounds the horizontal hull. Compare
+each graph to its central graph on its own interval, then
+extend the comparison across the hull using the interval-growth
+estimate.
+\end{proof}
+
+\begin{corollary}[Transitivity up to a constant; PYZ, Corollary 3.13]
+\label{cor:rectangle-transitivity}
+\lean{Kakeya.Cinematic.ComparabilityTransitivityStatement}
+\uses{def:cinematic-rectangle}
+If $R_1$ is $\lambda_1$-comparable to $R_2$ and $R_2$
+is $\lambda_2$-comparable to $R_3$, then $R_1$ and $R_3$
+are $\lambda_3$-comparable for a constant depending only
+on $K,\lambda_1,\lambda_2$.
+\end{corollary}
+\begin{proof}
+\uses{lem:comparable-rectangles}
+Combine the graph and interval-hull bounds for the two pairs
+and choose a containing rectangle with the resulting constant.
+\end{proof}
+
+\begin{lemma}[Shrinking incomparable rectangles; PYZ, Lemma 3.14]
+\label{lem:rectangle-shrink}
+\uses{def:cinematic-rectangle}
+For $0<c<1$, if the original rectangles are
+$C(c,K)$-incomparable, then shrinking their horizontal
+intervals by $c$ leaves them $100$-incomparable.
+\end{lemma}
+\begin{proof}
+\uses{lem:cinematic-interval-growth}
+Otherwise enlarge the common containing rectangle for the
+shrunk pair. The graph-growth bound would make the original
+pair comparable with a constant depending only on $c,K$.
+\end{proof}
+
+\begin{lemma}[Packing inside one rectangle; PYZ, Lemma 3.15]
+\label{lem:rectangle-packing}
+\lean{Kakeya.Cinematic.RectanglePackingStatement,Kakeya.Cinematic.incomparable_rectangles_packing_bound}
+\leanok
+\uses{def:cinematic-rectangle}
+Let the central functions of a pairwise $100$-incomparable
+family of $(\delta,t)$-rectangles lie in a $C^2$ ball of
+radius $3t$. If all its rectangles lie in one
+$(\lambda\delta,t)$-rectangle, $\lambda\geq100$, then
+their number is $O_K(\lambda^{5/2})$.
+\end{lemma}
+\begin{proof}
+\uses{lem:comparable-rectangles}
+\leanok
+Discretize the possible interval centres and the graph values
+and slopes inside the containing rectangle. Two rectangles
+with the same discretized data would be comparable. Counting
+the admissible data gives the stated power of $\lambda$.
+\end{proof}
+
+\begin{lemma}[Increasing incomparability; PYZ, Lemma 3.16]
+\label{lem:increase-incomparability}
+\uses{def:cinematic-rectangle}
+Under the same function-ball hypothesis, a finite pairwise
+$100$-incomparable family has, for any fixed $C\geq100$,
+a pairwise $C$-incomparable subfamily of comparable size.
+The comparison constant may depend on $C,K$.
+\end{lemma}
+\begin{proof}
+\uses{lem:rectangle-packing}
+Choose a maximal $C$-incomparable subfamily. The packing
+bound limits how many original rectangles can be assigned
+to each selected rectangle.
+\end{proof}
+
+\begin{lemma}[A coarse count of rectangles; PYZ, Lemma 3.17]
+\label{lem:rectangle-coarse-count}
+\uses{def:cinematic-rectangle,def:cinematic-family}
+For $\lambda\geq100$, a pairwise $\lambda$-incomparable
+family of $(\delta,t)$-rectangles in a cinematic family
+has at most $\delta^{-C(D)}$ elements, at sufficiently
+small $\delta$ depending on the fixed geometric constants.
+\end{lemma}
+\begin{proof}
+\uses{lem:rectangle-packing}
+Use the doubling property to cover function space by a
+polynomial number of small balls. Within each ball, count
+the possible interval locations and apply the packing bound.
+\end{proof}
+
+\input{chapters/cinematic-counting}

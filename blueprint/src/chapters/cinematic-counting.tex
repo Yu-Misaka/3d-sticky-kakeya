@@ -1,0 +1,392 @@
+\section{Bipartite tangencies and lenses}
+
+\begin{proposition}[Bipartite tangency bound; PYZ, Proposition 4.1]
+\label{prop:bipartite-tangency}
+\lean{Kakeya.Cinematic.BipartiteTangencyStatement,Kakeya.Cinematic.bipartite_tangency_robust_full}
+\uses{def:cinematic-rectangle}
+Let $A\geq1$, $0<\delta\leq At$, and let finite function
+families $W,B$ have union of diameter at most $6t$ and mutual
+separation at least $t/A$. Let $\mathcal R$ be a pairwise
+$100$-incomparable collection of $(\delta,t)$-rectangles over
+$J/4$, each tangent to at least $\mu\geq1$ members of $W$
+and $\nu\geq1$ members of $B$. Then
+\[
+ \#\mathcal R\leq CA^C
+       \left(\frac{\#W}{\mu}+\frac{\#B}{\nu}\right)^{3/2}
+       \log\left(\frac{\#W}{\mu}+\frac{\#B}{\nu}\right),
+\]
+where $C=C(K)$. The formal rectangle interface keeps the
+admissible scale and dilation conditions explicit.
+\end{proposition}
+\begin{proof}
+\uses{lem:bipartite-perturbation,lem:large-delta-reduction,
+  lem:separation-reduction,lem:incomparability-reduction}
+First reduce to well-separated colour classes, a small ratio
+$\delta/t$, and sufficiently strong incomparability. For
+$\mu=\nu=1$, associate rectangles to nonoverlapping lenses
+after a small perturbation and apply the lens count. For
+larger multiplicities, independently sample the two colour
+classes at rates comparable to $1/\mu$ and $1/\nu$ and
+average the resulting unit-multiplicity bound.
+\end{proof}
+
+\begin{lemma}[Reduction to small $\delta/t$; PYZ, Lemma 4.2]
+\label{lem:large-delta-reduction}
+If the bipartite estimate holds for $\delta\leq ct$, for
+a fixed $c>0$, then it holds for $\delta\leq At$ after
+changing its constant by a quantity depending on $K,c$ and
+the original constant.
+\end{lemma}
+\begin{proof}
+\uses{lem:rectangle-packing}
+In the remaining range the rectangles have a controlled
+horizontal length. A packing argument gives a polynomial
+bound in the scale ratio, which is absorbed by the factor
+$A^C$.
+\end{proof}
+
+\begin{lemma}[Reduction to separated colour classes; PYZ, Lemma 4.3]
+\label{lem:separation-reduction}
+If the bipartite estimate holds for $2t$-separated pairs,
+then it holds for $t/A$-separated pairs of union diameter
+at most $6t$, with a polynomial loss in $A$.
+\end{lemma}
+\begin{proof}
+Partition function space into smaller balls and pair those
+which meet the two colour classes. Rescale each pair to the
+well-separated configuration and sum the estimates. The
+geometric tangency constant must also be rescaled.
+\end{proof}
+
+\begin{lemma}[Reduction of incomparability; PYZ, Lemma 4.4]
+\label{lem:incomparability-reduction}
+It suffices to prove the bipartite estimate for pairwise
+$2C_c$-incomparable rectangles, where $C_c=C_c(K)$ is the
+constant in the overlapping-lens comparison below.
+\end{lemma}
+\begin{proof}
+\uses{lem:increase-incomparability}
+Select a strongly incomparable subfamily of comparable size
+and apply the estimate to it.
+\end{proof}
+
+\begin{definition}[Pseudo-circles and lenses; PYZ, Definitions 4.5--4.7]
+\label{def:pseudocircles}
+A family of closed Jordan curves consists of pseudo-circles
+if two distinct curves meet at most twice and all their
+intersections are proper crossings. Two crossings cut the
+curves into arcs. A lens is a simple closed curve formed by
+one arc from each curve. Lenses overlap when they share an
+arc of positive length, not merely an endpoint.
+\end{definition}
+
+\begin{theorem}[Lens count; PYZ, Theorem 4.8]
+\label{thm:lens-count}
+\lean{Kakeya.Cinematic.graph_lens_bound_from_sequences}
+\uses{def:pseudocircles}
+A family of $n$ pseudo-circles supports at most
+$O(n^{3/2}\log(2+n))$ pairwise nonoverlapping lenses.
+The formalized application uses the equivalent graph-lens
+count on a short interval.
+\end{theorem}
+\begin{proof}
+Order the intersection arcs along the curves and encode
+the nonoverlapping lenses by the resulting finite incidence
+sequences. The combinatorial lens estimate bounds their
+number. Closing the graph arcs outside the working interval
+reduces the geometric formulation to this count.
+\end{proof}
+
+\begin{lemma}[Overlapping lenses force comparable rectangles; PYZ, Lemma 4.9]
+\label{lem:lens-comparability}
+\lean{Kakeya.Cinematic.common_tangent_overlap_comparable}
+\uses{def:pseudocircles,def:cinematic-rectangle}
+Suppose $\delta/t$ is sufficiently small. Let $w,b_1,b_2$
+belong to the cinematic family, with $\|w-b_i\|_{C^2}\geq t$,
+and suppose $w,b_i$ form a lens on $J$. If a
+$(\delta,t)$-rectangle $R_i$ is $2\lambda$-tangent to
+$w,b_i$ for each $i$, and the two lenses overlap, then
+$R_1,R_2$ are $C_c(K,\lambda)$-comparable.
+\end{lemma}
+\begin{proof}
+\uses{lem:tangency-sublevels,lem:common-tangent}
+The common lens arc forces the two tangency windows to
+occur near the same critical region of the graph
+differences. The sublevel and common-tangent estimates
+bound both their separation and their vertical discrepancy.
+\end{proof}
+
+\begin{lemma}[The generic unit-multiplicity case; PYZ, Lemma 4.10]
+\label{lem:generic-bipartite}
+\uses{def:cinematic-rectangle}
+Let $W,B$ be $t$-separated, $\delta\leq c_2t$, and let
+$\mathcal R$ be pairwise $C_c$-incomparable rectangles,
+each assigned a tangent pair $(w_R,b_R)$. Assume every
+assigned pair crosses twice in $J$, all functions have
+distinct values at each endpoint of $J$, and no two
+functions have an exact tangency in $J$. Then
+\[
+                \#\mathcal R\lesssim_K
+                (\#W+\#B)^{3/2}\log(2+\#W+\#B).
+\]
+\end{lemma}
+\begin{proof}
+\uses{thm:lens-count,lem:lens-comparability}
+Complete the graph arcs to pseudo-circles. The assigned
+pairs give lenses, and incomparability prevents them from
+overlapping. Apply the lens count.
+\end{proof}
+
+\begin{lemma}[Removing genericity; PYZ, Lemma 4.11]
+\label{lem:bipartite-perturbation}
+\uses{def:cinematic-rectangle}
+The same unit-multiplicity bound holds without the
+genericity assumptions if $W,B$ are $2t$-separated,
+$\delta\leq c_2t/2$, and the rectangles are pairwise
+$2C_c$-incomparable and tangent to both colour classes.
+\end{lemma}
+\begin{proof}
+\uses{lem:generic-bipartite,cor:common-shift}
+Choose a common vertical shift retaining a fixed fraction
+of the assigned rectangles. Perturb the finite family
+slightly to separate endpoint values and remove exact
+tangencies. The margins in the hypotheses preserve the
+required incidences and incomparability. Apply the generic
+bound and pass to the original configuration.
+\end{proof}
+
+\begin{lemma}[Creating two crossings by a shift; PYZ, Lemma 4.12]
+\label{lem:two-crossing-shift}
+\uses{def:cinematic-rectangle}
+If $\|f-g\|_{C^2}\geq2t$, $0<\delta<c_1t$, and
+$f,g$ are tangent to a common $(\delta,t)$-rectangle,
+then for some $e\in\{-1,0,1\}$ the function
+$f+e\lambda\delta$ crosses $g$ twice in $J$ and is
+$2\lambda$-tangent to that rectangle, where
+$\lambda=\lambda(K)$ is fixed sufficiently large.
+\end{lemma}
+\begin{proof}
+\uses{lem:tangency-sublevels}
+The common tangency forces a small extremum of $f-g$.
+One of the three shifts puts this extremum on the opposite
+side of zero from the outer part of the interval. Strict
+curvature gives exactly two crossings.
+\end{proof}
+
+\begin{corollary}[One shift for many rectangles; PYZ, Corollary 4.13]
+\label{cor:common-shift}
+\uses{def:cinematic-rectangle}
+In the setting of Lemma~\ref{lem:bipartite-perturbation},
+one common shift $e\lambda\delta$ of the first colour
+class retains at least one third of the rectangles, with
+each retained rectangle tangent to an assigned pair
+crossing twice in $J$.
+\end{corollary}
+\begin{proof}
+\uses{lem:two-crossing-shift}
+Assign a successful shift to each rectangle and choose
+the largest of the three classes.
+\end{proof}
+
+\section{The local maximal argument}
+
+\begin{lemma}[The short-curve estimate; PYZ, Lemma 5.1]
+\label{lem:pyz-local-maximal}
+\uses{def:cinematic-family,def:quasi-product}
+Under the normalized hypotheses of Theorem~\ref{thm:pyz},
+let $J'=J/16$ and $E'=E\cap(J'\times\R)$. Then
+\[
+       \int_{E'}\left(\sum_{f\in F}\one_{f^\delta}\right)^{3/2}
+           \leq\delta^{2-\alpha/2-\zeta/2-C_0\eps}\#F,
+\]
+with $C_0=C_0(D)$ and the small-scale threshold depending
+on the fixed absolute $C^2$ bound as well.
+\end{lemma}
+\begin{proof}
+\uses{lem:cinematic-two-ends,lem:fine-rectangle-assignment,
+  lem:fine-rectangle-selection,lem:good-function-pairs,
+  lem:pair-rectangle-count,lem:coarse-fibre-nonconcentration,
+  prop:bipartite-tangency}
+Select a level set of the graph multiplicity. A two-ends
+selection fixes a function-space distance scale $t$ and a
+tangency scale $\Delta$. Cover the retained points by
+essentially disjoint fine rectangles, and group those into
+coarse rectangles. The quasi-product bound controls how
+many fine rectangles can lie inside a coarse one by their
+mass. Counting well-separated pairs of tangent functions
+gives a second bound. Interpolating the two bounds with
+weights $1/4$ and $3/4$ produces the exponent $3/2$.
+Finally use the bipartite estimate for the coarse
+rectangles and sum the multiplicity levels.
+\end{proof}
+
+We record the numbered selections used in that proof. At
+this stage $F_B$ lies in a function-space ball of radius
+$3t$. The set $F_B(x)$ consists of the functions retained
+at a point $x$ by the distance selection; $Y_1(f)$ is the
+refined point-function relation after tangency selection.
+The retained point set is $E_2$, and $\Delta$ is the
+common tangency scale. For each $x\in E_2$, write $R_x$
+for its fine rectangle. The sets $Y_2(R)$ are the
+enlarged rectangle shadings formed from this relation.
+A good pair $(f,R)$ means $x(R)\in Y_1(f)$, where
+$x(R)$ is its assigned point. Subsequent primes indicate
+the common degree refinements in PYZ Section 5.
+
+\begin{lemma}[Nonconcentration after two-ends selection; PYZ, Lemma 5.2]
+\label{lem:cinematic-two-ends}
+\lean{Kakeya.Cinematic.TwoEndsSelectionStatement}
+For each retained point $x$ and every $g\in C^2(J)$,
+if $\delta/t<\lambda<1$, then
+\[
+ \#\{f\in F_B(x):\|f-g\|_{C^2}\leq\lambda t\}
+               \leq4(2\lambda)^\eps\#F_B(x).
+\]
+\end{lemma}
+\begin{proof}
+Choose the distance scale where the normalized local
+count is largest. Excess concentration at a smaller
+radius would contradict that choice.
+\end{proof}
+
+\begin{lemma}[Assigning a fine rectangle; PYZ, Lemma 5.3]
+\label{lem:fine-rectangle-assignment}
+\lean{Kakeya.Cinematic.FineRectangleAssignmentStatement}
+For $t'=C_Rt\Delta/\delta$, with $C_R=C_R(K)$
+sufficiently large, each $x\in E_2$ lies in a
+$(\delta,t')$-rectangle over $J/8$ to which every
+$f$ with $x\in Y_1(f)$ is tangent.
+\end{lemma}
+\begin{proof}
+\uses{lem:tangency-sublevels}
+The common distance and tangency bounds give a common
+sublevel interval of the required length. Choose the
+rectangle around a retained reference function through
+$x$ and use the sublevel estimates for the others.
+\end{proof}
+
+\begin{lemma}[Compatibility of rectangle shadings; PYZ, Lemma 5.4]
+\label{lem:rectangle-shading}
+For a sufficiently large enlargement constant in the
+definition of $Y_2$, $100$-comparable rectangles satisfy
+$Y'_2(R')\subset Y_2(R)$.
+\end{lemma}
+\begin{proof}
+\uses{lem:comparable-rectangles}
+Comparability controls the interval hull and the
+difference of the central graphs. The chosen enlargement
+contains the corresponding smaller shading.
+\end{proof}
+
+\begin{lemma}[Selecting disjoint fine rectangles; PYZ, Lemma 5.5]
+\label{lem:fine-rectangle-selection}
+\lean{Kakeya.Cinematic.maximal_fine_rectangle_selection}
+There is a pairwise $100$-incomparable subcollection
+$\mathcal R$ of the rectangles $R_x$ and a number
+$\Lambda>0$ such that
+\[
+ \Lambda\leq|Y_2(R)|<2\Lambda,\qquad
+ |E_2|\lessapprox\sum_{R\in\mathcal R}|Y_2(R)|
+                          \asymp\Lambda\#\mathcal R.
+\]
+The retained shadings are disjoint, and
+$\#\mathcal R\leq\delta^{-C}$,
+$\Lambda\geq\delta^{C'}$ for constants depending on
+the fixed family parameters.
+\end{lemma}
+\begin{proof}
+\uses{lem:rectangle-shading,lem:rectangle-coarse-count}
+Greedily select incomparable rectangles and assign the
+remaining points to them. Pigeonhole the shading
+measures and disjointify while retaining a fixed
+fraction. The coarse rectangle count bounds the number
+of dyadic measure classes that matter.
+\end{proof}
+
+\begin{lemma}[Tangency to the coarse rectangle; PYZ, Lemma 5.6]
+\label{lem:coarse-tangency}
+If $R=R_x$ and $x\in Y_1(f)$, then $f$ is tangent
+both to $R$ and to its selected coarse
+$(\Delta,C_Rt)$-rectangle $\widetilde R$, provided
+$C_R$ is sufficiently large.
+\end{lemma}
+\begin{proof}
+\uses{lem:common-tangent,lem:cinematic-interval-growth}
+Propagate the fine tangency bound across the longer
+coarse interval, using the selected tangency scale
+$\Delta$.
+\end{proof}
+
+Let $\mathcal G'(R)$ be the functions incident to $R$
+after degree refinement. For a selected coarse rectangle
+$\widetilde R$, let $F(\widetilde R)$ be the functions
+incident to at least one of its retained fine rectangles.
+The refinement makes the number of such incidences per
+function comparable within each coarse rectangle.
+
+\begin{lemma}[Many nondegenerate pairs; PYZ, Lemma 5.7]
+\label{lem:good-function-pairs}
+\lean{Kakeya.Cinematic.GoodPairCountingStatement}
+For each retained fine rectangle $R$, at least
+$\#\mathcal G'(R)^2/3$ ordered pairs $(f,g)$ satisfy
+\[
+ \delta^{2\eps}t\leq\|f-g\|_{C^2}\leq6t,
+ \qquad
+ \delta^\eps\Delta\leq\Delta(f,g)+\delta\leq2\Delta.
+\]
+\end{lemma}
+\begin{proof}
+\uses{lem:cinematic-two-ends}
+The distance two-ends bound discards at most one third
+of the pairs for being too close. The analogous
+tangency selection discards at most another third.
+The upper bounds follow from the selected common
+distance and tangency bands.
+\end{proof}
+
+\begin{lemma}[One pair meets few fine rectangles; PYZ, Lemma 5.8]
+\label{lem:pair-rectangle-count}
+\lean{Kakeya.Cinematic.PairIncidenceCountingStatement}
+A pair with
+$\|f-g\|_{C^2}\geq\delta^{2\eps}t$ and
+$\Delta(f,g)+\delta\geq\delta^\eps\Delta$
+belongs to $\mathcal G'(R)^2$ for at most
+$O(\delta^{-4\eps})$ retained fine rectangles $R$.
+\end{lemma}
+\begin{proof}
+\uses{lem:tangency-sublevels,lem:rectangle-packing}
+The common tangency is confined to at most two short
+intervals. Cover these intervals by the permitted
+rectangle locations and apply the incomparability
+packing bound.
+\end{proof}
+
+\begin{lemma}[Nonconcentration in a coarse fibre; PYZ, Lemma 5.9]
+\label{lem:coarse-fibre-nonconcentration}
+For each retained coarse rectangle and every function-space
+ball $B(g,r)$,
+\[
+ \#(F(\widetilde R)\cap B(g,r))\lesssim
+       |\log\delta|(r/t)^\eps(t/\Delta)^{\eps^2}
+                                      \#F(\widetilde R).
+\]
+\end{lemma}
+\begin{proof}
+\uses{lem:cinematic-two-ends}
+Count incidences between functions in the ball and
+fine rectangles inside $\widetilde R$. Apply the
+pointwise two-ends bound at each assigned point, then
+divide by the common refined degree. The tangency
+selection and the degree pigeonhole account for the
+last factor and the logarithm.
+\end{proof}
+
+\begin{remark}[A variable counting constant; PYZ, Remark 5.10]
+\label{rem:pyz-variable-constant}
+If the counting hypothesis on $F$ has a fixed factor
+$A\geq1$ in place of its small-power factor, random
+selection at rate $1/A$ gives the corresponding
+$3/2$-moment bound with a factor $A^{1/2}$.
+The same absolute normalization and threshold
+dependencies must be retained when using this variant.
+\end{remark}

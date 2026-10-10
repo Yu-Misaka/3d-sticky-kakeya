@@ -1,0 +1,430 @@
+\chapter{The discretised Furstenberg estimate}
+\label{chap:furstenberg}
+
+The radial and twisted-projection arguments use the incidence gain of
+Orponen and Shmerkin~\cite{OS}. We use their September 2023 arXiv
+version. Its regular-case theorem is Theorem 6.2 and its scale-combining
+proposition is Proposition 7.5; the project and some earlier numbering
+call these Theorem 6.1 and Proposition 7.3. Proposition 8.1 retains
+the same number.
+
+\section{Point and tube configurations}
+
+\begin{definition}[Discrete nonconcentration; OS, Definitions 2.1 and 2.8]
+\label{def:os-set}
+\lean{IsDeltaSSet}
+In a metric space, a nonempty bounded set $P$ is a
+$(\delta,s,C)$-set when
+\[
+    \cE_\delta(P\cap B(x,r))\leq Cr^s\cE_\delta(P)
+    \quad(r\geq\delta).
+\]
+For planar lines, use a metric on the affine Grassmannian; in a
+bounded nonvertical chart this is comparable to the metric on
+slope-intercept parameters.
+\end{definition}
+
+\begin{definition}[Dyadic tubes; OS, Definitions 2.9--2.10]
+\label{def:dyadic-tube}
+The point-line duality sends $(a,b)$ to the line $y=ax+b$.
+A dyadic $\delta$-tube is the union of all such lines whose parameter
+pair lies in a dyadic square of side $\delta$, with slopes in a
+fixed bounded chart. Its slope is the left endpoint of the
+corresponding slope interval. Within a bounded spatial square it
+is comparable to a usual tube of width $\delta$.
+\end{definition}
+
+\begin{definition}[Nice configurations; OS, Definition 5.1]
+\label{def:nice-configuration}
+\uses{def:os-set,def:dyadic-tube}
+A $(\delta,s,C,M)$-nice configuration consists of a set $\cP$ of
+dyadic $\delta$-squares and, for every $p\in\cP$, a
+$(\delta,s,C)$-family $\T(p)$ of exactly $M\geq1$ dyadic tubes
+meeting $p$. Write $\T=\bigcup_p\T(p)$. No distribution condition
+on $\cP$ is included in this definition.
+\end{definition}
+
+\begin{theorem}[Discretised Furstenberg estimate; OS, Theorem 1.3]
+\label{thm:os-discretized}
+\lean{discretised_furstenberg_estimate}
+\leanok
+\uses{def:os-set}
+For $0<s<1$ and $s<t<2$, there is $\eps(s,t)>0$ such that the
+following holds at sufficiently small scales $\delta$. Let
+$X\subset B(0,1)\subset\R^2$ be a
+$(\delta,t,\delta^{-\eps})$-set. For every $x\in X$, let
+$\T(x)$ be a $(\delta,s,\delta^{-\eps})$-set of lines whose
+$\delta$-neighbourhoods contain $x$. Then
+\[
+                 \cE_\delta\left(\bigcup_{x\in X}\T(x)\right)
+                             \geq\delta^{-2s-\eps}.
+\]
+The function $\eps(s,t)$ can be chosen bounded away from zero on
+each compact subset of the open parameter range.
+\end{theorem}
+\begin{proof}
+\uses{thm:os-regular,prop:os-combining,prop:os-multiscale,
+  lem:os-uniformization}
+\leanok
+Pass to a uniform dyadic model. Decompose its scales into structured
+and bad intervals. Structured intervals of dimension near $s$ incur
+no substantial loss, while a positive proportion of the logarithmic
+scale range has dimension strictly larger than $s$. On that portion
+the regular-case incidence theorem gives a gain. Combine the
+estimates across scales and choose the bad-scale and uniformization
+losses smaller than that gain. Small perturbations of $(s,t)$ allow
+one choice of gain on a neighbourhood; compactness then gives the
+last assertion.
+\end{proof}
+
+\begin{remark}[The range and the geometric model]
+\label{rem:os-range}
+The paper includes $t=2$ and first states the theorem for dyadic
+squares and tubes. The exported Lean theorem above uses ordinary
+line neighbourhoods and the open range $s<t<2$, including compact
+uniformity in that range. These are the parameters needed by the
+subsequent arguments. The passage between models includes an actual
+incidence-preserving enlargement: rounding a line's parameters alone
+does not guarantee that the rounded line meets the same point cell.
+\end{remark}
+
+\begin{theorem}[Bounded charts; OS, Theorem 3.1]
+\label{thm:os-bounded}
+\uses{def:os-set,def:dyadic-tube}
+Fix a bounded chart of radius $R$. The dyadic form of
+Theorem~\ref{thm:os-discretized} holds for point squares in
+$[-R,R)^2$ and tubes in the corresponding slope chart, with the
+scale threshold also depending on $R$. Incidence may be imposed
+between the closures of the tube and the square. The conclusion is
+$\#\T\geq\delta^{-2s-\eps}$.
+\end{theorem}
+\begin{proof}
+\uses{thm:os-discretized}
+Partition the bounded chart into a fixed number of patches, rescale
+one substantial patch, and allow a fixed enlargement of the tubes
+and point cells. Absorb the resulting constants in the exponent loss.
+\end{proof}
+
+\begin{theorem}[Dual form; OS, Theorem 3.2]
+\label{thm:os-dual}
+\uses{def:os-set,def:dyadic-tube}
+Let $0<s<1$ and $s<t\leq2$. At sufficiently small dyadic scales,
+if $\T$ is a $(\delta,t,\delta^{-\eps})$-set of dyadic tubes and
+each tube meets a $(\delta,s,\delta^{-\eps})$-set $\cP(T)$ of
+point squares, then
+$\#\bigcup_{T\in\T}\cP(T)\geq\delta^{-2s-\eps}$.
+\end{theorem}
+\begin{proof}
+\uses{thm:os-bounded}
+Apply point-line duality. Bounded charts and a fixed enlargement
+preserve both nonconcentration and incidence, reducing the statement
+to the point-to-tube version.
+\end{proof}
+
+\section{Elementary incidence bounds}
+
+\begin{proposition}[Incidence bound; OS, Proposition 2.13]
+\label{prop:os-incidence}
+\uses{def:nice-configuration}
+Let $0\leq s\leq t\leq1$, let $\cP$ be a
+$(\delta,t,C_P)$-set, and let each $\T(p)$ be a
+$(\delta,s,C_T)$-set of $M$ tubes meeting $p$. For any tube family
+$\mathcal U$, define
+$\mathcal I=\{(p,T):p\in\cP, T\in\mathcal U\cap\T(p)\}$.
+Then, with $\theta=(1-t)/(1-s)$,
+\[
+ \#\mathcal I\lessapprox
+ \max\left\{\sqrt{C_PC_T}(M\delta^s)^{\theta/2}
+                   (\#\mathcal U)^{1/2}\#\cP, \#\mathcal U\right\}.
+\]
+For $s=t=1$, set $\theta=0$.
+\end{proposition}
+\begin{proof}
+Count pairs of points on a common tube, split by their separation,
+and use the nonconcentration bounds for points and tube directions.
+Cauchy--Schwarz converts the resulting pair count into an incidence
+bound. The sum over dyadic separations accounts for the logarithmic
+loss.
+\end{proof}
+
+\begin{corollary}[An elementary tube lower bound; OS, Corollary 2.14]
+\label{cor:os-elementary}
+\uses{def:nice-configuration}
+In the preceding setting, with $\#\T(p)\asymp M$ and
+$\T=\bigcup_p\T(p)$,
+\[
+ \#\T\gtrapprox (C_PC_T)^{-1}M\delta^{-s}
+                      (M\delta^s)^{(t-s)/(1-s)}.
+\]
+At $s=t=1$ the final exponent is interpreted as $1$.
+\end{corollary}
+\begin{proof}
+\uses{prop:os-incidence}
+The number of incidences is comparable to $M\#\cP$. Substitute
+this into the preceding bound and solve for $\#\T$; the
+nonconcentration bounds handle the alternative dominated by
+$\#\T$ itself.
+\end{proof}
+
+\begin{proposition}[A nonconcentrated coarse tube family; OS, Proposition 4.1]
+\label{prop:os-thick-cover}
+\lean{quantitative_thick_tube_cover_main}
+\uses{def:os-set,def:dyadic-tube}
+Let $0<\delta\leq\Delta\leq1$ be dyadic. For each element $p$
+of a finite index set $P$, let $\T(p)$ be a
+$(\delta,s,C_1)$-family of tubes meeting the unit square, with
+$M/2<\#\T(p)\leq M$. There are a subset
+$\overline P$ retaining a polylogarithmic fraction of $P$ and a
+$(\Delta,s,C_2)$-family $\overline{\T}_\Delta$, where
+$C_2\lessapprox_\Delta C_1$, such that each coarse tube contains
+at least a constant times
+\[
+                         H\asymp_\Delta
+                         M\#P/\#\overline{\T}_\Delta
+\]
+incidences $(p,T)$ with $p\in\overline P$ and $T\in\T(p)$.
+\end{proposition}
+\begin{proof}
+Group the fine tubes by their coarse parameter cells, and pigeonhole
+the number of incident fine tubes per coarse cell. Apply the fine
+nonconcentration estimate to unions of coarse cells. Retaining the
+common multiplicity range gives both the coarse Frostman bound and
+the lower incidence count.
+\end{proof}
+
+\begin{proposition}[Induction on scales; OS, Proposition 5.2]
+\label{prop:os-induction}
+\uses{def:nice-configuration}
+Let $(\cP_0,\T_0)$ be $(\delta,s,C_1,M)$-nice and
+$\delta\leq\Delta$ be dyadic. After polylogarithmic refinements,
+one obtains a fine configuration, a coarse
+$(\Delta,s,C_\Delta,M_\Delta)$-nice configuration on the occupied
+$\Delta$-squares, and for each such square $Q$ a rescaled
+$(\delta/\Delta,s,C_Q,M_Q)$-nice configuration, with
+$C_\Delta,C_Q\asymp_\delta C_1$. These can be chosen so that:
+\begin{enumerate}
+\item The number of occupied coarse squares and the number of fine
+squares in each retained coarse square lose only polylogarithmic factors.
+\item Each retained point keeps a polylogarithmic fraction of its
+$M$ tubes, and its fine tubes are covered by the coarse tubes over $Q$.
+\item The rescaled family preserves the occupied slope intervals
+of the fine family at resolution $\delta/\Delta$.
+\item The tube counts satisfy
+\[
+ \frac{\#\T_0}{M}\gtrapprox_\delta
+       \frac{\#\T_\Delta}{M_\Delta}
+       \max_Q\frac{\#\T_Q}{M_Q}.
+\]
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\uses{prop:os-thick-cover}
+Regularize the numbers of points, coarse tubes, and fine tubes in
+each relevant fibre. The coarse-cover proposition supplies the
+coarse nonconcentration. Rescale each retained point square and
+track the slope intervals of its fine tubes. Double counting the
+regularized incidences gives the product inequality.
+\end{proof}
+
+\section{The regular case}
+
+\begin{definition}[Square-root regularity; OS, Definition 6.1]
+\label{def:os-regular}
+\lean{DirecretisedFurstenbergEstimate.RegularIncidence.IsSquareRootRegular}
+\leanok
+\uses{def:os-set}
+A nonempty $(\delta,t,C)$-set $P$ is
+$(\delta,t,C,K)$-regular if
+$\cE_{\sqrt\delta}(P)\leq K\delta^{-t/2}$.
+Regularity between scales $\delta<\Delta$ means this condition
+holds after rescaling every occupied $\Delta$-square to unit size.
+\end{definition}
+
+\begin{theorem}[Regular-case incidence gain; OS, Theorem 6.2]
+\label{thm:os-regular}
+\lean{DirecretisedFurstenbergEstimate.theorem6_1_main}
+\leanok
+\uses{def:os-regular,def:nice-configuration}
+For $0<s<1$ and $s<t<2$, there is $\eps>0$ such that the
+following holds at sufficiently small scales. If $P$ is
+$(\delta,t,\delta^{-\eps},\delta^{-\eps})$-regular and every
+$p\in P$ has a $(\delta,s,\delta^{-\eps})$-family of incident
+tubes, then $\cE_\delta(\bigcup_p\T(p))\geq\delta^{-2s-\eps}$.
+The threshold can be shared over the larger dimensions used in
+the scale-combining argument.
+\end{theorem}
+\begin{proof}
+\uses{prop:os-induction,cor:os-elementary,thm:weak-ring}
+\leanok
+The sum-product argument gives either an improved fine tube count
+or an improved count at scale $\sqrt\delta$. The first alternative
+is the conclusion. In the second, apply induction on scales at
+$\sqrt\delta$. Square-root regularity keeps a substantial number
+of fine points in the retained coarse squares. The elementary
+incidence bound in each fibre converts the coarse improvement
+into the required fine improvement.
+\end{proof}
+
+\section{Combining the scales}
+
+\begin{lemma}[Uniformization; OS, Lemma 7.3]
+\label{lem:os-uniformization}
+\lean{DiscretisedFurstenbergEstimate.BasicUniformization.basic_uniformization_dyadic}
+\uses{def:uniform-set}
+For a planar set $P$ and dyadic scales
+$1=\Delta_0>\cdots>\Delta_n=\delta$, there is a uniform
+refinement $P'$ with
+\[
+       |P'|_\delta\geq
+          \bigl(4n^{-1}\log(1/\delta)\bigr)^{-n}|P|_\delta.
+\]
+\end{lemma}
+\begin{proof}
+\uses{lem:uniform-set}
+Pigeonhole the branching counts from the bottom scale upwards.
+Multiplying the one-level losses and applying the arithmetic-geometric
+mean inequality gives the stated dependence on the scale gaps.
+\end{proof}
+
+\begin{lemma}[Uniformization after restriction; OS, Lemma 7.4]
+\label{lem:os-reuniformization}
+\uses{def:uniform-set,def:os-regular}
+Suppose $P$ is uniform on $n$ scales and has prescribed
+nonconcentration and regularity bounds on specified scale intervals.
+If $P'\subset P$ retains at least an $L^{-1}$ fraction of its
+finest-scale cells, then $P'$ has a uniform refinement $P''$
+retaining at least an $M^{-1}$ fraction of $P$, where
+$M=L[4\log(1/\delta)]^n$. The Frostman constants increase by at
+most $M$; the square-root covering constants in the regularity
+hypotheses do not increase. A union-of-cells structure is preserved.
+\end{lemma}
+\begin{proof}
+\uses{lem:os-uniformization}
+Uniformize inside the retained set. The original uniform branching
+compares the old and new local normalizations. The loss in total
+cardinality weakens a normalized Frostman bound by at most $M$,
+while upper covering bounds are inherited by subsets.
+\end{proof}
+
+\begin{proposition}[Combining normal, good, and bad scales; OS, Proposition 7.5]
+\label{prop:os-combining}
+\lean{DiscretisedFurstenbergEstimate.CombiningTheoremRework.prop73_main}
+\uses{def:nice-configuration,def:uniform-set,def:os-regular}
+Fix $0<s<1$, $t>s$, a scale-separation exponent $\tau>0$, and
+a number $n$ of scale blocks. Choose $\eps_G,\eta>0$ sufficiently
+small in terms of $s,t$, then $\lambda>0$ sufficiently small in
+terms of $s,t,\tau,n$, and $0<\eps_N\leq\eps_G$.
+Let a uniform $(\delta,s,\delta^{-\lambda},M)$-nice configuration
+have scale ratios $r_j=\Delta_{j-1}/\Delta_j$ and a partition into
+normal, good, and bad indices $\mathcal N,\mathcal G,\mathcal B$.
+Assume $r_j\geq\delta^{-\tau}$ at normal and good indices.
+At a normal index the point set is an
+$(s,[\log(1/\delta)]^{C_P}r_j^{\eps_N})$-set between those
+scales. At a good index it is regular of some dimension $t_j\geq t$,
+with both constants at most
+$[\log(1/\delta)]^{C_P}r_j^{\eps_G}$.
+Then, at sufficiently small $\delta$,
+\[
+ \#\T\geq[\log(1/\delta)]^{-C}
+       M\delta^{C'\lambda}\delta^{-s+\eps_N}
+       \prod_{j\in\mathcal G}r_j^\eta
+       \prod_{j\in\mathcal B}r_j^{-1}.
+\]
+Here $C$ depends on $n,s,\tau,C_P$ and $C'$ on $n,\tau$.
+\end{proposition}
+\begin{proof}
+\uses{prop:os-induction,thm:os-regular,cor:os-elementary,
+  lem:os-reuniformization}
+Induct on the number of scale blocks. At a normal block use the
+elementary estimate; at a good block use the regular-case gain;
+at a bad block use the trivial estimate and charge its scale ratio.
+After each restriction, uniformize again and pass the resulting
+constants to the next block. The product inequality from induction
+on scales combines these estimates. The formal contract also
+bounds the coefficient of $\lambda$, allowing the final loss to be
+chosen before the family is supplied.
+\end{proof}
+
+\begin{proposition}[Multiscale decomposition; OS, Proposition 8.1]
+\label{prop:os-multiscale}
+\lean{DirecretisedFurstenbergEstimate.FinalProof.multiscale_decomposition_main}
+\uses{def:uniform-set,def:os-regular}
+Let $0<s<1$, $s<t\leq2$, and let $\Delta$ be a sufficiently
+small dyadic scale. For a small loss $\eps>0$, a uniform
+$(\delta,t,\delta^{-\eps})$-set, $\delta=\Delta^m$ with $m$
+large, admits blocks with dimensions $t_j\in[s,2]$, ratios
+$r_j=\Delta_{j-1}/\Delta_j$, and structured and bad index sets
+$\mathcal S,\mathcal B$ satisfying
+\begin{enumerate}
+\item $r_j\geq\delta^{-\tau}$ for $j\in\mathcal S$, for some
+$0<\tau\leq\eps$, and $\prod_{j\in\mathcal B}r_j\leq\delta^{-\eps}$.
+\item On each structured block the set has a $t_j$-Frostman bound
+with constant $r_j^\eps$; when $t_j>s$ it is also square-root
+regular with that constant.
+\item $\prod_{j\in\mathcal S}r_j^{t_j}\geq\delta^{\eps-t}$.
+\item Bad blocks are not adjacent.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\uses{lem:profile-decomposition}
+Apply the profile-decomposition lemma to the logarithms of the
+uniform branching numbers. Round the resulting interval endpoints
+to the permitted grid, discarding short residual intervals.
+Superlinear pieces give Frostman bounds, and pieces close to their
+chords also give the square-root covering bounds. The total discarded
+logarithmic length controls the bad product; the original
+$t$-dimensional lower bound gives the structured product.
+\end{proof}
+
+\begin{lemma}[Branching profiles and geometry; OS, Lemma 8.3]
+\label{lem:profile-geometry}
+\uses{def:uniform-set,def:os-regular}
+Let $f_P$ be the logarithmic branching profile of a set uniform at
+scales $\Delta^j$, $0\leq j\leq m$, with $\delta=\Delta^m$.
+If $f_P$ lies above its endpoint chord up to error $\eps m$,
+the set has Frostman dimension equal to the slope of that chord,
+with constant $O_\Delta(1)\delta^{-\eps}$. If its distance from
+the chord is at most $\eps m$, it also has square-root regularity
+with the same type of constant.
+\end{lemma}
+\begin{proof}
+Uniformity expresses local cell counts as ratios of products of
+branching numbers. Taking logarithms turns the desired inequalities
+into comparisons of the profile with its chord.
+\end{proof}
+
+\begin{lemma}[Decomposing a branching profile; OS, Lemma 8.5]
+\label{lem:profile-decomposition}
+Let $0<s<1$, $s<t\leq2$, and $\eps>0$. There is $\tau>0$
+such that a $2$-Lipschitz function $f:[0,m]\to\R$ with $f(0)=0$
+and $f(x)\geq tx-\eps m$ has disjoint intervals $[c_j,d_j]$
+with the following properties. Each has length at least $\tau m$.
+On each interval, either $f$ lies within $\eps(d_j-c_j)$ of its
+chord and the chord slope is at least $s$, or $f$ lies above that
+chord up to the same error and its slope is exactly $s$.
+The uncovered length is $O_{s,t}(\eps m)$.
+\end{lemma}
+\begin{proof}
+Use a stopping-time decomposition according to the first slope-$s$
+chord that falls below the graph. On the remaining pieces extract
+long intervals on which the graph is close to a chord of larger
+slope. The Lipschitz bound controls the discarded endpoint pieces,
+and the lower bound $tx-\eps m$ prevents them from occupying a
+large proportion of the domain.
+\end{proof}
+
+\begin{remark}[Loss parameters in Proposition 8.1]
+\label{rem:os-losses}
+The formalized decomposition keeps a separate bad-scale loss and
+the fixed constants from comparing balls and dyadic cells. For
+example, the linked interface requires
+\[
+ \left(1+\frac6{t-s}\right)
+ \left(\eps+\frac{2\log9}{\log(1/\Delta)}\right)<t-s.
+\]
+It returns constants of the form $81\Delta^{-4}r_j^{\eps_{\rm bad}}$.
+To obtain the concise paper formulation, choose the source loss and
+$\Delta$ sufficiently small before selecting $m$. Identifying
+all these losses without making that choice would change the
+quantifier order.
+\end{remark}

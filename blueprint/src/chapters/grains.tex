@@ -1,0 +1,294 @@
+\chapter{Local and global grains}
+\label{chap:grains}
+
+Throughout the structural argument we assume that a positive critical
+exponent $\sigma<1$ exists. The WZ1 statements in this chapter are
+recorded with their original normalization. Their WZ2 counterparts
+use Proposition~\ref{prop:sticky-structure}; the principal output is
+the following proposition.
+
+\begin{proposition}[Lipschitz grains; WZ2, Proposition 6.3]
+\label{prop:lipschitz-grains}
+\lean{Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement,Kakeya.Assouad.pure_wz2_node04_grains}
+\leanok
+\uses{def:extremal,def:ad-set,def:plane-map}
+For every $\eps>0$ and $\delta_0>0$, there is an $\eps$-extremal
+configuration at some $0<\delta\leq\delta_0$ with both of the
+following properties on the same shaded union $E$:
+\begin{enumerate}
+\item There is a $1$-Lipschitz function $f:[-1,1]\to\R$ such that
+\[
+       (E\cap\{z=z_0\})\cdot(1,f(z_0),0)
+\]
+is a $(\delta,1-\sigma,\delta^{-\eps})_1$-ADset for every
+$z_0\in[-1,1]$.
+\item There is a $1$-Lipschitz plane map $V:E\to S^2$ such that,
+for $p\in E$ and $\delta\leq\rho\leq1$,
+\[
+       V(p)\cdot(E\cap B(p,\sqrt\rho))
+\]
+is a $(\rho,1-\sigma,\delta^{-\eps})_1$-ADset.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\uses{prop:sticky-structure,lem:weak-plane-map,lem:lipschitz-plane-map,
+  lem:local-grains-all-scales,lem:mild-rescaling}
+\leanok
+The multilinear estimate first supplies a weak plane map. Passing to
+coarse tubes improves the angular tolerance to the tube radius. The
+comparison of plane maps at two scales gives a modulus of continuity;
+a finite iteration produces a Lipschitz plane map. Apply the local
+covering estimates at successive scales and keep one common
+refinement. Finally, choose a coordinate patch where one horizontal
+component of the normal is bounded away from zero. The ratio of the
+other horizontal component to it supplies the slope $f$. A mild
+rescaling absorbs the remaining Lipschitz constants and gives the
+global horizontal-slice estimate together with the local one.
+\end{proof}
+
+\begin{proposition}[The WZ1 grain proposition; WZ1, Proposition 4.1]
+\label{prop:wz1-grains}
+\lean{Kakeya.Assouad.WZ1PlaninessGraininessConclusion}
+\uses{def:wz1-extremal,def:plane-map,def:ad-set}
+At arbitrarily small scales there are WZ1 $\eps$-extremal families
+with the two grain properties in Proposition~\ref{prop:lipschitz-grains}:
+global horizontal grains with a $1$-Lipschitz slope, and local grains
+with a $1$-Lipschitz plane map. The critical exponent is now the WZ1
+exponent $\sigma_3$.
+\end{proposition}
+\begin{proof}
+\uses{lem:weak-plane-map,lem:lipschitz-plane-map,lem:local-grains-all-scales}
+These are the two conclusions assembled at the end of WZ1 Section 4.
+The argument is also the source of the WZ2 proposition above.
+\end{proof}
+
+\begin{remark}[The domain of the plane map]
+\label{rem:plane-domain}
+WZ1 Definition 4.1 defines $V$ on $E$, but the local-grain display in
+WZ1 Proposition 4.1 and WZ2 Propositions 6.3--6.5 quantifies over
+$p\in\R^3$. Without specifying an extension, $V(p)$ is undefined
+outside $E$. The corresponding Lean object,
+\texttt{PureWZ2LocalGrainData}, quantifies over $p\in E$. When a later
+argument uses a geometric cell centre, it first selects an occupied
+point in that cell and compares the two neighbourhoods. The statement
+above uses this precise domain.
+\end{remark}
+
+\section{From weak planiness to a continuous plane field}
+
+\begin{lemma}[Weak planiness; WZ1, Lemma 4.3]
+\label{lem:weak-plane-map}
+\lean{Kakeya.Assouad.WZ1WeakPlaninessAssemblyConclusion}
+\uses{def:extremal}
+For sufficiently small source loss $\eta$ and fine scale $\delta$,
+an $\eta$-extremal configuration has a refinement and a unit normal
+field $V$ satisfying
+\[
+       |V(p)\cdot\dir(T)|\leq\delta^{\sigma/2}
+       \qquad(p\in Y'(T)).
+\]
+\end{lemma}
+\begin{proof}
+\uses{thm:multilinear-kakeya,lem:robust-transversality}
+The multilinear estimate bounds the measure of points supporting many
+triples with large determinant. Such points carry little shaded mass
+in an extremal configuration. At each remaining point choose two
+directions separated by a definite power of $\delta$, using robust
+transversality. Their cross product defines a normal. The determinant
+bound puts all retained directions close to its perpendicular plane.
+\end{proof}
+
+\begin{lemma}[A coarse plane map; WZ1, Lemma 4.4]
+\label{lem:coarse-plane-map}
+\lean{Kakeya.Assouad.WZ1CoarsePlaneMapConclusion}
+\uses{def:extremal,def:plane-map}
+Given $\eps>0$, choose $\eta$ and $\delta$ sufficiently small. Suppose
+an $\eta$-extremal family has a unit normal field $V$ with
+$|V(p)\cdot\dir(T)|\leq\rho/2$ on its shaded incidences, where
+$\delta^{1-\eps}\leq\rho\leq\delta^\eps$.
+There is a refined fine family covered by an $\eps$-extremal
+$\rho$-tube configuration with a plane map $\widetilde V$ constant
+on each shaded $\rho$-cube. Its value on each such cube is the value
+of $V$ at a retained point of that cube.
+\end{lemma}
+\begin{proof}
+\uses{prop:sticky-structure}
+Take a balanced cover and, in each coarse cube, choose a fine point
+with maximal surviving multiplicity. Retain the coarse incidences
+witnessed by its fine tubes. Directional closeness transfers the
+$\rho/2$ bound to a radius-$\rho$ plane-map bound. The balance and
+multiplicity estimates ensure that the surviving coarse shading is
+still dense enough to be extremal.
+\end{proof}
+
+\begin{lemma}[Oscillation in a cube; WZ1, Lemma 4.5]
+\label{lem:plane-oscillation}
+\lean{Kakeya.Assouad.WZ1TwoScalePlaneMapConclusion}
+\uses{def:plane-map,def:extremal}
+For every $\eps>0$, an $\eta$-extremal family with a plane map $V$
+and an intermediate scale
+$\rho\in[\delta^{1-\eps},\delta^\eps]$ has an $\eps$-extremal
+refinement on which
+\[
+        |V(p)-V(q)|\leq\rho
+\]
+whenever $p,q$ belong to one $\rho$-cube. Here $\eta$ and then
+$\delta$ are chosen sufficiently small in terms of $\eps$.
+\end{lemma}
+\begin{proof}
+\uses{lem:coarse-plane-map,lem:robust-transversality}
+Compare the normals through two nested balanced covers. A pair of
+well-separated directions determines a plane to within the required
+error. The close-direction count excludes the pairs for which this
+determination is unstable. Refining to the surviving incidences gives
+the common-cube estimate.
+\end{proof}
+
+\begin{corollary}[Oscillation in a ball; WZ1, Corollary 4.6]
+\label{cor:plane-oscillation}
+\lean{Kakeya.Assouad.WZ1ExtremalOneScalePlaneMapConclusion}
+\uses{def:extremal,def:plane-map}
+Under the same hypotheses, there is an $\eps$-extremal refinement
+such that $|V(p)-V(q)|\leq2\rho$ whenever $|p-q|\leq\rho$.
+\end{corollary}
+\begin{proof}
+\uses{lem:plane-oscillation}
+Apply the cube estimate to a bounded collection of shifted grids and
+retain a common refinement. Nearby occupied points can then be
+compared in one of the enlarged cubes.
+\end{proof}
+
+\begin{lemma}[Finite-scale Lipschitz refinement; WZ1, Lemma 4.7]
+\label{lem:finite-lipschitz}
+\lean{Kakeya.Assouad.WZ1FinitePlaneMapIterationConclusion}
+\uses{def:extremal,def:plane-map}
+For every $\eps>0$, a sufficiently extremal family whose plane map
+is constant on $\delta$-cubes has an $\eps$-extremal refinement on
+which that plane map is $\delta^{-\eps}$-Lipschitz.
+\end{lemma}
+\begin{proof}
+\uses{cor:plane-oscillation}
+Apply the preceding corollary at a fixed finite sequence of power
+scales. Choose the losses in reverse order, so that each output meets
+the hypotheses of the next application. For two points use the first
+scale above their separation. The gap between consecutive scales
+accounts for the final factor $\delta^{-\eps}$; constancy on the
+finest cells handles the bottom scale.
+\end{proof}
+
+\begin{lemma}[Existence of a Lipschitz plane map; WZ1, Lemma 4.8]
+\label{lem:lipschitz-plane-map}
+\lean{Kakeya.Assouad.WZ1LipschitzPlaneMapConclusion}
+\uses{def:plane-map,def:extremal}
+For every $\eps,\delta_0>0$, there is an $\eps$-extremal family at
+some $0<\delta\leq\delta_0$ with a $\delta^{-\eps}$-Lipschitz plane
+map.
+\end{lemma}
+\begin{proof}
+\uses{lem:weak-plane-map,lem:coarse-plane-map,lem:finite-lipschitz}
+Obtain a weak plane map, pass to a scale at which it is a genuine
+plane map constant on the coarse cubes, and apply the finite-scale
+refinement. Renaming the resulting scale gives the statement.
+\end{proof}
+
+\section{The local covering estimates}
+
+In the next three statements the source pair is $\eta$-extremal and
+has a $\delta^{-\eta}$-Lipschitz plane map. For each prescribed
+$\eps>0$, $\eta$ and the fine-scale threshold are chosen afterwards.
+The notation $V(Q)$ means a value at an occupied point of $Q$; the
+Lipschitz bound controls the effect of the choice.
+
+\begin{lemma}[Projection of one cube; WZ1, Lemma 4.9]
+\label{lem:grain-cube}
+\lean{Kakeya.Assouad.WZ1LocalGrainCubeCountConclusion}
+\uses{def:plane-map,def:extremal}
+For $\rho\in[\delta^{1-\eps},\delta^\eps]$ and
+$\tau\in[\rho^{1-\eps},\sqrt\rho]$, there is an $\eps$-extremal
+refinement such that, for every occupied $\tau$-cube $Q$,
+\[
+ \cE_\rho\bigl(V(Q)\cdot(E_{Y'}\cap Q)\bigr)
+       \leq\rho^{-\eps}(\tau/\rho)^{1-\sigma}.
+\]
+\end{lemma}
+\begin{proof}
+\uses{prop:sticky-structure,lem:robust-transversality}
+Use a balanced cover at scale $\rho$ and count the coarse tubes that
+meet $Q$. Local planiness identifies their normal projections up to
+scale $\rho$. A large number of distinct projected intervals would
+force too much shaded volume, using the lower bound on each
+rescaled fibre. The extremal volume upper bound gives the estimate.
+\end{proof}
+
+\begin{lemma}[Localization to an interval; WZ1, Lemma 4.10]
+\label{lem:grain-interval}
+\lean{Kakeya.Assouad.WZ1LocalGrainIntervalConclusion}
+\uses{def:extremal,def:plane-map}
+At the same scales, an $\eps$-extremal refinement can be chosen so
+that, if $Q$ is an occupied $\sqrt\rho$-cube and
+$F=V(Q)\cdot(E_{Y'}\cap Q)$, then every interval $J$ of length
+$\tau$ satisfies
+\[
+                       \cE_\rho(F\cap J)
+                       \leq\rho^{-\eps}(\tau/\rho)^{1-\sigma}.
+\]
+\end{lemma}
+\begin{proof}
+\uses{lem:grain-cube}
+Localize the shaded incidences above $J$, and cover the relevant
+portion of $Q$ by cubes at the smaller scale. The plane-map variation
+changes the projected interval by at most a bounded enlargement.
+Apply the one-cube estimate and retain a common refinement over the
+required intervals.
+\end{proof}
+
+\begin{lemma}[Local AD at one scale; WZ1, Lemma 4.11]
+\label{lem:grain-ad-one-scale}
+\lean{Kakeya.Assouad.WZ1LocalGrainOneScaleConclusion}
+\uses{def:ad-set,def:extremal,def:plane-map}
+For $\rho\in[\delta^{1-\eps},\delta^\eps]$, there is an
+$\eps$-extremal refinement such that the projection of its shaded
+union in each occupied $\sqrt\rho$-cube, onto the normal at that
+cube, is a $(\rho,1-\sigma,\delta^{-\eps})_1$-ADset.
+\end{lemma}
+\begin{proof}
+\uses{lem:grain-interval}
+Apply the interval estimate at the required intermediate lengths.
+At the smallest lengths use the trivial covering bound, and at the
+largest lengths use the estimate for the entire cube. The parameter
+choices absorb the losses from the finite list of lengths.
+\end{proof}
+
+\begin{lemma}[Local grains at every scale; WZ1, Lemma 4.12]
+\label{lem:local-grains-all-scales}
+\lean{Kakeya.Assouad.WZ1EveryScaleLocalGrainConclusion,Kakeya.Assouad.pure_wz2_every_scale_local_grain}
+\uses{def:ad-set,def:extremal,def:plane-map}
+Given $\eps>0$, a sufficiently extremal family with a sufficiently
+slowly varying plane map has an $\eps$-extremal refinement for which
+\[
+        V(p)\cdot(E_{Y'}\cap B(p,\sqrt\rho))
+\]
+is a $(\rho,1-\sigma,\delta^{-\eps})_1$-ADset for every
+$\rho\in[\delta,1]$ and every retained point $p$.
+\end{lemma}
+\begin{proof}
+\uses{lem:grain-ad-one-scale}
+Iterate the one-scale statement at a sufficiently fine finite list of
+power scales, keeping the same restricted plane map. Upper AD bounds
+survive each further refinement. Interpolate between the selected
+scales using monotonicity of covering numbers; the scale spacing is
+chosen so that this costs less than the remaining loss budget.
+\end{proof}
+
+\begin{remark}[A common configuration]
+\label{rem:common-grains}
+In Propositions~\ref{prop:lipschitz-grains} and
+\ref{prop:c2-grains}, the global and local conclusions refer to one
+family and one shading. Combining conclusions obtained from unrelated
+refinements would not prove either proposition. The formalization
+retains the same family, shading, density, volume bound, and
+nonconcentration data through the joint selection. The local normal
+also has to be transported as a covector under an affine map: if
+$x'=Ax+b$, its new direction is proportional to $A^{-\mathsf T}V$.
+Applying $A$ directly to the normal gives the wrong plane.
+\end{remark}

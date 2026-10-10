@@ -1,0 +1,124 @@
+\chapter{Correspondence with the papers}
+\label{chap:correspondence}
+
+The endpoint of this account is the finite sticky estimate, WZ2
+Theorem 5.2. In particular, WZ2's earlier reduction from general
+Assouad configurations to all-scale CWA, and its final dimension
+arguments, are outside the present scope. The other papers enter
+through the structural, projection, incidence, and multilinear estimates
+used to prove that endpoint.
+
+\section{Manuscripts and numbering}
+
+We use the following freely available versions. The numbering in a
+Lean declaration may refer to an earlier manuscript or to the published
+article; mathematical content takes precedence over that name.
+
+\begin{center}
+\begin{tabular}{lll}
+Reference & arXiv version & Date \\
+\hline
+WZ1 & 2210.09581v2 & October 2025 \\
+WZ2 & 2401.12337v2 & April 2025 \\
+OSW25 & 2511.21656v1 & November 2025 \\
+OS & 2106.03338v3 & September 2023 \\
+OSW & 2209.00348v1 & September 2022 \\
+PYZ & 2207.02259v3 & October 2024 \\
+CV & 1205.6371v1 & May 2012
+\end{tabular}
+\end{center}
+
+In OS, the regular-case result called Theorem 6.1 in the repository
+is Theorem 6.2 in this manuscript. The combining result called
+Proposition 7.3 is Proposition 7.5 here. The uniformization lemma is
+Lemma 7.3 and the multiscale decomposition is Proposition 8.1.
+The radial bootstrap cited in WZ1 as OSW Lemma 2.9 is Lemma 2.8
+in the available arXiv manuscript, dated September 2022.
+CV's multilinear theorem appears as WZ1 Theorem 4.2 in the version
+used here; some Lean comments call it Theorem 10.
+
+\section{Coverage and formal scope}
+
+The geometric definitions from WZ2 Section 2, the sticky endpoint,
+all the numbered propositions and lemmas of WZ2 Sections 6--7,
+and the WZ1 structural and projection arguments are recorded in the
+preceding chapters. OSW25's seventeen numbered results are included.
+The OS chapter follows the discrete incidence and multiscale argument,
+and the radial chapter records the bootstrap and its WZ1 applications.
+For PYZ, we include the cinematic estimate, the curve-generated
+specialization, and the geometric and counting statements in
+Sections 3--5. The multilinear chapter includes CV's numbered
+ingredients, sometimes grouping the original and mollified versions.
+Continuum projection consequences not used in the sticky proof are
+not developed separately.
+
+There are three different kinds of correspondence. Some declarations
+prove the displayed statement outright, as with the final sticky
+theorem. Others prove precisely the normalized case used in the
+argument, such as the three-dimensional multilinear estimate and the
+$L^{3/2}$ cinematic input. Still others define an interface or prove
+one implication in a larger argument. In the last case, the link is a
+way to inspect that interface, not a claim that its entire paper
+statement has been proved by the linked declaration alone.
+
+The general PYZ Theorem 1.7 and the arbitrary-dimensional CV theorem
+are useful mathematical context, but the completed interfaces used
+by this project have the narrower scopes stated in their chapters.
+Similarly, the normalized strong ring theorem and the separated
+projection result retain the parameter ranges and endpoint alternatives
+actually supplied by Lean. An unmarked node may have substantial
+formal work behind it; absence of a completion mark is not evidence
+that the corresponding mathematics is absent from the repository.
+
+\section{Changes that affect a statement}
+
+The remarks at the relevant statements give the mathematical details.
+The following list locates the main issues without treating every
+normalization as an error in a paper.
+
+\begin{itemize}
+\item The sticky endpoint uses nonempty families and aggregate shading
+density. Its public hypothesis is the literal nearby-scale CWA
+condition, including full containment fibres and unit rescaling.
+See Remarks~\ref{rem:endpoint}, \ref{rem:aggregate-density},
+\ref{rem:full-fibres}, and \ref{rem:nearby-scale}.
+\item A balanced cover carries equal fine-union volume in each retained
+coarse cube. This is stronger than pointwise shading compatibility or
+uniform cardinality of containment fibres; see
+Remark~\ref{rem:balanced-cover}.
+\item The plane map is evaluated on the shaded union, and its normal
+transforms as a covector. The AD condition is an upper covering bound,
+not two-sided Ahlfors--David regularity; see
+Remark~\ref{rem:upper-ad} and the local-grain discussion.
+\item The small twisted image has exponent $\sigma-\eps$ in the
+formal argument, whereas WZ2 Lemma 6.7 prints $\sigma+\eps$.
+The minus sign is enough for the contradiction. The same chapter
+records the reversed ratio in the printed Katz--Tao condition and
+the scale conventions in the uniformization and replication lemmas.
+\item In the dot-product dichotomy, it is the coefficient set that
+concentrates near a line through zero. The endpoint set concentrates
+near an affine line. The closed separated result yields concentration
+in at least one endpoint class. The distinction is essential when the
+classes are independent.
+\item Passing from a measure-valued thin-tube condition to a statement
+for every retained discrete point changes the exceptional fraction
+and the counting constant. These losses are kept in the radial chapter.
+\item The cinematic estimate used here fixes an absolute $C^2$ bound
+before choosing the small-scale threshold. Pairwise cinematic
+conditions alone do not impose such a bound on a singleton family.
+The original WZ1 projection-norm upper bound also needs a bound on
+the slope offset $f(0)$; see Remark~\ref{rem:wz1-slope-offset}.
+\item OSW25's Marstrand inequality is a lower bound for average
+projection length by inverse energy. Its Ruzsa Corollary 2.4 has a
+different denominator in the general two-set Lean formulation; the
+equal-set specialization agrees.
+\item The CV degree comparison needs a positive degree bound, and
+the ellipsoid colouring keeps a quantitative separation margin.
+See Remarks~\ref{rem:cv-polynomial} and \ref{rem:cv-colouring}.
+\end{itemize}
+
+These distinctions preserve the logic of the argument while making
+clear exactly what each formal declaration says. The full theorem is
+the declaration
+\nolinkurl{Kakeya.Assouad.PureWZ2Theorem5_2Unconditional}; its statement
+has no external proof inputs.

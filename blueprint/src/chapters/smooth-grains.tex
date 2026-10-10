@@ -1,0 +1,305 @@
+\chapter{Improving the slope to $C^2$}
+\label{chap:smooth-grains}
+
+The Lipschitz slope supplied by the grain proposition has much more
+structure than an arbitrary Lipschitz function. The local grains and
+the global grains constrain the same shaded set. A projection theorem
+turns these simultaneous constraints into affine approximation on
+many heights. Repeating the argument at a finite sequence of scales
+then permits smoothing without losing the global grain bound.
+
+\begin{proposition}[$C^2$ grains; WZ2, Proposition 6.4]
+\label{prop:c2-grains}
+\lean{Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement,Kakeya.Assouad.pure_wz2_node05_c2_grains}
+\leanok
+\uses{def:extremal,def:plane-map,def:ad-set}
+For every $\eps,\delta_0>0$, there is an $\eps$-extremal
+configuration at some $0<\delta\leq\delta_0$ whose shaded union $E$
+has the following properties. There is $f\in C^2([-1,1])$ with
+$\|f\|_{C^2}\leq1$ such that
+\[
+              (E\cap\{z=z_0\})\cdot(1,f(z_0),0)
+\]
+is a $(\delta,1-\sigma,\delta^{-\eps})_1$-ADset for every $z_0$.
+The same configuration has a $1$-Lipschitz plane map $V:E\to S^2$
+with the local grain property of Proposition~\ref{prop:lipschitz-grains}.
+\end{proposition}
+\begin{proof}
+\uses{prop:lipschitz-grains,lem:locally-affine,lem:affine-hierarchy,
+  cor:trapezoid-hierarchy,prop:trapezoid-smoothing,lem:mild-rescaling}
+\leanok
+Apply the affine approximation argument successively to the global
+slope. Retain one common refinement of the shading, so that the local
+grain estimates remain available at every step. The approximating
+graphs lie in nested, horizontally separated trapezoids. Smooth their
+successive affine corrections using disjointly supported cutoffs.
+The derivative estimates follow by summing the correction bounds over
+the finite hierarchy. The smoothed function agrees with the original
+slope to within the fine scale on every retained height. This changes
+each global projection by at most a fixed multiple of $\delta$.
+Finally, a mild rescaling normalizes the $C^2$ and Lipschitz bounds.
+\end{proof}
+
+\begin{proposition}[The WZ1 smooth grain statement; WZ1, Proposition 5.1]
+\label{prop:wz1-c2-grains}
+\lean{Kakeya.Assouad.WZ1C2GrainPackageStatement}
+\uses{def:wz1-extremal,def:plane-map,def:ad-set}
+With WZ1 extremality in place of WZ2 extremality, the conclusion of
+Proposition~\ref{prop:c2-grains} holds at arbitrarily small scales:
+the global grain slope has $C^2$ norm at most $1$, and the same
+shaded union retains its local grains and $1$-Lipschitz plane map.
+\end{proposition}
+\begin{proof}
+\uses{prop:wz1-grains,cor:trapezoid-hierarchy,prop:trapezoid-smoothing}
+This is the conclusion of WZ1 Section 5. WZ2 uses the same smoothing
+argument after replacing the source of the Lipschitz grains.
+\end{proof}
+
+\section{The projection alternative}
+
+\begin{theorem}[A projection dichotomy; WZ1, Theorem 5.2, corrected orientation]
+\label{thm:wz1-projection}
+\lean{Kakeya.Assouad.WZ1ProjectionDichotomyConclusion}
+\uses{def:ad-set}
+For every $\eps>0$, there are $\eta,\delta_0>0$ such that the
+following holds at $0<\delta\leq\delta_0$. Let
+$F,G\subset[0,1]^2$ be $(\delta,1,\delta^{-\eta})_2$-ADsets.
+At least one of the following alternatives holds:
+\begin{enumerate}
+\item There is an affine line $\ell$ and its perpendicular line
+$\ell^\perp$ through the origin such that
+\[
+ \cE_\delta(F\cap N_\delta(\ell^\perp))\geq\delta^{\eps-1},
+ \qquad
+ \cE_\delta(G\cap N_\delta(\ell))\geq\delta^{\eps-1}.
+\]
+\item For every $H\subset F\times G\times G$ with
+$\cE_\delta(H)\geq\delta^{\eta-3}$, there are $\rho\geq\delta$
+and an interval $I$ with $|I|\geq\delta^{-\eta}\rho$ for which
+\[
+ \cE_\rho\bigl(I\cap
+       \{a\cdot(b_1-b_2):(a,b_1,b_2)\in H\}\bigr)
+                  \geq(|I|/\rho)^{1-\eps}.
+\]
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\uses{lem:hypergraph-refinement,prop:wz1-separated,
+  lem:strip-localization}
+Discretize the three vertex sets and refine the incidence graph so
+that all its projections have comparable degrees. Localize the active
+vertex sets into separated balls and apply the separated projection
+alternative. If an endpoint family concentrates in a strip, rescale
+that strip and apply the localized alternative. Transport the two
+possible conclusions back to the original dot-difference expression.
+The losses in the graph density and the scale are absorbed by choosing
+$\eta$ after $\eps$.
+\end{proof}
+
+\begin{remark}[Which line passes through the origin]
+\label{rem:projection-orientation}
+WZ1 Theorem 5.2 places $F$ near the affine line and $G$ near the
+perpendicular line through the origin. For the expression
+$a\cdot(b_1-b_2)$ the roles are reversed: if $G$ lies on an affine
+line with direction $v$, the degenerate set of coefficients is
+$v^\perp$, which passes through the origin. The Lean statements use
+this latter orientation, as does WZ1 Lemma 8.13.
+For a concrete illustration, take
+$F=\{0\}\times[1/2,3/4]$ and
+$G=[1/2,3/4]\times\{1\}$. All the dot differences vanish, while
+$G$ lies far from the horizontal line through the origin. Thus the
+printed orientation cannot describe this degenerate example.
+\end{remark}
+
+\begin{remark}[Finite graphs and the two endpoint classes]
+\label{rem:projection-model}
+The linked Lean formulation uses separated finite sets, normalized
+Frostman counts, and a uniformly dense tripartite graph. In the
+application to the slope, the two endpoint classes are refinements of
+one ambient set $G$. Some intermediate declarations therefore return
+line concentration in at least one of those two classes, which is
+enough to give concentration in $G$. This conclusion should not be
+reported as simultaneous line concentration in two arbitrary,
+independent endpoint sets; see Remark~\ref{rem:endpoint-union}.
+\end{remark}
+
+\section{Affine approximation on the retained heights}
+
+\begin{lemma}[Affine approximation in one grain; WZ1, Lemma 5.3]
+\label{lem:locally-affine}
+\lean{Kakeya.Assouad.WZ1LocallyLinearOneScaleData}
+\uses{def:ad-set,def:plane-map}
+For every $\eps>0$, choose $\eta>0$ and a sufficiently small
+$\rho>0$. Let $I=[z_*,z_*+\sqrt\rho]\subset[-1,1]$,
+$Z\subset I$, and let $f:I\to[0,1]$ be $1$-Lipschitz. Suppose
+$E\subset[-1,1]^2\times Z$ is a union of $\rho$-cubes lying within
+$\sqrt\rho$ of a line in direction $(-f(z_*),1,0)$, with
+\[
+                       |E|\geq\rho^{1+\sigma/2+\eta}.
+\]
+Let $V:E\to S^2$ be $1$-Lipschitz with $|V(p)\cdot(0,0,1)|\leq1/2$.
+Assume each horizontal projection
+$(E\cap\{z=z_0\})\cdot(1,f(z_0),0)$ is a
+$(\rho,1-\sigma,\rho^{-\eta})_1$-ADset, and
+\[
+       |(E\cap B(p,\sqrt\rho))\cdot V(p)|
+                 \leq\rho^{(1+\sigma)/2-\eta}\quad(p\in E).
+\]
+Then there is $Z_{\rm lin}\subset Z$ of measure at least
+$\rho^{1/2+\eps}$ and an affine function $L:I\to[0,1]$ satisfying
+$|f(z)-L(z)|\leq\rho$ on $Z_{\rm lin}$.
+\end{lemma}
+\begin{proof}
+\uses{thm:wz1-projection}
+Choose well-populated horizontal slices and encode the local and
+global normal directions by two planar graphs. The common shaded
+incidences give a dense tripartite graph. The projection alternative
+with a long, nearly one-dimensional dot-difference set would contradict
+the global AD exponent $1-\sigma$. The remaining alternative forces
+the slope graph to remain near an affine line on a substantial set
+of heights. The volume assumption supplies the stated measure of
+those heights.
+\end{proof}
+
+\begin{lemma}[Affine approximation at one scale; WZ1, Lemma 5.4]
+\label{lem:piecewise-affine}
+\lean{Kakeya.Assouad.WZ1LocallyLinearOneScaleConclusion}
+\uses{prop:lipschitz-grains}
+For every $\eps>0$, a sufficiently extremal grain configuration and
+$\rho\in[\delta^{1-\eps},\delta^\eps]$ admit an
+$\eps$-extremal refinement and a $2$-Lipschitz function
+$L:[-1,1]\to\R$ which is affine on the grid intervals
+$[m\sqrt\rho,(m+1)\sqrt\rho]$ and obeys
+\[
+        |f(z)-L(z)|\leq\rho
+        \quad\text{for every retained height }z.
+\]
+\end{lemma}
+\begin{proof}
+\uses{lem:locally-affine,prop:sticky-structure}
+Apply the one-grain result to a balanced decomposition of the source
+configuration. Select compatible affine pieces in the height intervals
+and retain the incidences above their good heights. Extend the chosen
+pieces across the gaps with controlled slope. The balanced cover
+provides the mass needed to restore extremality.
+\end{proof}
+
+\begin{lemma}[A finite affine hierarchy; WZ1, Lemma 5.5]
+\label{lem:affine-hierarchy}
+\lean{Kakeya.Assouad.WZ1LocallyLinearHierarchyData}
+\uses{prop:lipschitz-grains}
+Given $\eps>0$ and $N\geq1$, choose the source loss and scale
+sufficiently small, and put $\rho_j=\delta^{j/N}$.
+There is one $\eps$-extremal refinement with functions
+$L_1,\ldots,L_N$, each $2$-Lipschitz and affine on intervals of length
+$\sqrt{\rho_j}$, such that
+\[
+ |f(z)-L_j(z)|\leq\rho_j
+ \quad(1\leq j\leq N, z\text{ a retained height}).
+\]
+\end{lemma}
+\begin{proof}
+\uses{lem:piecewise-affine}
+Iterate at the prescribed scales, scheduling each input loss after
+the next requested output loss. Subsequent refinements preserve every
+previous approximation on the heights that survive.
+\end{proof}
+
+\begin{definition}[Vertical trapezoids; WZ1, Definition 5.1]
+\label{def:trapezoid}
+\lean{Kakeya.Assouad.WZ1VerticalTrapezoid}
+\leanok
+A vertical trapezoid has the form
+\[
+        R=\{(z,t):z\in J,\ |t-L(z)|\leq h\},
+\]
+where $J\subset[-1,1]$ is an interval and $L$ is affine. Its length
+is $|J|$, its height parameter is $h$, and its slope is the slope
+of $L$.
+\end{definition}
+
+\begin{corollary}[Nested trapezoids; WZ1, Corollary 5.6]
+\label{cor:trapezoid-hierarchy}
+\lean{Kakeya.Assouad.WZ1NestedSlopeCorrectionData}
+\uses{def:trapezoid,prop:lipschitz-grains}
+Given $\eps>0$ and $N\geq1$, one can refine a sufficiently extremal
+grain configuration and find families $\mathcal R_j$ of trapezoids,
+$\rho_j=\delta^{j/N}$, with the following properties. Every slope
+lies in $[-2,2]$. At level $j$ the height is $\rho_j$ and the lengths
+lie in $[\rho_j^{1/2+\eps},\sqrt{\rho_j}]$; the horizontal intervals
+are $\sqrt{\rho_j}$-separated. Each trapezoid at level $j>1$ is
+contained in a unique parent at level $j-1$. If $D$ is the set of
+retained heights, then $\graph(f|_D)\subset\bigcup\mathcal R_N$.
+\end{corollary}
+\begin{proof}
+\uses{lem:affine-hierarchy}
+Select separated subintervals where the approximations at all levels
+are compatible. Group their affine graphs into vertical trapezoids.
+Refining the occupied height intervals at each step ensures actual
+containment in the preceding trapezoids, as well as the mass retention
+needed for extremality.
+\end{proof}
+
+\section{Smoothing the hierarchy}
+
+\begin{lemma}[A smooth extension of a segment; WZ1, Lemma 5.8]
+\label{lem:segment-extension}
+\lean{Kakeya.Assouad.WZ1SmoothSegmentExtensionStatement,Kakeya.Assouad.wz1_smooth_segment_extension}
+\leanok
+Let $x_1<x_2$, let $L$ join $(x_1,y_1)$ to $(x_2,y_2)$, and let
+$a>0$. There is a smooth function $G:\R\to\R$ agreeing with the
+segment on $[x_1,x_2]$, vanishing outside
+$[x_1-a,x_2+a]$, and satisfying
+\[
+ |G'|\lesssim h/a+|s|,\qquad
+ |G''|\lesssim h/a^2+|s|/a,
+ \quad h=|y_1|+|y_2|,\quad s=(y_2-y_1)/(x_2-x_1).
+\]
+\end{lemma}
+\begin{proof}
+\leanok
+Multiply the affine function through the segment by smooth cutoffs
+which equal one on the segment and turn off over intervals of length
+$a$. Differentiating the product gives the two bounds. A single
+absolute cutoff constant works for every segment and every $a$.
+\end{proof}
+
+\begin{proposition}[Smoothing nested trapezoids; WZ1, Proposition 5.7]
+\label{prop:trapezoid-smoothing}
+\lean{Kakeya.Assouad.WZ1MultiscaleSlopeCorrectionData}
+\uses{def:trapezoid}
+Let $N\geq2$, $\rho_j=\delta^{j/N}$, and suppose the nested
+trapezoid families have slopes in $[-2,2]$, heights $\rho_j$,
+lengths in $[\rho_j^{1/2+\eta},\sqrt{\rho_j}]$, and horizontal
+separation $\sqrt{\rho_j}$ at level $j$. If
+$\graph(f)\subset\bigcup\mathcal R_N$, $f:D\to\R$,
+$D\subset[-1,1]$, then there is $g\in C^2([-1,1])$ satisfying
+\[
+ |f-g|\leq\delta\text{ on }D,
+ \qquad |g''|\lesssim\delta^{-1/N-2\eta}.
+\]
+On the horizontal interval of $R\in\mathcal R_j$, the derivative
+differs from the slope of $R$ by at most a constant times
+$\rho_j/\rho_{j+1}^{1/2+\eta}$, for $j<N$.
+\end{proposition}
+\begin{proof}
+\uses{lem:segment-extension}
+Begin with the coarsest affine pieces. At each finer level, extend
+the difference between a child's affine function and its parent's
+using the segment-extension lemma. Their supports are separated at
+that level. The resulting finite sum agrees with the terminal affine
+piece wherever the fine graph is retained. Summing the first- and
+second-derivative costs over levels gives the estimates.
+\end{proof}
+
+\begin{remark}[Constants and terminal indices in smoothing]
+\label{rem:smoothing}
+The paper's derivative comparison uses $\rho_{j+1}$; with only
+$\rho_1,\ldots,\rho_N$ defined, that formula is read for $j<N$.
+The Lean construction records the first- and second-derivative cost
+of every supported correction and sums them explicitly, including
+the terminal correction. It also records disjointness of supports
+and compatibility of parent and child intervals. These conditions
+are needed before a bound for each individual correction can be
+turned into a bound for their sum.
+\end{remark}

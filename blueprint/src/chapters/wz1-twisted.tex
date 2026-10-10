@@ -1,0 +1,191 @@
+\section{The original WZ1 slope and norm estimates}
+
+For comparison, we record the statements in WZ1 Sections 6--7.
+Extremality in this section has the WZ1 meaning of
+Definition~\ref{def:wz1-extremal}. These statements use direction
+separation and $L^{3/2}$ norms; WZ2 replaces them by the CWA and
+projected-area statements above.
+
+\begin{lemma}[A dense tube segment with small projection; WZ1, Lemma 6.2]
+\label{lem:wz1-dense-segment}
+\uses{def:ad-set,def:tube}
+Let $0\leq\alpha<1$, $0<\delta\leq\rho\leq1$, and $\eps>0$.
+Let $U$ be a segment of length $\sqrt\rho$ in a $\delta$-tube $T$,
+with its full transverse thickness, and suppose
+$F\subset U$ satisfies $|F|\geq\delta^\eps|U|$. If $v\in S^2$
+and $v\cdot F$ is a $(\rho,\alpha,\delta^{-\eps})_1$-ADset, then
+\[
+                 |v\cdot\dir(T)|
+                     \lesssim\delta^{-2\eps/(1-\alpha)}\sqrt\rho.
+\]
+\end{lemma}
+\begin{proof}
+A longitudinally dense subset of $U$ has a projection whose length
+is controlled below by the angle of its axis to $v^\perp$.
+The AD covering bound at scale $\rho$ bounds that projection above.
+Comparing the two estimates and raising to the power $1/(1-\alpha)$
+gives the conclusion.
+\end{proof}
+
+\begin{lemma}[Large derivative on a populated interval; WZ1, Lemma 6.3]
+\label{lem:wz1-large-derivative}
+\uses{prop:wz1-c2-grains}
+For every $\eps>0$, choose $\eta$ and $\delta$ sufficiently small.
+Suppose a WZ1 smooth-grain configuration with loss $\eta$ has
+$\delta$-separated directions. If an interval $J\subset[-1,1]$
+satisfies $\sqrt\delta\leq|J|\leq\delta^\eps$,
+\[
+ \sum_{T\in\T}|Y(T)\cap(\R^2\times J)|\geq\delta^\eta|J|,
+\]
+and $E_Y\cap(\R^2\times J)$ is covered by at most
+$\delta^{-\eta}|J|^{-2+\sigma_3}$ cubes of side $|J|$, then
+$|f'(z)|\geq|J|$ throughout $J$.
+\end{lemma}
+\begin{proof}
+\uses{lem:wz1-dense-segment}
+If the derivative is small at one point, the second derivative bound
+keeps the global grain direction nearly constant across $J$. The
+dense-segment lemma then confines many directions near one plane,
+inconsistent with the direction count and the mass in the interval.
+This is the directional predecessor of WZ2 Lemma 6.6.
+\end{proof}
+
+\begin{lemma}[A slab with comparable derivative; WZ1, Lemma 6.4]
+\label{lem:wz1-comparable-derivative}
+\uses{prop:wz1-c2-grains}
+For every $\eps>0$ and scale ceiling, there is a WZ1 smooth-grain
+configuration below that ceiling for which all shadings lie in
+$[-1,1]^2\times[0,\delta^\eps]$, and a number $m\geq\delta^\eps$
+such that
+\[
+             m\leq |f'(z)|\leq2m\quad(0\leq z\leq\delta^\eps).
+\]
+\end{lemma}
+\begin{proof}
+\uses{lem:wz1-large-derivative}
+Choose a height interval retaining sufficient shaded mass and the
+extremal spatial covering bound. Obtain the derivative lower bound
+there, then localize and translate so that its magnitude is comparable
+throughout one retained slab. Start with a smaller source loss to
+retain the requested grain and extremality bounds.
+\end{proof}
+
+\begin{proposition}[Nonsingular WZ1 grains; WZ1, Proposition 6.1]
+\label{prop:wz1-nonsingular}
+\uses{def:wz1-extremal,def:plane-map,def:ad-set}
+At arbitrarily small scales there are WZ1 $\eps$-extremal
+configurations with global grains whose slope obeys
+$1\leq|f'|\leq2$ and $|f''|\leq1/100$, together with local grains
+and a $1$-Lipschitz plane map. The two AD covering bounds are those
+of Proposition~\ref{prop:wz1-grains}, with the same retained shading.
+The plane map is evaluated on that shaded union, as in
+Remark~\ref{rem:plane-domain}.
+\end{proposition}
+\begin{proof}
+\uses{lem:wz1-comparable-derivative,lem:mild-rescaling}
+Rescale the selected height slab and the transverse coordinates.
+The first derivative becomes comparable to one, and choosing the
+slab sufficiently short makes the normalized second derivative small.
+Transport the plane map and the local covering estimates with the
+same affine change of variables.
+\end{proof}
+
+\begin{corollary}[A large projection norm; WZ1, Corollary 6.5]
+\label{cor:wz1-large-norm}
+\uses{def:twisted-projection,def:wz1-extremal}
+For every $\eps>0$ and scale ceiling, there are a WZ1
+$\eps$-extremal tube configuration below that ceiling and a slope
+with $1\leq|f'|\leq2$, $|f''|\leq1/100$, such that
+\[
+ \left\|\sum_{T\in\T}\one_{\pi_f(T)}\right\|_{L^{3/2}(\R^2)}
+                         \geq\delta^{-1-\sigma_3/3+\eps}.
+\]
+\end{corollary}
+\begin{proof}
+\uses{prop:wz1-nonsingular}
+The global grains make the projected shaded union small, while the
+sum of the projected shaded masses remains large. H\"older's
+inequality bounds the $L^{3/2}$ norm below by this mass divided by
+the one-third power of the support area. Enlarging each projected
+shading to $\pi_f(T)$ can only increase the norm.
+\end{proof}
+
+\begin{proposition}[A small projection norm; WZ1, Proposition 7.1, normalized slope]
+\label{prop:wz1-small-norm}
+\uses{def:twisted-projection}
+For every $\eps>0$, and all sufficiently small $\delta$, a family
+of $\delta$-tubes with $\delta$-separated directions in WZ1's
+bounded chart satisfies
+\[
+ \left\|\sum_{T\in\T}\one_{\pi_f(T)}\right\|_{L^{3/2}(\R^2)}
+                           \leq\delta^{-1-\eps}
+\]
+whenever $f(0)=0$, $1\leq|f'|\leq2$, and $|f''|\leq1/100$.
+\end{proposition}
+\begin{proof}
+\uses{thm:wz1-cinematic,lem:wz1-cinematic-family}
+Split the four line parameters into approximately $\delta^{-1}$
+windows of one slope parameter $c$. In each window, subtracting
+$ct$ leaves a cinematic family. Direction separation supplies its
+one-dimensional counting bound. Apply the cinematic estimate and
+sum over the windows.
+\end{proof}
+
+\begin{remark}[An absolute normalization of the slope]
+\label{rem:wz1-slope-offset}
+The displayed paper statement of Proposition 7.1 specifies derivative
+bounds but no bound on $f(0)$. Its uniform conclusion needs an
+absolute normalization, which is present in the later cinematic
+family construction and in the formal twisted-projection input.
+Indeed, take a single vertical tube and $f(z)=A+z$. The derivative
+conditions hold for every $A$, but the projected tube has area
+comparable to $A\delta$ for large positive $A$, so its indicator has
+$L^{3/2}$ norm comparable to $(A\delta)^{2/3}$. At a fixed scale this
+is unbounded as $A\to\infty$. A fixed bound on $f(0)$, or the
+normalization $f(0)=0$ used above, removes this obstruction.
+\end{remark}
+
+\begin{theorem}[The WZ1 cinematic estimate; WZ1, Theorem 7.2]
+\label{thm:wz1-cinematic}
+\uses{def:cinematic-family}
+Let $\cF\subset C^2(I)$ be a fixed cinematic family on a compact
+interval. For every $\eps>0$, at sufficiently small $\delta$, a
+$\delta$-separated finite $F\subset\cF$ satisfying
+\[
+              \#(F\cap B)\leq\delta^{-\eps}(r/\delta)
+\]
+for every ball $B$ of diameter $r\geq\delta$ obeys
+\[
+               \left\|\sum_{g\in F}\one_{N_\delta(\graph g)}
+                    \right\|_{3/2}\leq\delta^{-\eps}.
+\]
+For a threshold uniform over families, an absolute $C^2$ bound must
+be fixed first, as explained in Remark~\ref{rem:pyz-uniformity}.
+The completed Lean interface with a fixed counting constant is
+Theorem~\ref{thm:cinematic-l32}.
+\end{theorem}
+\begin{proof}
+\uses{thm:pyz}
+Use the one-dimensional counting case of the cinematic maximal
+estimate, localize the coordinate domain, and absorb fixed constants
+with the fine-scale threshold.
+\end{proof}
+
+\begin{lemma}[The three-parameter cinematic family; WZ1, Lemma 7.3]
+\label{lem:wz1-cinematic-family}
+\uses{def:cinematic-family}
+If $f(0)=0$, $1\leq|f'|\leq2$, and $|f''|\leq1/100$ on
+$[0,1]$, the functions
+\[
+          g_{a,b,d}(t)=a+bf(t)+dtf(t),\qquad a,b,d\in[-1,1],
+\]
+form a cinematic family with constants independent of $f$.
+They also have a uniform absolute $C^2$ bound.
+\end{lemma}
+\begin{proof}
+The determinant of the two-jets of $1,f,tf$ is
+$2(f')^2-ff''$, which is uniformly bounded away from zero because
+$|f|\leq2$. Thus the jet at any point controls all three parameter
+differences. This proves nondegeneracy and the equivalence of the
+parameter and $C^2$ metrics, from which doubling follows.
+\end{proof}

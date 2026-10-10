@@ -1,0 +1,291 @@
+\chapter{Tubes, shadings, and nonconcentration}
+\label{chap:geometry}
+
+We work in $\R^3$ unless another dimension is specified. Lebesgue measure
+is denoted by $|\cdot|$. The notation $\cE_r(A)$ denotes the least number
+of radius-$r$ balls needed to cover $A$, and $N_r(A)$ denotes its
+$r$-neighbourhood. Fixed changes in the radius affect covering numbers
+by a dimensional constant. We write $A\lesssim B$ when the implicit
+constant is independent of the fine scale $\delta$, and $A\lessapprox B$
+when a fixed power of $\log(1/\delta)$ is also allowed. Every use of such
+a loss takes place before the final small-scale threshold is chosen.
+
+\section{The geometric objects}
+
+\begin{definition}[Tubes; WZ2, Section 2.1]
+\label{def:tube}
+\lean{Kakeya.DeltaTube,Kakeya.Assouad.WZ2PaperOrdinaryIsEssentiallyDistinct}
+\leanok
+A $\delta$-tube is the closed $\delta$-neighbourhood of a unit line
+segment. Its direction is the unoriented direction of the segment. If
+$T$ is a tube and $a>0$, then $aT$ is its dilation by $a$ about its
+midpoint. Two tubes $T,T'$ are essentially distinct when
+$T\not\subset 2T'$ and $T'\not\subset 2T$.
+\end{definition}
+
+\begin{definition}[Shadings; WZ2, Definition 2.1]
+\label{def:shading}
+\lean{Kakeya.Streamlined.Shading,Kakeya.Streamlined.Shading.IsLambdaDense}
+\leanok
+\uses{def:tube}
+A shading of a finite family $\mathcal S$ is a collection of measurable
+sets $Y(S)\subset S$. Write
+\[
+ E_Y=\bigcup_{S\in\mathcal S}Y(S),\qquad
+ \mass(Y)=\sum_{S\in\mathcal S}|Y(S)|,\qquad
+ \mathcal S_Y(p)=\{S\in\mathcal S:p\in Y(S)\}.
+\]
+The shading is $\lambda$-dense if
+$\mass(Y)\geq\lambda\sum_{S\in\mathcal S}|S|$.
+It is uniformly $\lambda$-dense if $|Y(S)|\geq\lambda|S|$ for every
+$S$. The multiplicity at $p$ is $\#\mathcal S_Y(p)$.
+\end{definition}
+
+\begin{remark}[Density and multiplicity]
+\label{rem:aggregate-density}
+The endpoint uses aggregate density, exactly as in WZ2 Definition 2.1.
+Uniform density is obtained by discarding tubes with small shading and
+then refining. It must not be inserted as an extra hypothesis of the
+main theorem. Also, $\mathcal S_Y(p)$ counts shaded incidences: replacing
+$p\in Y(S)$ by $p\in S$ changes the multiplicity estimates used below.
+The families in Lean are indexed, so multiplicities are retained until
+an explicit selection of representatives is made.
+\end{remark}
+
+\begin{definition}[Regular shadings; WZ2, Definition 2.2]
+\label{def:regular-shading}
+\uses{def:shading}
+For a measurable set $S\subset B(0,1)\subset\R^n$ of positive measure,
+a shading is regular down to scale $\delta$ if, for $x\in Y(S)$ and
+$\delta\leq r\leq1$,
+\[
+ |Y(S)\cap B(x,r)|\geq
+ \frac{|Y(S)|}{100^n\log(1/\delta)}
+ \frac{|S\cap B(x,r)|}{|S|}.
+\]
+Here the fine scale is sufficiently small that the denominator is
+positive.
+\end{definition}
+
+\begin{lemma}[Regularization; WZ2, Lemma 2.3]
+\label{lem:regular-shading}
+\uses{def:regular-shading}
+Given a shading $Y(S)$ as above, one can pass to a regular subshading
+$Y'(S)\subset Y(S)$ while retaining at least half its measure.
+\end{lemma}
+\begin{proof}
+At each dyadic scale, discard the cells where the shaded measure is
+too small relative to the measure of $S$. The threshold allocates only
+a fixed fraction divided by the number of scales to each deletion.
+The sum of the discarded measures is at most half the original measure.
+A bounded collection of shifted dyadic grids supplies the ball version.
+\end{proof}
+
+\section{Wolff conditions}
+
+\begin{definition}[Wolff axioms; WZ2, Definition 2.4]
+\label{def:wolff}
+\uses{def:tube}
+A family of $\delta$-tubes in $\R^n$ satisfies the Wolff axioms with
+constant $C$ if every $\rho$-tube contains at most
+$C(\rho/\delta)^{n-1}$ members, and every rectangular prism of dimensions
+$2\delta\times\cdots\times2\delta\times\rho\times2$ contains at most
+$C\rho/\delta$ members. The conditions are imposed for
+$\delta\leq\rho\leq1$.
+\end{definition}
+
+\begin{definition}[Convex Wolff Axioms; WZ2, Definition 2.5]
+\label{def:cwa}
+\lean{Kakeya.Assouad.WZ2PaperBodyConvexWolffBound}
+\leanok
+A finite indexed family $\mathcal S$ satisfies the Convex Wolff Axioms
+with error $C$ if every convex set $W\subset\R^3$ obeys
+\[
+  \#\{S\in\mathcal S:S\subset W\}\leq C|W|\,\#\mathcal S.
+\]
+We always take $1\leq C<\infty$.
+\end{definition}
+
+\begin{remark}[Consequences; WZ2, Remarks 2.6--2.7]
+\label{rem:cwa-consequences}
+If $\mathcal S$ is nonempty and its members are convex, applying the
+axiom with $W=S$ gives
+$\#\mathcal S\geq C^{-1}(\inf_{S\in\mathcal S}|S|)^{-1}$.
+For equal-radius tubes in three dimensions, this is
+$\#\T\gtrsim C^{-1}\delta^{-2}$.
+If every member is replaced by a larger set, with its index retained,
+the axiom continues to hold: containment of the larger set implies
+containment of the original one. Identifying repeated larger sets is
+a separate operation and requires a counting argument.
+\end{remark}
+
+\begin{definition}[Unit rescaling; WZ2, Definition 2.8]
+\label{def:unit-rescaling}
+\lean{Kakeya.Assouad.WZ2PaperAssouadUnitRescalingData}
+\leanok
+Let $U$ be a convex body, and let $U^*$ be its minimum-volume
+circumscribed ellipsoid. Choose an affine isomorphism $\phi_U$ carrying
+$U^*$ onto the unit ball. The unit rescaling of a family of subsets of
+$U$ is the indexed family of their images under $\phi_U$.
+\end{definition}
+
+\begin{remark}[The two normalizations; WZ2, Remark 2.9]
+\label{rem:john-normalization}
+WZ1 uses a closely related normalization adapted to its cubical
+shadings; the terminal ellipsoid has fixed, comparable axes rather
+than being exactly the unit ball. WZ2 uses the actual circumscribed
+John ellipsoid. The public Lean definition follows WZ2. In particular,
+the rescaled family consists of affine images of the original sets,
+not arbitrarily chosen nearby tubes. Replacing these images by
+standard tubes later in the argument includes explicit containment
+and volume comparisons.
+\end{remark}
+
+\begin{definition}[Uniform partitioning covers; WZ2, Definition 2.10]
+\label{def:partition-cover}
+\lean{Kakeya.Assouad.WZ2PaperPurePartitioningCover,Kakeya.Assouad.WZ2PaperPureFullFibersAreCUniform}
+\leanok
+\uses{def:tube}
+For families $\mathcal A,\mathcal B$ set
+$\mathcal B[A]=\{B\in\mathcal B:B\subset A\}$.
+The family $\mathcal A$ covers $\mathcal B$ if every member of
+$\mathcal B$ is contained in some $A\in\mathcal A$. It is a
+$C$-uniform cover if
+\[
+ \#\mathcal B[A]\leq C\#\mathcal B[A']\quad(A,A'\in\mathcal A).
+\]
+It is partitioning if the indexed sets $\mathcal B[2A]$ and
+$\mathcal B[2A']$ are disjoint whenever $A\ne A'$.
+\end{definition}
+
+\begin{remark}[Geometric fibres]
+\label{rem:full-fibres}
+The fibre $\mathcal B[A]$ is the complete containment fibre. One cannot
+replace it by a selected group of children assigned to $A$ and then
+assert the same uniformity property. In the Lean definition the unique
+parent map is derived from containment and doubled-fibre disjointness.
+It is not an independent choice. This distinction matters after
+refining either family.
+\end{remark}
+
+\begin{lemma}[Passing CWA to a cover; WZ2, Remark 2.11]
+\label{lem:cover-cwa}
+\uses{def:cwa,def:partition-cover}
+If $\mathcal B$ is nonempty and satisfies CWA with error $C$, and
+$\mathcal A$ is a $K$-uniform partitioning cover, then $\mathcal A$
+satisfies CWA with error $KC$.
+\end{lemma}
+\begin{proof}
+The nonempty fibres partition $\mathcal B$. Their minimum size is at
+least $\#\mathcal B/(K\#\mathcal A)$. Every $A\subset W$ contributes
+at least this many distinct members of $\mathcal B$ contained in $W$.
+Apply CWA to $\mathcal B$ and cancel $\#\mathcal B$.
+\end{proof}
+
+\begin{definition}[CWA at every scale; WZ2, Definition 2.12]
+\label{def:all-scale-cwa}
+\lean{Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales}
+\leanok
+\uses{def:cwa,def:partition-cover,def:unit-rescaling}
+A family $\T$ of essentially distinct $\delta$-tubes satisfies CWA at
+every scale with error $C$ if, for every requested scale
+$\rho_0\in[\delta,1]$, there is a scale
+$\rho\in[\rho_0,C\rho_0)$ and a family $\T_\rho$ of $\rho$-tubes such
+that $\T_\rho$ is a $C$-uniform partitioning cover of $\T$, and the
+unit rescaling of $\T[T_\rho]$ satisfies CWA with error $C$ for each
+$T_\rho\in\T_\rho$.
+\end{definition}
+
+\begin{remark}[Requested and selected scales]
+\label{rem:nearby-scale}
+Only the requested scale $\rho_0$ is constrained to be at most $1$.
+The selected scale can exceed $1$. This is relevant when the definition
+is applied at the top scale: one cannot silently treat its output as
+a family of radius-$1$ tubes. Also, the half-open interval in the
+definition is empty at $C=1$. In applications $C=\delta^{-\eta}>1$,
+with $0<\delta<1$ and $\eta>0$.
+\end{remark}
+
+\begin{lemma}[Multiscale inheritance; WZ2, Lemma 2.13]
+\label{lem:multiscale-cwa}
+\uses{def:all-scale-cwa}
+At any requested scale $\rho_0\in[\delta,1]$, a family satisfying
+all-scale CWA with error $C$ admits a nearby coarse scale
+$\rho\in[\rho_0,C\rho_0]$ for which both the coarse family and the
+unit-rescaled fibres satisfy all-scale CWA with error $O(C)$.
+\end{lemma}
+\begin{proof}
+Choose partitioning covers at a separated sequence of scales. The
+disjointness condition on doubled fibres makes the relevant containment
+classes nested. The resulting tree has comparable class sizes at each
+level. Restricting this tree above or below the selected level gives
+the two conclusions. When standard tubes are substituted for affine
+images, the fixed geometric comparison factors must be included in
+the error constant.
+\end{proof}
+
+\begin{definition}[Tube Frostman condition; WZ2, Definition 2.14]
+\label{def:tube-frostman}
+\lean{Kakeya.Assouad.TubeWolffBound}
+\uses{def:tube}
+A family of essentially distinct tubes satisfies a Frostman condition
+of dimension $s$ with error $C$ if
+\[
+ \#\T[T_\rho]\leq C\rho^s\#\T
+ \qquad(\rho\geq\delta)
+\]
+for every $\rho$-tube $T_\rho$. The dimension-$2$ condition, without a
+prescribed total cardinality, is the Tube Wolff condition used in WZ2
+Section 7. Its parameter-space implementation is discussed in
+Remark~\ref{rem:parameter-frostman}.
+\end{definition}
+
+\begin{definition}[Self-similar CWA; WZ2, Definition 2.15]
+\label{def:self-similar-cwa}
+\uses{def:all-scale-cwa}
+Write $\#\T=\delta^{-s}$. The self-similar Convex Wolff Axioms add to
+Definition~\ref{def:all-scale-cwa} the estimates
+\[
+ C^{-1}(\rho/\delta)^s\leq\#\T[T_\rho]
+ \leq C(\rho/\delta)^s
+\]
+for each selected coarse tube. This stronger condition explains the
+relation with stickiness, but is not a hypothesis of our endpoint.
+\end{definition}
+
+\section{Grain terminology}
+
+\begin{definition}[Plane maps; WZ1, Definition 4.1]
+\label{def:plane-map}
+\lean{Kakeya.Assouad.WZ1PlaneMapData}
+\uses{def:shading}
+A plane map assigns a unit normal $V(p)\in S^2$ to each point of the
+shaded union. For every shaded incidence $p\in Y(T)$ it satisfies
+$|V(p)\cdot\dir(T)|\lesssim\delta$. Thus the directions through $p$
+are nearly contained in the plane normal to $V(p)$.
+\end{definition}
+
+\begin{definition}[Upper AD sets; WZ1, Definition 4.2]
+\label{def:ad-set}
+\lean{Kakeya.Assouad.PureWZ2PaperADSet1,Kakeya.Assouad.IsADSet1}
+\leanok
+A bounded set $A\subset\R^n$ is a $(\delta,\alpha,C)_n$-ADset if,
+whenever $\delta\leq\rho\leq r$,
+\[
+ \cE_\rho(A\cap B(x,r))\leq C(r/\rho)^\alpha.
+\]
+The paper-facing one-dimensional Lean formulation uses intervals in
+place of balls and assumes $0<\alpha\leq1$. The internal bounded
+formulation restricts the radii to at most $1$ and fixes a bounded
+coordinate interval; the two forms are compared with a fixed change
+in the covering constant.
+\end{definition}
+
+\begin{remark}[AD does not mean a two-sided measure bound here]
+\label{rem:upper-ad}
+As observed in WZ1 Remark 4.1, this is an upper covering condition and
+is inherited by every subset. No lower Ahlfors--David regularity is
+asserted. This is essential because many subsequent steps discard
+parts of the shading. The empty projected set also satisfies the
+covering inequalities.
+\end{remark}

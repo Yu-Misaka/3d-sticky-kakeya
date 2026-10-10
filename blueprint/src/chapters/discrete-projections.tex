@@ -1,0 +1,423 @@
+\chapter{Additive combinatorics and discretised projections}
+\label{chap:discrete-projections}
+
+This chapter records the numbered inputs from O'Regan, Shmerkin, and
+Wang, \emph{Simple proofs of discretised projection theorems}~\cite{OSW25}.
+Their ring theorem provides the expansion input in the formalized
+Furstenberg argument. Write $|A|_\delta=\cE_\delta(A)$. A
+$(\kappa,C)$-measure is a probability measure satisfying
+$\mu(B(x,r))\leq Cr^\kappa$ at every positive radius. A discretised
+$(\delta,s,C)$-set has the corresponding normalized nonconcentration
+at radii at least $\delta$. When volume and covering numbers are
+interchanged, the set is a union of finest-scale cells.
+
+\section{Ruzsa inequalities}
+
+\begin{lemma}[Triangle inequality; OSW25, Lemma 2.1]
+\label{lem:ruzsa-triangle}
+\lean{ProductLikeIncidence.discretized_ruzsa_triangle}
+\leanok
+For bounded sets $X,Y,Z\subset\R$ with $Y\ne\varnothing$,
+\[
+           |X-Z|_\delta\lesssim
+                    \frac{|X-Y|_\delta|Y-Z|_\delta}{|Y|_\delta}.
+\]
+\end{lemma}
+\begin{proof}
+\leanok
+Pass to occupied $\delta$-cell indices, apply the finite Ruzsa
+triangle inequality, and compare the indices of a sum or difference
+with those of its summands. Only a fixed number of neighbouring
+cells occur in this comparison.
+\end{proof}
+
+\begin{proposition}[Pl\"unnecke--Ruzsa; OSW25, Proposition 2.2]
+\label{prop:pluennecke}
+\lean{ProductLikeIncidence.discretized_pluennecke_nfold_sum}
+Let $X,Y_1,\ldots,Y_k$ be bounded sets, $X\ne\varnothing$, and
+suppose $|X+Y_i|_\delta\leq\alpha_i|X|_\delta$. Then
+\[
+        |Y_1+\cdots+Y_k|_\delta
+                  \lesssim_k\alpha_1\cdots\alpha_k|X|_\delta.
+\]
+The repeated-summand form and its difference analogue are the
+corresponding formalized covering estimates.
+\end{proposition}
+\begin{proof}
+Discretize, use the finite Pl\"unnecke inequality, and cover the
+possible cell carries. The number of carries depends only on $k$.
+\end{proof}
+
+\begin{corollary}[Self-sums and self-differences; OSW25, Corollary 2.3]
+\label{cor:ruzsa-self}
+\lean{ProductLikeIncidence.OSW.corollary2_3,ProductLikeIncidence.discretized_pluennecke_ruzsa_diff}
+\leanok
+For bounded $X,Y\subset\R$ with $Y\ne\varnothing$,
+\[
+ \max\{|X-X|_\delta,|X+X|_\delta\}
+                 \lesssim\frac{|X\pm Y|_\delta^2}{|Y|_\delta}.
+\]
+Either choice of sign is allowed, with an absolute constant.
+\end{corollary}
+\begin{proof}
+\uses{lem:ruzsa-triangle,prop:pluennecke}
+\leanok
+Apply the triangle and repeated-sum inequalities, replacing $Y$ by
+$-Y$ when necessary.
+\end{proof}
+
+\begin{corollary}[Sum to difference; OSW25, Corollary 2.4, formalized version]
+\label{cor:sum-difference}
+\lean{ProductLikeIncidence.OSW.corollary2_4,ProductLikeIncidence.OSW.corollary2_4_same}
+\leanok
+For bounded nonempty $X,Y\subset\R$,
+\[
+  |X-Y|_\delta\,|X|_\delta\,|Y|_\delta
+                              \leq81|X+Y|_\delta^3
+\]
+with the dyadic covering convention used in Lean. In particular,
+$|X-X|_\delta\leq81|X+X|_\delta^3/|X|_\delta^2$.
+\end{corollary}
+\begin{proof}
+\uses{lem:ruzsa-triangle,cor:ruzsa-self}
+\leanok
+Bound $|X-Y|_\delta|Y|_\delta$ by a constant times
+$|X+Y|_\delta|Y+Y|_\delta$, and then apply the self-sum inequality
+with $X$ as the auxiliary set.
+\end{proof}
+
+\begin{remark}[The denominator in Corollary 2.4]
+\label{rem:ruzsa-denominator}
+The manuscript prints $|Y|_\delta^2$ in the denominator for general
+$X,Y$. The checked two-set inequality has
+$|X|_\delta|Y|_\delta$. These expressions agree when $X=Y$, which
+is the symmetric form used in the ring argument. The displayed
+two-set statement above is the one proved by the linked declaration;
+no comparison of $|X|_\delta$ and $|Y|_\delta$ is silently assumed.
+\end{remark}
+
+\begin{proposition}[Balog--Szemer\'edi--Gowers; OSW25, Proposition 2.5]
+\label{prop:bsg}
+\lean{ProductLikeIncidence.DiscretizedBSG.discretized_bsg}
+Let $A,B\subset\R$ be bounded and $H\subset A\times B$. Suppose
+$K>1$,
+\[
+ |H|_\delta\geq K^{-1}|A|_\delta|B|_\delta,
+ \qquad
+ |\{a+b:(a,b)\in H\}|_\delta
+                   \leq K|A|_\delta^{1/2}|B|_\delta^{1/2}.
+\]
+There are subsets $A'\subset A$, $B'\subset B$ and an absolute
+constant $C$ such that
+\begin{align*}
+ |A'|_\delta&\gtrsim K^{-C}|A|_\delta,&
+ |B'|_\delta&\gtrsim K^{-C}|B|_\delta,\\
+ |A'+B'|_\delta&\lesssim K^C|A|_\delta^{1/2}|B|_\delta^{1/2},&
+ |H\cap(A'\times B')|_\delta&\gtrsim K^{-C}|A|_\delta|B|_\delta.
+\end{align*}
+\end{proposition}
+\begin{proof}
+Pass to the graph on occupied cells, apply the finite graph form of
+BSG, and return to the original cells. Retaining a large number of
+edges in the selected product is part of the conclusion and is
+needed by the subsequent incidence argument.
+\end{proof}
+
+\section{Energy and Frostman estimates}
+
+For a probability measure $\mu$ on $\R^d$, write
+$I_s(\mu)=\iint|x-y|^{-s}\,d\mu(x)\,d\mu(y)$. Its finite-scale
+version replaces $|x-y|$ by $\max(\delta,|x-y|)$.
+
+\begin{lemma}[Energy of a nonconcentrated set; OSW25, Lemma 2.6]
+\label{lem:frostman-energy}
+\lean{Kakeya.Assouad.frostman_energy_bound,WeakTwoEndsSumProduct.frostman_energy_finite_scale}
+For a discretised $(\delta,s,C)$-set $A$ and $0<t<s$, its normalized
+measure satisfies $I_t(\mu_A)\lesssim_{s,t}C$ in the bounded
+discretised setting. For atomic representatives the corresponding
+statement uses the finite-scale kernel. An all-scale Frostman
+measure satisfies the usual, untruncated energy estimate.
+\end{lemma}
+\begin{proof}
+Decompose the integral into dyadic annuli around each point. The
+contribution at radius $r$ is bounded by $Cr^{s-t}$, whose sum is
+finite. Below the discretization scale use the cell-volume bound,
+or truncate the kernel when the measure is atomic.
+\end{proof}
+
+\begin{lemma}[Energy to a large nonconcentrated subset; OSW25, Lemma 2.7]
+\label{lem:energy-frostman}
+\lean{robust_projection_main.energy_to_large_mass_delta_set}
+If $I_s(\mu)\leq K$ for a probability measure, then for $L\geq1$
+one can retain a subset of its support of measure at least
+$1-O_s(L^{-1})$ whose scale-$\delta$ representative set has a
+$(\delta,s/2,O_d(KL))$ nonconcentration bound.
+\end{lemma}
+\begin{proof}
+Discard points with excessive potential, using Markov's inequality.
+At every retained point the mass of a radius-$r$ ball is bounded by
+the potential times $r^s$. A second selection over the dyadic scales
+gives a uniform covering bound, with the exponent $s/2$ leaving room
+for the exceptional-scale summation.
+\end{proof}
+
+\begin{theorem}[Marstrand's energy estimate; OSW25, Theorem 2.8]
+\label{thm:marstrand-energy}
+\lean{ProductLikeIncidence.marstrand_projection_lower_bound,ProductLikeIncidence.marstrand_cone_lower_bound}
+Let $\mu$ be a compactly supported probability measure on $\R^d$,
+$d\geq2$, with $I_1(\mu)<\infty$, and let $A=\supp\mu$.
+The average length of its orthogonal projections satisfies
+\[
+       \int_{S^{d-1}}|\pi_\theta(A)|\,d\theta
+                                  \gtrsim_d I_1(\mu)^{-1}.
+\]
+A positive-measure cone of directions has a corresponding lower
+bound with a constant depending on the cone.
+\end{theorem}
+\begin{proof}
+Average the squared density of a smoothed projection over directions.
+The spherical integral is bounded by the $1$-energy of $\mu$.
+Cauchy--Schwarz then gives a lower bound for the size of the support
+of each projected measure, and a second Cauchy--Schwarz inequality
+gives the averaged bound. Pass to the limit in the smoothing scale.
+\end{proof}
+
+\begin{remark}[Direction of the Marstrand inequality]
+\label{rem:marstrand-sign}
+OSW25 Theorem 2.8 prints $\lesssim_d I_1(\mu)^{-1}$.
+The projection-length estimate needed in its expansion proof is a
+lower bound, $\gtrsim_d I_1(\mu)^{-1}$, as obtained from
+Cauchy--Schwarz and as proved by the linked Lean declarations.
+Probability normalization is also important: for a general finite
+measure the right-hand side includes the square of its total mass.
+\end{remark}
+
+\begin{theorem}[Kaufman's energy estimate; OSW25, Theorem 2.9]
+\label{thm:kaufman-energy}
+\lean{Kakeya.Assouad.projection_energy_total}
+Let $0<\kappa<\alpha\leq1$, and let $\nu$ be an
+$\alpha$-Frostman probability measure on $S^1$ with constant $C$.
+Then
+\[
+ \int I_\kappa(\pi_\theta\mu)\,d\nu(\theta)
+                         \lesssim_{\kappa,\alpha}C I_\kappa(\mu).
+\]
+The discretised implementation uses regularized energies and the
+corresponding finite directional count.
+\end{theorem}
+\begin{proof}
+Use Fubini to fix a pair $x,y$. Directions for which
+$|(x-y)\cdot\theta|$ is small lie near the two perpendicular
+directions. The Frostman bound for $\nu$ controls each angular
+annulus, and the resulting geometric series converges because
+$\kappa<\alpha$.
+\end{proof}
+
+\section{Expansion and the ring theorem}
+
+\begin{lemma}[A lattice translate; OSW25, Lemma 3.1]
+\label{lem:lattice-translate}
+\lean{ExpansionLemma.blichfeldt_n_dim}
+For measurable $V\subset\R^n$ and an invertible linear map $L$,
+some translate of $L\Z^n$ meets $V$ in at least
+$|\det L|^{-1}|V|$ points, in the counting-measure sense.
+\end{lemma}
+\begin{proof}
+Average the lattice count over a fundamental parallelepiped.
+The mean is the volume of $V$ divided by the covolume of the lattice.
+The formalized application uses a scalar lattice and a strict
+volume threshold to produce a specified finite number of distinct
+points.
+\end{proof}
+
+\begin{remark}[The lattice determinant]
+\label{rem:lattice-determinant}
+The manuscript writes $\det(L)^{-1}$ for an arbitrary invertible
+$L$. The geometric covolume is $|\det L|$. In the scalar-lattice
+application the determinant is positive, so this distinction does
+not change the proof.
+\end{remark}
+
+\begin{lemma}[Eliminating a coefficient; OSW25, Lemma 3.2]
+\label{lem:expansion-step}
+\lean{ExpansionLemma.expansion_lemma,ExpansionLemma.expansion_lemma_uniform}
+Let $A\subset\R$ be compact, $n\geq2$, and
+$v\in[1/2,1]^n$. If $|v_1A+\cdots+v_nA|>0$, there is an integer
+$N$, depending only on $n$, $\diam A$, and this positive measure,
+such that, after permuting the coordinates and writing
+$A_1=NA^{(2)}-NA^{(2)}$,
+\[
+       |v_1A_1+\cdots+v_{n-1}A_1|
+                    \geq\diam(A)|v_1A+\cdots+v_nA|.
+\]
+The choice of $N$ is uniform when these parameters range over a
+compact subset with the two real parameters positive.
+\end{lemma}
+\begin{proof}
+\uses{lem:lattice-translate}
+Place many separated translates of $A^n$ in a slab on which the
+projection $v\cdot x$ has bounded range. Two projected translates
+must overlap. The resulting integer relation permits one coefficient
+to be eliminated. The remaining terms belong to a bounded sum and
+difference of pairwise products of elements of $A$.
+\end{proof}
+
+\begin{theorem}[Expansion; OSW25, Theorem 1.1]
+\label{thm:expansion}
+\lean{WeakTwoEndsSumProduct.expansion_theorem_recursive}
+Let $0<\kappa<1$, $C>0$, and let $\mu$ be an all-scale
+$(\kappa,C)$-measure supported in $[-C,C]$, with $K=\supp\mu$.
+There is an integer $N=N(\kappa,C)$ such that
+\[
+                         |NK^{(N)}-NK^{(N)}|\gtrsim_{\kappa,C}1.
+\]
+Here $K^{(N)}$ is the set of products of $N$ elements of $K$,
+and $NA$ denotes an $N$-fold sumset.
+\end{theorem}
+\begin{proof}
+\uses{lem:frostman-energy,thm:marstrand-energy,lem:expansion-step}
+Choose $n$ with $n\kappa>1$. The product measure $\mu^{\otimes n}$
+has finite $1$-energy, so a weighted sum $v_1K+\cdots+v_nK$ has
+positive measure for a direction in a fixed positive cone. Eliminate
+the coefficients one at a time. The uniform form of the elimination
+lemma keeps all integer parameters and all positive volume bounds
+dependent only on $\kappa,C$.
+\end{proof}
+
+\begin{proposition}[Strong ring theorem; OSW25, Proposition 4.1, normalized form]
+\label{prop:strong-ring}
+\lean{WeakTwoEndsSumProduct.strong_ring_theorem_corrected}
+\leanok
+Let $0<\kappa\leq s<1$. There are $c,\eps>0$ such that, for a
+fixed admissible Frostman constant and sufficiently small dyadic
+$\delta$, the following holds. Let $A\subset[1,2]$ be a
+discretised $(\delta,\kappa,\delta^{-\eps})$-set with
+$|A|\leq\delta^{1-s}$ and $|A|_\delta\leq\delta^{-s}$.
+Let $\mu$ be an all-scale $\kappa$-Frostman probability measure
+supported in $[0,1]$, with constant at most $2^\kappa$.
+For $\delta^c\leq t\leq1$, some $x\in\supp\mu$ satisfies
+\[
+             |t^{-1}A+xA|_\delta
+                         \geq\delta^{-c}|t^{-1}A|_\delta.
+\]
+\end{proposition}
+\begin{proof}
+\uses{thm:expansion,thm:marstrand-energy,prop:pluennecke,
+  lem:ruzsa-triangle,cor:sum-difference}
+\leanok
+Normalize the coefficient measure away from zero and use the
+expansion theorem on its support. Marstrand's estimate gives a large
+weighted sumset. If all the required two-term sums were small,
+repeated applications of Pl\"unnecke--Ruzsa and the triangle
+inequality would force that weighted sumset to be small as well.
+Choosing the expansion and loss parameters in this order yields
+a fixed positive gain $c$.
+\end{proof}
+
+\begin{remark}[The normalized strong ring theorem]
+\label{rem:strong-ring}
+The paper allows all $t>\delta^c$ and writes a volume inequality.
+The linked theorem is the $t\leq1$ covering-number form, with
+dyadic discretization and a specified interval for $A$. This is the
+range needed when $t$ is the length of a maximal-density interval.
+Its measure hypothesis is all-scale Frostman, not merely a bound
+for radii above $\delta$: the expansion theorem cannot be applied
+to an arbitrary atomic measure satisfying only a finite-scale bound.
+The proof keeps the cell-volume and covering-number bounds separate
+until their conversion is justified.
+\end{remark}
+
+\begin{theorem}[Ring theorem; OSW25, Theorem 1.2]
+\label{thm:weak-ring}
+\lean{WeakTwoEndsSumProduct.weak_two_ends_sum_product}
+For $0<\kappa\leq s<1$, there are positive $c,\eps,\delta_0$
+such that a discretised $(\delta,\kappa,\delta^{-\eps})$-set $A$
+with $|A|\leq\delta^{1-s}$, and a
+$(\kappa,\delta^{-\eps})$-measure $\mu$ on $[0,1]$, have
+\[
+                    |A+xA|\geq\delta^{-c}|A|
+\]
+for some $x\in\supp\mu$, whenever $0<\delta\leq\delta_0$.
+The formalized statement uses a bounded dyadic model and covering
+numbers, with fixed multiplicative constants absorbed by the loss.
+\end{theorem}
+\begin{proof}
+\uses{prop:strong-ring}
+Choose a maximal-density interval and rescale its restriction so
+that the Frostman constant is bounded. Its length is the parameter
+$t$ in the normalized strong theorem. Apply that theorem and undo
+the rescaling, keeping the mass lost in the restriction within the
+prescribed error.
+\end{proof}
+
+\section{From sumsets to projections}
+
+\begin{lemma}[Projection of a product graph; OSW25, Lemma 5.1]
+\label{lem:product-projection}
+\lean{WeakTwoEndsSumProduct.discretized_lemma51}
+\leanok
+For bounded $A,B\subset\R$, a bounded $H\subset A\times B$, and
+$|x|\leq1$, let $\pi_x(a,b)=a+xb$. In the dyadic covering model,
+\[
+ |A+xA|_\delta|H|_\delta
+       \leq16|A-A|_\delta|B-A|_\delta|\pi_x(H)|_\delta.
+\]
+\end{lemma}
+\begin{proof}
+\leanok
+Count the possible representations of points of the graph using
+the two difference sets and the projected value. Discretization
+introduces only boundedly many neighbouring cell indices because
+$|x|\leq1$. The continuous paper version is written with Lebesgue
+measures and a general real $x$; the bounded-slope form is the one
+used by the formalized application.
+\end{proof}
+
+\begin{proposition}[A robust large-projection subset; OSW25, Proposition 5.2]
+\label{prop:bourgain-subset}
+Let $0<\alpha<2$ and $\beta,\kappa>0$. There are a universal
+$C\geq1$ and $\eta>10\eps>0$, depending on these exponents,
+with the following property at sufficiently small $\delta$.
+Let $\nu$ be a $(\kappa,\delta^{-\eps})$-measure on $S^1$,
+and let $E\subset B(0,\delta^{-\eps})\subset\R^2$ be a
+$(\delta,\beta,\delta^{-\eps})$-set with
+$|E|\leq\delta^{2-\alpha}$. There are
+$\Theta\subset\supp\nu$ with $\nu(\Theta)>1-\delta^\eps$,
+and a discretised $F\subset E$ with $|F|>\delta^{C\eta}|E|$,
+such that
+\[
+       |\pi_\theta(G)|>\delta^{-\eta}|E|^{1/2}
+\]
+for every $\theta\in\Theta$ and every discretised $G\subset F$
+with $|G|>\delta^\eps|F|$.
+\end{proposition}
+\begin{proof}
+\uses{prop:bsg,thm:weak-ring,lem:product-projection}
+If many projections were small, BSG would reveal a substantial
+product-like portion with small additive growth. The product graph
+inequality transfers that smallness to a family of sumsets. The ring
+theorem supplies a coefficient for which such small growth is
+impossible.
+\end{proof}
+
+\begin{theorem}[Discretised projection theorem; OSW25, Theorem 1.3]
+\label{thm:bourgain-projection}
+Under the exponent, set, and measure hypotheses of
+Proposition~\ref{prop:bourgain-subset}, there are $\eta,\eps>0$
+and a set $\Theta\subset\supp\nu$, with
+$\nu(\Theta)>1-\delta^\eps$, such that
+\[
+       |\pi_\theta(G)|_\delta>
+                     \delta^{-\eta}|E|_\delta^{1/2}
+\]
+for every $\theta\in\Theta$ and every $G\subset E$ with
+$|G|>\delta^\eps|E|$.
+\end{theorem}
+\begin{proof}
+\uses{prop:bourgain-subset}
+Apply the robust-subset proposition repeatedly to what remains of
+$E$. Stop when the remainder has small measure. After shrinking
+the loss exponents, the union of the exceptional direction sets
+still has measure at most $\delta^\eps$, and every sufficiently
+large $G$ meets one of the selected subsets in the required proportion.
+\end{proof}

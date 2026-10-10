@@ -1,0 +1,1877 @@
+{
+  "format": 1,
+  "toolchain": "leanprover/lean4:v4.32.0-rc1",
+  "source_sha256": "7d0731b39cd774166a5bc8ad7e3deae17c1ab83bbb2828d4b944c4daa6d26e8d",
+  "declarations": [
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 102,
+      "module": "MyLeanRepo.DiscretisedFurstenbergEstimate.FinalProof",
+      "name": "DirecretisedFurstenbergEstimate.FinalProof.multiscale_decomposition_main",
+      "file": "MyLeanRepo/DiscretisedFurstenbergEstimate/FinalProof.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 35,
+      "module": "MyLeanRepo.DiscretisedFurstenbergEstimate.RegularIncidence.Definitions",
+      "name": "DirecretisedFurstenbergEstimate.RegularIncidence.IsSquareRootRegular",
+      "file": "MyLeanRepo/DiscretisedFurstenbergEstimate/RegularIncidence/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 23,
+      "module": "MyLeanRepo.DiscretisedFurstenbergEstimate.Contracts.Theorem61",
+      "name": "DirecretisedFurstenbergEstimate.theorem6_1_main",
+      "file": "MyLeanRepo/DiscretisedFurstenbergEstimate/Contracts/Theorem61.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 1054,
+      "module": "MyLeanRepo.DiscretisedFurstenbergEstimate.BasicUniformization",
+      "name": "DiscretisedFurstenbergEstimate.BasicUniformization.basic_uniformization_dyadic",
+      "file": "MyLeanRepo/DiscretisedFurstenbergEstimate/BasicUniformization.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 14,
+      "module": "MyLeanRepo.DiscretisedFurstenbergEstimate.Contracts.Prop73",
+      "name": "DiscretisedFurstenbergEstimate.CombiningTheoremRework.prop73_main",
+      "file": "MyLeanRepo/DiscretisedFurstenbergEstimate/Contracts/Prop73.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 141,
+      "module": "MyLeanRepo.ExpansionLemma",
+      "name": "ExpansionLemma.blichfeldt_n_dim",
+      "file": "MyLeanRepo/ExpansionLemma.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 808,
+      "module": "MyLeanRepo.ExpansionLemma",
+      "name": "ExpansionLemma.expansion_lemma",
+      "file": "MyLeanRepo/ExpansionLemma.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 320,
+      "module": "MyLeanRepo.UniformExpansionLemma",
+      "name": "ExpansionLemma.expansion_lemma_uniform",
+      "file": "MyLeanRepo/UniformExpansionLemma.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 34,
+      "module": "MyLeanRepo.RadialBootstrapping.HasMeasureThinTubes",
+      "name": "HasMeasureThinTubes",
+      "file": "MyLeanRepo/RadialBootstrapping/HasMeasureThinTubes.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 116,
+      "module": "MyLeanRepo.DiscretisedFurstenbergEstimate.Base",
+      "name": "IsDeltaSSet",
+      "file": "MyLeanRepo/DiscretisedFurstenbergEstimate/Base.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 54,
+      "module": "MyLeanRepo.Kakeya.Assouad.Definitions",
+      "name": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+      "file": "MyLeanRepo/Kakeya/Assouad/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 63,
+      "module": "MyLeanRepo.Kakeya.Assouad.Definitions",
+      "name": "Kakeya.Assouad.DiscreteSet.IsKatzTao",
+      "file": "MyLeanRepo/Kakeya/Assouad/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 48,
+      "module": "MyLeanRepo.Kakeya.Assouad.Statements",
+      "name": "Kakeya.Assouad.FrostmanToKatzTaoStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 373,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.DiscreteThinTubes",
+      "name": "Kakeya.Assouad.HasDiscreteThinTubes",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/DiscreteThinTubes.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 242,
+      "module": "MyLeanRepo.Kakeya.Assouad.Definitions",
+      "name": "Kakeya.Assouad.IsADSet1",
+      "file": "MyLeanRepo/Kakeya/Assouad/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 592,
+      "module": "MyLeanRepo.Kakeya.Assouad.Statements",
+      "name": "Kakeya.Assouad.LargeSlopeTechnicalStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 83,
+      "module": "MyLeanRepo.Kakeya.Assouad.TwistedProjectionScale.ParameterBlockAmplificationStatement",
+      "name": "Kakeya.Assouad.ParameterBlockAmplificationStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/TwistedProjectionScale/ParameterBlockAmplificationStatement.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 45,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Core",
+      "name": "Kakeya.Assouad.PureWZ2Admissible",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Core.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "inductive",
+      "line": 76,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.PropSticky",
+      "name": "Kakeya.Assouad.PureWZ2BalancedCoverData",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/PropSticky.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 558,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
+      "name": "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Grains.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 303,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
+      "name": "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Grains.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 81,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.LargeSlope",
+      "name": "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 30,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
+      "name": "Kakeya.Assouad.PureWZ2PaperADSet1",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Grains.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 652,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.PropStickyReentry",
+      "name": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/PropStickyReentry.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "inductive",
+      "line": 30,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.TwistedProjection",
+      "name": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/TwistedProjection.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 24,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Core",
+      "name": "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Core.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 29,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Theorem5_2Unconditional",
+      "name": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Theorem5_2Unconditional.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 66,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Core",
+      "name": "Kakeya.Assouad.PureWZ2WolffVolumeFloor",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Core.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 29,
+      "module": "MyLeanRepo.Kakeya.Assouad.Statements",
+      "name": "Kakeya.Assouad.ScaleProfileCrossingStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 390,
+      "module": "MyLeanRepo.Kakeya.Assouad.Definitions",
+      "name": "Kakeya.Assouad.TubeWolffBound",
+      "file": "MyLeanRepo/Kakeya/Assouad/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 2562,
+      "module": "MyLeanRepo.Kakeya.Assouad.Statements",
+      "name": "Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 1267,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+      "name": "Kakeya.Assouad.WZ1C2GrainPackageStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 1017,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+      "name": "Kakeya.Assouad.WZ1CoarsePlaneMapConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 982,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+      "name": "Kakeya.Assouad.WZ1EveryScaleLocalGrainConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 704,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+      "name": "Kakeya.Assouad.WZ1ExtremalOneScalePlaneMapConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 753,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+      "name": "Kakeya.Assouad.WZ1FinitePlaneMapIterationConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 56,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremFirstLayerStatements",
+      "name": "Kakeya.Assouad.WZ1HypergraphRefinementStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/ProjectionTheoremFirstLayerStatements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 811,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+      "name": "Kakeya.Assouad.WZ1LipschitzPlaneMapConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 865,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+      "name": "Kakeya.Assouad.WZ1LocalGrainCubeCountConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 905,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+      "name": "Kakeya.Assouad.WZ1LocalGrainIntervalConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 944,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+      "name": "Kakeya.Assouad.WZ1LocalGrainOneScaleConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "inductive",
+      "line": 1787,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Definitions",
+      "name": "Kakeya.Assouad.WZ1LocallyLinearHierarchyData",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 23,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Corollary26Statements",
+      "name": "Kakeya.Assouad.WZ1LocallyLinearOneScaleConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Corollary26Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "inductive",
+      "line": 1724,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Definitions",
+      "name": "Kakeya.Assouad.WZ1LocallyLinearOneScaleData",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "inductive",
+      "line": 2072,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Definitions",
+      "name": "Kakeya.Assouad.WZ1MultiscaleSlopeCorrectionData",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "inductive",
+      "line": 1923,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Definitions",
+      "name": "Kakeya.Assouad.WZ1NestedSlopeCorrectionData",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "inductive",
+      "line": 557,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Definitions",
+      "name": "Kakeya.Assouad.WZ1PlaneMapData",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 106,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.MainChainStatements",
+      "name": "Kakeya.Assouad.WZ1PlaninessGraininessConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/MainChainStatements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 1105,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+      "name": "Kakeya.Assouad.WZ1ProjectionDichotomyConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 172,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremFirstLayerStatements",
+      "name": "Kakeya.Assouad.WZ1QuarterThinTubesStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/ProjectionTheoremFirstLayerStatements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 464,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+      "name": "Kakeya.Assouad.WZ1RobustCloseCountFromBalancedConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 1179,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+      "name": "Kakeya.Assouad.WZ1SmoothSegmentExtensionStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 25,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.SmoothedToDiscreteThinTubesStatement",
+      "name": "Kakeya.Assouad.WZ1SmoothedToDiscreteThinTubesStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/SmoothedToDiscreteThinTubesStatement.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 111,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremFirstLayerStatements",
+      "name": "Kakeya.Assouad.WZ1StandardSeparation",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/ProjectionTheoremFirstLayerStatements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 77,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremLocalizationStatements",
+      "name": "Kakeya.Assouad.WZ1StripLocalizationDichotomyStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/ProjectionTheoremLocalizationStatements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 128,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremFirstLayerStatements",
+      "name": "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/ProjectionTheoremFirstLayerStatements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 616,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+      "name": "Kakeya.Assouad.WZ1TwoScalePlaneMapConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 40,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremFirstLayerStatements",
+      "name": "Kakeya.Assouad.WZ1UniformHypergraphDensity",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/ProjectionTheoremFirstLayerStatements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "inductive",
+      "line": 1675,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Definitions",
+      "name": "Kakeya.Assouad.WZ1VerticalTrapezoid",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 80,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+      "name": "Kakeya.Assouad.WZ1WeakPlaninessAssemblyConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 85,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremFinalStatements",
+      "name": "Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/ProjectionTheoremFinalStatements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "inductive",
+      "line": 563,
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
+      "name": "Kakeya.Assouad.WZ2PaperAssouadUnitRescalingData",
+      "file": "MyLeanRepo/Kakeya/Assouad/PropStickyDefinition2_12.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 617,
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
+      "name": "Kakeya.Assouad.WZ2PaperBodyConvexWolffBound",
+      "file": "MyLeanRepo/Kakeya/Assouad/PropStickyDefinition2_12.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 286,
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
+      "name": "Kakeya.Assouad.WZ2PaperOrdinaryIsEssentiallyDistinct",
+      "file": "MyLeanRepo/Kakeya/Assouad/PropStickyDefinition2_12.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 703,
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
+      "name": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+      "file": "MyLeanRepo/Kakeya/Assouad/PropStickyDefinition2_12.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 300,
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
+      "name": "Kakeya.Assouad.WZ2PaperPureFullFibersAreCUniform",
+      "file": "MyLeanRepo/Kakeya/Assouad/PropStickyDefinition2_12.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "inductive",
+      "line": 41,
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12Extremal",
+      "name": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+      "file": "MyLeanRepo/Kakeya/Assouad/PropStickyDefinition2_12Extremal.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "inductive",
+      "line": 337,
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
+      "name": "Kakeya.Assouad.WZ2PaperPurePartitioningCover",
+      "file": "MyLeanRepo/Kakeya/Assouad/PropStickyDefinition2_12.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 160,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.FrostmanEnergy",
+      "name": "Kakeya.Assouad.frostman_energy_bound",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/FrostmanEnergy.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 864,
+      "module": "MyLeanRepo.Kakeya.Assouad.TwistedProjectionScale.FrostmanToKatzTao",
+      "name": "Kakeya.Assouad.frostman_to_katz_tao",
+      "file": "MyLeanRepo/Kakeya/Assouad/TwistedProjectionScale/FrostmanToKatzTao.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 13,
+      "module": "MyLeanRepo.Kakeya.Assouad.Targets.ParameterBlockAmplification",
+      "name": "Kakeya.Assouad.parameter_block_amplification",
+      "file": "MyLeanRepo/Kakeya/Assouad/Targets/ParameterBlockAmplification.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 27,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.KaufmanProjection",
+      "name": "Kakeya.Assouad.projection_energy_total",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/KaufmanProjection.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 609,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.DirectWolffFloor",
+      "name": "Kakeya.Assouad.pure_wz2_direct_wolff_floor",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/DirectWolffFloor.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 342,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains.MultiScaleLocalAD",
+      "name": "Kakeya.Assouad.pure_wz2_every_scale_local_grain",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Grains/MultiScaleLocalAD.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 19,
+      "module": "MyLeanRepo.Kakeya.Assouad.Targets.PureWZ2Node02CriticalExtraction",
+      "name": "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
+      "file": "MyLeanRepo/Kakeya/Assouad/Targets/PureWZ2Node02CriticalExtraction.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 16,
+      "module": "MyLeanRepo.Kakeya.Assouad.Targets.PureWZ2Node03PropSticky",
+      "name": "Kakeya.Assouad.pure_wz2_node03_prop_sticky",
+      "file": "MyLeanRepo/Kakeya/Assouad/Targets/PureWZ2Node03PropSticky.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 27,
+      "module": "MyLeanRepo.Kakeya.Assouad.Targets.PureWZ2Node04Grains",
+      "name": "Kakeya.Assouad.pure_wz2_node04_grains",
+      "file": "MyLeanRepo/Kakeya/Assouad/Targets/PureWZ2Node04Grains.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 98,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.C2.Node05V4RichFinalAssembly",
+      "name": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/C2/Node05V4RichFinalAssembly.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 13,
+      "module": "MyLeanRepo.Kakeya.Assouad.Targets.PureWZ2Node06LargeSlope",
+      "name": "Kakeya.Assouad.pure_wz2_node06_large_slope",
+      "file": "MyLeanRepo/Kakeya/Assouad/Targets/PureWZ2Node06LargeSlope.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 13,
+      "module": "MyLeanRepo.Kakeya.Assouad.Targets.PureWZ2Node07SmallTwistedProjection",
+      "name": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+      "file": "MyLeanRepo/Kakeya/Assouad/Targets/PureWZ2Node07SmallTwistedProjection.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 34,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.ParameterFrostmanLowerBound",
+      "name": "Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/ParameterFrostmanLowerBound.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 7,
+      "module": "MyLeanRepo.Kakeya.Assouad.Targets.ScaleProfileCrossing",
+      "name": "Kakeya.Assouad.scale_profile_crossing",
+      "file": "MyLeanRepo/Kakeya/Assouad/Targets/ScaleProfileCrossing.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 168,
+      "module": "MyLeanRepo.Kakeya.Assouad.Definitions",
+      "name": "Kakeya.Assouad.twistedCurve",
+      "file": "MyLeanRepo/Kakeya/Assouad/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 103,
+      "module": "MyLeanRepo.Kakeya.Assouad.Definitions",
+      "name": "Kakeya.Assouad.twistedProjection",
+      "file": "MyLeanRepo/Kakeya/Assouad/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 17,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.TwoEndsReduction",
+      "name": "Kakeya.Assouad.two_ends_reduction",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/TwoEndsReduction.lean"
+    },
+    {
+      "axioms": [
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 20,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremFirstLayerStatements",
+      "name": "Kakeya.Assouad.wz1HypergraphFiber",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/ProjectionTheoremFirstLayerStatements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 24,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.AnisotropicFrostmanRescaling",
+      "name": "Kakeya.Assouad.wz1_anisotropic_frostman_rescaling",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/AnisotropicFrostmanRescaling.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 78,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.FrostmanCoarsening",
+      "name": "Kakeya.Assouad.wz1_frostman_coarsening",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/FrostmanCoarsening.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 231,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.HypergraphRefinement",
+      "name": "Kakeya.Assouad.wz1_hypergraph_refinement",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/HypergraphRefinement.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 796,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.LineNonconcentrationProjection",
+      "name": "Kakeya.Assouad.wz1_line_nonconcentration_projection",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/LineNonconcentrationProjection.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 12,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.QuarterThinTubes",
+      "name": "Kakeya.Assouad.wz1_quarter_thin_tubes",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/QuarterThinTubes.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 305,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.SmoothSegmentExtension",
+      "name": "Kakeya.Assouad.wz1_smooth_segment_extension",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/SmoothSegmentExtension.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 1796,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.ThinTubesLargeDotProduct",
+      "name": "Kakeya.Assouad.wz1_thin_tubes_large_dot_product",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/ThinTubesLargeDotProduct.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 45,
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.WellSeparatedProjectionUnion",
+      "name": "Kakeya.Assouad.wz1_well_separated_projection_union",
+      "file": "MyLeanRepo/Kakeya/Assouad/WZ1/WellSeparatedProjectionUnion.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 163,
+      "module": "MyLeanRepo.Kakeya.CV.MultilinearKakeya",
+      "name": "Kakeya.CV.MultilinearKakeyaThreeStatement",
+      "file": "MyLeanRepo/Kakeya/CV/MultilinearKakeya.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 666,
+      "module": "MyLeanRepo.Kakeya.CV.Statements",
+      "name": "Kakeya.CV.PolynomialVisibilityStatement",
+      "file": "MyLeanRepo/Kakeya/CV/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 28,
+      "module": "MyLeanRepo.Kakeya.CV.Targets.EllipsoidSelectionStability",
+      "name": "Kakeya.CV.ellipsoid_selection_stability",
+      "file": "MyLeanRepo/Kakeya/CV/Targets/EllipsoidSelectionStability.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 92,
+      "module": "MyLeanRepo.Kakeya.CV.Targets.PreliminaryReduction",
+      "name": "Kakeya.CV.multilinear_kakeya_preliminary_reduction",
+      "file": "MyLeanRepo/Kakeya/CV/Targets/PreliminaryReduction.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 14,
+      "module": "MyLeanRepo.Kakeya.CV.MultilinearKakeya.Complete",
+      "name": "Kakeya.CV.multilinear_kakeya_three",
+      "file": "MyLeanRepo/Kakeya/CV/MultilinearKakeya/Complete.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 14,
+      "module": "MyLeanRepo.Kakeya.CV.PolynomialBadSetCover",
+      "name": "Kakeya.CV.polynomial_bad_set_cover",
+      "file": "MyLeanRepo/Kakeya/CV/PolynomialBadSetCover.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 12,
+      "module": "MyLeanRepo.Kakeya.CV.Targets.PolynomialCylinderEstimate",
+      "name": "Kakeya.CV.polynomial_cylinder_estimate",
+      "file": "MyLeanRepo/Kakeya/CV/Targets/PolynomialCylinderEstimate.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 41,
+      "module": "MyLeanRepo.Kakeya.CV.PolynomialVisibilityComplete",
+      "name": "Kakeya.CV.polynomial_visibility_complete",
+      "file": "MyLeanRepo/Kakeya/CV/PolynomialVisibilityComplete.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 38,
+      "module": "MyLeanRepo.Kakeya.CV.StableEllipsoidColouring",
+      "name": "Kakeya.CV.stable_finite_colour_ellipsoid_net",
+      "file": "MyLeanRepo/Kakeya/CV/StableEllipsoidColouring.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 17,
+      "module": "MyLeanRepo.Kakeya.CV.Targets.VisibilityDegreeBound",
+      "name": "Kakeya.CV.visibility_degree_bound",
+      "file": "MyLeanRepo/Kakeya/CV/Targets/VisibilityDegreeBound.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 315,
+      "module": "MyLeanRepo.Kakeya.CV.Targets.VisibilityDirectionalBound",
+      "name": "Kakeya.CV.visibility_directional_surface_bound",
+      "file": "MyLeanRepo/Kakeya/CV/Targets/VisibilityDirectionalBound.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 154,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Statements",
+      "name": "Kakeya.Cinematic.BipartiteTangencyStatement",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 96,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Statements",
+      "name": "Kakeya.Cinematic.CommonTangentRectangleRobustStatement",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 209,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Statements",
+      "name": "Kakeya.Cinematic.ComparabilityTransitivityStatement",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 114,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Statements",
+      "name": "Kakeya.Cinematic.ComparableRectanglesStatement",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "inductive",
+      "line": 182,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Geometry",
+      "name": "Kakeya.Cinematic.CurvilinearRectangle",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Geometry.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 220,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Geometry",
+      "name": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Geometry.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 208,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Geometry",
+      "name": "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Geometry.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 759,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Statements",
+      "name": "Kakeya.Cinematic.FineRectangleAssignmentStatement",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 667,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Statements",
+      "name": "Kakeya.Cinematic.GoodPairCountingStatement",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 198,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Definitions",
+      "name": "Kakeya.Cinematic.IsCinematicFamily",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 295,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Definitions",
+      "name": "Kakeya.Cinematic.IsDeltaSet",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 308,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Definitions",
+      "name": "Kakeya.Cinematic.IsQuasiProduct",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Definitions.lean"
+    },
+    {
+      "axioms": [
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 683,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Statements",
+      "name": "Kakeya.Cinematic.PairIncidenceCountingStatement",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 18,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Statements",
+      "name": "Kakeya.Cinematic.PreliminaryDichotomyStatement",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 134,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Statements",
+      "name": "Kakeya.Cinematic.RectanglePackingStatement",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 55,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Statements",
+      "name": "Kakeya.Cinematic.TangencySublevelDiameterStatement",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 823,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Statements",
+      "name": "Kakeya.Cinematic.Theorem1_7UniformC2Statement",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 622,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Statements",
+      "name": "Kakeya.Cinematic.TwoEndsSelectionStatement",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Statements.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 26,
+      "module": "MyLeanRepo.Kakeya.Cinematic.WZ2UniformC2Input",
+      "name": "Kakeya.Cinematic.WZ2UniformC2Input",
+      "file": "MyLeanRepo/Kakeya/Cinematic/WZ2UniformC2Input.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 37,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Targets.BipartiteTangencyRobustFull",
+      "name": "Kakeya.Cinematic.bipartite_tangency_robust_full",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Targets/BipartiteTangencyRobustFull.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 31,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Targets.TwoZeros",
+      "name": "Kakeya.Cinematic.cinematic_difference_has_at_most_two_zeros",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Targets/TwoZeros.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 29,
+      "module": "MyLeanRepo.Kakeya.Cinematic.BipartiteTangencyReduction.PerPair",
+      "name": "Kakeya.Cinematic.common_tangent_overlap_comparable",
+      "file": "MyLeanRepo/Kakeya/Cinematic/BipartiteTangencyReduction/PerPair.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 482,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Targets.CommonTangentRectangleRobust",
+      "name": "Kakeya.Cinematic.common_tangent_rectangle_robust",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Targets/CommonTangentRectangleRobust.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 775,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Targets.ComparableRectangles",
+      "name": "Kakeya.Cinematic.comparable_rectangles_have_close_graphs",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Targets/ComparableRectangles.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 12,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Targets.MarcusTardosGraphLenses",
+      "name": "Kakeya.Cinematic.graph_lens_bound_from_sequences",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Targets/MarcusTardosGraphLenses.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 1083,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Targets.RectanglePacking",
+      "name": "Kakeya.Cinematic.incomparable_rectangles_packing_bound",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Targets/RectanglePacking.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 9,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Targets.MaximalFineRectangleSelection",
+      "name": "Kakeya.Cinematic.maximal_fine_rectangle_selection",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Targets/MaximalFineRectangleSelection.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 162,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Geometry",
+      "name": "Kakeya.Cinematic.tangencyParameterOn",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Geometry.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 13,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Targets.TangencySublevelDiameter",
+      "name": "Kakeya.Cinematic.tangency_sublevel_diameter",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Targets/TangencySublevelDiameter.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 152,
+      "module": "MyLeanRepo.Kakeya.Cinematic.Section5.UniformC2ConcreteAssembly",
+      "name": "Kakeya.Cinematic.wz2_uniformC2_input",
+      "file": "MyLeanRepo/Kakeya/Cinematic/Section5/UniformC2ConcreteAssembly.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "inductive",
+      "line": 44,
+      "module": "MyLeanRepo.Kakeya.AssertionD",
+      "name": "Kakeya.DeltaTube",
+      "file": "MyLeanRepo/Kakeya/AssertionD.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "inductive",
+      "line": 101,
+      "module": "MyLeanRepo.Kakeya.Streamlined.Families",
+      "name": "Kakeya.Streamlined.Shading",
+      "file": "MyLeanRepo/Kakeya/Streamlined/Families.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
+      "line": 117,
+      "module": "MyLeanRepo.Kakeya.Streamlined.Families",
+      "name": "Kakeya.Streamlined.Shading.IsLambdaDense",
+      "file": "MyLeanRepo/Kakeya/Streamlined/Families.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 403,
+      "module": "MyLeanRepo.DiscretizedBSG",
+      "name": "ProductLikeIncidence.DiscretizedBSG.discretized_bsg",
+      "file": "MyLeanRepo/DiscretizedBSG.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 25,
+      "module": "MyLeanRepo.OSW.RuzsaCorollaries",
+      "name": "ProductLikeIncidence.OSW.corollary2_3",
+      "file": "MyLeanRepo/OSW/RuzsaCorollaries.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 35,
+      "module": "MyLeanRepo.OSW.RuzsaCorollaries",
+      "name": "ProductLikeIncidence.OSW.corollary2_4",
+      "file": "MyLeanRepo/OSW/RuzsaCorollaries.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 92,
+      "module": "MyLeanRepo.OSW.RuzsaCorollaries",
+      "name": "ProductLikeIncidence.OSW.corollary2_4_same",
+      "file": "MyLeanRepo/OSW/RuzsaCorollaries.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 431,
+      "module": "MyLeanRepo.DiscretizedPluenneckeFull",
+      "name": "ProductLikeIncidence.discretized_pluennecke_nfold_sum",
+      "file": "MyLeanRepo/DiscretizedPluenneckeFull.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 317,
+      "module": "MyLeanRepo.DiscretizedPluennecke",
+      "name": "ProductLikeIncidence.discretized_pluennecke_ruzsa_diff",
+      "file": "MyLeanRepo/DiscretizedPluennecke.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 38,
+      "module": "MyLeanRepo.RuzsaTriangle",
+      "name": "ProductLikeIncidence.discretized_ruzsa_triangle",
+      "file": "MyLeanRepo/RuzsaTriangle.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 1245,
+      "module": "MyLeanRepo.MarstrandArbitraryDim",
+      "name": "ProductLikeIncidence.marstrand_cone_lower_bound",
+      "file": "MyLeanRepo/MarstrandArbitraryDim.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 538,
+      "module": "MyLeanRepo.MarstrandArbitraryDim",
+      "name": "ProductLikeIncidence.marstrand_projection_lower_bound",
+      "file": "MyLeanRepo/MarstrandArbitraryDim.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 50,
+      "module": "MyLeanRepo.Lemma51Corollary",
+      "name": "WeakTwoEndsSumProduct.discretized_lemma51",
+      "file": "MyLeanRepo/Lemma51Corollary.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 77,
+      "module": "MyLeanRepo.ExpansionTheoremRecursive",
+      "name": "WeakTwoEndsSumProduct.expansion_theorem_recursive",
+      "file": "MyLeanRepo/ExpansionTheoremRecursive.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 172,
+      "module": "MyLeanRepo.SupportFreeFrostman",
+      "name": "WeakTwoEndsSumProduct.frostman_energy_finite_scale",
+      "file": "MyLeanRepo/SupportFreeFrostman.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 980,
+      "module": "MyLeanRepo.StrongRingTheoremCorrected",
+      "name": "WeakTwoEndsSumProduct.strong_ring_theorem_corrected",
+      "file": "MyLeanRepo/StrongRingTheoremCorrected.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 698,
+      "module": "MyLeanRepo.WeakTwoEndsSumProduct",
+      "name": "WeakTwoEndsSumProduct.weak_two_ends_sum_product",
+      "file": "MyLeanRepo/WeakTwoEndsSumProduct.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 28,
+      "module": "MyLeanRepo.discretised_furstenberg_estimate",
+      "name": "discretised_furstenberg_estimate",
+      "file": "MyLeanRepo/discretised_furstenberg_estimate.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 4264,
+      "module": "MyLeanRepo.DiscretisedFurstenbergEstimate.QuantitativeThickTubeCover",
+      "name": "quantitative_thick_tube_cover_main",
+      "file": "MyLeanRepo/DiscretisedFurstenbergEstimate/QuantitativeThickTubeCover.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 30,
+      "module": "MyLeanRepo.radial_bootstrapping_measure_thin_tubes",
+      "name": "radial_bootstrapping_measure_thin_tubes",
+      "file": "MyLeanRepo/radial_bootstrapping_measure_thin_tubes.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 947,
+      "module": "MyLeanRepo.Energy.EnergyToLargeMassDeltaSet",
+      "name": "robust_projection_main.energy_to_large_mass_delta_set",
+      "file": "MyLeanRepo/Energy/EnergyToLargeMassDeltaSet.lean"
+    }
+  ]
+}
