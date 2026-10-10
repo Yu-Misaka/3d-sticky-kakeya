@@ -16,19 +16,93 @@ sudo apt-get install -y --no-install-recommends \
   latexmk ghostscript dvisvgm poppler-utils graphviz libgraphviz-dev
 ```
 
-From the repository root, using Python 3.12:
+Install [Elan](https://github.com/leanprover/elan) so that `lake` uses the
+version pinned in `lean-toolchain`. From the repository root, using Python 3.12:
 
 ```sh
 python3 -m venv .venv-blueprint
 source .venv-blueprint/bin/activate
 python -m pip install -r blueprint/requirements.txt
+lake exe cache get
 python blueprint/scripts/build.py
 python -m http.server 8000 --directory blueprint/site
 ```
 
-Open <http://localhost:8000>. The complete site contains the HTML manuscript, interactive dependency graph, PDF, and source declaration index. MathJax loads from a CDN. The PDF is also available directly at `blueprint/print/print.pdf`.
+Open <http://localhost:8000>. The complete site contains the HTML manuscript,
+interactive dependency graph, PDF, and standard **doc-gen4 Lean documentation**
+under `/lean/`. Declaration links open their rendered Lean types and docstrings;
+doc-gen4 provides module navigation, declaration search, and source buttons.
+MathJax loads from a CDN. The PDF is also available directly at
+`blueprint/print/print.pdf`.
 
-The build runs `leanblueprint pdf` before `leanblueprint web`, so that both editions use the same bibliography. It checks labels, citations, graph dependencies, the audited source references, PDF margins, and the site's local links. Build logs and a statement inventory are kept under `blueprint/build/`. Generated output is ignored by Git.
+The documentation entry page includes the full Lean statement of the sticky
+theorem, checked against `PureWZ2/Core.lean`. Doc-gen4 omits long automatically
+generated equations; the source buttons provide the full bodies of other
+proposition-valued definitions when their Equations section is abbreviated.
+
+The full build compiles and audits the Lean imports, generates doc-gen4
+documentation, then runs `leanblueprint pdf` before `leanblueprint web` so that
+both editions use the same bibliography. It checks labels, citations, graph
+dependencies, PDF margins, doc-gen4's module index, and the exact documentation
+anchors for every blueprint declaration. Build logs are kept under
+`blueprint/build/`; generated output is ignored by Git.
+
+The first documentation build also processes the imported Mathlib and Lean
+libraries. Subsequent builds reuse compiled artifacts and documentation data.
+After a successful full build, a text-only edit can be previewed with:
+
+```sh
+python blueprint/scripts/build.py --reuse-docs
+```
+
+This shortcut fails if Lean or documentation inputs changed. Actions always
+runs the Lean audit before assembling the site.
+
+## Documentation build
+
+[docbuild](../docbuild/lakefile.toml) is a separate Lake project, following the
+doc-gen4 setup. Its toolchain matches the parent project; doc-gen4 and all its
+dependencies are pinned by [its manifest](../docbuild/lake-manifest.json).
+It shares `.lake/packages` with the parent without adding doc-gen4 to the
+mathematical library's dependencies.
+
+[Documentation.lean](../docbuild/Documentation.lean) imports every module in
+[lean-imports.txt](lean-imports.txt), including the closed sticky theorem.
+The generated documentation includes these modules **and their full transitive
+dependencies**, together with Lean's core libraries. This scope follows the
+sticky blueprint. It does not claim to compile the later general Kakeya
+development or the repository's unrelated comparison targets.
+
+The individual build steps, also used by Actions, are:
+
+```sh
+python blueprint/scripts/check.py --lean
+python blueprint/scripts/docs.py prepare
+lake --no-cache -d docbuild build Documentation:docs
+python blueprint/scripts/docs.py check
+python blueprint/scripts/build.py --reuse-docs
+```
+
+`--no-cache` here disables Lake's optional Reservoir download; the local Lake
+artifacts, Mathlib cache, and Actions cache are still used. The raw doc-gen4 site
+is `docbuild/.lake/build/doc/`. Publication copies it to `blueprint/site/lean/`,
+shortening equivalent relative URLs and omitting optional HTML attribute quotes
+to fit GitHub Pages' 1 GB limit. All module pages, declaration text, and search
+data are retained. The build checks the final size before uploading.
+The preparation step invalidates doc-gen4's database and generated pages when
+their inputs change, preventing stale declarations from surviving a cache
+restore. For unchanged Lean inputs, source buttons are refreshed to the current
+commit while documentation data is reused.
+
+When updating Lean, update both `lean-toolchain` files and the doc-gen4 revision
+in `docbuild/lakefile.toml`. Then refresh the nested manifest deliberately:
+
+```sh
+MATHLIB_NO_CACHE_ON_UPDATE=1 lake -d docbuild update MyLeanRepo doc-gen4
+```
+
+Commit both manifests and check that shared dependency revisions agree. Ordinary
+builds use the committed lock files and do not run `lake update`.
 
 ## Write a statement
 
@@ -69,7 +143,14 @@ To regenerate it, with the project's Lean toolchain and dependencies installed:
 python blueprint/scripts/check.py --lean
 ```
 
-This builds the modules in [lean-imports.txt](lean-imports.txt), resolves every `\lean{...}` name in the compiled Lean environment, and rejects axiom dependencies other than `propext`, `Classical.choice`, and `Quot.sound`. In particular, it rejects `sorryAx`. When a new reference is not already exposed by those imports, add its module to `lean-imports.txt` first. Commit the regenerated JSON along with the text changes.
+This builds the modules in [lean-imports.txt](lean-imports.txt), resolves every
+`\lean{...}` name in the compiled Lean environment, and rejects axiom dependencies
+other than `propext`, `Classical.choice`, and `Quot.sound`. In particular, it
+rejects `sorryAx`. When a new reference is not already exposed by those imports,
+add its module to both `lean-imports.txt` and `docbuild/Documentation.lean` in
+the same order. The check also verifies that these entry points and the two
+projects' dependency versions agree. Commit the regenerated JSON along with
+the text changes.
 
 For text changes that preserve the linked declarations and Lean sources, the faster check is sufficient:
 
@@ -79,11 +160,23 @@ python blueprint/scripts/check.py
 
 The audit establishes declaration existence and axiom dependencies. Comparing a mathematical statement with its Lean type still requires reading both. The manuscript's completion marks are deliberately more conservative than a list of existing declarations.
 
-Source links use the usual leanblueprint route `lean/find/#doc/Namespace.declaration`. The small resolver sends readers to the precise GitHub source line at the site build's commit. This supplies working declaration links without generating documentation for the entire imported library.
+The usual leanblueprint route `lean/find/#doc/Namespace.declaration` is handled
+by doc-gen4 itself and opens the declaration's documentation page. Its source
+button links to the corresponding GitHub source. The previous custom
+source-only resolver has been removed.
 
 ## Publish with GitHub Pages
 
-The [Blueprint workflow](../.github/workflows/blueprint.yml) builds the same artifact on pull requests and on relevant pushes to `main`. Only `main` deploys. It checks the committed Lean audit without rebuilding the large Lean project in every documentation job. If Lean sources have changed, regenerate the audit locally first.
+The [Blueprint workflow](../.github/workflows/blueprint.yml) builds the same
+artifact on pull requests and relevant pushes to `main`, including changes to
+Lean sources, toolchains, and Lake manifests. Every run compiles the blueprint
+imports, audits the declarations, and builds doc-gen4 before publishing the
+combined artifact. Only `main` deploys.
+
+The cache covers `.lake` and `docbuild/.lake`, keyed by platform, toolchain,
+dependency manifests, and commit, with reuse from compatible earlier commits.
+A cache hit never skips the Lean build or declaration audit. Documentation
+content is additionally checked against a digest of its inputs.
 
 To enable publication, choose **Settings → Pages → Build and deployment → Source: GitHub Actions** in the repository. Push the commit to `main` or run the **Blueprint** workflow manually. Its deployment target is <https://yu-misaka.github.io/3d-sticky-kakeya/>. The Pages setting and a successful deployment are required before that address is available.
 

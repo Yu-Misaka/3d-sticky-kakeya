@@ -6,8 +6,8 @@ h1 { margin: 8px 0 20px; font-size: clamp(2.1rem, 5vw, 3.15rem); line-height: 1.
 h2 { font-size: 1.15rem; font-weight: 600; margin: 0 0 10px; }
 a { color: #255b83; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 a:hover { color: #173c58; }
-a:focus-visible, input:focus-visible { outline: 3px solid #6b9bbd; outline-offset: 4px; }
-.eyebrow, .affiliation, footer, .reading, .source-form, .status { font-family: system-ui, sans-serif; }
+a:focus-visible { outline: 3px solid #6b9bbd; outline-offset: 4px; }
+.eyebrow, .affiliation, footer, .reading { font-family: system-ui, sans-serif; }
 .eyebrow { color: #637486; text-transform: uppercase; letter-spacing: .13em; font-size: .78rem; }
 .lead { max-width: 590px; font-size: 1.22rem; color: #4e5d6b; }
 .reading { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 25px; margin: 30px 0 42px; font-size: .92rem; }
@@ -17,10 +17,4 @@ a:focus-visible, input:focus-visible { outline: 3px solid #6b9bbd; outline-offse
 .note { color: #586571; font-size: .97rem; }
 .affiliation { color: #687583; font-size: .8rem; margin-top: -6px; }
 footer { display: flex; flex-wrap: wrap; gap: 12px 24px; padding-top: 32px; margin-top: 36px; border-top: 1px solid #e0e3e4; font-size: .84rem; }
-.source-form { margin: 28px 0 18px; }
-.source-form label { display: block; margin-bottom: 8px; }
-input { width: 100%; padding: 11px; border: 1px solid #b5c0c9; border-radius: 4px; background: white; font: inherit; }
-.declarations { padding-left: 20px; font-family: ui-monospace, monospace; font-size: .84rem; line-height: 1.7; overflow-wrap: anywhere; }
-.declarations li { margin-bottom: 13px; }
-.status { font-size: .88rem; color: #596978; }
 @media (max-width: 600px) { main { padding: 38px 20px 26px; } .wide-only { display: none; } .reading { align-items: flex-start; flex-direction: column; gap: 16px; } }

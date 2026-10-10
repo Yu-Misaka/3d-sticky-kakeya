@@ -4,19 +4,18 @@
 from __future__ import annotations
 
 import argparse
-import html
-import json
 import re
 import shutil
 import subprocess
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import quote, unquote, urlsplit
+from urllib.parse import unquote, urlsplit
 
-from check import BLUEPRINT, BUILD, ROOT, check_registry, inspect_content, run_logged
+from check import (BLUEPRINT, BUILD, audit_with_lean, check_docbuild_config,
+                   check_registry, inspect_content, run_logged)
+from docs import build_docs, check_fresh_docs, copy_documentation, validate_documentation
 
 SITE = BLUEPRINT / "site"
-REPOSITORY = "https://github.com/Yu-Misaka/3d-sticky-kakeya"
 
 
 class Links(HTMLParser):
@@ -36,8 +35,13 @@ class Links(HTMLParser):
                 self.ids.add(value)
 
 
-def validate_site(names: set[str]) -> None:
-    pages = {path: Links(path.read_text()) for path in SITE.rglob("*.html")}
+def validate_site(records: list[dict]) -> None:
+    index = validate_documentation(records, SITE / "lean")
+    names = index["declarations"]
+    # doc-gen4's module index and all blueprint declaration anchors are checked
+    # above. Keep this pass focused on the manuscript and the site's navigation.
+    files = [*SITE.glob("*.html"), *(SITE / "blueprint").rglob("*.html")]
+    pages = {path: Links(path.read_text()) for path in files}
     errors = []
     for page, document in pages.items():
         for link in document.links:
@@ -59,11 +63,25 @@ def validate_site(names: set[str]) -> None:
     if errors:
         raise ValueError("Broken site links:\n" + "\n".join(errors[:30]))
     print(f"Checked local links and anchors in {len(pages)} HTML pages.")
+    sizes = [path.stat().st_size for path in SITE.rglob("*") if path.is_file()]
+    # Include tar headers and padding rather than relying on compressed size.
+    artifact_size = sum(512 + ((size + 511) // 512) * 512 for size in sizes)
+    if artifact_size >= 1_000_000_000:
+        raise ValueError(f"Pages artifact exceeds 1 GB: approximately {artifact_size:,} bytes")
+    print(f"Pages artifact: {sum(sizes) / 1_000_000:.1f} MB of files, "
+          f"approximately {artifact_size / 1_000_000:.1f} MB with tar overhead.")
 
 
-def make_site() -> None:
+def make_site(reuse_docs: bool = False) -> None:
     _, names, nodes = inspect_content()
+    check_docbuild_config()
+    if not reuse_docs:
+        audit_with_lean(names)
     records = check_registry(names, nodes)
+    if reuse_docs:
+        check_fresh_docs()
+    else:
+        build_docs()
     BUILD.mkdir(exist_ok=True)
     run_logged(["leanblueprint", "pdf"], BUILD / "pdf.log")
     pdf_log = (BLUEPRINT / "print/print.log").read_text()
@@ -86,38 +104,24 @@ def make_site() -> None:
         shutil.rmtree(SITE)
     shutil.copytree(BLUEPRINT / "site-src", SITE)
     shutil.copytree(web, SITE / "blueprint")
+    copy_documentation(SITE / "lean")
     shutil.copy2(BLUEPRINT / "print/print.pdf", SITE / "blueprint.pdf")
     (SITE / ".nojekyll").touch()
-    revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
-    if not re.fullmatch(r"[0-9a-f]{40,64}", revision):
-        raise ValueError("Cannot determine a source revision")
-    source_links = [
-        {"name": record["name"], "kind": record["kind"],
-         "file": record["file"], "line": record["line"],
-         "url": f"{REPOSITORY}/blob/{revision}/{quote(record['file'])}#L{record['line']}"}
-        for record in records
-    ]
-    (SITE / "declarations.json").write_text(json.dumps(source_links, ensure_ascii=False) + "\n")
-    # The fallback source list also works without JavaScript.
-    finder = SITE / "lean/find/index.html"
-    links = "\n".join(
-        f'<li><a href="{html.escape(record["url"])}">'
-        f'{html.escape(record["name"])}</a></li>' for record in source_links
-    )
-    finder.write_text(finder.read_text().replace("<!-- DECLARATION_LINKS -->", links))
-    validate_site(set(names))
+    validate_site(records)
     print(f"Site ready: {SITE}\nServe with: python -m http.server 8000 --directory blueprint/site")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check-site", action="store_true", help="check an existing site without recompiling")
+    parser.add_argument("--reuse-docs", action="store_true",
+                        help="reuse already audited Lean and doc-gen4 output with matching inputs")
     args = parser.parse_args()
     try:
         if args.check_site:
-            _, names, _ = inspect_content()
-            validate_site(set(names))
+            _, names, nodes = inspect_content()
+            validate_site(check_registry(names, nodes))
         else:
-            make_site()
+            make_site(reuse_docs=args.reuse_docs)
     except (OSError, ValueError, subprocess.CalledProcessError) as error:
         parser.exit(1, f"Blueprint build failed: {error}\n")

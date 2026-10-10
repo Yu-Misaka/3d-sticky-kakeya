@@ -1,0 +1,16 @@
+name = "docbuild"
+reservoir = false
+version = "0.1.0"
+packagesDir = "../.lake/packages"
+
+[[require]]
+name = "doc-gen4"
+scope = "leanprover"
+rev = "v4.32.0-rc1"
+
+[[require]]
+name = "MyLeanRepo"
+path = "../"
+
+[[lean_lib]]
+name = "Documentation"

@@ -6,9 +6,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -119,6 +121,43 @@ def inspect_content() -> tuple[str, list[str], list[dict]]:
     return text, names, nodes
 
 
+def lean_modules() -> list[str]:
+    modules = [line.strip() for line in (BLUEPRINT / "lean-imports.txt").read_text().splitlines()
+               if line.strip() and not line.lstrip().startswith("#")]
+    if not modules or any(not re.fullmatch(r"[\w.]+", module) for module in modules):
+        raise ValueError("Invalid module list in blueprint/lean-imports.txt")
+    return modules
+
+
+def check_docbuild_config() -> None:
+    docbuild = ROOT / "docbuild"
+    toolchain = (ROOT / "lean-toolchain").read_text().strip()
+    if (docbuild / "lean-toolchain").read_text().strip() != toolchain:
+        raise ValueError("docbuild/lean-toolchain must match the project toolchain")
+    config = tomllib.loads((docbuild / "lakefile.toml").read_text())
+    generator = next((item for item in config["require"] if item["name"] == "doc-gen4"), {})
+    if generator.get("rev") != toolchain.rsplit(":", 1)[-1]:
+        raise ValueError("doc-gen4 must be pinned to the matching Lean release")
+    parent = json.loads((ROOT / "lake-manifest.json").read_text())
+    nested = json.loads((docbuild / "lake-manifest.json").read_text())
+    packages = {package["name"]: package for package in nested["packages"]}
+    locked_generator = next((package for name, package in packages.items()
+                             if name.strip("«»") == "doc-gen4"), {})
+    if locked_generator.get("inputRev") != generator["rev"]:
+        raise ValueError("Refresh docbuild/lake-manifest.json for the selected doc-gen4 release")
+    for package in parent["packages"]:
+        if packages.get(package["name"], {}).get("rev") != package.get("rev"):
+            raise ValueError(f"docbuild dependency differs from the parent: {package['name']}")
+    imports = re.findall(r"^import ([\w.]+)$", (docbuild / "Documentation.lean").read_text(), re.M)
+    if imports != lean_modules():
+        raise ValueError("docbuild/Documentation.lean must import exactly blueprint/lean-imports.txt")
+    core = (ROOT / "MyLeanRepo/Kakeya/Assouad/PureWZ2/Core.lean").read_text()
+    marker = "def PureWZ2Theorem5_2Statement : Prop :="
+    statement = marker + core.split(marker, 1)[1].split("\n\n", 1)[0]
+    if f"```lean\n{statement}\n```" not in (docbuild / "Documentation.lean").read_text():
+        raise ValueError("The full statement in Documentation.lean differs from PureWZ2/Core.lean")
+
+
 def source_digest() -> str:
     """Bind the audit to all project Lean sources and the dependency lock file."""
     result = subprocess.run(
@@ -127,7 +166,7 @@ def source_digest() -> str:
         cwd=ROOT, check=True, capture_output=True,
     )
     paths = sorted({name.decode() for name in result.stdout.split(b"\0")
-                    if name and not name.startswith(b"blueprint/")})
+                    if name and not name.startswith((b"blueprint/", b"docbuild/"))})
     digest = hashlib.sha256()
     for name in paths:
         digest.update(name.encode() + b"\0")
@@ -138,21 +177,25 @@ def source_digest() -> str:
 def run_logged(args: list[str], log: Path) -> str:
     print(f"Running {args[0]} {' '.join(args[1:4])} (log: {log.relative_to(ROOT)})", flush=True)
     with log.open("w") as output:
-        result = subprocess.run(args, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT)
+        process = subprocess.Popen(args, cwd=ROOT, stdout=subprocess.PIPE,
+                                   stderr=subprocess.STDOUT, text=True)
+        assert process.stdout is not None
+        for line in process.stdout:
+            output.write(line)
+            if os.environ.get("CI"):
+                print(line, end="", flush=True)
+        returncode = process.wait()
     text = log.read_text()
-    if result.returncode:
+    if returncode:
         print("\n".join(text.splitlines()[-35:]), file=sys.stderr)
         raise ValueError(f"Command failed; see {log.relative_to(ROOT)}")
     return text
 
 
 def audit_with_lean(names: list[str]) -> None:
-    modules = [line.strip() for line in (BLUEPRINT / "lean-imports.txt").read_text().splitlines()
-               if line.strip() and not line.lstrip().startswith("#")]
-    if not modules or any(not re.fullmatch(r"[\w.]+", module) for module in modules):
-        raise ValueError("Invalid module list in blueprint/lean-imports.txt")
+    modules = lean_modules()
     BUILD.mkdir(exist_ok=True)
-    run_logged(["lake", "build", *modules], BUILD / "lake-build.log")
+    run_logged(["lake", "--no-cache", "build", *modules], BUILD / "lake-build.log")
     source = "\n".join(f"import {module}" for module in modules)
     source += "\nimport Lean\n\n" + (BLUEPRINT / "scripts" / "audit.lean").read_text()
     source += "\nrun_cmd blueprintAudit #[\n"
@@ -213,6 +256,7 @@ def main() -> int:
     args = parser.parse_args()
     try:
         _, names, nodes = inspect_content()
+        check_docbuild_config()
         if args.lean:
             audit_with_lean(names)
         if not args.content_only:

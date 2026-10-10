@@ -20,7 +20,7 @@ Toolchain: `leanprover/lean4:v4.32.0-rc1`.
 
 This is a joint project of **Nankai University** and **ByteDance Seed AI4Math Team**: Mingfeng Chen, Shaoming Guo, Yixuan Pang, Minxing Shen, Zhihong Wang, Zheng Yuan, Huanyu Zheng, and Thomas Zhu.
 
-A [mathematical blueprint](blueprint/README.md) follows the argument through sticky Kakeya, with paper statements, proof outlines, a dependency graph, and links to the Lean declarations. Remarks record differences between the manuscripts and the formal statements. See its [build and authoring instructions](blueprint/README.md) for the HTML and PDF editions and the included GitHub Pages workflow.
+A [mathematical blueprint](blueprint/README.md) follows the argument through sticky Kakeya, with paper statements, proof outlines, a dependency graph, and links to doc-gen4's Lean documentation. Remarks record differences between the manuscripts and the formal statements. The [build and authoring instructions](blueprint/README.md) cover the HTML and PDF editions, declaration documentation, and the GitHub Pages workflow, which compiles and audits the Lean imports before publication.
 
 Formalization results include:
 
