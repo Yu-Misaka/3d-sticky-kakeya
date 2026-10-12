@@ -1,5 +1,5 @@
 {
-  "format": 1,
+  "format": 2,
   "root": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
   "module_roots": [
     "MyLeanRepo",
@@ -8342,29 +8342,69 @@
     }
   ],
   "graph_nodes": [
+    "DirecretisedFurstenbergEstimate.RegularIncidence.IsSquareRootRegular",
     "DirecretisedFurstenbergEstimate.theorem6_1_main",
     "DiscretisedFurstenbergEstimate.BasicUniformization.basic_uniformization_dyadic",
     "DiscretisedFurstenbergEstimate.CombiningTheoremRework.prop73_main",
     "ExpansionLemma.blichfeldt_n_dim",
     "ExpansionLemma.expansion_lemma_uniform",
+    "HasMeasureThinTubes",
+    "IsDeltaSSet",
+    "Kakeya.Assouad.DiscreteSet.IsFrostman",
+    "Kakeya.Assouad.DiscreteSet.IsKatzTao",
+    "Kakeya.Assouad.FrostmanToKatzTaoWeightedCardStatement",
+    "Kakeya.Assouad.HasDiscreteThinTubes",
+    "Kakeya.Assouad.IsADSet1",
+    "Kakeya.Assouad.ParameterBlockAmplificationStatement",
+    "Kakeya.Assouad.PureWZ2Admissible",
+    "Kakeya.Assouad.PureWZ2BalancedCoverData",
+    "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+    "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+    "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement",
+    "Kakeya.Assouad.PureWZ2PaperADSet1",
+    "Kakeya.Assouad.PureWZ2PropStickyStatement",
+    "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData",
+    "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
     "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
+    "Kakeya.Assouad.PureWZ2WolffVolumeFloor",
+    "Kakeya.Assouad.ScaleProfileCrossingStatement",
+    "Kakeya.Assouad.TubeWolffBound",
+    "Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement",
+    "Kakeya.Assouad.WZ1HypergraphRefinementStatement",
+    "Kakeya.Assouad.WZ1PlaneMapData",
+    "Kakeya.Assouad.WZ1QuarterThinTubesStatement",
+    "Kakeya.Assouad.WZ1SmoothSegmentExtensionStatement",
+    "Kakeya.Assouad.WZ1SmoothedToDiscreteThinTubesStatement",
+    "Kakeya.Assouad.WZ1StandardSeparation",
+    "Kakeya.Assouad.WZ1StripLocalizationDichotomyStatement",
+    "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+    "Kakeya.Assouad.WZ1UniformHypergraphDensity",
+    "Kakeya.Assouad.WZ1VerticalTrapezoid",
+    "Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion",
+    "Kakeya.Assouad.WZ2PaperAssouadUnitRescalingData",
+    "Kakeya.Assouad.WZ2PaperBodyConvexWolffBound",
+    "Kakeya.Assouad.WZ2PaperOrdinaryIsEssentiallyDistinct",
+    "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+    "Kakeya.Assouad.WZ2PaperPureFullFibersAreCUniform",
+    "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+    "Kakeya.Assouad.WZ2PaperPurePartitioningCover",
     "Kakeya.Assouad.frostman_energy_bound",
     "Kakeya.Assouad.frostman_to_katz_tao_weighted_card",
     "Kakeya.Assouad.paper_cv_broad_set_estimate",
     "Kakeya.Assouad.parameter_block_amplification",
     "Kakeya.Assouad.projection_energy_total",
     "Kakeya.Assouad.pure_wz2_direct_wolff_floor",
-    "Kakeya.Assouad.pure_wz2_node01_subunit_package",
     "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
     "Kakeya.Assouad.pure_wz2_node03_prop_sticky",
     "Kakeya.Assouad.pure_wz2_node04_grains",
     "Kakeya.Assouad.pure_wz2_node05_c2_grains",
     "Kakeya.Assouad.pure_wz2_node06_large_slope",
     "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
-    "Kakeya.Assouad.pure_wz2_node08_theorem5_2",
     "Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound",
     "Kakeya.Assouad.scale_profile_crossing",
+    "Kakeya.Assouad.twistedProjection",
     "Kakeya.Assouad.two_ends_reduction",
+    "Kakeya.Assouad.wz1HypergraphFiber",
     "Kakeya.Assouad.wz1_anisotropic_frostman_rescaling",
     "Kakeya.Assouad.wz1_frostman_coarsening",
     "Kakeya.Assouad.wz1_hypergraph_refinement",
@@ -8373,6 +8413,7 @@
     "Kakeya.Assouad.wz1_smooth_segment_extension",
     "Kakeya.Assouad.wz1_thin_tubes_large_dot_product",
     "Kakeya.Assouad.wz1_well_separated_projection_union",
+    "Kakeya.CV.PolynomialVisibilityStatement",
     "Kakeya.CV.ellipsoid_selection_stability",
     "Kakeya.CV.multilinear_kakeya_preliminary_reduction",
     "Kakeya.CV.polynomial_bad_set_cover",
@@ -8381,6 +8422,21 @@
     "Kakeya.CV.stable_finite_colour_ellipsoid_net",
     "Kakeya.CV.visibility_degree_bound",
     "Kakeya.CV.visibility_directional_surface_bound",
+    "Kakeya.Cinematic.CommonTangentRectangleRobustStatement",
+    "Kakeya.Cinematic.ComparabilityTransitivityStatement",
+    "Kakeya.Cinematic.ComparableRectanglesStatement",
+    "Kakeya.Cinematic.CurvilinearRectangle",
+    "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable",
+    "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent",
+    "Kakeya.Cinematic.FineRectangleAssignmentStatement",
+    "Kakeya.Cinematic.GoodPairCountingStatement",
+    "Kakeya.Cinematic.IsCinematicFamily",
+    "Kakeya.Cinematic.PairIncidenceCountingStatement",
+    "Kakeya.Cinematic.PreliminaryDichotomyStatement",
+    "Kakeya.Cinematic.RectanglePackingStatement",
+    "Kakeya.Cinematic.TangencySublevelDiameterStatement",
+    "Kakeya.Cinematic.TwoEndsSelectionStatement",
+    "Kakeya.Cinematic.WZ2UniformC2Input",
     "Kakeya.Cinematic.bipartite_tangency_robust_full",
     "Kakeya.Cinematic.cinematic_difference_has_at_most_two_zeros",
     "Kakeya.Cinematic.common_tangent_overlap_comparable",
@@ -8389,8 +8445,12 @@
     "Kakeya.Cinematic.graph_lens_bound_from_sequences",
     "Kakeya.Cinematic.incomparable_rectangles_packing_bound",
     "Kakeya.Cinematic.maximal_fine_rectangle_selection",
+    "Kakeya.Cinematic.tangencyParameterOn",
     "Kakeya.Cinematic.tangency_sublevel_diameter",
     "Kakeya.Cinematic.wz2_uniformC2_input",
+    "Kakeya.DeltaTube",
+    "Kakeya.Streamlined.Shading",
+    "Kakeya.Streamlined.Shading.IsLambdaDense",
     "ProductLikeIncidence.DiscretizedBSG.discretized_bsg",
     "ProductLikeIncidence.OSW.corollary2_3",
     "ProductLikeIncidence.OSW.corollary2_4",
@@ -8408,6 +8468,33 @@
     "robust_projection_main.energy_to_large_mass_delta_set"
   ],
   "edges": [
+    {
+      "from": "DirecretisedFurstenbergEstimate.RegularIncidence.IsSquareRootRegular",
+      "to": "IsDeltaSSet",
+      "path": [
+        {
+          "from": "DirecretisedFurstenbergEstimate.RegularIncidence.IsSquareRootRegular",
+          "to": "IsDeltaSSet",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "DirecretisedFurstenbergEstimate.theorem6_1_main",
+      "to": "DirecretisedFurstenbergEstimate.RegularIncidence.IsSquareRootRegular",
+      "path": [
+        {
+          "from": "DirecretisedFurstenbergEstimate.theorem6_1_main",
+          "to": "DirecretisedFurstenbergEstimate.theorem6_1_main_assembly",
+          "kind": "value"
+        },
+        {
+          "from": "DirecretisedFurstenbergEstimate.theorem6_1_main_assembly",
+          "to": "DirecretisedFurstenbergEstimate.RegularIncidence.IsSquareRootRegular",
+          "kind": "value"
+        }
+      ]
+    },
     {
       "from": "DirecretisedFurstenbergEstimate.theorem6_1_main",
       "to": "ProductLikeIncidence.DiscretizedBSG.discretized_bsg",
@@ -8841,6 +8928,27 @@
     },
     {
       "from": "DiscretisedFurstenbergEstimate.CombiningTheoremRework.prop73_main",
+      "to": "DirecretisedFurstenbergEstimate.RegularIncidence.IsSquareRootRegular",
+      "path": [
+        {
+          "from": "DiscretisedFurstenbergEstimate.CombiningTheoremRework.prop73_main",
+          "to": "DiscretisedFurstenbergEstimate.CombiningTheoremRework.combining_induction_uniform_with_data_bounded",
+          "kind": "value"
+        },
+        {
+          "from": "DiscretisedFurstenbergEstimate.CombiningTheoremRework.combining_induction_uniform_with_data_bounded",
+          "to": "DiscretisedFurstenbergEstimate.CombiningTheoremRework.base_case_inner",
+          "kind": "value"
+        },
+        {
+          "from": "DiscretisedFurstenbergEstimate.CombiningTheoremRework.base_case_inner",
+          "to": "DirecretisedFurstenbergEstimate.RegularIncidence.IsSquareRootRegular",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "DiscretisedFurstenbergEstimate.CombiningTheoremRework.prop73_main",
       "to": "DiscretisedFurstenbergEstimate.BasicUniformization.basic_uniformization_dyadic",
       "path": [
         {
@@ -8897,12 +9005,506 @@
       ]
     },
     {
+      "from": "Kakeya.Assouad.FrostmanToKatzTaoWeightedCardStatement",
+      "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.FrostmanToKatzTaoWeightedCardStatement",
+          "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.FrostmanToKatzTaoWeightedCardStatement",
+      "to": "Kakeya.Assouad.DiscreteSet.IsKatzTao",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.FrostmanToKatzTaoWeightedCardStatement",
+          "to": "Kakeya.Assouad.DiscreteSet.IsKatzTao",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.ParameterBlockAmplificationStatement",
+      "to": "Kakeya.Assouad.DiscreteSet.IsKatzTao",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.ParameterBlockAmplificationStatement",
+          "to": "Kakeya.Assouad.DiscreteSet.IsKatzTao",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2Admissible",
+      "to": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2Admissible",
+          "to": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2Admissible",
+      "to": "Kakeya.Streamlined.Shading.IsLambdaDense",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2Admissible",
+          "to": "Kakeya.Streamlined.Shading.IsLambdaDense",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2BalancedCoverData",
+      "to": "Kakeya.DeltaTube",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2BalancedCoverData",
+          "to": "Kakeya.Streamlined.TubeFamily",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Streamlined.TubeFamily",
+          "to": "Kakeya.Streamlined.TubeFamily.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Streamlined.TubeFamily.mk",
+          "to": "Kakeya.DeltaTube",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2BalancedCoverData",
+      "to": "Kakeya.Streamlined.Shading",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2BalancedCoverData",
+          "to": "Kakeya.Assouad.WZ1PaperTubeShading",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ1PaperTubeShading",
+          "to": "Kakeya.Streamlined.Shading",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+      "to": "Kakeya.Assouad.PureWZ2PaperADSet1",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+          "to": "Kakeya.Assouad.PureWZ2C2GrainConfiguration",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2C2GrainConfiguration",
+          "to": "Kakeya.Assouad.PureWZ2C2GrainConfiguration.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2C2GrainConfiguration.mk",
+          "to": "Kakeya.Assouad.PureWZ2C2GlobalGrainData",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2C2GlobalGrainData",
+          "to": "Kakeya.Assouad.PureWZ2C2GlobalGrainData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2C2GlobalGrainData.mk",
+          "to": "Kakeya.Assouad.PureWZ2PaperADSet1",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+      "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+          "to": "Kakeya.Assouad.PureWZ2CriticalPackage",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CriticalPackage",
+          "to": "Kakeya.Assouad.PureWZ2CriticalPackage.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CriticalPackage.mk",
+          "to": "Kakeya.Assouad.PureWZ2ExtremalConfiguration",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ExtremalConfiguration",
+          "to": "Kakeya.Assouad.PureWZ2ExtremalConfiguration.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ExtremalConfiguration.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+      "to": "Kakeya.Assouad.PureWZ2PaperADSet1",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+          "to": "Kakeya.Assouad.PureWZ2GrainConfiguration",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2GrainConfiguration",
+          "to": "Kakeya.Assouad.PureWZ2GrainConfiguration.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2GrainConfiguration.mk",
+          "to": "Kakeya.Assouad.PureWZ2LipschitzGlobalGrainData",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2LipschitzGlobalGrainData",
+          "to": "Kakeya.Assouad.PureWZ2LipschitzGlobalGrainData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2LipschitzGlobalGrainData.mk",
+          "to": "Kakeya.Assouad.PureWZ2PaperADSet1",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+      "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+          "to": "Kakeya.Assouad.PureWZ2CriticalPackage",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CriticalPackage",
+          "to": "Kakeya.Assouad.PureWZ2CriticalPackage.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CriticalPackage.mk",
+          "to": "Kakeya.Assouad.PureWZ2ExtremalConfiguration",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ExtremalConfiguration",
+          "to": "Kakeya.Assouad.PureWZ2ExtremalConfiguration.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ExtremalConfiguration.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement",
+      "to": "Kakeya.Assouad.PureWZ2PaperADSet1",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement",
+          "to": "Kakeya.Assouad.PureWZ2LargeSlopeConfiguration",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2LargeSlopeConfiguration",
+          "to": "Kakeya.Assouad.PureWZ2LargeSlopeConfiguration.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2LargeSlopeConfiguration.mk",
+          "to": "Kakeya.Assouad.PureWZ2PaperADSet1",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement",
+      "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement",
+          "to": "Kakeya.Assouad.PureWZ2CriticalPackage",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CriticalPackage",
+          "to": "Kakeya.Assouad.PureWZ2CriticalPackage.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CriticalPackage.mk",
+          "to": "Kakeya.Assouad.PureWZ2ExtremalConfiguration",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ExtremalConfiguration",
+          "to": "Kakeya.Assouad.PureWZ2ExtremalConfiguration.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ExtremalConfiguration.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement",
+      "to": "Kakeya.Assouad.twistedProjection",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement",
+          "to": "Kakeya.Assouad.PureWZ2LargeSlopeConfiguration",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2LargeSlopeConfiguration",
+          "to": "Kakeya.Assouad.PureWZ2LargeSlopeConfiguration.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2LargeSlopeConfiguration.mk",
+          "to": "Kakeya.Assouad.twistedProjection",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+      "to": "Kakeya.Assouad.PureWZ2Admissible",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+          "to": "Kakeya.Assouad.PureWZ2SubunitPackageStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2SubunitPackageStatement",
+          "to": "Kakeya.Assouad.PureWZ2Admissible",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+      "to": "Kakeya.Assouad.PureWZ2BalancedCoverData",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+          "to": "Kakeya.Assouad.PureWZ2PropStickyCapability",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2PropStickyCapability",
+          "to": "Kakeya.Assouad.PureWZ2PropStickyCapability.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2PropStickyCapability.mk",
+          "to": "Kakeya.Assouad.PureWZ2CroppedPropStickyAt",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CroppedPropStickyAt",
+          "to": "Kakeya.Assouad.PureWZ2PropStickyData",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2PropStickyData",
+          "to": "Kakeya.Assouad.PureWZ2PropStickyData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2PropStickyData.mk",
+          "to": "Kakeya.Assouad.PureWZ2BalancedCoverData",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+      "to": "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+          "to": "Kakeya.Assouad.PureWZ2CriticalExtractionStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CriticalExtractionStatement",
+          "to": "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+      "to": "Kakeya.Assouad.PureWZ2WolffVolumeFloor",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+          "to": "Kakeya.Assouad.PureWZ2SubunitPackageStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2SubunitPackageStatement",
+          "to": "Kakeya.Assouad.PureWZ2WolffVolumeFloor",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+      "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+          "to": "Kakeya.Assouad.PureWZ2CriticalExtractionStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CriticalExtractionStatement",
+          "to": "Kakeya.Assouad.PureWZ2CriticalPackage",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CriticalPackage",
+          "to": "Kakeya.Assouad.PureWZ2CriticalPackage.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CriticalPackage.mk",
+          "to": "Kakeya.Assouad.PureWZ2ExtremalConfiguration",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ExtremalConfiguration",
+          "to": "Kakeya.Assouad.PureWZ2ExtremalConfiguration.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ExtremalConfiguration.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData",
+      "to": "Kakeya.Assouad.twistedProjection",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData",
+          "to": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData.mk",
+          "to": "Kakeya.Assouad.twistedProjection",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData",
+      "to": "Kakeya.DeltaTube",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData",
+          "to": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData.mk",
+          "to": "Kakeya.Assouad.WZ1PaperIsLineClass",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ1PaperIsLineClass",
+          "to": "Kakeya.Assouad.WZ1PaperTubeInLineClass",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ1PaperTubeInLineClass",
+          "to": "Kakeya.DeltaTube",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData",
+      "to": "Kakeya.Streamlined.Shading.IsLambdaDense",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData",
+          "to": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData.mk",
+          "to": "Kakeya.Streamlined.Shading.IsLambdaDense",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
+      "to": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
+          "to": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
+      "to": "Kakeya.Streamlined.Shading.IsLambdaDense",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
+          "to": "Kakeya.Streamlined.Shading.IsLambdaDense",
+          "kind": "value"
+        }
+      ]
+    },
+    {
       "from": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
-      "to": "Kakeya.Assouad.pure_wz2_node01_subunit_package",
+      "to": "Kakeya.Assouad.pure_wz2_direct_wolff_floor",
       "path": [
         {
           "from": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
           "to": "Kakeya.Assouad.pure_wz2_node01_subunit_package",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node01_subunit_package",
+          "to": "Kakeya.Assouad.pure_wz2_direct_wolff_floor",
           "kind": "value"
         }
       ]
@@ -8975,12 +9577,583 @@
     },
     {
       "from": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
-      "to": "Kakeya.Assouad.pure_wz2_node08_theorem5_2",
+      "to": "Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound",
       "path": [
         {
           "from": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
           "to": "Kakeya.Assouad.pure_wz2_node08_theorem5_2",
           "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node08_theorem5_2",
+          "to": "Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2WolffVolumeFloor",
+      "to": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2WolffVolumeFloor",
+          "to": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.PureWZ2WolffVolumeFloor",
+      "to": "Kakeya.Streamlined.Shading.IsLambdaDense",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2WolffVolumeFloor",
+          "to": "Kakeya.Streamlined.Shading.IsLambdaDense",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.TubeWolffBound",
+      "to": "Kakeya.DeltaTube",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.TubeWolffBound",
+          "to": "Kakeya.DeltaTube",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement",
+      "to": "Kakeya.Assouad.TubeWolffBound",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement",
+          "to": "Kakeya.Assouad.TubeWolffBound",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement",
+      "to": "Kakeya.Assouad.twistedProjection",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement",
+          "to": "Kakeya.Assouad.twistedUnion",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.twistedUnion",
+          "to": "Kakeya.Assouad.twistedProjection",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement",
+      "to": "Kakeya.Streamlined.Shading.IsLambdaDense",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement",
+          "to": "Kakeya.Streamlined.Shading.IsLambdaDense",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1HypergraphRefinementStatement",
+      "to": "Kakeya.Assouad.WZ1UniformHypergraphDensity",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1HypergraphRefinementStatement",
+          "to": "Kakeya.Assouad.WZ1UniformHypergraphDensity",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1PlaneMapData",
+      "to": "Kakeya.DeltaTube",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1PlaneMapData",
+          "to": "Kakeya.Streamlined.TubeFamily",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Streamlined.TubeFamily",
+          "to": "Kakeya.Streamlined.TubeFamily.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Streamlined.TubeFamily.mk",
+          "to": "Kakeya.DeltaTube",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1PlaneMapData",
+      "to": "Kakeya.Streamlined.Shading",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1PlaneMapData",
+          "to": "Kakeya.Streamlined.TubeShading",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Streamlined.TubeShading",
+          "to": "Kakeya.Streamlined.Shading",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1QuarterThinTubesStatement",
+      "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1QuarterThinTubesStatement",
+          "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1QuarterThinTubesStatement",
+      "to": "Kakeya.Assouad.HasDiscreteThinTubes",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1QuarterThinTubesStatement",
+          "to": "Kakeya.Assouad.HasDiscreteThinTubes",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1SmoothedToDiscreteThinTubesStatement",
+      "to": "Kakeya.Assouad.HasDiscreteThinTubes",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1SmoothedToDiscreteThinTubesStatement",
+          "to": "Kakeya.Assouad.HasDiscreteThinTubes",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1StripLocalizationDichotomyStatement",
+      "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1StripLocalizationDichotomyStatement",
+          "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1StripLocalizationDichotomyStatement",
+      "to": "Kakeya.Assouad.WZ1StandardSeparation",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1StripLocalizationDichotomyStatement",
+          "to": "Kakeya.Assouad.WZ1StandardSeparation",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1StripLocalizationDichotomyStatement",
+      "to": "Kakeya.Assouad.WZ1UniformHypergraphDensity",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1StripLocalizationDichotomyStatement",
+          "to": "Kakeya.Assouad.WZ1UniformTripleDensity",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ1UniformTripleDensity",
+          "to": "Kakeya.Assouad.WZ1UniformHypergraphDensity",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+      "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+          "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+      "to": "Kakeya.Assouad.HasDiscreteThinTubes",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+          "to": "Kakeya.Assouad.HasDiscreteThinTubes",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+      "to": "Kakeya.Assouad.WZ1StandardSeparation",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+          "to": "Kakeya.Assouad.WZ1StandardSeparation",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+      "to": "Kakeya.Assouad.WZ1UniformHypergraphDensity",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+          "to": "Kakeya.Assouad.WZ1UniformTripleDensity",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ1UniformTripleDensity",
+          "to": "Kakeya.Assouad.WZ1UniformHypergraphDensity",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1UniformHypergraphDensity",
+      "to": "Kakeya.Assouad.wz1HypergraphFiber",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1UniformHypergraphDensity",
+          "to": "Kakeya.Assouad.wz1HypergraphFiber",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion",
+      "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion",
+          "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion",
+      "to": "Kakeya.Assouad.WZ1StandardSeparation",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion",
+          "to": "Kakeya.Assouad.WZ1StandardSeparation",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion",
+      "to": "Kakeya.Assouad.WZ1UniformHypergraphDensity",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion",
+          "to": "Kakeya.Assouad.WZ1UniformTripleDensity",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ1UniformTripleDensity",
+          "to": "Kakeya.Assouad.WZ1UniformHypergraphDensity",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ2PaperAssouadUnitRescalingData",
+      "to": "Kakeya.DeltaTube",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ2PaperAssouadUnitRescalingData",
+          "to": "Kakeya.DeltaTube",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ2PaperOrdinaryIsEssentiallyDistinct",
+      "to": "Kakeya.DeltaTube",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ2PaperOrdinaryIsEssentiallyDistinct",
+          "to": "Kakeya.Assouad.wz2PaperCenteredDilatedCarrier",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.wz2PaperCenteredDilatedCarrier",
+          "to": "Kakeya.DeltaTube",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+      "to": "Kakeya.Assouad.WZ2PaperAssouadUnitRescalingData",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+          "to": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData",
+          "to": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureScaleCoverData",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureScaleCoverData",
+          "to": "Kakeya.Assouad.WZ2PaperPureScaleCoverData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureScaleCoverData.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureUnitRescaledFullFiberData",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureUnitRescaledFullFiberData",
+          "to": "Kakeya.Assouad.WZ2PaperPureUnitRescaledFullFiberData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureUnitRescaledFullFiberData.mk",
+          "to": "Kakeya.Assouad.WZ2PaperAssouadUnitRescalingData",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+      "to": "Kakeya.Assouad.WZ2PaperBodyConvexWolffBound",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+          "to": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData",
+          "to": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureScaleCoverData",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureScaleCoverData",
+          "to": "Kakeya.Assouad.WZ2PaperPureScaleCoverData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureScaleCoverData.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureUnitRescaledFullFiberData",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureUnitRescaledFullFiberData",
+          "to": "Kakeya.Assouad.WZ2PaperPureUnitRescaledFullFiberData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureUnitRescaledFullFiberData.mk",
+          "to": "Kakeya.Assouad.WZ2PaperBodyConvexWolffBound",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+      "to": "Kakeya.Assouad.WZ2PaperOrdinaryIsEssentiallyDistinct",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+          "to": "Kakeya.Assouad.WZ2PaperOrdinaryIsEssentiallyDistinct",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+      "to": "Kakeya.Assouad.WZ2PaperPureFullFibersAreCUniform",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+          "to": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData",
+          "to": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureScaleCoverData",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureScaleCoverData",
+          "to": "Kakeya.Assouad.WZ2PaperPureScaleCoverData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureScaleCoverData.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureFullFibersAreCUniform",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+      "to": "Kakeya.Assouad.WZ2PaperPurePartitioningCover",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+          "to": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData",
+          "to": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureScaleCoverData",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureScaleCoverData",
+          "to": "Kakeya.Assouad.WZ2PaperPureScaleCoverData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureScaleCoverData.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPurePartitioningCover",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ2PaperPureFullFibersAreCUniform",
+      "to": "Kakeya.DeltaTube",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureFullFibersAreCUniform",
+          "to": "Kakeya.Streamlined.TubeFamily",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Streamlined.TubeFamily",
+          "to": "Kakeya.Streamlined.TubeFamily.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Streamlined.TubeFamily.mk",
+          "to": "Kakeya.DeltaTube",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+      "to": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+          "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureIsExtremal.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+      "to": "Kakeya.Streamlined.Shading.IsLambdaDense",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+          "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureIsExtremal.mk",
+          "to": "Kakeya.Streamlined.Shading.IsLambdaDense",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.WZ2PaperPurePartitioningCover",
+      "to": "Kakeya.DeltaTube",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPurePartitioningCover",
+          "to": "Kakeya.Streamlined.TubeFamily",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Streamlined.TubeFamily",
+          "to": "Kakeya.Streamlined.TubeFamily.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Streamlined.TubeFamily.mk",
+          "to": "Kakeya.DeltaTube",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.frostman_energy_bound",
+      "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.frostman_energy_bound",
+          "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.frostman_to_katz_tao_weighted_card",
+      "to": "Kakeya.Assouad.FrostmanToKatzTaoWeightedCardStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.frostman_to_katz_tao_weighted_card",
+          "to": "Kakeya.Assouad.FrostmanToKatzTaoWeightedCardStatement",
+          "kind": "type"
         }
       ]
     },
@@ -9049,6 +10222,49 @@
       ]
     },
     {
+      "from": "Kakeya.Assouad.paper_cv_broad_set_estimate",
+      "to": "Kakeya.DeltaTube",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.paper_cv_broad_set_estimate",
+          "to": "_private.MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains.PaperCV.0.Kakeya.Assouad.paper_multiplicity_scaled_le",
+          "kind": "value"
+        },
+        {
+          "from": "_private.MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains.PaperCV.0.Kakeya.Assouad.paper_multiplicity_scaled_le",
+          "to": "Kakeya.DeltaTube",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.paper_cv_broad_set_estimate",
+      "to": "Kakeya.Streamlined.Shading",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.paper_cv_broad_set_estimate",
+          "to": "Kakeya.Assouad.WZ1PaperTubeShading",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ1PaperTubeShading",
+          "to": "Kakeya.Streamlined.Shading",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.parameter_block_amplification",
+      "to": "Kakeya.Assouad.ParameterBlockAmplificationStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.parameter_block_amplification",
+          "to": "Kakeya.Assouad.ParameterBlockAmplificationStatement",
+          "kind": "type"
+        }
+      ]
+    },
+    {
       "from": "Kakeya.Assouad.projection_energy_total",
       "to": "Kakeya.Assouad.frostman_energy_bound",
       "path": [
@@ -9065,12 +10281,105 @@
       ]
     },
     {
-      "from": "Kakeya.Assouad.pure_wz2_node01_subunit_package",
-      "to": "Kakeya.Assouad.pure_wz2_direct_wolff_floor",
+      "from": "Kakeya.Assouad.pure_wz2_direct_wolff_floor",
+      "to": "Kakeya.Assouad.PureWZ2WolffVolumeFloor",
       "path": [
         {
-          "from": "Kakeya.Assouad.pure_wz2_node01_subunit_package",
-          "to": "Kakeya.Assouad.pure_wz2_direct_wolff_floor",
+          "from": "Kakeya.Assouad.pure_wz2_direct_wolff_floor",
+          "to": "Kakeya.Assouad.PureWZ2WolffVolumeFloor",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
+      "to": "Kakeya.Assouad.PureWZ2Admissible",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
+          "to": "Kakeya.Assouad.PureWZ2Admissible",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
+      "to": "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
+          "to": "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
+      "to": "Kakeya.Assouad.PureWZ2WolffVolumeFloor",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
+          "to": "Kakeya.Assouad.PureWZ2WolffVolumeFloor",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
+      "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
+          "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node03_prop_sticky",
+      "to": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node03_prop_sticky",
+          "to": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node04_grains",
+      "to": "Kakeya.Assouad.IsADSet1",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node04_grains",
+          "to": "Kakeya.Assouad.PureWZ2PaperADBridgeStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2PaperADBridgeStatement",
+          "to": "Kakeya.Assouad.IsADSet1",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node04_grains",
+      "to": "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node04_grains",
+          "to": "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node04_grains",
+      "to": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node04_grains",
+          "to": "Kakeya.Assouad.PureWZ2PropStickyStatement",
           "kind": "value"
         }
       ]
@@ -9108,6 +10417,208 @@
           "from": "Kakeya.Assouad.PureWZ2.proposition63_m9_paperCVConstantWitness_exists",
           "to": "Kakeya.Assouad.paper_cv_broad_set_estimate",
           "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+      "to": "Kakeya.Assouad.DiscreteSet.IsKatzTao",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+          "to": "Kakeya.Assouad.pureWZ2_c2_grains_directRich",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_c2_grains_directRich",
+          "to": "Kakeya.Assouad.exists_pureWZ2C2RichEndpointClosureSchedule",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.exists_pureWZ2C2RichEndpointClosureSchedule",
+          "to": "Kakeya.Assouad.PureWZ2ReentrantTerminalKernelSchedule.terminal",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ReentrantTerminalKernelSchedule.terminal",
+          "to": "Kakeya.Assouad.PureWZ2ReentrantTerminalScalarSchedule",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ReentrantTerminalScalarSchedule",
+          "to": "Kakeya.Assouad.PureWZ2ReentrantTerminalScalarSchedule.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ReentrantTerminalScalarSchedule.mk",
+          "to": "Kakeya.Assouad.PureWZ2TerminalExactReadyGraph.common",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2TerminalExactReadyGraph.common",
+          "to": "Kakeya.Assouad.WZ1Lemma23UnitBallGraph",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ1Lemma23UnitBallGraph",
+          "to": "Kakeya.Assouad.WZ1Lemma23UnitBallGraph.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ1Lemma23UnitBallGraph.mk",
+          "to": "Kakeya.Assouad.DiscreteSet.IsKatzTao",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+      "to": "Kakeya.Assouad.IsADSet1",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+          "to": "Kakeya.Assouad.pureWZ2_c2_grains_directRich",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_c2_grains_directRich",
+          "to": "Kakeya.Assouad.PureWZ2PaperADBridgeStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2PaperADBridgeStatement",
+          "to": "Kakeya.Assouad.IsADSet1",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+      "to": "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+          "to": "Kakeya.Assouad.pureWZ2_c2_grains_directRich",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_c2_grains_directRich",
+          "to": "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+      "to": "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+          "to": "Kakeya.Assouad.pureWZ2_c2_grains_directRich",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_c2_grains_directRich",
+          "to": "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+      "to": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+          "to": "Kakeya.Assouad.pureWZ2_c2_grains_directRich",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_c2_grains_directRich",
+          "to": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+      "to": "Kakeya.Assouad.WZ1PlaneMapData",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+          "to": "Kakeya.Assouad.pureWZ2_c2_grains_directRich",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_c2_grains_directRich",
+          "to": "Kakeya.Assouad.exists_pureWZ2C2RichEndpointClosureSchedule",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.exists_pureWZ2C2RichEndpointClosureSchedule",
+          "to": "Kakeya.Assouad.pureWZ2_reentrantTerminal_paperOrderSchedule",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_reentrantTerminal_paperOrderSchedule",
+          "to": "Kakeya.Assouad.PureWZ2TerminalLemma23Prepared",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2TerminalLemma23Prepared",
+          "to": "Kakeya.Assouad.PureWZ2TerminalLemma23Prepared.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2TerminalLemma23Prepared.mk",
+          "to": "Kakeya.Assouad.WZ1LocalGrainData.toWZ1PlaneMapData",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ1LocalGrainData.toWZ1PlaneMapData",
+          "to": "Kakeya.Assouad.WZ1PlaneMapData",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+      "to": "Kakeya.Assouad.WZ1VerticalTrapezoid",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+          "to": "Kakeya.Assouad.pureWZ2_c2_grains_directRich",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_c2_grains_directRich",
+          "to": "Kakeya.Assouad.PureWZ2C2RichEndpointClosureSchedule.ActualRichEndpointP6Data",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2C2RichEndpointClosureSchedule.ActualRichEndpointP6Data",
+          "to": "Kakeya.Assouad.PureWZ2C2RichEndpointClosureSchedule.ActualRichEndpointP6Data.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2C2RichEndpointClosureSchedule.ActualRichEndpointP6Data.mk",
+          "to": "Kakeya.Assouad.PureWZ2AnchoredHierarchyData.levelCount",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2AnchoredHierarchyData.levelCount",
+          "to": "Kakeya.Assouad.PureWZ2AnchoredHierarchyData",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2AnchoredHierarchyData",
+          "to": "Kakeya.Assouad.PureWZ2AnchoredHierarchyData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2AnchoredHierarchyData.mk",
+          "to": "Kakeya.Assouad.WZ1VerticalTrapezoid",
+          "kind": "type"
         }
       ]
     },
@@ -9230,13 +10741,230 @@
       ]
     },
     {
-      "from": "Kakeya.Assouad.pure_wz2_node08_theorem5_2",
-      "to": "Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound",
+      "from": "Kakeya.Assouad.pure_wz2_node06_large_slope",
+      "to": "Kakeya.Assouad.IsADSet1",
       "path": [
         {
-          "from": "Kakeya.Assouad.pure_wz2_node08_theorem5_2",
-          "to": "Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound",
+          "from": "Kakeya.Assouad.pure_wz2_node06_large_slope",
+          "to": "Kakeya.Assouad.pureWZ2_direct_halfOffset_large_slope",
           "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_direct_halfOffset_large_slope",
+          "to": "Kakeya.Assouad.PureWZ2GrainsStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2GrainsStatement",
+          "to": "Kakeya.Assouad.PureWZ2PaperADBridgeStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2PaperADBridgeStatement",
+          "to": "Kakeya.Assouad.IsADSet1",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node06_large_slope",
+      "to": "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node06_large_slope",
+          "to": "Kakeya.Assouad.pureWZ2_direct_halfOffset_large_slope",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_direct_halfOffset_large_slope",
+          "to": "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node06_large_slope",
+      "to": "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node06_large_slope",
+          "to": "Kakeya.Assouad.pureWZ2_direct_halfOffset_large_slope",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_direct_halfOffset_large_slope",
+          "to": "Kakeya.Assouad.PureWZ2GrainsStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2GrainsStatement",
+          "to": "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node06_large_slope",
+      "to": "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node06_large_slope",
+          "to": "Kakeya.Assouad.pureWZ2_direct_halfOffset_large_slope",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_direct_halfOffset_large_slope",
+          "to": "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node06_large_slope",
+      "to": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node06_large_slope",
+          "to": "Kakeya.Assouad.pureWZ2_direct_halfOffset_large_slope",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_direct_halfOffset_large_slope",
+          "to": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+      "to": "Kakeya.Assouad.IsADSet1",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+          "to": "Kakeya.Assouad.PureWZ2GrainsStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2GrainsStatement",
+          "to": "Kakeya.Assouad.PureWZ2PaperADBridgeStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2PaperADBridgeStatement",
+          "to": "Kakeya.Assouad.IsADSet1",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+      "to": "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+          "to": "Kakeya.Assouad.PureWZ2C2GrainsStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2C2GrainsStatement",
+          "to": "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+      "to": "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+          "to": "Kakeya.Assouad.PureWZ2GrainsStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2GrainsStatement",
+          "to": "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+      "to": "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+          "to": "Kakeya.Assouad.PureWZ2LargeSlopeStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2LargeSlopeStatement",
+          "to": "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+      "to": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+          "to": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+      "to": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+          "to": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionFromCriticalStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionFromCriticalStatement",
+          "to": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+      "to": "Kakeya.Assouad.TubeWolffBound",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+          "to": "Kakeya.Assouad.PureWZ2ParameterFrostmanPreparationStatement",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ParameterFrostmanPreparationStatement",
+          "to": "Kakeya.Assouad.PureWZ2ParameterFrostmanPreparationData",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ParameterFrostmanPreparationData",
+          "to": "Kakeya.Assouad.PureWZ2ParameterFrostmanPreparationData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ParameterFrostmanPreparationData.mk",
+          "to": "Kakeya.Assouad.TubeWolffBound",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound",
+      "to": "Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound",
+          "to": "Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement",
+          "kind": "type"
         }
       ]
     },
@@ -9305,6 +11033,116 @@
       ]
     },
     {
+      "from": "Kakeya.Assouad.scale_profile_crossing",
+      "to": "Kakeya.Assouad.ScaleProfileCrossingStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.scale_profile_crossing",
+          "to": "Kakeya.Assouad.ScaleProfileCrossingStatement",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.wz1_anisotropic_frostman_rescaling",
+      "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.wz1_anisotropic_frostman_rescaling",
+          "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.wz1_frostman_coarsening",
+      "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.wz1_frostman_coarsening",
+          "to": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.wz1_hypergraph_refinement",
+      "to": "Kakeya.Assouad.WZ1HypergraphRefinementStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.wz1_hypergraph_refinement",
+          "to": "Kakeya.Assouad.WZ1HypergraphRefinementStatement",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.wz1_line_nonconcentration_projection",
+      "to": "Kakeya.Assouad.WZ1QuarterThinTubesStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.wz1_line_nonconcentration_projection",
+          "to": "Kakeya.Assouad.WZ1QuarterThinTubesStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.wz1_line_nonconcentration_projection",
+      "to": "Kakeya.Assouad.WZ1SmoothedToDiscreteThinTubesStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.wz1_line_nonconcentration_projection",
+          "to": "Kakeya.Assouad.WZ1SmoothedToDiscreteThinTubesStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.wz1_line_nonconcentration_projection",
+      "to": "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.wz1_line_nonconcentration_projection",
+          "to": "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.wz1_quarter_thin_tubes",
+      "to": "Kakeya.Assouad.WZ1QuarterThinTubesStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.wz1_quarter_thin_tubes",
+          "to": "Kakeya.Assouad.WZ1QuarterThinTubesStatement",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.wz1_smooth_segment_extension",
+      "to": "Kakeya.Assouad.WZ1SmoothSegmentExtensionStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.wz1_smooth_segment_extension",
+          "to": "Kakeya.Assouad.WZ1SmoothSegmentExtensionStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.wz1_thin_tubes_large_dot_product",
+      "to": "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.wz1_thin_tubes_large_dot_product",
+          "to": "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+          "kind": "type"
+        }
+      ]
+    },
+    {
       "from": "Kakeya.Assouad.wz1_thin_tubes_large_dot_product",
       "to": "Kakeya.Assouad.frostman_energy_bound",
       "path": [
@@ -9317,6 +11155,28 @@
           "from": "Kakeya.Assouad.wz1_thin_tubes_large_dot_product_at_of_lt_one",
           "to": "Kakeya.Assouad.frostman_energy_bound",
           "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.wz1_well_separated_projection_union",
+      "to": "Kakeya.Assouad.WZ1StripLocalizationDichotomyStatement",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.wz1_well_separated_projection_union",
+          "to": "Kakeya.Assouad.WZ1StripLocalizationDichotomyStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Assouad.wz1_well_separated_projection_union",
+      "to": "Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.wz1_well_separated_projection_union",
+          "to": "Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion",
+          "kind": "type"
         }
       ]
     },
@@ -9466,6 +11326,17 @@
     },
     {
       "from": "Kakeya.CV.polynomial_visibility_complete",
+      "to": "Kakeya.CV.PolynomialVisibilityStatement",
+      "path": [
+        {
+          "from": "Kakeya.CV.polynomial_visibility_complete",
+          "to": "Kakeya.CV.PolynomialVisibilityStatement",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.CV.polynomial_visibility_complete",
       "to": "Kakeya.CV.ellipsoid_selection_stability",
       "path": [
         {
@@ -9505,6 +11376,484 @@
           "from": "Kakeya.CV.polynomial_visibility_complete",
           "to": "Kakeya.CV.stable_finite_colour_ellipsoid_net",
           "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.CommonTangentRectangleRobustStatement",
+      "to": "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.CommonTangentRectangleRobustStatement",
+          "to": "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.CommonTangentRectangleRobustStatement",
+      "to": "Kakeya.Cinematic.IsCinematicFamily",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.CommonTangentRectangleRobustStatement",
+          "to": "Kakeya.Cinematic.IsCinematicFamily",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.CommonTangentRectangleRobustStatement",
+      "to": "Kakeya.Cinematic.tangencyParameterOn",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.CommonTangentRectangleRobustStatement",
+          "to": "Kakeya.Cinematic.tangencyParameterOn",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.ComparabilityTransitivityStatement",
+      "to": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.ComparabilityTransitivityStatement",
+          "to": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.ComparabilityTransitivityStatement",
+      "to": "Kakeya.Cinematic.IsCinematicFamily",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.ComparabilityTransitivityStatement",
+          "to": "Kakeya.Cinematic.IsCinematicFamily",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.ComparableRectanglesStatement",
+      "to": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.ComparableRectanglesStatement",
+          "to": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.ComparableRectanglesStatement",
+      "to": "Kakeya.Cinematic.IsCinematicFamily",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.ComparableRectanglesStatement",
+          "to": "Kakeya.Cinematic.IsCinematicFamily",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable",
+      "to": "Kakeya.Cinematic.CurvilinearRectangle",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable",
+          "to": "Kakeya.Cinematic.CurvilinearRectangle",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent",
+      "to": "Kakeya.Cinematic.CurvilinearRectangle",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent",
+          "to": "Kakeya.Cinematic.CurvilinearRectangle",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.FineRectangleAssignmentStatement",
+      "to": "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.FineRectangleAssignmentStatement",
+          "to": "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.FineRectangleAssignmentStatement",
+      "to": "Kakeya.Cinematic.IsCinematicFamily",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.FineRectangleAssignmentStatement",
+          "to": "Kakeya.Cinematic.IsCinematicFamily",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.FineRectangleAssignmentStatement",
+      "to": "Kakeya.Cinematic.tangencyParameterOn",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.FineRectangleAssignmentStatement",
+          "to": "Kakeya.Cinematic.tangencyParameterOn",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.PreliminaryDichotomyStatement",
+      "to": "Kakeya.Cinematic.IsCinematicFamily",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.PreliminaryDichotomyStatement",
+          "to": "Kakeya.Cinematic.IsCinematicFamily",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.RectanglePackingStatement",
+      "to": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.RectanglePackingStatement",
+          "to": "Kakeya.Cinematic.RectangleFamily.IsPairwiseIncomparable",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Cinematic.RectangleFamily.IsPairwiseIncomparable",
+          "to": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaIncomparable",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaIncomparable",
+          "to": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.TangencySublevelDiameterStatement",
+      "to": "Kakeya.Cinematic.IsCinematicFamily",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.TangencySublevelDiameterStatement",
+          "to": "Kakeya.Cinematic.IsCinematicFamily",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.TangencySublevelDiameterStatement",
+      "to": "Kakeya.Cinematic.tangencyParameterOn",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.TangencySublevelDiameterStatement",
+          "to": "Kakeya.Cinematic.tangencyParameterOn",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.WZ2UniformC2Input",
+      "to": "Kakeya.Cinematic.IsCinematicFamily",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.WZ2UniformC2Input",
+          "to": "Kakeya.Cinematic.IsCinematicFamily",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.bipartite_tangency_robust_full",
+      "to": "Kakeya.Cinematic.CommonTangentRectangleRobustStatement",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.bipartite_tangency_robust_full",
+          "to": "Kakeya.Cinematic.CommonTangentRectangleRobustStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.bipartite_tangency_robust_full",
+      "to": "Kakeya.Cinematic.ComparableRectanglesStatement",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.bipartite_tangency_robust_full",
+          "to": "Kakeya.Cinematic.ComparableRectanglesStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.bipartite_tangency_robust_full",
+      "to": "Kakeya.Cinematic.RectanglePackingStatement",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.bipartite_tangency_robust_full",
+          "to": "Kakeya.Cinematic.RectanglePackingStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.cinematic_difference_has_at_most_two_zeros",
+      "to": "Kakeya.Cinematic.PreliminaryDichotomyStatement",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.cinematic_difference_has_at_most_two_zeros",
+          "to": "Kakeya.Cinematic.PreliminaryDichotomyStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.common_tangent_overlap_comparable",
+      "to": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.common_tangent_overlap_comparable",
+          "to": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.common_tangent_overlap_comparable",
+      "to": "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.common_tangent_overlap_comparable",
+          "to": "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.common_tangent_rectangle_robust",
+      "to": "Kakeya.Cinematic.CommonTangentRectangleRobustStatement",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.common_tangent_rectangle_robust",
+          "to": "Kakeya.Cinematic.CommonTangentRectangleRobustStatement",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.comparable_rectangles_have_close_graphs",
+      "to": "Kakeya.Cinematic.ComparableRectanglesStatement",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.comparable_rectangles_have_close_graphs",
+          "to": "Kakeya.Cinematic.ComparableRectanglesStatement",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.comparable_rectangles_have_close_graphs",
+      "to": "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.comparable_rectangles_have_close_graphs",
+          "to": "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.comparable_rectangles_have_close_graphs",
+      "to": "Kakeya.Cinematic.tangencyParameterOn",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.comparable_rectangles_have_close_graphs",
+          "to": "Kakeya.Cinematic.tangencyParameterOn",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.incomparable_rectangles_packing_bound",
+      "to": "Kakeya.Cinematic.RectanglePackingStatement",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.incomparable_rectangles_packing_bound",
+          "to": "Kakeya.Cinematic.RectanglePackingStatement",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.maximal_fine_rectangle_selection",
+      "to": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.maximal_fine_rectangle_selection",
+          "to": "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaComparable",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.maximal_fine_rectangle_selection",
+      "to": "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.maximal_fine_rectangle_selection",
+          "to": "Kakeya.Cinematic.FineRectangleAssignmentData",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Cinematic.FineRectangleAssignmentData",
+          "to": "Kakeya.Cinematic.FineRectangleAssignmentData.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Cinematic.FineRectangleAssignmentData.mk",
+          "to": "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.tangency_sublevel_diameter",
+      "to": "Kakeya.Cinematic.PreliminaryDichotomyStatement",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.tangency_sublevel_diameter",
+          "to": "Kakeya.Cinematic.PreliminaryDichotomyStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.tangency_sublevel_diameter",
+      "to": "Kakeya.Cinematic.TangencySublevelDiameterStatement",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.tangency_sublevel_diameter",
+          "to": "Kakeya.Cinematic.TangencySublevelDiameterStatement",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.wz2_uniformC2_input",
+      "to": "Kakeya.Cinematic.ComparabilityTransitivityStatement",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.wz2_uniformC2_input",
+          "to": "Kakeya.Cinematic.wz2_uniformC2_short_curve_level_set",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Cinematic.wz2_uniformC2_short_curve_level_set",
+          "to": "Kakeya.Cinematic.ComparabilityTransitivityStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.wz2_uniformC2_input",
+      "to": "Kakeya.Cinematic.FineRectangleAssignmentStatement",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.wz2_uniformC2_input",
+          "to": "Kakeya.Cinematic.wz2_uniformC2_short_curve_level_set",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Cinematic.wz2_uniformC2_short_curve_level_set",
+          "to": "Kakeya.Cinematic.FineRectangleAssignmentStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.wz2_uniformC2_input",
+      "to": "Kakeya.Cinematic.GoodPairCountingStatement",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.wz2_uniformC2_input",
+          "to": "Kakeya.Cinematic.wz2_uniformC2_short_curve_level_set",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Cinematic.wz2_uniformC2_short_curve_level_set",
+          "to": "Kakeya.Cinematic.good_pair_counting",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Cinematic.good_pair_counting",
+          "to": "Kakeya.Cinematic.GoodPairCountingStatement",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.wz2_uniformC2_input",
+      "to": "Kakeya.Cinematic.PairIncidenceCountingStatement",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.wz2_uniformC2_input",
+          "to": "Kakeya.Cinematic.wz2_uniformC2_short_curve_level_set",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Cinematic.wz2_uniformC2_short_curve_level_set",
+          "to": "Kakeya.Cinematic.fine_pair_incidence_bound",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Cinematic.fine_pair_incidence_bound",
+          "to": "Kakeya.Cinematic.PairIncidenceCountingStatement",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.wz2_uniformC2_input",
+      "to": "Kakeya.Cinematic.TwoEndsSelectionStatement",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.wz2_uniformC2_input",
+          "to": "Kakeya.Cinematic.wz2_uniformC2_short_curve_level_set",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Cinematic.wz2_uniformC2_short_curve_level_set",
+          "to": "Kakeya.Cinematic.two_ends_selection",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Cinematic.two_ends_selection",
+          "to": "Kakeya.Cinematic.TwoEndsSelectionStatement",
+          "kind": "type"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Cinematic.wz2_uniformC2_input",
+      "to": "Kakeya.Cinematic.WZ2UniformC2Input",
+      "path": [
+        {
+          "from": "Kakeya.Cinematic.wz2_uniformC2_input",
+          "to": "Kakeya.Cinematic.WZ2UniformC2Input",
+          "kind": "type"
         }
       ]
     },
@@ -9663,6 +12012,17 @@
         {
           "from": "Kakeya.Cinematic.tangency_geometry_completion",
           "to": "Kakeya.Cinematic.tangency_sublevel_diameter",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "Kakeya.Streamlined.Shading.IsLambdaDense",
+      "to": "Kakeya.Streamlined.Shading",
+      "path": [
+        {
+          "from": "Kakeya.Streamlined.Shading.IsLambdaDense",
+          "to": "Kakeya.Streamlined.Shading",
           "kind": "value"
         }
       ]
@@ -9889,6 +12249,17 @@
     },
     {
       "from": "radial_bootstrapping_measure_thin_tubes",
+      "to": "HasMeasureThinTubes",
+      "path": [
+        {
+          "from": "radial_bootstrapping_measure_thin_tubes",
+          "to": "HasMeasureThinTubes",
+          "kind": "value"
+        }
+      ]
+    },
+    {
+      "from": "radial_bootstrapping_measure_thin_tubes",
       "to": "discretised_furstenberg_estimate",
       "path": [
         {
@@ -10024,6 +12395,11 @@
       "kind": "theorem",
       "module": "MyLeanRepo.DiscretisedFurstenbergEstimate.CombiningTheoremRework.Prop73.NonAllBadBranch",
       "line": 38
+    },
+    "DiscretisedFurstenbergEstimate.CombiningTheoremRework.base_case_inner": {
+      "kind": "theorem",
+      "module": "MyLeanRepo.DiscretisedFurstenbergEstimate.CombiningTheoremRework.Prop73.CombiningInductionWithBound",
+      "line": 398
     },
     "DiscretisedFurstenbergEstimate.CombiningTheoremRework.combining_induction_uniform_with_data_bounded": {
       "kind": "theorem",
@@ -10165,10 +12541,35 @@
       "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.PropSticky",
       "line": 76
     },
+    "Kakeya.Assouad.PureWZ2C2GlobalGrainData": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
+      "line": 389
+    },
+    "Kakeya.Assouad.PureWZ2C2GlobalGrainData.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
+      "line": 389
+    },
+    "Kakeya.Assouad.PureWZ2C2GrainConfiguration": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
+      "line": 516
+    },
+    "Kakeya.Assouad.PureWZ2C2GrainConfiguration.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
+      "line": 516
+    },
     "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement": {
       "kind": "definition",
       "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
       "line": 558
+    },
+    "Kakeya.Assouad.PureWZ2C2GrainsStatement": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
+      "line": 570
     },
     "Kakeya.Assouad.PureWZ2C2RichEndpointClosureSchedule.ActualRichEndpointP6Data": {
       "kind": "inductive",
@@ -10180,15 +12581,85 @@
       "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.C2.Node05V4RichEndpointHierarchyAssembly",
       "line": 260
     },
+    "Kakeya.Assouad.PureWZ2CriticalExtractionStatement": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Critical",
+      "line": 280
+    },
+    "Kakeya.Assouad.PureWZ2CriticalPackage": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Critical",
+      "line": 262
+    },
+    "Kakeya.Assouad.PureWZ2CriticalPackage.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Critical",
+      "line": 262
+    },
+    "Kakeya.Assouad.PureWZ2CroppedPropStickyAt": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.PropSticky",
+      "line": 320
+    },
+    "Kakeya.Assouad.PureWZ2ExtremalConfiguration": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Critical",
+      "line": 228
+    },
+    "Kakeya.Assouad.PureWZ2ExtremalConfiguration.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Critical",
+      "line": 228
+    },
+    "Kakeya.Assouad.PureWZ2GrainConfiguration": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
+      "line": 224
+    },
+    "Kakeya.Assouad.PureWZ2GrainConfiguration.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
+      "line": 224
+    },
     "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement": {
       "kind": "definition",
       "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
       "line": 303
     },
+    "Kakeya.Assouad.PureWZ2GrainsStatement": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
+      "line": 340
+    },
+    "Kakeya.Assouad.PureWZ2LargeSlopeConfiguration": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.LargeSlope",
+      "line": 45
+    },
+    "Kakeya.Assouad.PureWZ2LargeSlopeConfiguration.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.LargeSlope",
+      "line": 45
+    },
     "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement": {
       "kind": "definition",
       "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.LargeSlope",
       "line": 81
+    },
+    "Kakeya.Assouad.PureWZ2LargeSlopeStatement": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.LargeSlope",
+      "line": 93
+    },
+    "Kakeya.Assouad.PureWZ2LipschitzGlobalGrainData": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
+      "line": 121
+    },
+    "Kakeya.Assouad.PureWZ2LipschitzGlobalGrainData.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
+      "line": 121
     },
     "Kakeya.Assouad.PureWZ2NormalizedHierarchyOutput.PureWZ2Proposition64Lemma35GeometricData.assembleVerticalRediscretization": {
       "kind": "theorem",
@@ -10205,6 +12676,31 @@
       "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains",
       "line": 30
     },
+    "Kakeya.Assouad.PureWZ2ParameterFrostmanPreparationData": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.TwistedProjection",
+      "line": 56
+    },
+    "Kakeya.Assouad.PureWZ2ParameterFrostmanPreparationData.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.TwistedProjection",
+      "line": 56
+    },
+    "Kakeya.Assouad.PureWZ2ParameterFrostmanPreparationStatement": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.TwistedProjection",
+      "line": 105
+    },
+    "Kakeya.Assouad.PureWZ2PropStickyCapability": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.PropStickyReentry",
+      "line": 623
+    },
+    "Kakeya.Assouad.PureWZ2PropStickyCapability.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.PropStickyReentry",
+      "line": 623
+    },
     "Kakeya.Assouad.PureWZ2PropStickyData": {
       "kind": "inductive",
       "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.PropSticky",
@@ -10220,8 +12716,28 @@
       "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.PropStickyReentry",
       "line": 652
     },
+    "Kakeya.Assouad.PureWZ2ReentrantTerminalKernelSchedule.terminal": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.C2.PureHierarchyReentrantTerminalRuntime",
+      "line": 27
+    },
+    "Kakeya.Assouad.PureWZ2ReentrantTerminalScalarSchedule": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.C2.PureHierarchyReentrantTerminalSchedule",
+      "line": 20
+    },
+    "Kakeya.Assouad.PureWZ2ReentrantTerminalScalarSchedule.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.C2.PureHierarchyReentrantTerminalSchedule",
+      "line": 20
+    },
     "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData": {
       "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.TwistedProjection",
+      "line": 30
+    },
+    "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData.mk": {
+      "kind": "constructor",
       "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.TwistedProjection",
       "line": 30
     },
@@ -10229,6 +12745,16 @@
       "kind": "definition",
       "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.TwistedProjection",
       "line": 87
+    },
+    "Kakeya.Assouad.PureWZ2SubunitPackageStatement": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Critical",
+      "line": 218
+    },
+    "Kakeya.Assouad.PureWZ2TerminalExactReadyGraph.common": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.C2.TerminalScaleExactReadyGraph",
+      "line": 33
     },
     "Kakeya.Assouad.PureWZ2TerminalLemma23Prepared": {
       "kind": "inductive",
@@ -10285,10 +12811,35 @@
       "module": "MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremFirstLayerStatements",
       "line": 56
     },
+    "Kakeya.Assouad.WZ1Lemma23UnitBallGraph": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Lemma23UnitBallGraph",
+      "line": 102
+    },
+    "Kakeya.Assouad.WZ1Lemma23UnitBallGraph.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Lemma23UnitBallGraph",
+      "line": 102
+    },
     "Kakeya.Assouad.WZ1LocalGrainData.toWZ1PlaneMapData": {
       "kind": "definition",
       "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Definitions",
       "line": 1328
+    },
+    "Kakeya.Assouad.WZ1PaperIsLineClass": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Proposition3_2PaperStatements",
+      "line": 126
+    },
+    "Kakeya.Assouad.WZ1PaperTubeInLineClass": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Proposition3_2PaperStatements",
+      "line": 105
+    },
+    "Kakeya.Assouad.WZ1PaperTubeShading": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Proposition3_2PaperStatements",
+      "line": 89
     },
     "Kakeya.Assouad.WZ1PlaneMapData": {
       "kind": "inductive",
@@ -10330,6 +12881,11 @@
       "module": "MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremFirstLayerStatements",
       "line": 40
     },
+    "Kakeya.Assouad.WZ1UniformTripleDensity": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremFirstLayerStatements",
+      "line": 95
+    },
     "Kakeya.Assouad.WZ1VerticalTrapezoid": {
       "kind": "inductive",
       "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Definitions",
@@ -10370,10 +12926,45 @@
       "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12Extremal",
       "line": 41
     },
+    "Kakeya.Assouad.WZ2PaperPureIsExtremal.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12Extremal",
+      "line": 41
+    },
+    "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
+      "line": 690
+    },
+    "Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
+      "line": 690
+    },
     "Kakeya.Assouad.WZ2PaperPurePartitioningCover": {
       "kind": "inductive",
       "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
       "line": 337
+    },
+    "Kakeya.Assouad.WZ2PaperPureScaleCoverData": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
+      "line": 668
+    },
+    "Kakeya.Assouad.WZ2PaperPureScaleCoverData.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
+      "line": 668
+    },
+    "Kakeya.Assouad.WZ2PaperPureUnitRescaledFullFiberData": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
+      "line": 653
+    },
+    "Kakeya.Assouad.WZ2PaperPureUnitRescaledFullFiberData.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
+      "line": 653
     },
     "Kakeya.Assouad.exists_pureWZ2C2RichEndpointClosureSchedule": {
       "kind": "theorem",
@@ -10560,6 +13151,11 @@
       "module": "MyLeanRepo.Kakeya.Assouad.Definitions",
       "line": 103
     },
+    "Kakeya.Assouad.twistedUnion": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.Definitions",
+      "line": 382
+    },
     "Kakeya.Assouad.two_ends_reduction": {
       "kind": "theorem",
       "module": "MyLeanRepo.Kakeya.Assouad.WZ1.TwoEndsReduction",
@@ -10645,6 +13241,11 @@
       "module": "MyLeanRepo.Kakeya.Assouad.WZ1.WellSeparatedProjectionUnion",
       "line": 45
     },
+    "Kakeya.Assouad.wz2PaperCenteredDilatedCarrier": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
+      "line": 76
+    },
     "Kakeya.CV.PolynomialVisibilityStatement": {
       "kind": "definition",
       "module": "MyLeanRepo.Kakeya.CV.Statements",
@@ -10720,10 +13321,25 @@
       "module": "MyLeanRepo.Kakeya.Cinematic.Geometry",
       "line": 220
     },
+    "Kakeya.Cinematic.CurvilinearRectangle.AreLambdaIncomparable": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Cinematic.Geometry",
+      "line": 225
+    },
     "Kakeya.Cinematic.CurvilinearRectangle.IsLambdaTangent": {
       "kind": "definition",
       "module": "MyLeanRepo.Kakeya.Cinematic.Geometry",
       "line": 208
+    },
+    "Kakeya.Cinematic.FineRectangleAssignmentData": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Cinematic.Section5.FineShadings",
+      "line": 19
+    },
+    "Kakeya.Cinematic.FineRectangleAssignmentData.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Cinematic.Section5.FineShadings",
+      "line": 19
     },
     "Kakeya.Cinematic.FineRectangleAssignmentStatement": {
       "kind": "definition",
@@ -10749,6 +13365,11 @@
       "kind": "definition",
       "module": "MyLeanRepo.Kakeya.Cinematic.Statements",
       "line": 18
+    },
+    "Kakeya.Cinematic.RectangleFamily.IsPairwiseIncomparable": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Cinematic.Geometry",
+      "line": 266
     },
     "Kakeya.Cinematic.RectanglePackingStatement": {
       "kind": "definition",
@@ -10874,6 +13495,21 @@
       "kind": "definition",
       "module": "MyLeanRepo.Kakeya.Streamlined.Families",
       "line": 117
+    },
+    "Kakeya.Streamlined.TubeFamily": {
+      "kind": "inductive",
+      "module": "MyLeanRepo.Kakeya.Streamlined.Families",
+      "line": 410
+    },
+    "Kakeya.Streamlined.TubeFamily.mk": {
+      "kind": "constructor",
+      "module": "MyLeanRepo.Kakeya.Streamlined.Families",
+      "line": 410
+    },
+    "Kakeya.Streamlined.TubeShading": {
+      "kind": "definition",
+      "module": "MyLeanRepo.Kakeya.Streamlined.Families",
+      "line": 480
     },
     "Phase2Bsg.bsg_sector_ready_package": {
       "kind": "theorem",
@@ -11109,6 +13745,11 @@
       "kind": "theorem",
       "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.DirectWolffFloor",
       "line": 29
+    },
+    "_private.MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains.PaperCV.0.Kakeya.Assouad.paper_multiplicity_scaled_le": {
+      "kind": "theorem",
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains.PaperCV",
+      "line": 197
     },
     "_private.MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains.PaperCV.0.Kakeya.Assouad.unit_scale_multilinear_kakeya": {
       "kind": "theorem",

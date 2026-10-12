@@ -6,8 +6,10 @@ from __future__ import annotations
 import hashlib
 import html
 import json
+import re
 import subprocess
 from collections import Counter, deque
+from html.parser import HTMLParser
 from importlib.resources import files
 from pathlib import Path
 from types import SimpleNamespace
@@ -20,6 +22,7 @@ RAW = BLUEPRINT / "build/lean-dependencies.jsonl"
 EXTRACTOR = BLUEPRINT / "scripts/dependencies.lean"
 THEOREM = "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional"
 EDGE_KINDS = ("value", "type", "structural")
+REPORT_FORMAT = 2
 
 
 def extractor_digest() -> str:
@@ -120,10 +123,12 @@ def make_report(graph: dict[str, dict], records: list[dict], root: str,
     if set(parents) != graph.keys():
         raise ValueError("Dependency extraction contains declarations unreachable from the root")
     indexed = {record["name"]: record for record in records}
-    # Keep exact Lean theorem names separate even when one paper node links several versions.
-    selected = {name for name in indexed if name in graph and graph[name]["kind"] == "theorem"}
-    selected.add(root)
-    selected.update(name for name in graph[root]["value"] if graph[name]["kind"] == "theorem")
+    if root not in indexed:
+        raise ValueError("The dependency root must be linked from the blueprint")
+    # Keep every reached blueprint declaration, including definitions and types.
+    # Unlinked helpers are folded into witnessed edges; each displayed node has
+    # a manuscript statement. Distinct Lean versions remain distinct nodes.
+    selected = indexed.keys() & graph.keys()
     edges = []
     for name in sorted(selected):
         nearest = walks(graph, name, selected)
@@ -146,7 +151,7 @@ def make_report(graph: dict[str, dict], records: list[dict], root: str,
     evidence = {name: {key: graph[name][key] for key in ("kind", "module", "line")}
                 for name in sorted(evidence_names)}
     return {
-        "format": 1, "root": root, "module_roots": module_roots,
+        "format": REPORT_FORMAT, "root": root, "module_roots": module_roots,
         "project_declarations": len(graph), "library_boundary": boundary_count,
         "kinds": dict(sorted(Counter(record["kind"] for record in graph.values()).items())),
         "declarations": declarations, "graph_nodes": sorted(selected), "edges": edges,
@@ -171,13 +176,16 @@ def check_report(records: list[dict], source_sha256: str) -> dict:
     if not REPORT.is_file():
         raise ValueError("No proof dependency audit; run python blueprint/scripts/check.py --lean")
     report = json.loads(REPORT.read_text())
-    if (report.get("format") != 1 or report.get("root") != THEOREM
+    if (report.get("format") != REPORT_FORMAT or report.get("root") != THEOREM
             or report.get("source_sha256") != source_sha256
             or report.get("extractor_sha256") != extractor_digest()):
         raise ValueError("Lean dependency audit is stale; run python blueprint/scripts/check.py --lean")
     expected = {record["name"]: record for record in records}
     if sorted(entry["name"] for entry in report["declarations"]) != sorted(expected):
         raise ValueError("Lean dependency audit differs from the blueprint declaration links")
+    reached = {entry["name"] for entry in report["declarations"] if entry["reached"]}
+    if report["graph_nodes"] != sorted(reached):
+        raise ValueError("Displayed dependency nodes differ from the reached blueprint declarations")
     for entry in report["declarations"]:
         if any(entry[key] != expected[entry["name"]][key] for key in ("kind", "module", "line", "axioms")):
             raise ValueError(f"Dependency metadata disagrees with Lean audit: {entry['name']}")
@@ -200,59 +208,162 @@ def check_report(records: list[dict], source_sha256: str) -> dict:
     return report
 
 
-def render_graph(report: dict, aliases: dict[str, list[str]], source_link) -> str:
+class PaperStatements(HTMLParser):
+    """Read the already rendered blueprint, preserving its math and cross-links."""
+
+    VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link",
+            "meta", "param", "source", "track", "wbr"}
+
+    def __init__(self, text: str):
+        super().__init__(convert_charrefs=False)
+        self.text = text
+        self.offsets = [0]
+        for line in text.splitlines(keepends=True):
+            self.offsets.append(self.offsets[-1] + len(line))
+        self.depth = 0
+        self.current = None
+        self.captures = []
+        self.head = ""
+        self.statements: dict[str, dict] = {}
+        self.feed(text)
+
+    def source_offset(self) -> int:
+        line, column = self.getpos()
+        return self.offsets[line - 1] + column
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        classes = attrs.get("class", "").split()
+        key = None
+        if tag == "head":
+            key = "head"
+        if tag == "div" and "thm" in classes:
+            self.current = {"depth": self.depth, "ref": "", "title": ""}
+            self.statements[attrs["id"]] = self.current
+        if self.current is not None:
+            if "thm_thmcontent" in classes:
+                key = "content"
+            for cls in classes:
+                for suffix, field in (("_thmcaption", "caption"), ("_thmlabel", "ref"),
+                                      ("_thmtitle", "title")):
+                    if cls.endswith(suffix):
+                        key = field
+                        self.current["kind"] = cls.removesuffix(suffix)
+            if "latex_link" in classes:
+                self.current["url"] = attrs["href"]
+        if key:
+            self.captures.append((self.depth, key, self.source_offset() + len(self.get_starttag_text())))
+        if tag not in self.VOID:
+            self.depth += 1
+
+    def handle_endtag(self, tag):
+        if tag in self.VOID:
+            return
+        self.depth -= 1
+        if self.captures and self.captures[-1][0] == self.depth:
+            _, key, start = self.captures.pop()
+            value = self.text[start:self.source_offset()].strip()
+            if key == "head":
+                self.head = value
+            else:
+                self.current[key] = value
+        if self.current is not None and self.current["depth"] == self.depth:
+            self.current = None
+
+
+def statement_content(text: str, node_id: str) -> str:
+    """Give copies of a statement unique equation anchors for each Lean version."""
+    text = re.sub(r'(?<![\w:-])id="([^"]+)"', lambda match: f'id="{node_id}-{match[1]}"', text)
+    return re.sub(r'(?<![\w:-])href="#([^"]+)"', lambda match: f'href="#{node_id}-{match[1]}"', text)
+
+
+def render_graph(report: dict, aliases: dict[str, list[str]], source_link, paper_html: str) -> str:
     """Use the installed default blueprint graph template and modal interactions."""
     from jinja2 import Template
 
-    class TheoremNode(SimpleNamespace):
+    class GraphNode(SimpleNamespace):
         def __str__(self):
             return self.content
 
+    paper = PaperStatements(paper_html)
     q = lambda text: json.dumps(text, ensure_ascii=False)
     dot = ['strict digraph { graph [bgcolor=transparent];',
            'node [penwidth=1.8]; edge [arrowhead=vee];']
     nodes = []
+    groups: dict[str, list[str]] = {}
+    for name in report["graph_nodes"]:
+        labels = aliases.get(name, [])
+        if not labels or any(label not in paper.statements for label in labels):
+            raise ValueError(f"No rendered blueprint statement for {name}")
+        groups.setdefault(labels[0], []).append(name)
+
+    def role(name: str) -> str:
+        if report["evidence"][name]["kind"] == "theorem":
+            return "proof"
+        return "definition" if paper.statements[aliases[name][0]]["kind"] == "definition" else "statement"
+
     for index, name in enumerate(report["graph_nodes"]):
         # Stable safe DOM IDs also support Lean names with punctuation.
         node_id = f"lean-{index}"
-        labels = aliases.get(name, [])
-        label = labels[0].split(":", 1)[-1] if labels else name.rsplit(".", 1)[-1]
-        if labels and sum(labels == aliases.get(other, []) for other in report["graph_nodes"]) > 1:
-            label += "\n" + name.rsplit(".", 1)[-1]
-        dot.append(f'{q(node_id)} [label={q(label)}, shape=ellipse, '
-                   'style=filled, color=green, fillcolor="#9CEC8B"];')
-        anchor = quote(labels[0], safe=":") if labels else "proof-references"
-        content = (f'<p><code>{html.escape(name).replace(".", ".<wbr>").replace("_", "_<wbr>")}</code></p>'
-                   '<p>This theorem occurs in the audited Lean dependency closure.</p>'
-                   f'<p>{source_link(name)} · <a href="lean_dependency_audit.html#{anchor}">'
-                   'Version audit and paths</a></p>')
-        nodes.append(TheoremNode(id=node_id, thmName="theorem", caption="Lean theorem",
-                                 ref=None, title=None, content=content,
-                                 url="../lean/find/#doc/" + quote(name, safe=".")))
+        labels = aliases[name]
+        statement = paper.statements[labels[0]]
+        label = labels[0].split(":", 1)[-1]
+        if len(groups[labels[0]]) > 1:
+            versions = [other for other in groups[labels[0]] if role(other) == role(name)]
+            label += "\n" + role(name)
+            if len(versions) > 1:
+                label += f" {versions.index(name) + 1}"
+        theorem = report["evidence"][name]["kind"] == "theorem"
+        shape, color = ("ellipse", "#9CEC8B") if theorem else ("box", "#B0ECA3")
+        dot.append(f'{q(node_id)} [label={q(label)}, shape={shape}, '
+                   f'style=filled, color=green, fillcolor="{color}"];')
+        content = statement_content(statement["content"], node_id)
+        for other in labels[1:]:
+            extra = paper.statements[other]
+            content += (f'<p><a href="{html.escape(extra["url"], quote=True)}">'
+                        f'{extra["caption"]} {extra["ref"]}: {extra["title"]}</a></p>'
+                        + statement_content(extra["content"], node_id))
+        status = {"proof": "Proved Lean theorem", "definition": "Lean definition / type",
+                  "statement": "Lean statement interface"}[role(name)]
+        link = "../lean/find/#doc/" + quote(name, safe=".")
+        display_name = html.escape(name).replace(".", ".<wbr>").replace("_", "_<wbr>")
+        content += (f'<p class="lean-version"><small>{status}: '
+                    f'<a class="lean_decl" href="{link}"><code>{display_name}</code></a></small></p>'
+                    f'<p>{source_link(name, "Lean source")} · '
+                    f'<a href="{link}">Lean documentation</a> · '
+                    f'<a href="lean_dependency_audit.html#{quote(labels[0], safe=":")}">'
+                    'Version audit and paths</a></p>')
+        nodes.append(GraphNode(id=node_id, thmName=statement["kind"], caption=statement["caption"],
+                               ref=statement["ref"], title=statement["title"], content=content,
+                               url=statement["url"]))
     ids = {name: node.id for name, node in zip(report["graph_nodes"], nodes)}
     for edge in report["edges"]:
         dot.append(f'{q(ids[edge["to"]])} -> {q(ids[edge["from"]])};')
     dot.append("}")
 
     template = files("plastexdepgraph").joinpath("templates/dep_graph.html").read_text()
+    # Inherit the manuscript's MathJax setup, macros and styles along with its
+    # rendered statements, without feeding that HTML back through Jinja.
+    template = re.sub(r"<head>.*?</head>", "<head>{{ paper_head }}</head>", template, flags=re.S)
     # The upstream viewer embeds DOT in a JavaScript template literal. Use JSON
     # quoting so Lean declaration names cannot be interpreted as JavaScript.
     template = template.replace(".renderDot(`{{ dot.replace('\\n','') }}`)",
                                 ".renderDot({{ dot_json }})")
-    template = template.replace('>LaTeX</a>', '>Lean documentation</a>')
     template = template.replace('<div class="content">', '<div class="content">\n'
                                 '<nav aria-label="Dependency views">'
                                 '<a href="lean_dependency_audit.html">Version audit and paths</a> · '
                                 '<a href="dep_graph_document.html">Paper argument graph</a></nav>', 1)
     return Template(template).render(
         graph=SimpleNamespace(nodes=nodes), title="Lean dependencies",
-        context=SimpleNamespace(terms={"Dependency graph": "Lean proof dependencies"}),
-        config={"html5": {"theme-css": "white", "use-mathjax": False}, "mathjax-macros": {}},
-        legend=[("Ellipses", "audited Lean theorems"),
+        paper_head=re.sub(r"<title>.*?</title>", "<title>Lean proof dependencies</title>", paper.head, flags=re.S),
+        config={"html5": {}},
+        legend=[("Boxes", "definitions, types and statement interfaces"),
+                ("Ellipses", "proved theorems and lemmas"),
                 ("Green border", "the statement is formalized"),
-                ("Green background", "the proof is formalized"),
-                ("Arrows", "from a dependency to the theorem using it; intermediate helpers are folded"),
-                ("Scope", f"all {len(nodes)} audited theorem nodes; "
+                ("Green background", "the theorem's proof is formalized"),
+                ("Light green background", "the definition or type is formalized"),
+                ("Arrows", "from a dependency to the declaration using it; intermediate helpers are folded"),
+                ("Scope", f"all {len(nodes)} reached blueprint declarations; "
                  '<a href="lean_dependency_audit.html">audit method and declaration versions</a>')],
         extra_modal_links=[],
         dot_json=json.dumps("\n".join(dot), ensure_ascii=False).replace("<", "\\u003c"),
@@ -269,13 +380,14 @@ def write_site(site: Path, report: dict, paper_nodes: list[dict]) -> None:
     edge_rows = []
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
 
-    def source_link(name: str) -> str:
+    def source_link(name: str, label: str | None = None) -> str:
         metadata = report["evidence"].get(name, entries.get(name))
         file = metadata["module"].replace(".", "/") + ".lean"
         url = f"https://github.com/Yu-Misaka/3d-sticky-kakeya/blob/{revision}/{quote(file)}"
         if metadata.get("line"):
             url += f"#L{metadata['line']}"
-        return f'<a href="{html.escape(url, quote=True)}"><code>{html.escape(name)}</code></a>'
+        caption = html.escape(label) if label else f'<code>{html.escape(name)}</code>'
+        return f'<a href="{html.escape(url, quote=True)}">{caption}</a>'
 
     def path_details(path: list[dict]) -> str:
         if not path:
@@ -318,11 +430,11 @@ def write_site(site: Path, report: dict, paper_nodes: list[dict]) -> None:
     }
     for name, text in substitutions.items():
         template = template.replace("{{" + name + "}}", text)
-    (site / "blueprint/lean_dependency_audit.html").write_text(template)
-    (site / "blueprint/lean_dependencies.html").write_text(render_graph(report, aliases, source_link))
-    (site / "blueprint/lean-dependencies.json").write_text(json.dumps(report, ensure_ascii=False) + "\n")
     paper = site / "blueprint/dep_graph_document.html"
     text = paper.read_text()
+    (site / "blueprint/lean_dependency_audit.html").write_text(template)
+    (site / "blueprint/lean_dependencies.html").write_text(render_graph(report, aliases, source_link, text))
+    (site / "blueprint/lean-dependencies.json").write_text(json.dumps(report, ensure_ascii=False) + "\n")
     note = ('<p class="graph-audit-note">This graph follows the paper and manual completion marks. '
             '<a href="lean_dependencies.html">View the dependencies extracted from the Lean proof</a> '
             'and check which declaration versions are actually used.</p>')

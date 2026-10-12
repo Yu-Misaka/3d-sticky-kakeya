@@ -36,14 +36,40 @@ class DependencyGraphTests(unittest.TestCase):
                                   "Root", ["Example"], 0)
         entries = {row["name"]: row for row in report["declarations"]}
         self.assertTrue(entries["Statement"]["reached"])
-        self.assertNotIn("Statement", report["graph_nodes"])
+        self.assertEqual(set(report["graph_nodes"]), {"Root", "Statement", "Used"})
         self.assertFalse(entries["UnusedSameType"]["reached"])
         self.assertEqual(entries["UnusedSameType"]["kind"], "theorem")
         self.assertEqual(entries["Used"]["path"], [
             {"from": "Root", "to": "Helper", "kind": "value"},
             {"from": "Helper", "to": "Used", "kind": "value"},
         ])
-        self.assertEqual(report["edges"][0]["path"], entries["Used"]["path"])
+        proof_edge = next(edge for edge in report["edges"]
+                          if edge["from"] == "Root" and edge["to"] == "Used")
+        self.assertEqual(proof_edge["path"], entries["Used"]["path"])
+        statement_edge = next(edge for edge in report["edges"] if edge["to"] == "Statement")
+        self.assertEqual(statement_edge["path"], [{"from": "Root", "to": "Statement", "kind": "type"}])
+
+    def test_definitions_are_kept_and_unlinked_assembly_steps_are_folded(self):
+        graph = {row["name"]: row for row in [
+            declaration("Root", types=["Conclusion"], values=["Assembly"]),
+            declaration("Conclusion", "definition", types=["Objects"]),
+            declaration("Objects", "inductive"),
+            declaration("Assembly", types=["Conclusion"], values=["Proof"]),
+            declaration("Proof", types=["Conclusion"]),
+        ]}
+        records = [registry_record("Root"), registry_record("Conclusion", "definition"),
+                   registry_record("Objects", "inductive"), registry_record("Proof"),
+                   registry_record("UnusedDefinition", "definition"), registry_record("UnusedProof")]
+        report = deps.make_report(graph, records, "Root", ["Example"], 0)
+        self.assertEqual(report["graph_nodes"], ["Conclusion", "Objects", "Proof", "Root"])
+        self.assertEqual({(edge["from"], edge["to"]) for edge in report["edges"]},
+                         {("Root", "Proof"), ("Proof", "Conclusion"), ("Conclusion", "Objects")})
+        proof_edge = next(edge for edge in report["edges"] if edge["from"] == "Root")
+        self.assertEqual(proof_edge["path"], [
+            {"from": "Root", "to": "Assembly", "kind": "value"},
+            {"from": "Assembly", "to": "Proof", "kind": "value"},
+        ])
+        self.assertEqual(report["evidence"]["Objects"]["kind"], "inductive")
 
     def test_reduction_keeps_the_nonredundant_dependency_chain(self):
         edges = [{"from": "Root", "to": "Middle"}, {"from": "Middle", "to": "Leaf"},
@@ -65,6 +91,46 @@ class DependencyGraphTests(unittest.TestCase):
             file.write_text(header + "\n" + record + '\n{"boundary": []}\n')
             with self.assertRaisesRegex(ValueError, "Unresolved"):
                 deps.read_graph(file)
+
+
+class ManuscriptPopupTests(unittest.TestCase):
+    PAPER = r'''<!doctype html><html><head>
+<title>Dependency graph</title>
+<script>MathJax = {tex: {macros: {R: "\\mathbb{R}"}}};</script>
+<script src="mathjax.js"></script><link rel="stylesheet" href="styles/theme.css" />
+</head><body><div id="statements"><div class="thm" id="thm:bound">
+<div class="thm_thmheading"><span class="theorem_thmcaption">Theorem</span>
+<span class="theorem_thmlabel">2.3</span>
+<span class="theorem_thmtitle">A bound on \(\R\)</span></div>
+<div class="thm_thmcontent"><p>Every <em>nonempty</em> set satisfies<br /> the bound.</p>
+<div class="displaymath" id="bound-equation">\[ |E| \geq \delta^\varepsilon. \]</div>
+<p>See <a href="#bound-equation">the bound</a> and
+<a href="chapter.html#def:sets">Definition 2.1</a>.</p></div>
+<a class="latex_link" href="chapter.html#thm:bound">LaTeX</a>
+</div></div></body></html>'''
+
+    def test_versions_reuse_natural_statements_math_config_and_cross_references(self):
+        report = {"graph_nodes": ["Bound", "Bound.proof"], "edges": [],
+                  "evidence": {"Bound": {"kind": "definition"}, "Bound.proof": {"kind": "theorem"}}}
+        aliases = {name: ["thm:bound"] for name in report["graph_nodes"]}
+        rendered = deps.render_graph(report, aliases, lambda name, label: label, self.PAPER)
+        self.assertIn('macros: {R: "\\\\mathbb{R}"}', rendered)
+        self.assertIn('<script src="mathjax.js"></script>', rendered)
+        self.assertEqual(rendered.count(r'\[ |E| \geq \delta^\varepsilon. \]'), 2)
+        self.assertEqual(rendered.count('Every <em>nonempty</em> set'), 2)
+        for index in range(2):
+            self.assertIn(f'id="lean-{index}-bound-equation"', rendered)
+            self.assertIn(f'href="#lean-{index}-bound-equation"', rendered)
+        self.assertNotIn('id="bound-equation"', rendered)
+        self.assertEqual(rendered.count('href="chapter.html#def:sets"'), 2)
+        self.assertEqual(rendered.count('href="chapter.html#thm:bound"'), 2)
+        self.assertIn('Lean statement interface:', rendered)
+        self.assertIn('Proved Lean theorem:', rendered)
+
+    def test_missing_manuscript_statement_does_not_silently_become_a_code_only_popup(self):
+        report = {"graph_nodes": ["Unknown"], "edges": []}
+        with self.assertRaisesRegex(ValueError, "No rendered blueprint statement for Unknown"):
+            deps.render_graph(report, {"Unknown": ["thm:missing"]}, lambda name, label: label, self.PAPER)
 
 
 @unittest.skipUnless(shutil.which("lake"), "Lean is needed for the metaprogram regression")

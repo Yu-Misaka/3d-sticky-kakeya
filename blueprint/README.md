@@ -182,12 +182,18 @@ the root's complete transitive axiom set. The driver deliberately has no
 `module` header, so Lean loads imported private declaration bodies as well.
 A missing referenced declaration fails the audit.
 
-The graph shows the reached theorem declarations linked by the blueprint,
-together with the root's immediate theorem inputs. It uses the default
-`plastexdepgraph` frontend and displays all audited theorem nodes on opening.
-Clicking an ellipse opens its theorem popup with links to Lean documentation
-and the version audit. Intermediate declarations
-are folded into edges, and redundant edges are removed only if the projected
+The graph shows all reached declarations linked by the blueprint, including
+definitions, types, and proposition-valued statement interfaces. It uses the
+default `plastexdepgraph` frontend and displays every selected node on opening.
+Theorems use green ellipses; definitions and interfaces use light-green boxes,
+so a definition of a proposition is distinguished from a proof of it.
+Clicking a node opens the manuscript's rendered natural-language statement,
+including its number, formulas and cross-references, with links to the exact
+Lean version, source, and version audit. These statements and the MathJax
+configuration are reused from the generated paper graph. When several reached
+Lean versions share a paper statement, they keep separate nodes and popups.
+Unlinked helpers (including internal assembly steps) are folded into witnessed
+edges, and redundant edges are removed only if the projected
 graph is acyclic. Every displayed edge and every reached blueprint declaration
 has a concrete witness path whose steps link to source. The separate
 `blueprint/lean_dependency_audit.html` page contains the method, edge witnesses,

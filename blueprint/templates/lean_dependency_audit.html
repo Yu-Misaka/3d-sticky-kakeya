@@ -30,9 +30,11 @@
   <p>{{COUNTS}}</p>
   <details><summary>How this graph is computed</summary>
   <p>References in declaration types, proof bodies, private helpers and inductive
-    data are followed. The <a href="lean_dependencies.html">dependency graph</a> displays linked theorems and the root's
-    immediate theorem inputs. Intermediate definitions and helpers are folded
-    into edges; redundant edges are removed for readability. Every edge has a
+    data are followed. The <a href="lean_dependencies.html">dependency graph</a> displays all reached blueprint-linked
+    declarations: theorems, definitions, types and statement interfaces. Its
+    popups show the corresponding manuscript statements and the exact Lean
+    versions. Unlinked helpers are folded into edges; redundant edges are
+    removed for readability. Every edge has a
     witness below. Lean and Mathlib are library boundaries.</p>
   <p>These are references in the stored proof term, not a claim of minimal logical necessity.
     Type annotations, unused let bindings and arguments passed to a theorem still count.
