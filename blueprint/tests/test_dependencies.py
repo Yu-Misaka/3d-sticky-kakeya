@@ -1,6 +1,7 @@
 """Dependency extraction must distinguish proofs, signatures, and unused versions."""
 
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -113,7 +114,7 @@ class ManuscriptPopupTests(unittest.TestCase):
         report = {"graph_nodes": ["Bound", "Bound.proof"], "edges": [],
                   "evidence": {"Bound": {"kind": "definition"}, "Bound.proof": {"kind": "theorem"}}}
         aliases = {name: ["thm:bound"] for name in report["graph_nodes"]}
-        rendered = deps.render_graph(report, aliases, lambda name, label: label, self.PAPER)
+        rendered = deps.render_graph(report, aliases, self.PAPER)
         self.assertIn('macros: {R: "\\\\mathbb{R}"}', rendered)
         self.assertIn('<script src="mathjax.js"></script>', rendered)
         self.assertEqual(rendered.count(r'\[ |E| \geq \delta^\varepsilon. \]'), 2)
@@ -124,13 +125,28 @@ class ManuscriptPopupTests(unittest.TestCase):
         self.assertNotIn('id="bound-equation"', rendered)
         self.assertEqual(rendered.count('href="chapter.html#def:sets"'), 2)
         self.assertEqual(rendered.count('href="chapter.html#thm:bound"'), 2)
-        self.assertIn('Lean statement interface:', rendered)
-        self.assertIn('Proved Lean theorem:', rendered)
+        statements = deps.PaperStatements(rendered).statements
+        for index, name in enumerate(report["graph_nodes"]):
+            content = statements[f"lean-{index}"]["content"]
+            self.assertNotIn('Lean', content)
+            self.assertNotIn('Version audit and paths', content)
+            # Each version has exactly one Lean action; all three actions are
+            # adjacent inline links after the statement, as in the paper graph.
+            link = f'../lean/find/#doc/{name}'
+            self.assertEqual(rendered.count(f'href="{link}"'), 1)
+            self.assertRegex(rendered,
+                r'<a class="latex_link" href="chapter.html#thm:bound">LaTeX</a>\s*'
+                rf'<a class="lean_link lean_decl" href="{re.escape(link)}">Lean</a>\s*'
+                r'<a class="issue_link audit_link" href="lean_dependency_audit.html#thm:bound">'
+                r'Version audit and paths</a>')
+        for removed in ('Proved Lean theorem:', 'Lean statement interface:',
+                        'Lean source', 'Lean documentation', 'lean-version'):
+            self.assertNotIn(removed, rendered)
 
     def test_missing_manuscript_statement_does_not_silently_become_a_code_only_popup(self):
         report = {"graph_nodes": ["Unknown"], "edges": []}
         with self.assertRaisesRegex(ValueError, "No rendered blueprint statement for Unknown"):
-            deps.render_graph(report, {"Unknown": ["thm:missing"]}, lambda name, label: label, self.PAPER)
+            deps.render_graph(report, {"Unknown": ["thm:missing"]}, self.PAPER)
 
 
 @unittest.skipUnless(shutil.which("lake"), "Lean is needed for the metaprogram regression")

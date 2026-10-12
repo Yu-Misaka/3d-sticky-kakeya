@@ -92,6 +92,39 @@ with an iteration over scales, makes the same projection large. The
 two estimates contradict each other when the losses are chosen in the
 correct order.
 
+The route to Theorem~\ref{thm:sticky} can be read through the following
+outputs. Every refinement in the structural branch carries the same
+selected shading into the next step.
+
+\begin{center}
+\begin{tabular}{p{.27\textwidth}p{.63\textwidth}}
+Output & Dependency route \\
+\hline
+Critical exponent & Lemma~\ref{lem:critical-exponent}: arbitrarily
+small extremizers and a uniform lower envelope for admissible unions. \\
+Balanced extremality & Proposition~\ref{prop:sticky-structure}:
+coarse and rescaled fine families, with the normalized refinement
+cost in Lemma~\ref{lem:cwa-refinement}. \\
+Regular grains & Proposition~\ref{prop:lipschitz-grains}, then
+Proposition~\ref{prop:c2-grains}: the multilinear and radial projection
+branches supply planiness, AD spacing, and slope regularity. \\
+Small twisted image & Proposition~\ref{prop:large-slope}, then
+Lemma~\ref{lem:small-twisted-projection}: the convex slab count forces
+a nonsingular slope, while global grains bound its projected area. \\
+Large twisted image & Theorem~\ref{thm:twisted-parameter}: parameter
+extraction and cinematic comparison give
+Lemma~\ref{lem:projection-one-step}; compatible coarsening and finite
+telescoping close the lower bound. \\
+Contradiction & Choose the lower-bound exponent before the structural
+loss and the final scale, as in the proof of Theorem~\ref{thm:sticky}.
+\end{tabular}
+\end{center}
+
+The WZ1-to-WZ2 transfers used in this route are listed in
+Section~\ref{sec:wz1-wz2-transfer}. In particular, the WZ2 critical
+exponent belongs to the all-scale-CWA class; it is not identified
+with WZ1's directional exponent $\sigma_3$.
+
 \section{Reading the formalization}
 
 The Lean links attached to statements lead to their declarations in the

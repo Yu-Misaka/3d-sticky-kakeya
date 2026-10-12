@@ -125,6 +125,24 @@ independent endpoint sets; see Remark~\ref{rem:endpoint-union}.
 
 \section{Affine approximation on the retained heights}
 
+\begin{lemma}[The AD exponent gap]
+\label{lem:ad-expansion-gap}
+\uses{def:ad-set}
+Let $A\subset\R$ be a $(\rho_0,1-\sigma,C)_1$-ADset, where
+$0<\eps<\sigma<1$. For $\rho\geq\rho_0$, let $I$ be an interval and set
+$R=|I|/\rho\geq1$. If
+\[
+                \cE_\rho(A\cap I)\geq R^{1-\eps},
+\]
+then $R^{\sigma-\eps}\leq C$. In particular, the expansion
+alternative is impossible when $R>C^{1/(\sigma-\eps)}$.
+\end{lemma}
+\begin{proof}
+The upper AD bound gives
+$R^{1-\eps}\leq\cE_\rho(A\cap I)\leq CR^{1-\sigma}$.
+Divide by the positive quantity $R^{1-\sigma}$.
+\end{proof}
+
 \begin{lemma}[Affine approximation in one grain; WZ1, Lemma 5.3]
 \label{lem:locally-affine}
 \lean{Kakeya.Assouad.WZ1LocallyLinearOneScaleData}
@@ -150,12 +168,15 @@ $\rho^{1/2+\eps}$ and an affine function $L:I\to[0,1]$ satisfying
 $|f(z)-L(z)|\leq\rho$ on $Z_{\rm lin}$.
 \end{lemma}
 \begin{proof}
-\uses{thm:wz1-projection}
+\uses{thm:wz1-projection,lem:ad-expansion-gap}
 Choose well-populated horizontal slices and encode the local and
 global normal directions by two planar graphs. The common shaded
 incidences give a dense tripartite graph. The projection alternative
 with a long, nearly one-dimensional dot-difference set would contradict
-the global AD exponent $1-\sigma$. The remaining alternative forces
+the global AD exponent $1-\sigma$. Quantitatively, choose its expansion
+loss below $\sigma$, and reserve enough slack in the source AD constant
+and the interval-to-mesh ratio to apply Lemma~\ref{lem:ad-expansion-gap}.
+The remaining alternative forces
 the slope graph to remain near an affine line on a substantial set
 of heights. The volume assumption supplies the stated measure of
 those heights.

@@ -119,6 +119,23 @@ containment of the original one. Identifying repeated larger sets is
 a separate operation and requires a counting argument.
 \end{remark}
 
+\begin{lemma}[The cost of restricting a normalized Wolff count]
+\label{lem:cwa-refinement}
+\uses{def:cwa}
+Suppose a nonempty finite indexed family $\mathcal S$ satisfies CWA
+with error $C$, and $\mathcal S'\subset\mathcal S$ retains at least
+a fraction $\kappa>0$ of its indices. Then $\mathcal S'$ satisfies
+CWA with error $C/\kappa$.
+\end{lemma}
+\begin{proof}
+For every convex $W$, inclusion and the original count give
+\[
+ \#\{S\in\mathcal S':S\subset W\}
+ \leq C|W|\#\mathcal S
+ \leq(C/\kappa)|W|\#\mathcal S'.
+\]
+\end{proof}
+
 \begin{definition}[Unit rescaling; WZ2, Definition 2.8]
 \label{def:unit-rescaling}
 \lean{Kakeya.Assouad.WZ2PaperAssouadUnitRescalingData}
@@ -223,6 +240,20 @@ the two conclusions. When standard tubes are substituted for affine
 images, the fixed geometric comparison factors must be included in
 the error constant.
 \end{proof}
+
+\begin{remark}[Refinement of an all-scale cover]
+\label{rem:refinement-loss}
+Lemma~\ref{lem:cwa-refinement} applies to each nonempty retained
+containment fibre, with its own retained fraction. A lower bound for
+the fraction of tubes retained globally gives no such bound in every
+fibre. For all-scale CWA, the coarse cover and its full containment
+fibres must therefore be rebuilt and rebalanced together. Shading
+mass retention is another condition: a large fraction of the total
+mass need not be a large fraction of the tube indices.
+The refinements in Proposition~\ref{prop:sticky-structure} keep track
+of these separate quantities. Arbitrary tube deletion is not an
+application of Lemma~\ref{lem:multiscale-cwa}.
+\end{remark}
 
 \begin{definition}[Tube Frostman condition; WZ2, Definition 2.14]
 \label{def:tube-frostman}

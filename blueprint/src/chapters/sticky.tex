@@ -158,6 +158,13 @@ all-scale CWA. The same extremal argument applies, but a WZ1 theorem
 must be transported to the WZ2 family class before it is used. In
 particular, the powers of the family cardinality in the next proposition
 are present in WZ2 and absent from the corresponding WZ1 display.
+Indeed, in the WZ2 class a dense shading has mass at least a constant
+times $\delta^{2+\eta}\#\T$. Dividing by an extremal union bound
+$\delta^{\sigma-\eta}$ gives average multiplicity at least a constant
+times $\delta^{2-\sigma+2\eta}\#\T$. Thus the reference multiplicity
+is $\delta^{2-\sigma}\#\T$, with small power losses. CWA does not
+supply the directional upper bound $\#\T\lesssim\delta^{-2}$;
+the cardinality factors must be retained until they cancel.
 \end{remark}
 
 \section{The structure at an intermediate scale}
@@ -216,7 +223,7 @@ Here the statement is read in the bounded cubical model reached from
 the public configuration by localization and rescaling.
 \end{proposition}
 \begin{proof}
-\uses{lem:multiscale-cwa,lem:critical-exponent}
+\uses{lem:multiscale-cwa,lem:critical-exponent,lem:cwa-refinement}
 \leanok
 First retain tubes carrying comparable positive mass. The multiscale
 CWA condition supplies coarse tubes and rescaled fibres with the
@@ -328,12 +335,15 @@ give configurations at arbitrarily small scales whose twisted
 projection has area at most $\delta^{\sigma-a}$, where $a>0$ may be
 chosen as small as needed. The same selected configuration satisfies
 the parameter nonconcentration required by
-Theorem~\ref{thm:twisted-parameter}. Choose its output loss $b>0$ and
-the structural loss $a>0$ so that $a+b<\sigma$, and take the fine
-scale below the threshold in that theorem. It gives
+Theorem~\ref{thm:twisted-parameter}. First choose its output loss
+$b=\sigma/4$ and obtain its admissible input loss and scale threshold.
+Then choose the structural loss $a>0$ below both that input loss
+and $\sigma/4$, and take the fine scale below the threshold.
+The two bounds give
 \[
-          \delta^b\leq |\pi_f(E_Y)|\leq\delta^{\sigma-a}.
+ \delta^{\sigma/4}\leq |\pi_f(E_Y)|
+       \leq\delta^{\sigma-a}\leq\delta^{3\sigma/4}.
 \]
-Since $0<\delta<1$ and $b<\sigma-a$, these inequalities are
+Since $0<\delta<1$ and $\sigma>0$, these inequalities are
 incompatible. This proves the sticky estimate.
 \end{proof}

@@ -277,9 +277,10 @@ def statement_content(text: str, node_id: str) -> str:
     return re.sub(r'(?<![\w:-])href="#([^"]+)"', lambda match: f'href="#{node_id}-{match[1]}"', text)
 
 
-def render_graph(report: dict, aliases: dict[str, list[str]], source_link, paper_html: str) -> str:
+def render_graph(report: dict, aliases: dict[str, list[str]], paper_html: str) -> str:
     """Use the installed default blueprint graph template and modal interactions."""
     from jinja2 import Template
+    from leanblueprint.Packages.blueprint import LEAN_LINKS_TPL
 
     class GraphNode(SimpleNamespace):
         def __str__(self):
@@ -323,19 +324,11 @@ def render_graph(report: dict, aliases: dict[str, list[str]], source_link, paper
             content += (f'<p><a href="{html.escape(extra["url"], quote=True)}">'
                         f'{extra["caption"]} {extra["ref"]}: {extra["title"]}</a></p>'
                         + statement_content(extra["content"], node_id))
-        status = {"proof": "Proved Lean theorem", "definition": "Lean definition / type",
-                  "statement": "Lean statement interface"}[role(name)]
         link = "../lean/find/#doc/" + quote(name, safe=".")
-        display_name = html.escape(name).replace(".", ".<wbr>").replace("_", "_<wbr>")
-        content += (f'<p class="lean-version"><small>{status}: '
-                    f'<a class="lean_decl" href="{link}"><code>{display_name}</code></a></small></p>'
-                    f'<p>{source_link(name, "Lean source")} · '
-                    f'<a href="{link}">Lean documentation</a> · '
-                    f'<a href="lean_dependency_audit.html#{quote(labels[0], safe=":")}">'
-                    'Version audit and paths</a></p>')
         nodes.append(GraphNode(id=node_id, thmName=statement["kind"], caption=statement["caption"],
                                ref=statement["ref"], title=statement["title"], content=content,
-                               url=statement["url"]))
+                               url=statement["url"], userdata={"lean_urls": [(name, link)]},
+                               audit_url="lean_dependency_audit.html#" + quote(labels[0], safe=":")))
     ids = {name: node.id for name, node in zip(report["graph_nodes"], nodes)}
     for edge in report["edges"]:
         dot.append(f'{q(ids[edge["to"]])} -> {q(ids[edge["from"]])};')
@@ -365,7 +358,11 @@ def render_graph(report: dict, aliases: dict[str, list[str]], source_link, paper
                 ("Arrows", "from a dependency to the declaration using it; intermediate helpers are folded"),
                 ("Scope", f"all {len(nodes)} reached blueprint declarations; "
                  '<a href="lean_dependency_audit.html">audit method and declaration versions</a>')],
-        extra_modal_links=[],
+        # The upstream extension point puts these inline beside LaTeX, outside
+        # the natural-language statement. Reuse its Lean link and link styling.
+        extra_modal_links=[LEAN_LINKS_TPL, Template(
+            '<a class="issue_link audit_link" href="{{ thm.audit_url }}">'
+            'Version audit and paths</a>')],
         dot_json=json.dumps("\n".join(dot), ensure_ascii=False).replace("<", "\\u003c"),
     )
 
@@ -433,7 +430,7 @@ def write_site(site: Path, report: dict, paper_nodes: list[dict]) -> None:
     paper = site / "blueprint/dep_graph_document.html"
     text = paper.read_text()
     (site / "blueprint/lean_dependency_audit.html").write_text(template)
-    (site / "blueprint/lean_dependencies.html").write_text(render_graph(report, aliases, source_link, text))
+    (site / "blueprint/lean_dependencies.html").write_text(render_graph(report, aliases, text))
     (site / "blueprint/lean-dependencies.json").write_text(json.dumps(report, ensure_ascii=False) + "\n")
     note = ('<p class="graph-audit-note">This graph follows the paper and manual completion marks. '
             '<a href="lean_dependencies.html">View the dependencies extracted from the Lean proof</a> '

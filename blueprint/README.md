@@ -4,6 +4,17 @@ The blueprint follows the proof through Wang–Zahl's finite sticky estimate, Th
 
 The mathematical text is in English. [The correspondence chapter](src/chapters/correspondence.tex) identifies the manuscript versions and numbering. Remarks next to the relevant results distinguish corrections, normalizations, weaker interfaces, and propositions whose general paper formulation is not marked as fully proved. The downloaded papers themselves are not included in the repository.
 
+The supplied `wz2_theorem_5_2_dependency_atlas.tex` is a mathematical
+reading guide. Its Lean snippets are pseudocode, not declaration names or
+evidence of formalization. The introduction maps the main route, and the
+correspondence chapter records the WZ1-to-WZ2 transfers. Intermediate nodes
+expose normalized refinement losses, the AD exponent gap, parameter
+freezing, cinematic mass-to-area comparison, uniform parameter coarsening,
+and finite telescoping. The Section 7 account keeps the actual Lean
+replication deficit and the explicit parameter-Frostman hypotheses.
+These additions change the mathematical graph; the compiled dependency
+graph continues to follow audited Lean declarations and proof terms.
+
 ## Build and read locally
 
 On Ubuntu/Debian, install the system dependencies:
@@ -189,7 +200,11 @@ Theorems use green ellipses; definitions and interfaces use light-green boxes,
 so a definition of a proposition is distinguished from a proof of it.
 Clicking a node opens the manuscript's rendered natural-language statement,
 including its number, formulas and cross-references, with links to the exact
-Lean version, source, and version audit. These statements and the MathJax
+Lean version and version audit. The popup uses the upstream inline action
+row: **LaTeX · Lean · Version audit and paths**, below the natural-language
+statement. Lean opens that node's exact declaration in doc-gen4, where its
+source button is available; declaration status and dependency paths are in
+the separate audit. These statements and the MathJax
 configuration are reused from the generated paper graph. When several reached
 Lean versions share a paper statement, they keep separate nodes and popups.
 Unlinked helpers (including internal assembly steps) are folded into witnessed

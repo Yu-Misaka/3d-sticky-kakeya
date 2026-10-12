@@ -129,6 +129,13 @@ satisfies
 for $0<\delta\leq\delta_0$ and every slope with
 $1\leq|f'|\leq2$, $|f''|\leq1/100$ on the height window.
 \end{proposition}
+\begin{proof}
+\uses{prop:twisted-tube-wolff}
+A radius-$r$ tube has volume $O(r^2)$. Applying CWA to that convex
+body gives the dimension-$2$ Tube Wolff count, with a fixed change
+of constant. Apply the paper's Tube Wolff projection estimate with
+a smaller source loss to absorb this constant.
+\end{proof}
 
 \begin{proposition}[Tube Wolff version; WZ2, Proposition 7.1]
 \label{prop:twisted-tube-wolff}
@@ -182,7 +189,8 @@ and $f(0)=0$, $1\leq|f'|\leq2$, $|f''|\leq1/100$, then
 \end{theorem}
 \begin{proof}
 \uses{lem:spacing,lem:block-replication,lem:projection-one-step,
-  thm:cinematic-l32,thm:os-discretized}
+  thm:cinematic-l32,thm:os-discretized,lem:uniform-parameter-coarsening,
+  lem:projection-iteration}
 \leanok
 Separate the parameters into blocks and regularize their branching
 over a finite sequence of scales. The spacing argument finds a
@@ -200,6 +208,10 @@ The iteration keeps the induced shading on the actual selected
 family. Clipping a thickened shading back to the height window costs
 an additive boundary term; this term is estimated before converting
 the mass bound into a density bound.
+Lemmas~\ref{lem:uniform-parameter-coarsening} and
+\ref{lem:projection-iteration} isolate the counting and arithmetic
+steps in this passage; they do not assert that an arbitrary coarse
+shading has the required density or projection compatibility.
 \end{proof}
 
 \section{Discrete sets and scale selection}
@@ -344,13 +356,19 @@ pruning and scale-selection results supply its hypotheses.
 \label{lem:block-replication}
 \lean{Kakeya.Assouad.ParameterBlockAmplificationStatement,Kakeya.Assouad.parameter_block_amplification}
 \uses{def:kt-frostman}
-Let $A_0$ lie in a cube of side $\rho$ and be a
+Let $0<s\leq n$ and $0<\delta\leq\rho\leq1$. Let $A_0$ lie in a
+cube of side $\rho$ and be a
 $(\delta,s,C)$-Katz--Tao set, with
 $\cE_\delta(A_0)\gtrsim(\rho/\delta)^s$. One can place translated
 copies in a bounded region to obtain a
 $(\delta,s,O(C))$-Katz--Tao set $A$ with
 $\cE_\delta(A)\gtrsim\delta^{-s}$. Each selected replica cell
 contains one translated copy of $A_0$.
+More generally, if the local lower bound is only
+$\cE_\delta(A_0)\geq\kappa(\rho/\delta)^s$ with $0<\kappa\leq1$,
+the same construction gives
+$\cE_\delta(A)\gtrsim\kappa\delta^{-s}$. The upper Katz--Tao
+constant does not require $\kappa$ to be bounded away from zero.
 \end{lemma}
 \begin{proof}
 Place about $\rho^{-s}$ copies on a grid of spacing comparable to
@@ -373,7 +391,65 @@ cut a copy in two. The formalization carries explicit replica
 indices and disjointness data.
 \end{remark}
 
+\begin{remark}[The density deficit in the linked replication theorem]
+\label{rem:replication-deficit}
+The extraction in Lemma~\ref{lem:frostman-to-kt} loses a Frostman
+constant and a logarithm, so its output need not satisfy a saturated
+cardinality bound. This loss must survive replication.
+The linked three-parameter Lean statement makes a more specific
+choice than the general paper formulation: in a block of scale $q$,
+it assumes an upper Katz--Tao exponent $k\leq1$ and a lower
+cardinality exponent $0<s\leq k$. It produces $\asymp q^{-1}$
+disjoint copies and a one-dimensional Katz--Tao set, with the exact
+cardinality identity
+\[
+ \#A^*=\#\{\text{copies}\}\,\#A_0
+       \gtrsim q^{-1}(q/\delta)^s
+       =\delta^{-1}h^{1-s},\qquad h=\delta/q.
+\]
+The small factor $h^{1-s}$ is retained in the projected mass bound.
+Replacing this by $\#A^*\gtrsim\delta^{-1}$ would discard a
+hypothesis needed in the cinematic argument.
+\end{remark}
+
 \section{The one-step estimate and cinematic curves}
+
+\begin{lemma}[Freezing a line parameter in a thin slab]
+\label{lem:freeze-line-parameter}
+\uses{def:twisted-projection}
+Suppose $|c-c_0|\leq\delta$ and $|t|\leq1$. The area-preserving
+target shear $(u,t)\mapsto(u-c_0t,t)$ sends the projected line
+$\pi_f(\ell_{a,b,c,d})$ to within horizontal distance $\delta$ of
+the graph of $g_{a,b,d}(t)=a+bf(t)+dtf(t)$.
+\end{lemma}
+\begin{proof}
+After the shear the first coordinate is
+$a+bf(t)+dtf(t)+(c-c_0)t$. The last term has absolute value at
+most $\delta$, and the shear has determinant one.
+\end{proof}
+
+\begin{lemma}[From cinematic projected mass to area]
+\label{lem:cinematic-area}
+\uses{thm:cinematic-l32}
+Fix the constants in Theorem~\ref{thm:cinematic-l32} and an output
+loss $a>0$. At a sufficiently small scale $\delta$, let $G$ satisfy
+that theorem's hypotheses and choose measurable
+$E_g\subset N_{\lambda\delta}(\graph g)$ for each $g\in G$.
+Writing $Z=\bigcup_{g\in G}E_g$ and
+$M_{\rm proj}=\sum_{g\in G}|E_g|$, one has
+\[
+ M_{\rm proj}\leq |Z|^{1/3}\delta^{-a},\qquad
+ |Z|\geq\delta^{3a}M_{\rm proj}^{\,3}.
+\]
+Here $M_{\rm proj}$ is planar projected mass, not three-dimensional
+shaded tube volume.
+\end{lemma}
+\begin{proof}
+Put $H=\sum_{g\in G}\one_{N_{\lambda\delta}(\graph g)}$.
+H\"older's inequality and the cinematic estimate give
+$M_{\rm proj}\leq\int_Z H\leq |Z|^{1/3}\|H\|_{3/2}
+\leq |Z|^{1/3}\delta^{-a}$. Cube and rearrange.
+\end{proof}
 
 \begin{lemma}[Fine area versus coarse area; WZ2, Lemma 7.12]
 \label{lem:projection-one-step}
@@ -388,15 +464,60 @@ at least $\delta^{4\eta}$ such that
 \]
 \end{lemma}
 \begin{proof}
-\uses{lem:spacing,lem:block-replication,thm:cinematic-l32}
-Pigeonhole the multiplicity of the fibres of the twisted projection
-and regularize the projected set. In the line chart, select a narrow
-window in the parameter $c$. Removing its affine contribution
-leaves curves $a+f(t)(b+dt)$. Choose a well-spaced parameter block,
-replicate it, and apply the cinematic maximal estimate. H\"older's
-inequality converts the multiplicity bound into the area comparison.
-The density losses are paid on one common subshading.
+\uses{lem:uniform-set,lem:spacing,lem:frostman-to-kt,
+  lem:block-replication,lem:freeze-line-parameter,
+  lem:wz1-cinematic-family,lem:cinematic-area}
+First pigeonhole the incidence multiplicity along fibres of the
+twisted projection. Uniformly refine that level set and pull it back
+to a subshading. Keeping one multiplicity level relates the retained
+target area to retained incidence mass; area retention alone would
+not give shading density. Then select popular tubes.
+
+In the bounded line chart, choose a $\delta$-slab in the parameter
+$c$, retaining its mass and parameter-count losses. This is a finite
+slab selection, rather than an assertion that an exact $c$-fibre of
+a finite net is rich. Lemma~\ref{lem:freeze-line-parameter} removes
+the common affine term with an $O(\delta)$ target error. Uniformize
+the resulting triple parameters, select a block of side $q$, and
+apply Frostman-to-Katz--Tao extraction at the rescaled mesh
+$h=\delta/q$. Return the extracted points to the original block
+before replicating them. Retain the cardinality deficit described in
+Remark~\ref{rem:replication-deficit}.
+
+The jet comparison in Lemma~\ref{lem:wz1-cinematic-family} converts
+parameter separation and Katz--Tao counts into the corresponding
+$C^2$ metric conditions. The replicated, transported shadings then
+satisfy Lemma~\ref{lem:cinematic-area}. Translating parameters by
+$(a_0,b_0,d_0)$ translates each horizontal image slice by
+$a_0+b_0f(t)+d_0tf(t)$, so all copies have the same projected area.
+Subadditivity bounds the replicated area by the number of copies
+times the original block area; disjoint parameter copies need not
+have disjoint projected images. Dividing by that number gives a
+lower area bound for the block. Its curves lie in an $O(q)$
+neighbourhood of one representative curve. The target uniformity
+transfers this local comparison to the whole retained image.
+All these steps use one compatible chain of subshadings.
 \end{proof}
+
+\begin{remark}[The three scales in the one-step argument]
+\label{rem:projection-scales}
+Write $q$ for the side of the selected parameter block and
+$h=\delta/q$ for its mesh after unit rescaling. The coarse target
+neighbourhood is at scale $r=q$, up to fixed geometric constants;
+it is not at scale $h$. The conclusion above denotes this target
+scale by $\rho$.
+If $q>\delta^{1-\theta}$, then $\delta\leq h<\delta^\theta$.
+In particular,
+\[
+                  \delta^{-a}\leq h^{-a/\theta}.
+\]
+A cinematic loss measured in $\delta$ therefore needs its own
+budget: to spend at most $h^{-b}$, choose $a\leq\theta b$.
+The absolute $C^2$ bound, neighbourhood dilation, and counting
+constants are fixed before choosing the cinematic scale threshold.
+Extraction, shading, and fixed-constant losses consume additional
+parts of this budget.
+\end{remark}
 
 \begin{theorem}[Cinematic $L^{3/2}$ estimate; WZ2, Theorem 7.13]
 \label{thm:cinematic-l32}
@@ -438,6 +559,88 @@ an absolute $C^2$ bound before choosing the fine scale. This is the
 form used after selecting and rescaling the parameter blocks. The
 need to keep the absolute bound in a family-uniform version of the
 PYZ theorem is explained in Remark~\ref{rem:pyz-uniformity}.
+\end{remark}
+
+\section{Coarsening and the finite iteration}
+
+\begin{lemma}[Uniform parameter fibres preserve the normalized count]
+\label{lem:uniform-parameter-coarsening}
+\uses{def:kt-frostman,def:uniform-set}
+Let $A$ be a nonempty finite indexed family of line parameters in
+$\R^4$ satisfying
+\[
+ \#\{p\in A:\|p-x\|_\infty\leq u\}\leq Cu^2\#A
+       \quad(x\in\R^4,\ u\geq\delta).
+\]
+Let $\delta\leq q\leq1$. Partition $A$ into fibres $A_v$, indexed
+by a finite parent family $P$, with
+$\|p-v\|_\infty\leq q$ for $p\in A_v$. Suppose
+$m\leq\#A_v\leq Km$ for every parent, where $m>0$ and $K\geq1$.
+Then
+\[
+ \#\{v\in P:\|v-x\|_\infty\leq r\}
+                       \leq4KC r^2\#P\quad(r\geq q).
+\]
+\end{lemma}
+\begin{proof}
+Each counted parent contributes at least $m$ distinct fine indices
+within distance $2r$ of $x$. Their total is at most $4Cr^2\#A$,
+while $\#A\leq Km\#P$. Cancel $m$.
+\end{proof}
+
+In the projection argument this lemma is applied to a selected
+parameter family whose normalized count has already been restored.
+Uniform child counts supply the required fibre bounds. The coarse
+shading is induced by thickening the retained fine shadings; its
+density, height support, and compatibility with the target
+neighbourhood are checked separately. These geometric properties,
+together with the count, permit the next application of the one-step
+estimate. The carrier containment predicate alone does not provide
+this parameter-space conclusion; see
+Remark~\ref{rem:parameter-frostman}.
+
+\begin{lemma}[Finite scale growth and telescoping]
+\label{lem:projection-iteration}
+Let $0<\delta<1$ and $0<\theta<1$. Starting at $r_0=\delta$,
+suppose that whenever $r_j<\delta^\theta$ a next scale can be chosen
+with $r_j^{1-\theta}<r_{j+1}\leq1$. The first index $N$ with
+$r_N\geq\delta^\theta$ satisfies
+\[
+ N\leq1+\left\lceil\frac{\log\theta}{\log(1-\theta)}\right\rceil.
+\]
+If positive areas $A_j$ obey
+$A_j\geq(r_j/r_{j+1})^a A_{j+1}$ and
+$A_N\geq c r_N^2$, with $a,c>0$, then
+\[
+ A_0\geq c(\delta/r_N)^a r_N^2
+                       \geq c\delta^{a+2\theta}.
+\]
+\end{lemma}
+\begin{proof}
+Induction gives $r_j\geq\delta^{(1-\theta)^j}$ as long as the
+process continues. Once $(1-\theta)^j\leq\theta$, the stopping
+condition holds, giving the stated finite bound. Multiplying the
+area inequalities cancels every intermediate scale. Finally use
+$r_N^{-a}\geq1$ and $r_N^2\geq\delta^{2\theta}$.
+\end{proof}
+
+\begin{remark}[The terminal scale and the loss schedule]
+\label{rem:projection-iteration}
+For the paper's iteration, the terminal area is the area of an
+$r_N$-neighbourhood of a nonempty retained image. It contains a disk
+of radius $r_N$, giving the quadratic terminal bound in the lemma.
+The product of ratios ends at $r_N$.
+Choose a small one-step exponent $a>0$ and use its available scale
+gain: for example, $\theta=a^2$ in Lemma~\ref{lem:projection-one-step}.
+Arrange $a+2\theta<\eps$, then fix the finite number of calls before
+choosing the initial density and nonconcentration losses. If each
+call spends an additional factor $\delta^b$, reserve $Nb$ in the
+exponent and require $a+2\theta+Nb<\eps$. A final decrease of the
+scale threshold absorbs fixed constants.
+WZ2's displayed iteration count and last ratio are not needed
+literally: scale growth gives the finite bound above, and telescoping
+uses the actual terminal index. The Lean implementation keeps a
+finite scale schedule, transition data, and a terminal estimate.
 \end{remark}
 
 \input{chapters/wz1-twisted}

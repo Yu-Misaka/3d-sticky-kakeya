@@ -37,6 +37,57 @@ in the available arXiv manuscript, dated September 2022.
 CV's multilinear theorem appears as WZ1 Theorem 4.2 in the version
 used here; some Lean comments call it Theorem 10.
 
+\section{Transfer from WZ1 to WZ2}
+\label{sec:wz1-wz2-transfer}
+
+The structural part of WZ2 reuses the WZ1 argument after changing its
+extremal class. The following correspondences concern mathematical
+proofs, rather than an identification of Lean declarations or a use
+of an unchanged directional theorem on a CWA family.
+
+\begin{center}
+\begin{tabular}{p{.23\textwidth}p{.22\textwidth}p{.44\textwidth}}
+WZ1 source & WZ2 result & Transfer needed \\
+\hline
+Proposition 3.2 & Proposition 6.2 & Rebuild all-scale CWA covers and
+retain the family-cardinality factors in both multiplicity bounds. \\
+Proposition 4.1 & Proposition 6.3 & Carry planiness and grain counts
+through the balanced coarse and fine CWA configurations. \\
+Proposition 5.1 & Proposition 6.4 & Apply the projection dichotomy,
+AD exponent gap, and trapezoid smoothing to the retained grains. \\
+Lemma 6.3 & Lemma 6.6 & Replace the final directional count by a
+convex-prism containment count; the popular-slab preparation remains. \\
+Proposition 6.1 & Proposition 6.5 & Normalize the derivative while
+transporting the same shading, plane map, and AD bounds. \\
+Corollary 6.5 & Lemma 6.7 & Retain the small projected-area conclusion
+needed for the WZ2 contradiction. \\
+Proposition 7.1 & Propositions 7.1, 6.8 & Use parameter extraction,
+block replication, and finite scale iteration for the WZ2 lower bound.
+\end{tabular}
+\end{center}
+
+The supplied Theorem 5.2 dependency atlas is useful for locating these
+transfers and the intermediate proof operations. Its published-paper
+page numbers are separate from the manuscript versions listed above.
+Its Lean blocks are uncompiled interface sketches. Declaration links
+here refer to the repository's audited names, and the added mathematical
+steps do not acquire completion marks from those sketches.
+
+Several qualifications matter when using the route. The normalized
+Wolff count changes under tube deletion
+(Lemma~\ref{lem:cwa-refinement}); each surviving containment fibre
+has its own loss. The Section 7 replication used in Lean retains a
+local cardinality deficit (Remark~\ref{rem:replication-deficit}).
+The final parameter-Frostman theorem also requires explicit indexed
+parameter counts (Remark~\ref{rem:parameter-frostman}). These are
+part of the passage between the displayed mathematical interfaces.
+
+The atlas stops at the external multilinear, radial, cinematic, and
+entropy inputs. This blueprint also opens the supporting arguments
+implemented in the repository. The WZ1 continuum statements and
+self-similar CWA remain contextual statements; the finite endpoint
+does not gain them as additional dependencies.
+
 \section{Coverage and formal scope}
 
 The geometric definitions from WZ2 Section 2, the sticky endpoint,
@@ -105,6 +156,10 @@ formal argument, whereas WZ2 Lemma 6.7 prints $\sigma+\eps$.
 The minus sign is enough for the contradiction. The same chapter
 records the reversed ratio in the printed Katz--Tao condition and
 the scale conventions in the uniformization and replication lemmas.
+The replication deficit, the distinction between the parameter-block
+scale and its rescaled mesh, and the finite iteration budget are made
+explicit in Remarks~\ref{rem:replication-deficit},
+\ref{rem:projection-scales}, and \ref{rem:projection-iteration}.
 \item In the dot-product dichotomy, it is the coefficient set that
 concentrates near a line through zero. The endpoint set concentrates
 near an affine line. The closed separated result yields concentration
