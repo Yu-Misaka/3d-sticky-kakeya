@@ -7,9 +7,10 @@ import hashlib
 import html
 import json
 import subprocess
-import textwrap
 from collections import Counter, deque
+from importlib.resources import files
 from pathlib import Path
+from types import SimpleNamespace
 from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -199,28 +200,72 @@ def check_report(records: list[dict], source_sha256: str) -> dict:
     return report
 
 
+def render_graph(report: dict, aliases: dict[str, list[str]], source_link) -> str:
+    """Use the installed default blueprint graph template and modal interactions."""
+    from jinja2 import Template
+
+    class TheoremNode(SimpleNamespace):
+        def __str__(self):
+            return self.content
+
+    q = lambda text: json.dumps(text, ensure_ascii=False)
+    dot = ['strict digraph { graph [bgcolor=transparent];',
+           'node [penwidth=1.8]; edge [arrowhead=vee];']
+    nodes = []
+    for index, name in enumerate(report["graph_nodes"]):
+        # Stable safe DOM IDs also support Lean names with punctuation.
+        node_id = f"lean-{index}"
+        labels = aliases.get(name, [])
+        label = labels[0].split(":", 1)[-1] if labels else name.rsplit(".", 1)[-1]
+        if labels and sum(labels == aliases.get(other, []) for other in report["graph_nodes"]) > 1:
+            label += "\n" + name.rsplit(".", 1)[-1]
+        dot.append(f'{q(node_id)} [label={q(label)}, shape=ellipse, '
+                   'style=filled, color=green, fillcolor="#9CEC8B"];')
+        anchor = quote(labels[0], safe=":") if labels else "proof-references"
+        content = (f'<p><code>{html.escape(name).replace(".", ".<wbr>").replace("_", "_<wbr>")}</code></p>'
+                   '<p>This theorem occurs in the audited Lean dependency closure.</p>'
+                   f'<p>{source_link(name)} · <a href="lean_dependency_audit.html#{anchor}">'
+                   'Version audit and paths</a></p>')
+        nodes.append(TheoremNode(id=node_id, thmName="theorem", caption="Lean theorem",
+                                 ref=None, title=None, content=content,
+                                 url="../lean/find/#doc/" + quote(name, safe=".")))
+    ids = {name: node.id for name, node in zip(report["graph_nodes"], nodes)}
+    for edge in report["edges"]:
+        dot.append(f'{q(ids[edge["to"]])} -> {q(ids[edge["from"]])};')
+    dot.append("}")
+
+    template = files("plastexdepgraph").joinpath("templates/dep_graph.html").read_text()
+    # The upstream viewer embeds DOT in a JavaScript template literal. Use JSON
+    # quoting so Lean declaration names cannot be interpreted as JavaScript.
+    template = template.replace(".renderDot(`{{ dot.replace('\\n','') }}`)",
+                                ".renderDot({{ dot_json }})")
+    template = template.replace('>LaTeX</a>', '>Lean documentation</a>')
+    template = template.replace('<div class="content">', '<div class="content">\n'
+                                '<nav aria-label="Dependency views">'
+                                '<a href="lean_dependency_audit.html">Version audit and paths</a> · '
+                                '<a href="dep_graph_document.html">Paper argument graph</a></nav>', 1)
+    return Template(template).render(
+        graph=SimpleNamespace(nodes=nodes), title="Lean dependencies",
+        context=SimpleNamespace(terms={"Dependency graph": "Lean proof dependencies"}),
+        config={"html5": {"theme-css": "white", "use-mathjax": False}, "mathjax-macros": {}},
+        legend=[("Ellipses", "audited Lean theorems"),
+                ("Green border", "the statement is formalized"),
+                ("Green background", "the proof is formalized"),
+                ("Arrows", "from a dependency to the theorem using it; intermediate helpers are folded"),
+                ("Scope", f"all {len(nodes)} audited theorem nodes; "
+                 '<a href="lean_dependency_audit.html">audit method and declaration versions</a>')],
+        extra_modal_links=[],
+        dot_json=json.dumps("\n".join(dot), ensure_ascii=False).replace("<", "\\u003c"),
+    )
+
+
 def write_site(site: Path, report: dict, paper_nodes: list[dict]) -> None:
-    """Reuse the blueprint's Graphviz viewer and preserve the paper graph beside it."""
+    """Publish the default graph viewer and a separate version/witness audit."""
     entries = {entry["name"]: entry for entry in report["declarations"]}
     aliases: dict[str, list[str]] = {}
     for node in paper_nodes:
         for name in node["lean"]:
             aliases.setdefault(name, []).append(node["label"])
-    q = lambda text: json.dumps(text, ensure_ascii=False)
-    dot = ['digraph { rankdir=LR; graph [bgcolor="transparent", ranksep="0.6"];',
-           'node [shape=box, style="rounded,filled", fillcolor="#e6f3e6", color="#56845c", fontname="sans-serif"];',
-           'edge [color="#6b7787", arrowsize="0.7"];']
-    assembly_dot = dot.copy()
-    assembly_names = {report["root"], *report["root_inputs"]}
-    for name in report["graph_nodes"]:
-        short = name.rsplit(".", 1)[-1]
-        caption = "\n".join([*aliases.get(name, []), *textwrap.wrap(short, width=38)])
-        color = ", fillcolor=\"#b7dfbf\"" if name == report["root"] else ""
-        line = (f'{q(name)} [label={q(caption)}, tooltip={q(name)}, '
-                f'URL={q("../lean/find/#doc/" + quote(name, safe="."))}{color}];')
-        dot.append(line)
-        if name in assembly_names:
-            assembly_dot.append(line)
     edge_rows = []
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
 
@@ -240,13 +285,8 @@ def write_site(site: Path, report: dict, paper_nodes: list[dict]) -> None:
         return f'<details><summary>Witness: {len(path)} references</summary><ol>{steps}</ol></details>'
 
     for edge in report["edges"]:
-        # Arrow direction matches the mathematical graph: dependency → consumer.
-        dot.append(f'{q(edge["to"])} -> {q(edge["from"])};')
         edge_rows.append(f'<li>{source_link(edge["to"])} → {source_link(edge["from"])}'
                          f'{path_details(edge["path"])}</li>')
-    dot.append("}")
-    assembly_dot.extend(f'{q(name)} -> {q(report["root"])};' for name in report["root_inputs"])
-    assembly_dot.append("}")
     rows = []
     for node in paper_nodes:
         if node["kind"] == "remark":
@@ -269,18 +309,17 @@ def write_site(site: Path, report: dict, paper_nodes: list[dict]) -> None:
                     f'<br>{html.escape(node["title"])}</td><td>{mark}</td><td>{content}</td></tr>')
     used = sum(entry["reached"] for entry in entries.values())
     unused_proofs = sum(not entry["reached"] and entry["kind"] == "theorem" for entry in entries.values())
-    template = (BLUEPRINT / "templates/lean_dependencies.html").read_text()
+    template = (BLUEPRINT / "templates/lean_dependency_audit.html").read_text()
     substitutions = {
         "ROOT": html.escape(report["root"]),
         "COUNTS": f"{report['project_declarations']:,} project declarations inspected; {used}/{len(entries)} linked declarations reached; {unused_proofs} linked theorems proved but unused by this root.",
         "ROWS": "\n".join(rows), "EDGES": "\n".join(edge_rows),
-        "DOT": json.dumps("\n".join(dot), ensure_ascii=False).replace("<", "\\u003c"),
-        "ASSEMBLY_DOT": json.dumps("\n".join(assembly_dot), ensure_ascii=False).replace("<", "\\u003c"),
         "SHA": html.escape(revision),
     }
     for name, text in substitutions.items():
         template = template.replace("{{" + name + "}}", text)
-    (site / "blueprint/lean_dependencies.html").write_text(template)
+    (site / "blueprint/lean_dependency_audit.html").write_text(template)
+    (site / "blueprint/lean_dependencies.html").write_text(render_graph(report, aliases, source_link))
     (site / "blueprint/lean-dependencies.json").write_text(json.dumps(report, ensure_ascii=False) + "\n")
     paper = site / "blueprint/dep_graph_document.html"
     text = paper.read_text()

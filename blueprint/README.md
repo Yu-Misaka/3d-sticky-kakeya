@@ -183,10 +183,15 @@ the root's complete transitive axiom set. The driver deliberately has no
 A missing referenced declaration fails the audit.
 
 The graph shows the reached theorem declarations linked by the blueprint,
-together with the root's immediate theorem inputs. Intermediate declarations
+together with the root's immediate theorem inputs. It uses the default
+`plastexdepgraph` frontend and displays all audited theorem nodes on opening.
+Clicking an ellipse opens its theorem popup with links to Lean documentation
+and the version audit. Intermediate declarations
 are folded into edges, and redundant edges are removed only if the projected
 graph is acyclic. Every displayed edge and every reached blueprint declaration
-has a concrete witness path whose steps link to source. The comparison table
+has a concrete witness path whose steps link to source. The separate
+`blueprint/lean_dependency_audit.html` page contains the method, edge witnesses,
+and version comparison, with navigation back to the graph. The comparison table
 lists each linked version separately, including proved theorems not reached
 from this root, definitions used only as interfaces, and paper nodes with no
 audited Lean correspondence.
