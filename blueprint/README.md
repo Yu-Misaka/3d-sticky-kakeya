@@ -166,6 +166,45 @@ python blueprint/scripts/check.py
 
 The audit establishes declaration existence and axiom dependencies. Comparing a mathematical statement with its Lean type still requires reading both. The manuscript's completion marks are deliberately more conservative than a list of existing declarations.
 
+## Actual Lean dependencies
+
+The homepage links to **Lean proof dependencies**, generated at
+`blueprint/lean_dependencies.html` within the published site. This view starts
+from `Kakeya.Assouad.PureWZ2Theorem5_2Unconditional` and follows references in
+compiled kernel declarations. It distinguishes type references, proof or
+definition bodies, and the structural data of inductives and recursors.
+Private helpers, opaque bodies, and structure projections are included.
+Importing a file alone does not make its declarations dependencies.
+
+The traversal covers declarations in this repository's Lean libraries. Lean
+and Mathlib are library boundaries; the existing axiom audit separately checks
+the root's complete transitive axiom set. The driver deliberately has no
+`module` header, so Lean loads imported private declaration bodies as well.
+A missing referenced declaration fails the audit.
+
+The graph shows the reached theorem declarations linked by the blueprint,
+together with the root's immediate theorem inputs. Intermediate declarations
+are folded into edges, and redundant edges are removed only if the projected
+graph is acyclic. Every displayed edge and every reached blueprint declaration
+has a concrete witness path whose steps link to source. The comparison table
+lists each linked version separately, including proved theorems not reached
+from this root, definitions used only as interfaces, and paper nodes with no
+audited Lean correspondence.
+
+Regenerate the audit with `python blueprint/scripts/check.py --lean`; the full
+site build also does this. The result is committed in
+[lean-dependencies.json](lean-dependencies.json), bound to the Lean source
+digest and the extractor. The complete direct project reference graph is
+written to the ignored `blueprint/build/lean-dependencies.jsonl`. The published
+JSON contains the displayed graph and all its witnesses.
+
+These are syntactic dependencies of the stored type and proof. An argument or
+let binding still present in the proof term counts even if it could be
+eliminated. Reachability is not a proof of minimal logical necessity or of
+equivalence to an informal statement. The original **paper argument graph**
+therefore remains available with its manual `\uses` and `\leanok` marks; those
+marks are not automatically promoted when a related Lean theorem is reached.
+
 The usual leanblueprint route `lean/find/#doc/Namespace.declaration` is handled
 by doc-gen4 itself and opens the declaration's documentation page. Its source
 button links to the corresponding GitHub source. The previous custom

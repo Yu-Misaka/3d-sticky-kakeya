@@ -8,10 +8,13 @@ import hashlib
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 import tomllib
 from pathlib import Path
+
+from dependencies import (EXTRACTOR, RAW, THEOREM, check_report, save_report)
 
 ROOT = Path(__file__).resolve().parents[2]
 BLUEPRINT = ROOT / "blueprint"
@@ -175,8 +178,10 @@ def source_digest() -> str:
 
 
 def run_logged(args: list[str], log: Path) -> str:
-    print(f"Running {args[0]} {' '.join(args[1:4])} (log: {log.relative_to(ROOT)})", flush=True)
+    suffix = f" … (+{len(args) - 4} arguments)" if len(args) > 4 else ""
+    print(f"Running {shlex.join(args[:4])}{suffix} (log: {log.relative_to(ROOT)})", flush=True)
     with log.open("w") as output:
+        output.write("$ " + shlex.join(args) + "\n")
         process = subprocess.Popen(args, cwd=ROOT, stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT, text=True)
         assert process.stdout is not None
@@ -198,9 +203,15 @@ def audit_with_lean(names: list[str]) -> None:
     run_logged(["lake", "--no-cache", "build", *modules], BUILD / "lake-build.log")
     source = "\n".join(f"import {module}" for module in modules)
     source += "\nimport Lean\n\n" + (BLUEPRINT / "scripts" / "audit.lean").read_text()
+    source += "\n" + EXTRACTOR.read_text()
     source += "\nrun_cmd blueprintAudit #[\n"
     source += ",\n".join("  " + json.dumps(name, ensure_ascii=False) + ".toName" for name in names)
     source += "\n]\n"
+    project_roots = [library["name"] for library in tomllib.loads((ROOT / "lakefile.toml").read_text())["lean_lib"]]
+    quoted_roots = ", ".join(json.dumps(name) + ".toName" for name in project_roots)
+    source += ("\nset_option maxHeartbeats 0 in\nrun_cmd BlueprintDependencies.collect "
+               + json.dumps(THEOREM) + ".toName #[" + quoted_roots + "] "
+               + json.dumps(str(RAW)) + "\n")
     probe = BUILD / "CheckDeclarations.lean"
     probe.write_text(source)
     output = run_logged(["lake", "env", "lean", str(probe)], BUILD / "lean-audit.log")
@@ -216,6 +227,7 @@ def audit_with_lean(names: list[str]) -> None:
     registry = {"format": 1, "toolchain": (ROOT / "lean-toolchain").read_text().strip(),
                 "source_sha256": source_digest(), "declarations": records}
     REGISTRY.write_text(json.dumps(registry, ensure_ascii=False, indent=2) + "\n")
+    save_report(records, registry["source_sha256"])
 
 
 def check_registry(names: list[str], nodes: list[dict]) -> list[dict]:
@@ -246,6 +258,7 @@ def check_registry(names: list[str], nodes: list[dict]) -> list[dict]:
             indexed[name]["kind"] == "theorem" for name in node["lean"]
         ):
             raise ValueError(f"Completed proof has no linked theorem: {node['label']}")
+    check_report(records, registry["source_sha256"])
     return records
 
 

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lean proof dependencies — Sticky Kakeya</title>
+  <link rel="stylesheet" href="../assets/site.css">
+  <style>
+    main { max-width: 1200px; }
+    h1 { font-size: 2.2rem; }
+    nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
+    code { overflow-wrap: anywhere; font-size: .85em; }
+    #proof-graph { width: 100%; height: 650px; border: 1px solid #d5ded7; background: #fff; }
+    #proof-graph svg { width: 100%; height: 100%; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { text-align: left; vertical-align: top; padding: .8rem; border-bottom: 1px solid #d8dee3; }
+    th:first-child { width: 26%; }
+    td ul { padding-left: 1.1rem; margin: 0; }
+    td li { margin-bottom: .8rem; }
+    details { margin: .5rem 0 1rem; }
+    summary { cursor: pointer; }
+    .graph-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin: .8rem 0; }
+    button, select { padding: .4rem .6rem; font: inherit; }
+    .usage { font-weight: 600; }
+    .table-wrap { overflow-x: auto; }
+    #filter { width: 100%; padding: .6rem; margin: .5rem 0 1rem; box-sizing: border-box; }
+    @media (max-width: 700px) { main { padding: 1rem; } table { min-width: 680px; } #proof-graph { height: 480px; } }
+  </style>
+</head>
+<body><main>
+  <nav aria-label="Project"><a href="../">Project home</a><a href="index.html">Blueprint</a><a href="dep_graph_document.html">Paper argument graph</a><a href="../lean/Documentation.html">Lean documentation</a></nav>
+  <h1>Lean proof dependencies</h1>
+  <p>Root: <code>{{ROOT}}</code>.</p>
+  <p>{{COUNTS}}</p>
+  <p>Green boxes are Lean theorems reached from the compiled proof.
+    Click a box to read its declaration. Arrows point from a dependency to the theorem using it.</p>
+  <div class="graph-controls">
+    <label for="graph-scope">View</label>
+    <select id="graph-scope"><option value="assembly">Final assembly</option><option value="all">All audited theorem nodes</option></select>
+    <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
+    <button type="button" id="zoom-out" aria-label="Zoom out">−</button>
+    <button type="button" id="fit-graph">Fit graph</button>
+  </div>
+  <div id="proof-graph" role="img" aria-label="Dependencies extracted from the Lean proof"></div>
+  <details><summary>How this graph is computed</summary>
+  <p>References in declaration types, proof bodies, private helpers and inductive
+    data are followed. The expanded graph displays linked theorems and the root's
+    immediate theorem inputs. Intermediate definitions and helpers are folded
+    into edges; redundant edges are removed for readability. Every edge has a
+    witness below. Lean and Mathlib are library boundaries.</p>
+  <p>These are references in the stored proof term, not a claim of minimal logical necessity.
+    Type annotations, unused let bindings and arguments passed to a theorem still count.
+    A reached theorem does not by itself establish equivalence to every informal formulation.</p></details>
+  <details><summary>Inspect the paths behind graph edges</summary><ul>{{EDGES}}</ul></details>
+  <h2>Which version of each paper result is used?</h2>
+  <p>The middle column records the manuscript's manual proof mark. The last column
+    is computed from Lean and treats each declaration version separately.
+    A used type or proposition-valued definition is not counted as a proof.
+    “Not used” refers only to this root's stored dependency closure.</p>
+  <label for="filter">Filter by paper label, Lean name or usage</label>
+  <input id="filter" type="search" placeholder="For example: marstrand, frostman, not used">
+  <div class="table-wrap"><table>
+    <thead><tr><th>Blueprint node</th><th>Paper proof mark</th><th>Lean declarations and witnesses</th></tr></thead>
+    <tbody>{{ROWS}}</tbody>
+  </table></div>
+  <p><a href="lean-dependencies.json">Download the audited graph and witness data</a>.
+    Source checkout: <code>{{SHA}}</code>.</p>
+  <noscript>The table and witness paths remain available without JavaScript.</noscript>
+</main>
+<script src="js/d3.min.js"></script>
+<script src="js/hpcc.min.js"></script>
+<script src="js/d3-graphviz.js"></script>
+<script>
+  const holder = document.getElementById('proof-graph');
+  const graphs = {assembly: {{ASSEMBLY_DOT}}, all: {{DOT}}};
+  const renderer = d3.select(holder).graphviz().width(holder.clientWidth).height(holder.clientHeight).fit(true);
+  renderer.on('end', () => renderer.resetZoom()).renderDot(graphs.assembly);
+  document.getElementById('graph-scope').addEventListener('change', event => renderer.renderDot(graphs[event.target.value]));
+  document.getElementById('zoom-in').addEventListener('click', () => {
+    if (renderer.zoomBehavior()) renderer.zoomSelection().call(renderer.zoomBehavior().scaleBy, 1.5);
+  });
+  document.getElementById('zoom-out').addEventListener('click', () => {
+    if (renderer.zoomBehavior()) renderer.zoomSelection().call(renderer.zoomBehavior().scaleBy, 1 / 1.5);
+  });
+  document.getElementById('fit-graph').addEventListener('click', () => renderer.resetZoom());
+  document.getElementById('filter').addEventListener('input', event => {
+    const query = event.target.value.toLowerCase();
+    document.querySelectorAll('tbody tr').forEach(row => {
+      row.hidden = !row.textContent.toLowerCase().includes(query);
+    });
+  });
+</script>
+</body></html>

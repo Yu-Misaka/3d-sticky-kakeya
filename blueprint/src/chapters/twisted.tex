@@ -232,6 +232,7 @@ $C$. All Katz--Tao statements here use the latter quotient.
 \begin{lemma}[Frostman to Katz--Tao; WZ2, Lemma 7.6]
 \label{lem:frostman-to-kt}
 \lean{Kakeya.Assouad.FrostmanToKatzTaoStatement,Kakeya.Assouad.frostman_to_katz_tao}
+\lean{Kakeya.Assouad.FrostmanToKatzTaoWeightedCardStatement,Kakeya.Assouad.frostman_to_katz_tao_weighted_card}
 \uses{def:kt-frostman}
 A $(\delta,s,C)$-Frostman set in a bounded region has a
 $(\delta,s,100)$-Katz--Tao subset $A'$ with
@@ -242,6 +243,11 @@ $(\delta,s,100)$-Katz--Tao subset $A'$ with
 The linked finite-set form assumes $\delta$-separation and
 $\#A\geq\delta^{-s}$ and writes the implicit dimensional constant
 explicitly as an existential constant.
+The sticky proof uses the linked weighted-cardinality version instead:
+it removes the separation hypothesis, assumes
+$\delta^{-s}\leq C\#A$, and retains
+$\delta^{-s}\leq L(1+\log(\delta^{-1}))C\#A'$.
+The dependency audit distinguishes these two Lean versions.
 \end{lemma}
 \begin{proof}
 \uses{lem:content-to-kt}

@@ -173,7 +173,7 @@ def validate_documentation(records: list[dict], root: Path = DOCS) -> dict:
         if name not in anchors[target]:
             raise ValueError(f"Missing declaration anchor: {path}#{name}")
     print(f"Checked doc-gen4: {len(index['modules'])} module pages, "
-          f"{len(index['declarations'])} indexed declarations, {len(records)} blueprint links.", flush=True)
+          f"{len(index['declarations'])} indexed declarations, {len(records)} declaration links.", flush=True)
     return index
 
 

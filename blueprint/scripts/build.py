@@ -12,8 +12,9 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 from check import (BLUEPRINT, BUILD, audit_with_lean, check_docbuild_config,
-                   check_registry, inspect_content, run_logged)
+                   check_registry, inspect_content, run_logged, source_digest)
 from docs import build_docs, check_fresh_docs, copy_documentation, validate_documentation
+from dependencies import check_report, write_site
 
 SITE = BLUEPRINT / "site"
 
@@ -36,7 +37,11 @@ class Links(HTMLParser):
 
 
 def validate_site(records: list[dict]) -> None:
-    index = validate_documentation(records, SITE / "lean")
+    report = check_report(records, source_digest())
+    existing = {record["name"] for record in records}
+    extra = [{"name": name, **report["evidence"][name]}
+             for name in report["graph_nodes"] if name not in existing]
+    index = validate_documentation([*records, *extra], SITE / "lean")
     names = index["declarations"]
     # doc-gen4's module index and all blueprint declaration anchors are checked
     # above. Keep this pass focused on the manuscript and the site's navigation.
@@ -107,6 +112,7 @@ def make_site(reuse_docs: bool = False) -> None:
     copy_documentation(SITE / "lean")
     shutil.copy2(BLUEPRINT / "print/print.pdf", SITE / "blueprint.pdf")
     (SITE / ".nojekyll").touch()
+    write_site(SITE, check_report(records, source_digest()), nodes)
     validate_site(records)
     print(f"Site ready: {SITE}\nServe with: python -m http.server 8000 --directory blueprint/site")
 

@@ -166,6 +166,18 @@
         "propext"
       ],
       "kind": "definition",
+      "line": 26,
+      "module": "MyLeanRepo.Kakeya.Assouad.TwistedProjectionScale.FrostmanToKatzTaoWeightedCard",
+      "name": "Kakeya.Assouad.FrostmanToKatzTaoWeightedCardStatement",
+      "file": "MyLeanRepo/Kakeya/Assouad/TwistedProjectionScale/FrostmanToKatzTaoWeightedCard.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "definition",
       "line": 373,
       "module": "MyLeanRepo.Kakeya.Assouad.WZ1.DiscreteThinTubes",
       "name": "Kakeya.Assouad.HasDiscreteThinTubes",
@@ -842,6 +854,30 @@
       "module": "MyLeanRepo.Kakeya.Assouad.TwistedProjectionScale.FrostmanToKatzTao",
       "name": "Kakeya.Assouad.frostman_to_katz_tao",
       "file": "MyLeanRepo/Kakeya/Assouad/TwistedProjectionScale/FrostmanToKatzTao.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 97,
+      "module": "MyLeanRepo.Kakeya.Assouad.TwistedProjectionScale.FrostmanToKatzTaoWeightedCard",
+      "name": "Kakeya.Assouad.frostman_to_katz_tao_weighted_card",
+      "file": "MyLeanRepo/Kakeya/Assouad/TwistedProjectionScale/FrostmanToKatzTaoWeightedCard.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "kind": "theorem",
+      "line": 296,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains.PaperCV",
+      "name": "Kakeya.Assouad.paper_cv_broad_set_estimate",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Grains/PaperCV.lean"
     },
     {
       "axioms": [

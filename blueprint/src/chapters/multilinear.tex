@@ -39,6 +39,7 @@ and approximation recover general nonnegative coefficients.
 \begin{theorem}[The shaded three-dimensional estimate; WZ1, Theorem 4.2]
 \label{thm:multilinear-kakeya}
 \lean{Kakeya.CV.MultilinearKakeyaThreeStatement,Kakeya.CV.multilinear_kakeya_three}
+\lean{Kakeya.Assouad.paper_cv_broad_set_estimate}
 \leanok
 \uses{def:tube,def:shading}
 For $0<\delta\leq1$, any finite indexed family $\T$ of
@@ -58,6 +59,11 @@ Take three copies of the same family, enlarge each finite tube to
 the neighbourhood of its complete axis, and rescale by $\delta$.
 Restriction to the shading decreases the integrand. The Jacobian
 contributes $\delta^3$, which is exactly the power on the right.
+The sticky proof reaches the unit-scale theorem through
+\texttt{paper\_cv\_broad\_set\_estimate}, using the paper's cropped
+full-line shadings and a rescaling by $6\delta$. The linked
+\texttt{multilinear\_kakeya\_three} theorem is a separately proved
+finite-segment formulation; its proof term is not used by the sticky endpoint.
 \end{proof}
 
 \begin{proposition}[Finite factorization; CV, Proposition 2]

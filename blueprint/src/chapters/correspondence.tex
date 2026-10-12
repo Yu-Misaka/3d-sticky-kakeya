@@ -70,6 +70,16 @@ actually supplied by Lean. An unmarked node may have substantial
 formal work behind it; absence of a completion mark is not evidence
 that the corresponding mathematics is absent from the repository.
 
+The compiled dependency audit provides a separate check of usage. For
+example, the sticky proof reaches the cone version of the Marstrand
+estimate and the uniform expansion lemma. Its Frostman-to-Katz--Tao
+step uses the weighted-cardinality theorem, while its multilinear
+input passes through the broad-set estimate for paper tube shadings.
+These choices need not pass through every other proved formulation
+linked in the mathematical account. The generated comparison table
+records each declaration separately and supplies a source-level
+dependency path for every reached version.
+
 \section{Changes that affect a statement}
 
 The remarks at the relevant statements give the mathematical details.

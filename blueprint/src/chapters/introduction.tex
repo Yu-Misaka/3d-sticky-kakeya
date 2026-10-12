@@ -103,8 +103,16 @@ definition does not by itself assert that the proposition has been
 proved. Completion marks are reserved for the mathematical formulation
 described at that node.
 
-The dependency graph records the mathematical uses described in the
-proofs. It omits routine implementation lemmas. Most of the numbered
+The paper argument graph records the mathematical uses described in the
+proofs. A separate \emph{Lean proof dependencies} view, linked from the
+project homepage, is extracted from the compiled sticky theorem. It
+lists the actual Lean versions reached from that theorem, together with
+source paths witnessing the dependencies. In particular, a paper node
+can link several proved versions of which only one is used, or an
+interface that is not itself a proof. The two graphs answer different
+questions; the paper graph's colours are the manual completion marks.
+
+The paper graph omits routine implementation lemmas. Most of the numbered
 results in WZ1's structural and projection arguments and WZ2's sticky
 argument are included, together with the supporting numbered results
 from the projection and cinematic estimates. The correspondence chapter
