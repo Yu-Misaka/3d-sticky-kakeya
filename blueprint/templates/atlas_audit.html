@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atlas correspondence and edge witnesses · Sticky Kakeya</title><link rel="stylesheet" href="../assets/atlas.css">
+</head><body>
+  <header class="atlas-header"><div class="header-inner"><div class="eyebrow">Theorem 5.2 · Evidence</div><h1>Connections and their witnesses</h1><p>The expert's proposed edges, checked against compiled Lean references.</p><nav><a href="lean_dependencies.html">Proof atlas</a><a href="index.html">Manuscript</a><a href="lean_dependency_audit.html">Declaration versions</a></nav></div></header>
+  <main class="audit-content">
+    <section class="surface"><h2>What the audit establishes</h2>
+      <p>Root: <code>{{ atlas.root }}</code>. Each solid arrow below has a nonempty kernel-reference path. The expert's graph never participates in the reachability computation.</p>
+      <p>Reachability is checked in the full projected declaration graph, including paths through other displayed nodes. Failure to find a direct displayed edge is not enough to declare a connection unsupported. When a selected declaration is outside the root closure, the comparison records that fact rather than asserting that its own independent proof has no such dependency.</p>
+      <p>References in types, proof or definition bodies, private helpers, projections, constructors and recursors are distinguished in the paths. A constructor or a proposition-valued definition is not classified as an independent proof. References retained in a proof term are counted even if a later simplification could eliminate them.</p>
+      <p>Shared declarations are explicitly identified: two mathematical cards using the same Lean declaration do not create a self-dependency. Correspondence Remarks, rather than graph reachability, delimit the mathematical scope of each match.</p>
+      <p><a href="atlas-dependencies.json">Atlas data and paths</a> · <a href="lean-dependencies.json">Compiled declaration audit</a></p>
+      <details><summary>Source fingerprints</summary><dl><dt>Lean sources</dt><dd><code>{{ atlas.source_sha256 }}</code></dd><dt>Extractor</dt><dd><code>{{ atlas.extractor_sha256 }}</code></dd><dt>Reviewed mapping</dt><dd><code>{{ atlas.provenance.mapping_sha256 }}</code></dd><dt>Expert snapshot</dt><dd><code>{{ atlas.provenance.expert_sha256 }}</code></dd></dl></details>
+    </section>
+    <section class="surface audit-section" id="expert-connections"><h2>All {{ counts.expert_edges }} expert connections</h2>
+      <p>The expert's unified graph records {{ counts.expert_unified_edges }} connections. Its branch views add {{ counts.expert_branch_only_edges }} further connections; these are included in the combined atlas too.</p>
+      <p>{% for kind, count in counts.classifications.items() %}<span class="audit-count">{{ count }} {{ kind }}</span>{% endfor %}</p>
+      <div class="table-wrap"><table><thead><tr><th>Prerequisite → consumer</th><th>Comparison</th><th>Reason and witness</th></tr></thead><tbody>
+      {% for edge in comparisons %}<tr><td><a href="lean_dependencies.html#node-{{ edge.from }}">{{ edge.from }}</a> → <a href="lean_dependencies.html#node-{{ edge.to }}">{{ edge.to }}</a><br><small>Expert category: {{ edge.expert_kind }}</small></td><td>{{ edge.classification }}</td><td><p>{{ edge.reason }}</p><details><summary>Expert source / usage note</summary><p>{{ edge.expert_view_title }}</p><p>{{ edge.expert_note }}</p></details>{{ edge.path_html }}</td></tr>{% endfor %}
+      </tbody></table></div>
+    </section>
+    <section class="surface audit-section"><h2>Every displayed arrow</h2><p>Each row identifies the exact edge used in a branch view or in the unified graph. Witnesses run from a consumer back to its prerequisite; the drawn arrow points in the opposite direction.</p>
+      <div class="table-wrap"><table><thead><tr><th>Drawn arrow</th><th>Line meaning</th><th>Evidence</th></tr></thead><tbody>
+      {% for edge in edges %}<tr id="{{ edge.id }}"><td><a href="lean_dependencies.html#node-{{ edge.from }}">{{ edge.from }}</a> → <a href="lean_dependencies.html#node-{{ edge.to }}">{{ edge.to }}</a></td><td>{{ edge.kind }}</td><td><p>{{ edge.reason }}</p>{{ edge.path_html }}</td></tr>{% endfor %}
+      </tbody></table></div>
+    </section>
+  </main>
+</body></html>

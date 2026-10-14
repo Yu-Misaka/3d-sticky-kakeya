@@ -51,6 +51,7 @@ MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremFinalStatements
 MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremFirstLayerStatements
 MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremLocalizationStatements
 MyLeanRepo.Kakeya.Assouad.WZ1.QuarterThinTubes
+MyLeanRepo.Kakeya.Assouad.WZ1.RobustCloseCountFromBalanced
 MyLeanRepo.Kakeya.Assouad.WZ1.SmoothSegmentExtension
 MyLeanRepo.Kakeya.Assouad.WZ1.SmoothedToDiscreteThinTubesStatement
 MyLeanRepo.Kakeya.Assouad.WZ1.Statements

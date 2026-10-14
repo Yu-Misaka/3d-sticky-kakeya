@@ -242,14 +242,18 @@ Apply the one-cube estimate and retain a common refinement over the
 required intervals.
 \end{proof}
 
-\begin{lemma}[Local AD at one scale; WZ1, Lemma 4.11]
+\begin{lemma}[Fixed-mesh interval spacing; WZ1, Lemma 4.11]
 \label{lem:grain-ad-one-scale}
 \lean{Kakeya.Assouad.WZ1LocalGrainOneScaleConclusion}
 \uses{def:ad-set,def:extremal,def:plane-map}
 For $\rho\in[\delta^{1-\eps},\delta^\eps]$, there is an
-$\eps$-extremal refinement such that the projection of its shaded
-union in each occupied $\sqrt\rho$-cube, onto the normal at that
-cube, is a $(\rho,1-\sigma,\delta^{-\eps})_1$-ADset.
+$\eps$-extremal refinement such that, for each occupied
+$\sqrt\rho$-cube $Q$ and every interval $J$ with $|J|\geq\rho$,
+\[
+ \cE_\rho\bigl(J\cap V(Q)\cdot(E_{Y'}\cap Q)\bigr)
+       \leq\delta^{-\eps}(|J|/\rho)^{1-\sigma}.
+\]
+The covering mesh in this statement is fixed at $\rho$.
 \end{lemma}
 \begin{proof}
 \uses{lem:grain-interval}
@@ -258,6 +262,17 @@ At the smallest lengths use the trivial covering bound, and at the
 largest lengths use the estimate for the entire cube. The parameter
 choices absorb the losses from the finite list of lengths.
 \end{proof}
+
+\begin{remark}[Fixed mesh and the stronger Lean interface]
+\label{rem:fixed-mesh-ad}
+The expert atlas separates the iteration in interval length from the
+later iteration in covering mesh. We adopt that distinction here.
+The linked \texttt{WZ1LocalGrainOneScaleConclusion} instead defines a
+proposition with a full \texttt{IsADSet1} output. It is not a proof
+of that stronger conclusion, and the fixed-mesh bound above alone
+does not imply the full upper AD condition at all larger meshes.
+See also Remark~\ref{rem:atlas-L4_11}.
+\end{remark}
 
 \begin{lemma}[Local grains at every scale; WZ1, Lemma 4.12]
 \label{lem:local-grains-all-scales}
@@ -273,11 +288,12 @@ $\rho\in[\delta,1]$ and every retained point $p$.
 \end{lemma}
 \begin{proof}
 \uses{lem:grain-ad-one-scale}
-Iterate the one-scale statement at a sufficiently fine finite list of
-power scales, keeping the same restricted plane map. Upper AD bounds
-survive each further refinement. Interpolate between the selected
-scales using monotonicity of covering numbers; the scale spacing is
-chosen so that this costs less than the remaining loss budget.
+Iterate the fixed-mesh interval statement at a sufficiently fine
+finite list of covering meshes and spatial scales, keeping the same
+restricted plane map. Previously obtained upper covering bounds
+survive further refinement. Interpolating between these meshes gives
+the full upper AD condition; the scale spacing is chosen so that
+the interpolation costs less than the remaining loss budget.
 \end{proof}
 
 \begin{remark}[A common configuration]

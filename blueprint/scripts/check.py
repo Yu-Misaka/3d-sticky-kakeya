@@ -211,7 +211,9 @@ def audit_with_lean(names: list[str]) -> None:
     quoted_roots = ", ".join(json.dumps(name) + ".toName" for name in project_roots)
     source += ("\nset_option maxHeartbeats 0 in\nrun_cmd BlueprintDependencies.collect "
                + json.dumps(THEOREM) + ".toName #[" + quoted_roots + "] "
-               + json.dumps(str(RAW)) + "\n")
+               + json.dumps(str(RAW)) + " #["
+               + ", ".join(json.dumps(name, ensure_ascii=False) + ".toName" for name in names)
+               + "]\n")
     probe = BUILD / "CheckDeclarations.lean"
     probe.write_text(source)
     output = run_logged(["lake", "env", "lean", str(probe)], BUILD / "lean-audit.log")
@@ -221,10 +223,12 @@ def audit_with_lean(names: list[str]) -> None:
         raise ValueError("Lean did not return exactly the requested declarations")
     for record in records:
         record["file"] = record["module"].replace(".", "/") + ".lean"
+        if record["module"].startswith("Mathlib."):
+            record["file"] = ".lake/packages/mathlib/" + record["file"]
         unexpected = set(record["axioms"]) - ALLOWED_AXIOMS
         if unexpected:
             raise ValueError(f"Unexpected axioms for {record['name']}: {sorted(unexpected)}")
-    registry = {"format": 1, "toolchain": (ROOT / "lean-toolchain").read_text().strip(),
+    registry = {"format": 2, "toolchain": (ROOT / "lean-toolchain").read_text().strip(),
                 "source_sha256": source_digest(), "declarations": records}
     REGISTRY.write_text(json.dumps(registry, ensure_ascii=False, indent=2) + "\n")
     save_report(records, registry["source_sha256"])
@@ -234,6 +238,8 @@ def check_registry(names: list[str], nodes: list[dict]) -> list[dict]:
     if not REGISTRY.is_file():
         raise ValueError("No declaration registry; run this script with --lean")
     registry = json.loads(REGISTRY.read_text())
+    if registry.get("format") != 2:
+        raise ValueError("Declaration classification changed; regenerate the registry with --lean")
     if registry["toolchain"] != (ROOT / "lean-toolchain").read_text().strip():
         raise ValueError("Lean toolchain changed; regenerate the registry with --lean")
     if registry["source_sha256"] != source_digest():
@@ -269,11 +275,18 @@ def main() -> int:
     args = parser.parse_args()
     try:
         _, names, nodes = inspect_content()
+        from atlas import check_correspondence
+        check_correspondence(nodes)
         check_docbuild_config()
         if args.lean:
             audit_with_lean(names)
         if not args.content_only:
             check_registry(names, nodes)
+            from dependencies import check_report
+            atlas = check_correspondence(nodes, check_report(
+                json.loads(REGISTRY.read_text())["declarations"], source_digest()))
+            print(f"Checked expert atlas: {atlas['counts']['expert_nodes']} correspondences; "
+                  f"{atlas['counts']['expert_edges']} proposed edges compared with Lean.")
         BUILD.mkdir(exist_ok=True)
         (BUILD / "statements.json").write_text(json.dumps(nodes, ensure_ascii=False, indent=2) + "\n")
         statements = sum(node["kind"] != "remark" for node in nodes)

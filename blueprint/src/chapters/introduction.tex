@@ -136,16 +136,26 @@ definition does not by itself assert that the proposition has been
 proved. Completion marks are reserved for the mathematical formulation
 described at that node.
 
-The paper argument graph records the mathematical uses described in the
-proofs. A separate \emph{Lean proof dependencies} view, linked from the
-project homepage, is extracted from the compiled sticky theorem. It
-lists the actual Lean versions reached from that theorem, together with
-source paths witnessing the dependencies. In particular, a paper node
-can link several proved versions of which only one is used, or an
-interface that is not itself a proof. The two graphs answer different
-questions; the paper graph's colours are the manual completion marks.
+The interactive \emph{proof atlas} follows the expert's branch views and
+node catalogue while checking connections against the compiled sticky
+theorem. A solid arrow has a nonempty kernel-reference path between its
+selected Lean versions. A dashed arrow preserves an expert connection
+without such a path in this root's closure. The audit distinguishes a
+different code route, an unused version, a missing primary match and
+two mathematical nodes sharing one declaration. Paths through other
+displayed nodes still count as actual dependencies.
 
-The paper graph omits routine implementation lemmas. Most of the numbered
+Each card distinguishes a proved theorem, a proposition interface, and
+its actual usage. A constructor requiring fields is not a construction
+of those fields. Branch colours identify mathematical topics rather
+than formalization progress. External inputs and their reached project
+proofs are grouped inside labelled frames; Lean and Mathlib remain
+library boundaries except for explicitly displayed terminal inputs.
+Chapter~\ref{chap:atlas-correspondence} records the correspondence
+Remarks for all 102 expert nodes. The original Lean snippets are not
+used as declaration names or evidence.
+
+The mathematical account omits routine implementation lemmas. Most of the numbered
 results in WZ1's structural and projection arguments and WZ2's sticky
 argument are included, together with the supporting numbered results
 from the projection and cinematic estimates. The correspondence chapter

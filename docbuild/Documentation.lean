@@ -50,6 +50,7 @@ import MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremFinalStatements
 import MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremFirstLayerStatements
 import MyLeanRepo.Kakeya.Assouad.WZ1.ProjectionTheoremLocalizationStatements
 import MyLeanRepo.Kakeya.Assouad.WZ1.QuarterThinTubes
+import MyLeanRepo.Kakeya.Assouad.WZ1.RobustCloseCountFromBalanced
 import MyLeanRepo.Kakeya.Assouad.WZ1.SmoothSegmentExtension
 import MyLeanRepo.Kakeya.Assouad.WZ1.SmoothedToDiscreteThinTubesStatement
 import MyLeanRepo.Kakeya.Assouad.WZ1.Statements

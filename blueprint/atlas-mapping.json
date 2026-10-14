@@ -1,0 +1,1518 @@
+{
+  "format": 1,
+  "description": "Reviewed mathematical correspondence. Status and edges are computed from the compiled Lean audit, never from expert sketches. A primary declaration identifies the displayed Lean version; the Remark limits its mathematical scope. A null primary means no independently identified exact interface.",
+  "nodes": [
+    {
+      "id": "W2CWA",
+      "labels": [
+        "def:cwa"
+      ],
+      "remarks": [
+        "rem:cwa-consequences",
+        "rem:wz1-extremality"
+      ],
+      "primary": "Kakeya.Assouad.WZ2PaperBodyConvexWolffBound",
+      "lean": [
+        "Kakeya.Assouad.WZ2PaperBodyConvexWolffBound"
+      ],
+      "remark": "The count is normalized by the indexed family cardinality. The lower tube-count consequence is valid; no upper cardinality bound follows. The Lean predicate uses extended nonnegative real volume and a finite error constant."
+    },
+    {
+      "id": "W2Unit",
+      "labels": [
+        "def:unit-rescaling"
+      ],
+      "remarks": [
+        "rem:john-normalization",
+        "rem:common-grains"
+      ],
+      "primary": "Kakeya.Assouad.WZ2PaperAssouadUnitRescalingData",
+      "lean": [
+        "Kakeya.Assouad.WZ2PaperAssouadUnitRescalingData"
+      ],
+      "remark": "The public definition uses the actual circumscribed John ellipsoid and full affine images. Re-cubulation and replacement by standard tubes are later constructions with separate containment and volume comparisons; the two operations are not identified by definition."
+    },
+    {
+      "id": "W2MW",
+      "labels": [
+        "def:all-scale-cwa"
+      ],
+      "remarks": [
+        "rem:full-fibres",
+        "rem:nearby-scale"
+      ],
+      "primary": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+      "lean": [
+        "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales"
+      ],
+      "remark": "This is the public nearby-scale predicate, including essential distinctness and complete containment fibres. Only the requested scale is bounded by one; the selected scale may exceed one."
+    },
+    {
+      "id": "W2L2_13",
+      "labels": [
+        "lem:multiscale-cwa"
+      ],
+      "remarks": [
+        "rem:refinement-loss"
+      ],
+      "primary": null,
+      "lean": [],
+      "remark": "This is a mathematical inheritance interface. No standalone proof of the displayed general inheritance lemma is linked. The closed structural theorem reconstructs its particular covers and fibres; the expert inheritance arrows do not establish arbitrary refinement closure."
+    },
+    {
+      "id": "W2Sigma",
+      "labels": [
+        "def:extremal",
+        "lem:critical-exponent"
+      ],
+      "remarks": [
+        "rem:wz1-extremality"
+      ],
+      "primary": "Kakeya.Assouad.PureWZ2Admissible",
+      "lean": [
+        "Kakeya.Assouad.PureWZ2Admissible",
+        "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+        "Kakeya.Assouad.pure_wz2_node02_critical_extraction"
+      ],
+      "remark": "Lean defines admissibility globally and chooses its supremum locally inside critical extraction. There is no separately exported constant sigma_CW identified with the directional WZ1 exponent."
+    },
+    {
+      "id": "W2D6_1",
+      "labels": [
+        "def:extremal"
+      ],
+      "remarks": [
+        "rem:wz1-extremality"
+      ],
+      "primary": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+      "lean": [
+        "Kakeya.Assouad.PureWZ2Admissible",
+        "Kakeya.Assouad.WZ2PaperPureIsExtremal"
+      ],
+      "remark": "The Lean extremal configuration stores nonemptiness, nearby-scale CWA, aggregate shading density, and the volume upper bound. Its critical exponent is supplied explicitly."
+    },
+    {
+      "id": "W2Exists",
+      "labels": [
+        "lem:critical-exponent"
+      ],
+      "remarks": [
+        "rem:wz1-extremality"
+      ],
+      "primary": "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
+      "lean": [
+        "Kakeya.Assouad.pure_wz2_node02_critical_extraction"
+      ],
+      "remark": "Existence at arbitrarily small scales is a field of the critical package produced by the extraction theorem. The same theorem also supplies positivity, a subunit ceiling, and the lower envelope; this is one shared Lean declaration, not three independent proofs."
+    },
+    {
+      "id": "W2P6_2",
+      "labels": [
+        "prop:sticky-structure"
+      ],
+      "remarks": [
+        "rem:balanced-cover",
+        "rem:refinement-loss"
+      ],
+      "primary": "Kakeya.Assouad.pure_wz2_node03_prop_sticky",
+      "lean": [
+        "Kakeya.Assouad.PureWZ2PropStickyStatement",
+        "Kakeya.Assouad.pure_wz2_node03_prop_sticky"
+      ],
+      "remark": "The closed version is in the localized cubical model and retains both cardinality factors. Spatial balance is equality of fine-union volumes in retained coarse cubes, not merely uniform child counts."
+    },
+    {
+      "id": "L3_3",
+      "labels": [
+        "lem:wz1-rescaled-fibre",
+        "prop:sticky-structure"
+      ],
+      "remarks": [
+        "rem:wz1-extremality"
+      ],
+      "primary": null,
+      "lean": [
+        "Kakeya.Assouad.PureWZ2PropStickyStatement",
+        "Kakeya.Assouad.pure_wz2_node03_prop_sticky"
+      ],
+      "remark": "The expert card is a CW transfer with the factor s squared times child cardinality. The original WZ1 fibre lemma in the manuscript is directional. The related WZ2 structure theorem supplies balanced rescaled fibres; it is not a separately proved copy of the expert local interface."
+    },
+    {
+      "id": "L3_4",
+      "labels": [
+        "lem:robust-transversality"
+      ],
+      "remarks": [
+        "rem:wz1-extremality"
+      ],
+      "primary": "Kakeya.Assouad.WZ1RobustCloseCountFromBalancedConclusion",
+      "lean": [
+        "Kakeya.Assouad.WZ1RobustCloseCountFromBalancedConclusion",
+        "Kakeya.Assouad.wz1_robust_close_count_from_balanced"
+      ],
+      "remark": "The WZ1 conclusion is an interface in the directional uniform-structure model. A separate proved implication assumes a coarse close-direction packing input and balanced data. This does not independently prove the expert CW refinement statement."
+    },
+    {
+      "id": "L3_5",
+      "labels": [
+        "lem:mild-rescaling"
+      ],
+      "remarks": [
+        "rem:common-grains"
+      ],
+      "primary": null,
+      "lean": [],
+      "remark": "The expert card combines restriction, affine transport, re-cubulation and restoration of CWA. Those obligations are distributed across the structural proof. A generic mild-rescaling theorem of this displayed scope is not assigned a proof-completion mark."
+    },
+    {
+      "id": "W2Zero",
+      "labels": [
+        "thm:sticky"
+      ],
+      "remarks": [
+        "rem:endpoint"
+      ],
+      "primary": "Kakeya.Assouad.pure_wz2_node08_theorem5_2",
+      "lean": [
+        "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
+        "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
+        "Kakeya.Assouad.pure_wz2_node08_theorem5_2"
+      ],
+      "remark": "The code closes a contradiction from a positive critical package and returns Theorem 5.2. It does not export the expert equality sigma_CW = 0 as a separate scalar theorem."
+    },
+    {
+      "id": "W2T5_2",
+      "labels": [
+        "thm:sticky"
+      ],
+      "remarks": [
+        "rem:endpoint",
+        "rem:aggregate-density"
+      ],
+      "primary": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
+      "lean": [
+        "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
+        "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional"
+      ],
+      "remark": "The public theorem has no external proof arguments. Nonemptiness is explicit, density is aggregate, and a support ball is not an additional hypothesis."
+    },
+    {
+      "id": "Dplane",
+      "labels": [
+        "def:plane-map"
+      ],
+      "remarks": [
+        "rem:plane-domain"
+      ],
+      "primary": "Kakeya.Assouad.WZ1PlaneMapData",
+      "lean": [
+        "Kakeya.Assouad.WZ1PlaneMapData"
+      ],
+      "remark": "The plane map is defined on the shaded union. Values at geometric cell centres require occupied-point representatives or an explicit extension. Affine transport acts on normals by the inverse transpose."
+    },
+    {
+      "id": "T4_2",
+      "labels": [
+        "thm:multilinear-kakeya"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.paper_cv_broad_set_estimate",
+      "lean": [
+        "Kakeya.CV.MultilinearKakeyaThreeStatement",
+        "Kakeya.CV.multilinear_kakeya_three",
+        "Kakeya.Assouad.paper_cv_broad_set_estimate"
+      ],
+      "remark": "The finite-segment multilinear theorem is proved but is not the version used by the sticky root. The root reaches the cropped full-line broad-set estimate, which supplies the mass bound needed for planiness."
+    },
+    {
+      "id": "L4_3",
+      "labels": [
+        "lem:weak-plane-map"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.WZ1WeakPlaninessAssemblyConclusion",
+      "lean": [
+        "Kakeya.Assouad.WZ1WeakPlaninessAssemblyConclusion"
+      ],
+      "remark": "The matching WZ1 declaration defines a proposition in the directional uniform-structure model. No proof of that full conclusion is supplied by the definition. The expert card transfers the argument to CW extremality; the closed WZ2 grain package uses its own constructions. Solid paths show only the actual compiled references."
+    },
+    {
+      "id": "L4_4",
+      "labels": [
+        "lem:coarse-plane-map"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.WZ1CoarsePlaneMapConclusion",
+      "lean": [
+        "Kakeya.Assouad.WZ1CoarsePlaneMapConclusion"
+      ],
+      "remark": "The linked WZ1 interface records a coarse incidence tolerance of 5 times rho after direction alignment, rather than an exact unit tolerance. It also assumes the older directional uniform structure. The expert CW transfer is therefore not certified by the existence of this definition."
+    },
+    {
+      "id": "L4_5",
+      "labels": [
+        "lem:plane-oscillation"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.WZ1TwoScalePlaneMapConclusion",
+      "lean": [
+        "Kakeya.Assouad.WZ1TwoScalePlaneMapConclusion"
+      ],
+      "remark": "The matching WZ1 declaration defines a proposition in the directional uniform-structure model. No proof of that full conclusion is supplied by the definition. The expert card transfers the argument to CW extremality; the closed WZ2 grain package uses its own constructions. Solid paths show only the actual compiled references."
+    },
+    {
+      "id": "C4_6",
+      "labels": [
+        "cor:plane-oscillation"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.WZ1ExtremalOneScalePlaneMapConclusion",
+      "lean": [
+        "Kakeya.Assouad.WZ1ExtremalOneScalePlaneMapConclusion"
+      ],
+      "remark": "The matching WZ1 declaration defines a proposition in the directional uniform-structure model. No proof of that full conclusion is supplied by the definition. The expert card transfers the argument to CW extremality; the closed WZ2 grain package uses its own constructions. Solid paths show only the actual compiled references."
+    },
+    {
+      "id": "L4_7",
+      "labels": [
+        "lem:finite-lipschitz"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.WZ1FinitePlaneMapIterationConclusion",
+      "lean": [
+        "Kakeya.Assouad.WZ1FinitePlaneMapIterationConclusion"
+      ],
+      "remark": "The matching WZ1 declaration defines a proposition in the directional uniform-structure model. No proof of that full conclusion is supplied by the definition. The expert card transfers the argument to CW extremality; the closed WZ2 grain package uses its own constructions. Solid paths show only the actual compiled references."
+    },
+    {
+      "id": "L4_8",
+      "labels": [
+        "lem:lipschitz-plane-map"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.WZ1LipschitzPlaneMapConclusion",
+      "lean": [
+        "Kakeya.Assouad.WZ1LipschitzPlaneMapConclusion"
+      ],
+      "remark": "The matching WZ1 declaration defines a proposition in the directional uniform-structure model. No proof of that full conclusion is supplied by the definition. The expert card transfers the argument to CW extremality; the closed WZ2 grain package uses its own constructions. Solid paths show only the actual compiled references."
+    },
+    {
+      "id": "DAD",
+      "labels": [
+        "def:ad-set"
+      ],
+      "remarks": [
+        "rem:upper-ad"
+      ],
+      "primary": "Kakeya.Assouad.PureWZ2PaperADSet1",
+      "lean": [
+        "Kakeya.Assouad.PureWZ2PaperADSet1",
+        "Kakeya.Assouad.IsADSet1"
+      ],
+      "remark": "AD denotes a one-sided upper covering condition. The internal bounded-interval predicate and the paper-facing predicate have separate radius conventions; neither asserts a lower measure bound."
+    },
+    {
+      "id": "L4_9",
+      "labels": [
+        "lem:grain-cube"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.WZ1LocalGrainCubeCountConclusion",
+      "lean": [
+        "Kakeya.Assouad.WZ1LocalGrainCubeCountConclusion"
+      ],
+      "remark": "The grain-count quotient is tau/rho to the power 1 minus sigma. The linked WZ1 conclusion is an interface in the directional model, not a proof of the expert CW transfer."
+    },
+    {
+      "id": "L4_10",
+      "labels": [
+        "lem:grain-interval"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.WZ1LocalGrainIntervalConclusion",
+      "lean": [
+        "Kakeya.Assouad.WZ1LocalGrainIntervalConclusion"
+      ],
+      "remark": "The expert thin-prism step is presented in the manuscript through interval-localized normal projections. The linked WZ1 predicate records that output and is not itself its construction."
+    },
+    {
+      "id": "L4_11",
+      "labels": [
+        "lem:grain-ad-one-scale"
+      ],
+      "remarks": [
+        "rem:fixed-mesh-ad"
+      ],
+      "primary": "Kakeya.Assouad.WZ1LocalGrainOneScaleConclusion",
+      "lean": [
+        "Kakeya.Assouad.WZ1LocalGrainOneScaleConclusion"
+      ],
+      "remark": "The expert statement controls interval lengths at one fixed covering mesh. The existing WZ1LocalGrainOneScaleConclusion instead asks for a full IsADSet1 output. That stronger proposition is only an interface here; the fixed-mesh bound alone does not prove it. The manuscript now keeps these formulations distinct."
+    },
+    {
+      "id": "L4_12",
+      "labels": [
+        "lem:local-grains-all-scales"
+      ],
+      "remarks": [
+        "rem:common-grains"
+      ],
+      "primary": "Kakeya.Assouad.pure_wz2_every_scale_local_grain",
+      "lean": [
+        "Kakeya.Assouad.WZ1EveryScaleLocalGrainConclusion",
+        "Kakeya.Assouad.pure_wz2_every_scale_local_grain"
+      ],
+      "remark": "The expert route iterates the covering mesh. The repository also proves pure_wz2_every_scale_local_grain, but that exported theorem is not reached from this root. Its existence must not turn the expert chain into solid Lean dependencies."
+    },
+    {
+      "id": "W2P6_3",
+      "labels": [
+        "prop:lipschitz-grains"
+      ],
+      "remarks": [
+        "rem:common-grains",
+        "rem:plane-domain"
+      ],
+      "primary": "Kakeya.Assouad.pure_wz2_node04_grains",
+      "lean": [
+        "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+        "Kakeya.Assouad.pure_wz2_node04_grains"
+      ],
+      "remark": "Both grain conclusions belong to the same selected family and shading. The closed PureWZ2 theorem replaces the older WZ1 interfaces; dependency paths determine which internal constructions it actually uses."
+    },
+    {
+      "id": "Dtrap",
+      "labels": [
+        "def:trapezoid"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.WZ1VerticalTrapezoid",
+      "lean": [
+        "Kakeya.Assouad.WZ1VerticalTrapezoid"
+      ],
+      "remark": "The geometric trapezoid type is implemented. Parent compatibility, occupied heights and supported corrections are additional data, not consequences of the type alone."
+    },
+    {
+      "id": "Iadgap",
+      "labels": [
+        "lem:ad-expansion-gap"
+      ],
+      "remarks": [],
+      "primary": null,
+      "lean": [],
+      "remark": "This elementary exponent comparison is a mathematical explanation of the projection exclusion. No independent Lean theorem with this exact interface is asserted; its arithmetic can be inlined in the actual proof."
+    },
+    {
+      "id": "T5_2",
+      "labels": [
+        "thm:wz1-projection"
+      ],
+      "remarks": [
+        "rem:projection-orientation",
+        "rem:projection-model"
+      ],
+      "primary": "Kakeya.Assouad.WZ1ProjectionDichotomyConclusion",
+      "lean": [
+        "Kakeya.Assouad.WZ1ProjectionDichotomyConclusion"
+      ],
+      "remark": "The coefficient set concentrates near the perpendicular line through the origin; the endpoint set lies near an affine line. The linked general dichotomy is a proposition interface. The proved separated result has a weaker one-endpoint alternative."
+    },
+    {
+      "id": "L5_3",
+      "labels": [
+        "lem:locally-affine"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.WZ1LocallyLinearOneScaleData",
+      "lean": [
+        "Kakeya.Assouad.WZ1LocallyLinearOneScaleData"
+      ],
+      "remark": "The linked WZ1 object stores a local affine-approximation witness; an inductive data declaration does not provide that witness. The direct-rich WZ2 construction retains additional local/global compatibility and its quantitative hypotheses."
+    },
+    {
+      "id": "L5_4",
+      "labels": [
+        "lem:piecewise-affine"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.WZ1LocallyLinearOneScaleConclusion",
+      "lean": [
+        "Kakeya.Assouad.WZ1LocallyLinearOneScaleConclusion"
+      ],
+      "remark": "The exported WZ1 conclusion is an interface in the older extremal model. The WZ2 proof constructs its hierarchy through its own retained-height and common-shading data, rather than proving this whole interface first."
+    },
+    {
+      "id": "L5_5",
+      "labels": [
+        "lem:affine-hierarchy"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.WZ1LocallyLinearHierarchyData",
+      "lean": [
+        "Kakeya.Assouad.WZ1LocallyLinearHierarchyData"
+      ],
+      "remark": "A hierarchy data type is present, but a constructor with hierarchy fields as arguments is not an existence proof. Approximation, density and compatibility must be established on one refinement."
+    },
+    {
+      "id": "C5_6",
+      "labels": [
+        "cor:trapezoid-hierarchy"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.WZ1NestedSlopeCorrectionData",
+      "lean": [
+        "Kakeya.Assouad.WZ1NestedSlopeCorrectionData"
+      ],
+      "remark": "The linked nested-correction data encode compatibility of parents and children. They are not a closed construction of the expert trapezoid hierarchy from extremality."
+    },
+    {
+      "id": "L5_8",
+      "labels": [
+        "lem:segment-extension"
+      ],
+      "remarks": [
+        "rem:smoothing"
+      ],
+      "primary": "Kakeya.Assouad.wz1_smooth_segment_extension",
+      "lean": [
+        "Kakeya.Assouad.WZ1SmoothSegmentExtensionStatement",
+        "Kakeya.Assouad.wz1_smooth_segment_extension"
+      ],
+      "remark": "The repository proves a smooth segment extension with one fixed cutoff constant. The support margin and both derivative costs are explicit."
+    },
+    {
+      "id": "P5_7",
+      "labels": [
+        "prop:trapezoid-smoothing"
+      ],
+      "remarks": [
+        "rem:smoothing"
+      ],
+      "primary": "Kakeya.Assouad.WZ1MultiscaleSlopeCorrectionData",
+      "lean": [
+        "Kakeya.Assouad.WZ1MultiscaleSlopeCorrectionData"
+      ],
+      "remark": "The linked WZ1 multiscale-correction object is data, not the theorem producing all of those corrections. The terminal derivative comparison involving the next scale is read only before the final index."
+    },
+    {
+      "id": "W2P6_4",
+      "labels": [
+        "prop:c2-grains"
+      ],
+      "remarks": [
+        "rem:common-grains"
+      ],
+      "primary": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+      "lean": [
+        "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+        "Kakeya.Assouad.pure_wz2_node05_c2_grains"
+      ],
+      "remark": "The root uses the direct-rich C2 assembly. The output family, shading, density, volume bound and both grain estimates share one combined-selection witness."
+    },
+    {
+      "id": "L6_2",
+      "labels": [
+        "lem:wz1-dense-segment"
+      ],
+      "remarks": [],
+      "primary": null,
+      "lean": [],
+      "remark": "This paper lemma explains the projection-to-angle mechanism. No standalone declaration of its full expert formulation is linked; later slab arguments retain their own quantitative geometric data."
+    },
+    {
+      "id": "W1SlabPrep",
+      "labels": [
+        "lem:large-slope"
+      ],
+      "remarks": [],
+      "primary": null,
+      "lean": [
+        "Kakeya.Assouad.LargeSlopeTechnicalStatement"
+      ],
+      "remark": "This is an unnumbered preparation inside the slope argument. The related large-slope statement does not independently construct the popular slice, occupied square or nonzero projected normal. These must be retained as actual witnesses."
+    },
+    {
+      "id": "W2SlabCount",
+      "labels": [
+        "lem:large-slope"
+      ],
+      "remarks": [],
+      "primary": null,
+      "lean": [
+        "Kakeya.Assouad.LargeSlopeTechnicalStatement"
+      ],
+      "remark": "The expert count concerns whole tubes contained in an enlarged convex slab. Shaded mass in a prism alone is insufficient. The related technical interface is not a proof of this grouped preparation-and-count step."
+    },
+    {
+      "id": "W2L6_6",
+      "labels": [
+        "lem:large-slope"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.LargeSlopeTechnicalStatement",
+      "lean": [
+        "Kakeya.Assouad.LargeSlopeTechnicalStatement"
+      ],
+      "remark": "LargeSlopeTechnicalStatement is a proposition-valued interface, distinct from the closed WZ2 large-slope package. A declaration link to the former does not certify the generic technical lemma."
+    },
+    {
+      "id": "L6_4",
+      "labels": [
+        "lem:wz1-comparable-derivative"
+      ],
+      "remarks": [],
+      "primary": null,
+      "lean": [],
+      "remark": "The expert card transfers a WZ1 populated-height argument to CW extremality. The manuscript records the original directional formulation for comparison; the final normalized WZ2 output is supplied by Proposition 6.5."
+    },
+    {
+      "id": "W2P6_5",
+      "labels": [
+        "prop:large-slope"
+      ],
+      "remarks": [
+        "rem:common-grains"
+      ],
+      "primary": "Kakeya.Assouad.pure_wz2_node06_large_slope",
+      "lean": [
+        "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement",
+        "Kakeya.Assouad.pure_wz2_node06_large_slope"
+      ],
+      "remark": "The closed output includes the normalized derivative bounds together with local and global grains on the same shading. Transporting only the slope would not establish this package."
+    },
+    {
+      "id": "W2L6_7",
+      "labels": [
+        "lem:small-twisted-projection"
+      ],
+      "remarks": [
+        "rem:projection-sign",
+        "rem:parameter-frostman"
+      ],
+      "primary": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+      "lean": [
+        "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData",
+        "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection"
+      ],
+      "remark": "The proved small-image exponent is sigma minus the loss. The printed plus sign is stronger and unnecessary. Parameter-Frostman preparation is supplied on the same retained configuration before the lower bound is applied."
+    },
+    {
+      "id": "Dtwist",
+      "labels": [
+        "def:twisted-projection"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.twistedProjection",
+      "lean": [
+        "Kakeya.Assouad.twistedProjection",
+        "Kakeya.Assouad.twistedCurve"
+      ],
+      "remark": "The map and four-parameter curve formula are defined separately. A supporting line and a particular unit-segment carrier are not interchangeable when converting geometric containment counts to parameter counts."
+    },
+    {
+      "id": "W2TW",
+      "labels": [
+        "def:tube-frostman"
+      ],
+      "remarks": [
+        "rem:parameter-frostman"
+      ],
+      "primary": "Kakeya.Assouad.TubeWolffBound",
+      "lean": [
+        "Kakeya.Assouad.TubeWolffBound"
+      ],
+      "remark": "Ordinary Tube Wolff containment does not by itself count all carriers with nearby supporting-line parameters, because longitudinal positions may differ. The actual analytic theorem assumes indexed parameter nonconcentration separately."
+    },
+    {
+      "id": "W2DKT",
+      "labels": [
+        "def:kt-frostman"
+      ],
+      "remarks": [
+        "rem:kt-quotient"
+      ],
+      "primary": "Kakeya.Assouad.DiscreteSet.IsKatzTao",
+      "lean": [
+        "Kakeya.Assouad.DiscreteSet.IsKatzTao",
+        "Kakeya.Assouad.DiscreteSet.IsFrostman"
+      ],
+      "remark": "Katz-Tao is an absolute count using (r/delta)^s. The reversed printed ratio is not used. It is distinct from normalized Frostman counting."
+    },
+    {
+      "id": "W2DFrost",
+      "labels": [
+        "def:kt-frostman"
+      ],
+      "remarks": [
+        "rem:kt-quotient"
+      ],
+      "primary": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+      "lean": [
+        "Kakeya.Assouad.DiscreteSet.IsKatzTao",
+        "Kakeya.Assouad.DiscreteSet.IsFrostman"
+      ],
+      "remark": "Frostman counting is normalized by the total size of the indexed set. Passing to a subset or a coarse family changes that normalization and requires a retention or uniform-fibre bound."
+    },
+    {
+      "id": "W2DUnif",
+      "labels": [
+        "def:uniform-set"
+      ],
+      "remarks": [
+        "rem:uniform-parameters"
+      ],
+      "primary": "Kakeya.Assouad.ParameterSpacingUniformTreeData",
+      "lean": [
+        "Kakeya.Assouad.ParameterSpacingUniformTreeData",
+        "Kakeya.Assouad.parameter_spacing_uniform_tree_of_base"
+      ],
+      "remark": "The concrete ParameterSpacingUniformTreeData stores exact branching for the retained parameter points, together with its base, depth, atomization and retention bounds. Its construction is separately proved under quantitative base and scale hypotheses. This is a specialized parameter-tree implementation, not an identification of every generic uniform-set formulation."
+    },
+    {
+      "id": "Dcinematic",
+      "labels": [
+        "def:cinematic-family"
+      ],
+      "remarks": [
+        "rem:pyz-uniformity"
+      ],
+      "primary": "Kakeya.Cinematic.IsCinematicFamily",
+      "lean": [
+        "Kakeya.Cinematic.IsCinematicFamily"
+      ],
+      "remark": "The pairwise cinematic predicate controls differences, not absolute C2 norms. The family-uniform maximal estimate fixes an additional absolute C2 bound."
+    },
+    {
+      "id": "T7_2",
+      "labels": [
+        "thm:cinematic-l32"
+      ],
+      "remarks": [
+        "rem:cinematic-normalization",
+        "rem:pyz-uniformity"
+      ],
+      "primary": "Kakeya.Cinematic.wz2_uniformC2_input",
+      "lean": [
+        "Kakeya.Cinematic.WZ2UniformC2Input",
+        "Kakeya.Cinematic.wz2_uniformC2_input"
+      ],
+      "remark": "The proved input fixes a Katz-Tao constant, a neighbourhood dilation and an absolute C2 bound before the scale threshold. The full alpha/zeta PYZ statement is a separate unproved interface in this correspondence."
+    },
+    {
+      "id": "L7_3",
+      "labels": [
+        "lem:wz1-cinematic-family"
+      ],
+      "remarks": [
+        "rem:wz1-slope-offset"
+      ],
+      "primary": "Kakeya.Assouad.cinematic_family_from_slope",
+      "lean": [
+        "Kakeya.Assouad.CinematicFamilyFromSlopeStatement",
+        "Kakeya.Assouad.cinematic_family_from_slope"
+      ],
+      "remark": "The three-parameter cinematic-family theorem is proved, but this particular exported theorem is outside the sticky root's dependency closure. The root uses other parameter-family constructions. The theorem assumes f(0)=0 and constructs cinematic metric and doubling bounds; the absolute C2 bound is a further quantitative model estimate."
+    },
+    {
+      "id": "W2L7_6",
+      "labels": [
+        "lem:frostman-to-kt"
+      ],
+      "remarks": [
+        "rem:replication-deficit"
+      ],
+      "primary": "Kakeya.Assouad.frostman_to_katz_tao_weighted_card",
+      "lean": [
+        "Kakeya.Assouad.FrostmanToKatzTaoStatement",
+        "Kakeya.Assouad.frostman_to_katz_tao",
+        "Kakeya.Assouad.FrostmanToKatzTaoWeightedCardStatement",
+        "Kakeya.Assouad.frostman_to_katz_tao_weighted_card"
+      ],
+      "remark": "The root uses the weighted-cardinality extraction, which does not assume separated representatives and retains the Frostman and logarithmic deficit. The separately proved separated version is unused by this root."
+    },
+    {
+      "id": "W2L7_9",
+      "labels": [
+        "lem:uniform-set",
+        "lem:os-uniformization"
+      ],
+      "remarks": [
+        "rem:uniform-parameters"
+      ],
+      "primary": "DiscretisedFurstenbergEstimate.BasicUniformization.basic_uniformization_dyadic",
+      "lean": [
+        "DiscretisedFurstenbergEstimate.BasicUniformization.basic_uniformization_dyadic"
+      ],
+      "remark": "The nearby implemented uniformization is the OS dyadic theorem. Its number of levels and block lengths remain distinct. This correspondence does not equate the two papers' displayed constants."
+    },
+    {
+      "id": "W2L7_10",
+      "labels": [
+        "lem:spacing"
+      ],
+      "remarks": [
+        "rem:os-losses"
+      ],
+      "primary": "Kakeya.Assouad.scale_profile_crossing",
+      "lean": [
+        "Kakeya.Assouad.ScaleProfileCrossingStatement",
+        "Kakeya.Assouad.scale_profile_crossing"
+      ],
+      "remark": "The linked scale-profile theorem proves the numerical crossing argument. The geometric selection, uniformity and local Frostman witnesses are separate inputs; the arithmetic lemma alone is not the whole spacing theorem."
+    },
+    {
+      "id": "W2L7_11",
+      "labels": [
+        "lem:block-replication"
+      ],
+      "remarks": [
+        "rem:replication",
+        "rem:replication-deficit"
+      ],
+      "primary": "Kakeya.Assouad.parameter_block_amplification",
+      "lean": [
+        "Kakeya.Assouad.ParameterBlockAmplificationStatement",
+        "Kakeya.Assouad.parameter_block_amplification"
+      ],
+      "remark": "The implemented three-parameter replication produces about q^{-1} copies and keeps the factor h^{1-s}, with h=delta/q. It does not assert saturated cardinality delta^{-1} after a lossy extraction."
+    },
+    {
+      "id": "W2ImageUniform",
+      "labels": [
+        "lem:projection-one-step"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.projected_fiber_os_preparation",
+      "lean": [
+        "Kakeya.Assouad.projected_fiber_os_preparation"
+      ],
+      "remark": "The implemented projected-fibre preparation retains incidence mass as well as area uniformity. A large target subset alone does not ensure a dense pulled-back shading."
+    },
+    {
+      "id": "W2Slice",
+      "labels": [
+        "lem:freeze-line-parameter",
+        "lem:projection-one-step"
+      ],
+      "remarks": [
+        "rem:parameter-frostman"
+      ],
+      "primary": "Kakeya.Assouad.parameter_window_cluster_cardinality",
+      "lean": [
+        "Kakeya.Assouad.parameter_window_cluster_cardinality"
+      ],
+      "remark": "The formal implementation uses a finite parameter window and an explicit indexed four-parameter Frostman input. The expert inference from ordinary Tube Wolff alone is stronger than the actual interface."
+    },
+    {
+      "id": "W2JetCount",
+      "labels": [
+        "lem:wz1-cinematic-family",
+        "lem:projection-one-step"
+      ],
+      "remarks": [
+        "rem:replication-deficit",
+        "rem:cinematic-normalization"
+      ],
+      "primary": "Kakeya.Assouad.parameter_block_representative_cinematic_pullback",
+      "lean": [
+        "Kakeya.Assouad.parameter_block_representative_cinematic_pullback"
+      ],
+      "remark": "The implementation transports representative parameters and their shadings into the cinematic family. Separation, metric distortion and the replication deficit are hypotheses or proved fields, not automatic properties of a bare parameter set."
+    },
+    {
+      "id": "W2AreaCompare",
+      "labels": [
+        "lem:cinematic-area"
+      ],
+      "remarks": [
+        "rem:projection-scales"
+      ],
+      "primary": "Kakeya.Assouad.projected_fiber_os_cinematic_globalization",
+      "lean": [
+        "Kakeya.Assouad.projected_fiber_os_cinematic_globalization"
+      ],
+      "remark": "Holder acts on planar projected incidence mass, not three-dimensional shaded volume. The selected implementation globalizes through OS cells and cinematic comparison, with all retained mass and fixed constants recorded."
+    },
+    {
+      "id": "W2L7_12",
+      "labels": [
+        "lem:projection-one-step"
+      ],
+      "remarks": [
+        "rem:projection-scales"
+      ],
+      "primary": "Kakeya.Assouad.parameter_block_projection_uniformization_from_os",
+      "lean": [
+        "Kakeya.Assouad.parameter_block_projection_uniformization_from_os"
+      ],
+      "remark": "The expert one-step inequality is a mathematical guide. The linked implementation is a parameter-block projection uniformization assembled from explicit arithmetic, mass-pruning, OS preparation and globalization inputs. These are not identical statements."
+    },
+    {
+      "id": "IcoarseTW",
+      "labels": [
+        "lem:uniform-parameter-coarsening"
+      ],
+      "remarks": [
+        "rem:parameter-frostman"
+      ],
+      "primary": null,
+      "lean": [],
+      "remark": "The normalized count is transported in parameter space using comparable nonempty fibres. Density, clipping at the height window and target-neighbourhood compatibility are separate geometric obligations. No single generic coarsening constructor is claimed."
+    },
+    {
+      "id": "W2Iterate",
+      "labels": [
+        "lem:projection-iteration"
+      ],
+      "remarks": [
+        "rem:projection-iteration"
+      ],
+      "primary": "Kakeya.Assouad.parameter_block_positive_window_assembly",
+      "lean": [
+        "Kakeya.Assouad.parameter_block_positive_window_assembly"
+      ],
+      "remark": "The expert finite telescoping argument is retained as mathematics. The root closes Section 7 through the parameter-block positive-window assembly; an absent reference to a separately named telescoping lemma must not be replaced by an invented solid edge."
+    },
+    {
+      "id": "W2P7_1",
+      "labels": [
+        "thm:twisted-parameter",
+        "prop:twisted-tube-wolff"
+      ],
+      "remarks": [
+        "rem:parameter-frostman"
+      ],
+      "primary": "Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound",
+      "lean": [
+        "Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement",
+        "Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound"
+      ],
+      "remark": "The proved specialization assumes a bounded vertical chart, analytic distinctness, an indexed four-parameter Frostman bound, an upper cardinality bound and f(0)=0. The broader Tube Wolff-only paper statement is not independently marked proved."
+    },
+    {
+      "id": "W2P6_8",
+      "labels": [
+        "prop:twisted-cwa",
+        "thm:twisted-parameter"
+      ],
+      "remarks": [
+        "rem:parameter-frostman"
+      ],
+      "primary": null,
+      "lean": [
+        "Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement",
+        "Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound"
+      ],
+      "remark": "CWA yields a geometric radius-squared tube count, but does not by itself establish all the parameter hypotheses of the proved lower bound for arbitrary unit-segment carriers. The generic expert CWA corollary is therefore a comparison node, not a second closed theorem."
+    },
+    {
+      "id": "DFrost",
+      "labels": [
+        "def:wz1-frostman"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.DiscreteSet.IsFrostman",
+      "lean": [
+        "Kakeya.Assouad.DiscreteSet.IsFrostman"
+      ],
+      "remark": "The expert grid-volume convention and the implemented separated finite-point convention use normalized counts. The comparison requires discretization and its constants; they are not identical definitions."
+    },
+    {
+      "id": "Dhyp",
+      "labels": [
+        "def:uniform-hypergraph"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.wz1HypergraphFiber",
+      "lean": [
+        "Kakeya.Assouad.wz1HypergraphFiber",
+        "Kakeya.Assouad.WZ1UniformHypergraphDensity"
+      ],
+      "remark": "The implemented density includes every coordinate projection, including the empty and full coordinate sets. A graph restricted to active vertices still has to preserve these fibre inequalities."
+    },
+    {
+      "id": "Dthin",
+      "labels": [
+        "def:thin-tubes"
+      ],
+      "remarks": [],
+      "primary": "HasMeasureThinTubes",
+      "lean": [
+        "HasMeasureThinTubes"
+      ],
+      "remark": "Thin tubes are a property of an ordered pair of measures and a retained relation. The reverse ordered pair is an additional hypothesis."
+    },
+    {
+      "id": "DthinD",
+      "labels": [
+        "def:discrete-thin-tubes"
+      ],
+      "remarks": [
+        "rem:thin-tube-loss"
+      ],
+      "primary": "Kakeya.Assouad.HasDiscreteThinTubes",
+      "lean": [
+        "Kakeya.Assouad.HasDiscreteThinTubes"
+      ],
+      "remark": "The discrete predicate counts retained incidences at radii above delta and normalizes by endpoint cardinality. A measure-level statement does not automatically hold at every discrete centre."
+    },
+    {
+      "id": "Dsep",
+      "labels": [
+        "def:standard-separation"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.WZ1StandardSeparation",
+      "lean": [
+        "Kakeya.Assouad.WZ1StandardSeparation"
+      ],
+      "remark": "The implementation uses bounded finite charts, endpoint separation and separation of coefficients from zero. These chart hypotheses remain visible."
+    },
+    {
+      "id": "L8_1",
+      "labels": [
+        "lem:hypergraph-refinement"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.wz1_hypergraph_refinement",
+      "lean": [
+        "Kakeya.Assouad.WZ1HypergraphRefinementStatement",
+        "Kakeya.Assouad.wz1_hypergraph_refinement"
+      ],
+      "remark": "The finite hypergraph pruning theorem is proved, including all coordinate subsets and the retained-edge fraction. Its mathematical output is the density interface used subsequently."
+    },
+    {
+      "id": "T8_2",
+      "labels": [
+        "thm:robust-kaufman",
+        "thm:kaufman-energy"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.projection_energy_total",
+      "lean": [
+        "Kakeya.Assouad.projection_energy_total"
+      ],
+      "remark": "The averaged projection-energy theorem is a supporting result. It is not, by itself, the full dense-fibre robust projection theorem on this expert card; the mass selections and energy-to-support conversion remain separate."
+    },
+    {
+      "id": "L8_3",
+      "labels": [
+        "lem:unsmooth-thin-tubes"
+      ],
+      "remarks": [
+        "rem:thin-tube-loss"
+      ],
+      "primary": "Kakeya.Assouad.wz1_smoothed_to_discrete_thin_tubes",
+      "lean": [
+        "Kakeya.Assouad.WZ1SmoothedToDiscreteThinTubesStatement",
+        "Kakeya.Assouad.wz1_smoothed_to_discrete_thin_tubes"
+      ],
+      "remark": "The smoothed-to-discrete theorem increases the exceptional fraction from c to 2c and uses an explicit enlarged counting constant. It does not preserve the expert/paper exceptional fraction unchanged."
+    },
+    {
+      "id": "L8_4",
+      "labels": [
+        "lem:thin-tubes-dots"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.wz1_thin_tubes_large_dot_product",
+      "lean": [
+        "Kakeya.Assouad.WZ1ThinTubesLargeDotProductStatement",
+        "Kakeya.Assouad.wz1_thin_tubes_large_dot_product"
+      ],
+      "remark": "The finite theorem has standard separation, normalized Frostman counts and a uniformly dense graph as hypotheses. Those conditions cannot be replaced by total edge density alone."
+    },
+    {
+      "id": "P8_6",
+      "labels": [
+        "prop:radial-bootstrap"
+      ],
+      "remarks": [
+        "rem:radial-support"
+      ],
+      "primary": "radial_bootstrapping_measure_thin_tubes",
+      "lean": [
+        "radial_bootstrapping_measure_thin_tubes"
+      ],
+      "remark": "The closed measure bootstrap includes support in a normalized unit ball. This is the same Lean measure theorem associated with the external OSW input, rather than a new proof depending on a duplicate theorem."
+    },
+    {
+      "id": "P8_6p",
+      "labels": [
+        "prop:radial-bootstrap",
+        "lem:unsmooth-thin-tubes"
+      ],
+      "remarks": [
+        "rem:thin-tube-loss"
+      ],
+      "primary": null,
+      "lean": [
+        "radial_bootstrapping_measure_thin_tubes",
+        "Kakeya.Assouad.WZ1SmoothedToDiscreteThinTubesStatement",
+        "Kakeya.Assouad.wz1_discrete_to_smoothed_thin_tubes",
+        "Kakeya.Assouad.wz1_smoothed_to_discrete_thin_tubes",
+        "Kakeya.Assouad.wz1_finite_osw_one_step_iteration"
+      ],
+      "remark": "The expert discrete bootstrap keeps the paper constants and exceptional fraction. The implemented conversion and finite iteration have explicit smoothing losses; the measure theorem does not itself prove this exact discrete statement."
+    },
+    {
+      "id": "C8_7",
+      "labels": [
+        "cor:thin-tube-iteration"
+      ],
+      "remarks": [
+        "rem:thin-tube-loss"
+      ],
+      "primary": "Kakeya.Assouad.wz1_finite_osw_one_step_iteration",
+      "lean": [
+        "Kakeya.Assouad.wz1_finite_osw_one_step_iteration"
+      ],
+      "remark": "The linked theorem iterates measure-valued thin tubes with an explicit bootstrap premise and the recurrence 3^N c. The expert card is discrete: smoothing and return to point counts impose additional losses, so that measure theorem does not certify the exact discrete constants."
+    },
+    {
+      "id": "L8_8",
+      "labels": [
+        "lem:quarter-thin-tubes"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.wz1_quarter_thin_tubes",
+      "lean": [
+        "Kakeya.Assouad.WZ1QuarterThinTubesStatement",
+        "Kakeya.Assouad.wz1_quarter_thin_tubes"
+      ],
+      "remark": "The quarter-exponent seed is proved for separated finite Frostman sets. Both normalized ball counts and line nonconcentration hypotheses are retained."
+    },
+    {
+      "id": "P8_5",
+      "labels": [
+        "prop:line-nonconcentration"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.wz1_line_nonconcentration_projection",
+      "lean": [
+        "Kakeya.Assouad.wz1_line_nonconcentration_projection"
+      ],
+      "remark": "The proof uses the quarter seed, finite bootstrap and dot-product comparison with propagated constants. Its theorem type retains the parameter order and separated finite-set model."
+    },
+    {
+      "id": "L8_10",
+      "labels": [
+        "lem:two-ends-strip"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.two_ends_reduction",
+      "lean": [
+        "Kakeya.Assouad.two_ends_reduction"
+      ],
+      "remark": "The implemented two-ends selection uses a near-maximal strip and a retained-mass margin. No attainment of an unrestricted supremum is assumed."
+    },
+    {
+      "id": "L8_11",
+      "labels": [
+        "lem:anisotropic-frostman"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.wz1_anisotropic_frostman_rescaling",
+      "lean": [
+        "Kakeya.Assouad.wz1_anisotropic_frostman_rescaling"
+      ],
+      "remark": "Anisotropic rescaling retains a substantial subset and comparable cell masses before renormalizing Frostman counts. Applying the affine map to the whole set is not the stated conclusion."
+    },
+    {
+      "id": "L8_12",
+      "labels": [
+        "lem:frostman-coarsening"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.Assouad.wz1_frostman_coarsening",
+      "lean": [
+        "Kakeya.Assouad.wz1_frostman_coarsening"
+      ],
+      "remark": "Coarsening uses a common dyadic mass class; its logarithmic retention loss changes the normalized Frostman constant."
+    },
+    {
+      "id": "L8_13",
+      "labels": [
+        "lem:strip-localization"
+      ],
+      "remarks": [
+        "rem:active-vertices",
+        "rem:projection-orientation"
+      ],
+      "primary": "Kakeya.Assouad.wz1_strip_localization_dichotomy_from_kaufman",
+      "lean": [
+        "Kakeya.Assouad.WZ1StripLocalizationDichotomyStatement",
+        "Kakeya.Assouad.wz1_strip_localization_dichotomy_from_kaufman"
+      ],
+      "remark": "The output concerns active vertices of the hypergraph, with the coefficient strip perpendicular through zero. The linked statement and its proved-from-inputs version retain the Kaufman/geometry inputs explicitly."
+    },
+    {
+      "id": "P8_9",
+      "labels": [
+        "prop:wz1-separated"
+      ],
+      "remarks": [
+        "rem:endpoint-union",
+        "rem:projection-orientation"
+      ],
+      "primary": "Kakeya.Assouad.wz1_well_separated_projection_union",
+      "lean": [
+        "Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion",
+        "Kakeya.Assouad.wz1_well_separated_projection_union"
+      ],
+      "remark": "The closed result gives affine-line concentration in at least one endpoint class. The expert card asks for both independent endpoint classes, a stronger conclusion. The coefficient line passes through zero in the perpendicular direction."
+    },
+    {
+      "id": "T5_2p",
+      "labels": [
+        "thm:wz1-projection",
+        "prop:wz1-separated"
+      ],
+      "remarks": [
+        "rem:projection-orientation",
+        "rem:endpoint-union"
+      ],
+      "primary": null,
+      "lean": [
+        "Kakeya.Assouad.WZ1ProjectionDichotomyConclusion",
+        "Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion",
+        "Kakeya.Assouad.wz1_well_separated_projection_union"
+      ],
+      "remark": "The expert general Frostman card has the reversed coefficient/endpoint orientation and simultaneous concentration in two endpoint sets. The implemented separated union alternative is weaker and has corrected orientation. No closed theorem of this full expert scope is asserted."
+    },
+    {
+      "id": "XBCT",
+      "labels": [
+        "thm:multilinear-kakeya",
+        "thm:cv-general"
+      ],
+      "remarks": [],
+      "primary": "Kakeya.CV.polynomial_visibility_to_unitScale_multilinear_kakeya_of_factorization",
+      "lean": [
+        "Kakeya.CV.MultilinearKakeyaThreeStatement",
+        "Kakeya.CV.multilinear_kakeya_three",
+        "Kakeya.Assouad.paper_cv_broad_set_estimate",
+        "Kakeya.CV.polynomial_visibility_to_unitScale_multilinear_kakeya_of_factorization"
+      ],
+      "remark": "The expert leaves multilinear Kakeya external. The repository proves the required dimension-three input using CV visibility and its topological and geometric ingredients. The arbitrary-dimensional paper theorem is not inferred from that specialization. The linked public polynomial application is conditional on its geometric inputs; the private unit-scale proof assembles those inputs before the broad-set estimate uses it."
+    },
+    {
+      "id": "XExt",
+      "labels": [
+        "prop:lipschitz-grains"
+      ],
+      "remarks": [],
+      "primary": "LipschitzOnWith.extend_real",
+      "lean": [
+        "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+        "Kakeya.Assouad.pure_wz2_node04_grains",
+        "LipschitzOnWith.extend_real"
+      ],
+      "remark": "The scalar Lipschitz extension theorem is a Mathlib boundary input. Its incoming references can be audited, while Mathlib's internal proof is outside the project traversal."
+    },
+    {
+      "id": "XOSW",
+      "labels": [
+        "prop:radial-bootstrap"
+      ],
+      "remarks": [
+        "rem:radial-support"
+      ],
+      "primary": "radial_bootstrapping_measure_thin_tubes",
+      "lean": [
+        "radial_bootstrapping_measure_thin_tubes"
+      ],
+      "remark": "This external measure bootstrap is implemented in the repository. Its actual incidence, radial and additive-combinatorial dependencies are expanded inside the External frame; source numbering differs between the manuscripts."
+    },
+    {
+      "id": "XPYZ",
+      "labels": [
+        "thm:pyz"
+      ],
+      "remarks": [
+        "rem:pyz-uniformity"
+      ],
+      "primary": "Kakeya.Cinematic.Theorem1_7UniformC2Statement",
+      "lean": [
+        "Kakeya.Cinematic.Theorem1_7UniformC2Statement"
+      ],
+      "remark": "The full normalized PYZ statement is only a proposition interface in the current correspondence. The proved uniform-C2 L3/2 specialization and its actual tangency/counting dependencies are shown inside the External frame."
+    },
+    {
+      "id": "XFO",
+      "labels": [
+        "lem:content-to-kt",
+        "lem:frostman-to-kt"
+      ],
+      "remarks": [],
+      "primary": null,
+      "lean": [
+        "Kakeya.Assouad.FrostmanToKatzTaoStatement",
+        "Kakeya.Assouad.frostman_to_katz_tao",
+        "Kakeya.Assouad.FrostmanToKatzTaoWeightedCardStatement",
+        "Kakeya.Assouad.frostman_to_katz_tao_weighted_card"
+      ],
+      "remark": "The expert invokes Hausdorff-content extraction as a black box. The root instead uses finite weighted-cardinality Frostman-to-Katz-Tao extraction. No independently proved content theorem is identified here."
+    },
+    {
+      "id": "XOSuniform",
+      "labels": [
+        "lem:os-uniformization"
+      ],
+      "remarks": [
+        "rem:uniform-parameters"
+      ],
+      "primary": "DiscretisedFurstenbergEstimate.BasicUniformization.basic_uniformization_dyadic",
+      "lean": [
+        "DiscretisedFurstenbergEstimate.BasicUniformization.basic_uniformization_dyadic"
+      ],
+      "remark": "The implemented dyadic uniformization is recorded with its own theorem and scale conventions. The expert's paper numbering is provenance, not a Lean declaration name."
+    },
+    {
+      "id": "XSWdecomp",
+      "labels": [
+        "prop:os-multiscale"
+      ],
+      "remarks": [
+        "rem:os-losses"
+      ],
+      "primary": "DirecretisedFurstenbergEstimate.FinalProof.multiscale_decomposition_main",
+      "lean": [
+        "DirecretisedFurstenbergEstimate.FinalProof.multiscale_decomposition_main"
+      ],
+      "remark": "The linked OS multiscale decomposition is a related proved formulation, but that exported theorem is unused by this root. This does not certify a direct reference to the expert's Shmerkin-Wang black box."
+    },
+    {
+      "id": "XSWmerge",
+      "labels": [
+        "lem:profile-decomposition"
+      ],
+      "remarks": [],
+      "primary": "CombinatorialKaufman.MergingLemmas.merge_adjacent_epsilonSuperlinear",
+      "lean": [
+        "CombinatorialKaufman.MergingLemmas.merge_adjacent_epsilonSuperlinear"
+      ],
+      "remark": "The nearby implemented merging theorem requires equal chord slopes on two adjacent epsilon-superlinear intervals and returns their common slope. The expert black box merges decreasing dimensions by a weighted average, which is more general. These statements are related, not identified."
+    },
+    {
+      "id": "Igeom",
+      "labels": [
+        "def:tube",
+        "def:shading"
+      ],
+      "remarks": [
+        "rem:aggregate-density"
+      ],
+      "primary": "Kakeya.Streamlined.TubeFamily",
+      "lean": [
+        "Kakeya.DeltaTube",
+        "Kakeya.Assouad.WZ2PaperOrdinaryIsEssentiallyDistinct",
+        "Kakeya.Streamlined.Shading",
+        "Kakeya.Streamlined.Shading.IsLambdaDense",
+        "Kakeya.Streamlined.TubeFamily"
+      ],
+      "remark": "The geometric API consists of indexed tube and shading data, preserving multiplicities. It is not a single theorem or a set of uncompiled Config declarations."
+    },
+    {
+      "id": "Ientropy",
+      "labels": [
+        "def:ad-set"
+      ],
+      "remarks": [],
+      "primary": "Metric.externalCoveringNumber",
+      "lean": [
+        "Kakeya.Assouad.PureWZ2PaperADSet1",
+        "Kakeya.Assouad.IsADSet1",
+        "Metric.externalCoveringNumber"
+      ],
+      "remark": "The underlying Mathlib external covering number takes values in the extended natural numbers and can be infinite. Boundedness, finiteness and coercion to real counting quantities are additional steps. The expert finite-entropy API groups these operations rather than supplying one theorem."
+    },
+    {
+      "id": "Imass",
+      "labels": [
+        "def:shading",
+        "def:balanced-cover"
+      ],
+      "remarks": [
+        "rem:balanced-cover",
+        "rem:refinement-loss"
+      ],
+      "primary": null,
+      "lean": [
+        "Kakeya.Streamlined.Shading",
+        "Kakeya.Streamlined.Shading.IsLambdaDense",
+        "Kakeya.Assouad.PureWZ2BalancedCoverData",
+        "Kakeya.Streamlined.Shading.mass",
+        "Kakeya.Streamlined.Shading.pointMultiplicity"
+      ],
+      "remark": "Mass, point multiplicity and spatial balance are different quantities. The grouped API does not allow total mass retention to replace per-fibre or per-tube counting hypotheses."
+    },
+    {
+      "id": "Icover",
+      "labels": [
+        "def:partition-cover",
+        "def:balanced-cover"
+      ],
+      "remarks": [
+        "rem:full-fibres",
+        "rem:balanced-cover"
+      ],
+      "primary": "Kakeya.Assouad.PureWZ2BalancedCoverData",
+      "lean": [
+        "Kakeya.Assouad.WZ2PaperPurePartitioningCover",
+        "Kakeya.Assouad.WZ2PaperPureFullFibersAreCUniform",
+        "Kakeya.Assouad.PureWZ2BalancedCoverData"
+      ],
+      "remark": "Full geometric containment fibres and doubled-fibre disjointness determine the parent map. Balanced shaded covers add a common positive fine-union volume in each retained coarse cell."
+    },
+    {
+      "id": "Iaffine",
+      "labels": [
+        "def:unit-rescaling",
+        "lem:mild-rescaling"
+      ],
+      "remarks": [
+        "rem:common-grains"
+      ],
+      "primary": null,
+      "lean": [
+        "Kakeya.Assouad.WZ2PaperAssouadUnitRescalingData"
+      ],
+      "remark": "Unit rescaling data and the later affine transport constructions have different roles. Plane normals use the inverse transpose, and induced shadings require determinant and re-cubulation comparisons."
+    },
+    {
+      "id": "Icalc",
+      "labels": [
+        "lem:segment-extension"
+      ],
+      "remarks": [
+        "rem:smoothing"
+      ],
+      "primary": "Kakeya.Assouad.wz1_smooth_segment_extension",
+      "lean": [
+        "Kakeya.Assouad.WZ1SmoothSegmentExtensionStatement",
+        "Kakeya.Assouad.wz1_smooth_segment_extension"
+      ],
+      "remark": "The proved segment-extension theorem is one concrete calculus input. The expert API also includes finite supported-correction sums and their compatibility; the single lemma does not construct a whole smoothing hierarchy."
+    },
+    {
+      "id": "Iparams",
+      "labels": [
+        "lem:projection-iteration",
+        "lem:critical-exponent"
+      ],
+      "remarks": [
+        "rem:projection-iteration"
+      ],
+      "primary": null,
+      "lean": [
+        "Kakeya.Assouad.pure_wz2_node02_critical_extraction"
+      ],
+      "remark": "Small-parameter ordering and finite schedules are distributed through actual theorem binders and arithmetic helpers. No single theorem with all the expert API obligations is asserted."
+    },
+    {
+      "id": "Iwolffbalance",
+      "labels": [
+        "lem:cwa-refinement",
+        "lem:multiscale-cwa"
+      ],
+      "remarks": [
+        "rem:refinement-loss"
+      ],
+      "primary": null,
+      "lean": [],
+      "remark": "A retained index fraction gives the single-scale loss A/q. Every surviving containment fibre has its own retained fraction; arbitrary global deletion does not preserve all-scale CWA. The actual structural construction rebuilds its specific witnesses."
+    },
+    {
+      "id": "Ienvelope",
+      "labels": [
+        "lem:critical-exponent"
+      ],
+      "remarks": [
+        "rem:wz1-extremality"
+      ],
+      "primary": "Kakeya.Assouad.pure_wz2_non_admissible_spec",
+      "lean": [
+        "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
+        "Kakeya.Assouad.pure_wz2_non_admissible_spec"
+      ],
+      "remark": "The non-admissibility lemma gives a uniform strict lower bound once an exponent is known not to be admissible. The critical extraction proves this premise above its locally chosen supremum; constant multiplicity then requires a separate mass comparison."
+    }
+  ],
+  "external_groups": [
+    {
+      "id": "multilinear",
+      "title": "Multilinear Kakeya · CV",
+      "nodes": [
+        "XBCT"
+      ],
+      "module_prefixes": [
+        "MyLeanRepo.Kakeya.CV"
+      ]
+    },
+    {
+      "id": "cinematic",
+      "title": "Cinematic estimate · PYZ",
+      "nodes": [
+        "XPYZ"
+      ],
+      "module_prefixes": [
+        "MyLeanRepo.Kakeya.Cinematic"
+      ]
+    },
+    {
+      "id": "radial",
+      "title": "Radial bootstrap · OSW",
+      "nodes": [
+        "XOSW"
+      ],
+      "module_prefixes": [
+        "MyLeanRepo.RadialBootstrapping",
+        "MyLeanRepo.radial_bootstrapping"
+      ]
+    },
+    {
+      "id": "incidence",
+      "title": "Furstenberg, uniformity and scale profiles · OS",
+      "nodes": [
+        "XOSuniform",
+        "XSWdecomp",
+        "XSWmerge"
+      ],
+      "module_prefixes": [
+        "MyLeanRepo.DiscretisedFurstenbergEstimate",
+        "MyLeanRepo.discretised_furstenberg_estimate"
+      ]
+    },
+    {
+      "id": "projection",
+      "title": "Discretised projections and additive combinatorics",
+      "nodes": [
+        "XFO"
+      ],
+      "module_prefixes": [
+        "MyLeanRepo.Discretized",
+        "MyLeanRepo.Expansion",
+        "MyLeanRepo.UniformExpansion",
+        "MyLeanRepo.Energy",
+        "MyLeanRepo.Marstrand",
+        "MyLeanRepo.OSW",
+        "MyLeanRepo.Ruzsa",
+        "MyLeanRepo.StrongRing",
+        "MyLeanRepo.SupportFreeFrostman",
+        "MyLeanRepo.WeakTwoEnds",
+        "MyLeanRepo.Lemma51"
+      ]
+    },
+    {
+      "id": "extension",
+      "title": "Scalar extension · Mathlib boundary",
+      "nodes": [
+        "XExt"
+      ],
+      "module_prefixes": [
+        "Mathlib"
+      ]
+    }
+  ]
+}

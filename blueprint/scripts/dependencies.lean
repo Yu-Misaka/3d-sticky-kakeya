@@ -36,7 +36,8 @@ def structuralReferences : ConstantInfo → IO (Array Name)
 /-- Emit the complete project-local closure, with library declarations as a
     boundary. Each edge records whether it comes from a type, value or the
     kernel data for an inductive declaration/recursor. Cycles are visited once. -/
-def collect (root : Name) (projectRoots : Array Name) (output : System.FilePath) :
+def collect (root : Name) (projectRoots : Array Name) (output : System.FilePath)
+    (visibleLibrary : Array Name := #[]) :
     CommandElabM Unit := do
   let env := (← getEnv).setExporting false
   let kernel := env.checked.get
@@ -45,6 +46,7 @@ def collect (root : Name) (projectRoots : Array Name) (output : System.FilePath)
   let project := fun name => match env.getModuleIdxFor? name with
     | some idx => projectModules[idx]!
     | none => projectRoots.any (·.isPrefixOf env.mainModule)
+  let selected := fun name => project name || visibleLibrary.contains name
   unless project root do throwError "Dependency root is outside the project: {root}"
   let handle ← IO.FS.Handle.mk output .write
   handle.putStrLn (Json.mkObj [
@@ -59,27 +61,30 @@ def collect (root : Name) (projectRoots : Array Name) (output : System.FilePath)
     index := index + 1
     let some info := kernel.find? name
       | throwError "Missing kernel declaration in dependency closure: {name}"
-    let types ← references info.type
-    let values ← match info.value? (allowOpaque := true) with
+    -- Explicitly linked library declarations are terminal nodes. Their
+    -- incoming kernel references are retained without traversing all Mathlib.
+    let types ← if project name then references info.type else pure #[]
+    let values ← match if project name then info.value? (allowOpaque := true) else none with
       | some value => references value
       | none => pure #[]
-    let structural ← structuralReferences info
+    let structural ← if project name then structuralReferences info else pure #[]
     for dependency in types ++ values ++ structural do
       unless (kernel.find? dependency).isSome do
         throwError "Missing referenced kernel declaration: {name} → {dependency}"
-      if project dependency then
+      if selected dependency then
         if !seen.contains dependency then
           seen := seen.insert dependency
           queue := queue.push dependency
-      else
+      if !project dependency then
         boundary := boundary.insert dependency
     let range ← findDeclarationRanges? name
     let moduleName := (env.getModuleIdxFor? name).map
       (fun idx => env.header.moduleNames[idx]!) |>.getD env.mainModule
-    let jsonNames := fun names => toJson ((names.filter project).map Name.toString)
+    let jsonNames := fun names => toJson ((names.filter selected).map Name.toString)
     handle.putStrLn (Json.mkObj [
       ("name", toJson name.toString), ("module", toJson moduleName.toString),
       ("kind", toJson (kind info)),
+      ("scope", toJson (if project name then "project" else "library")),
       ("line", toJson (range.map (·.selectionRange.pos.line))),
       ("type", jsonNames types), ("value", jsonNames values),
       ("structural", jsonNames structural)]).compress
@@ -89,6 +94,6 @@ def collect (root : Name) (projectRoots : Array Name) (output : System.FilePath)
   handle.putStrLn (Json.mkObj [
     ("boundary", toJson (boundary.toArray.qsort Name.lt |>.map Name.toString))]).compress
   handle.flush
-  liftIO <| IO.println s!"Lean dependencies: {seen.size} project declarations, {boundary.size} library references"
+  liftIO <| IO.println s!"Lean dependencies: {seen.size} inspected declarations (project and selected library leaves), {boundary.size} library references"
 
 end BlueprintDependencies

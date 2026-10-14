@@ -11,6 +11,22 @@ def blueprintAudit (names : Array Name) : CommandElabM Unit := do
     let some ranges ← findDeclarationRanges? name
       | throwError "No source position for blueprint declaration: {name}"
     let axioms ← collectAxioms name
+    -- A definition of `Prop` is an interface, whereas a definition *whose
+    -- type is a proposition* can be a proof. Names and declaration kinds
+    -- alone do not establish this distinction.
+    let (isProof, isProposition, typeText, definitionText, expandedTypeText) ← liftTermElabM do
+      let isProof ← Meta.isProp info.type
+      let isProposition ← Meta.forallTelescopeReducing info.type fun _ body =>
+        pure body.isProp
+      let typeText := toString (← Meta.ppExpr info.type)
+      let expandedTypeText := toString (← Meta.ppExpr (← Meta.whnf info.type))
+      let definitionText ← match info with
+        | .defnInfo value =>
+          if isProposition then
+            pure (some (toString (← Meta.ppExpr value.value)))
+          else pure none
+        | _ => pure none
+      pure (isProof, isProposition, typeText, definitionText, expandedTypeText)
     let kind := match info with
       | .thmInfo _ => "theorem"
       | .defnInfo _ => "definition"
@@ -25,5 +41,10 @@ def blueprintAudit (names : Array Name) : CommandElabM Unit := do
       ("module", toJson env.header.moduleNames[idx]!.toString),
       ("line", toJson ranges.selectionRange.pos.line),
       ("kind", toJson kind),
+      ("is_proof", toJson isProof),
+      ("is_proposition", toJson isProposition),
+      ("type", toJson typeText),
+      ("definition", toJson definitionText),
+      ("expanded_type", toJson expandedTypeText),
       ("axioms", toJson ((axioms.map Name.toString).qsort (· < ·)))]
     liftIO <| IO.println ("BLUEPRINT " ++ record.compress)

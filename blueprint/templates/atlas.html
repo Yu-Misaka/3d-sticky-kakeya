@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="The expert's sticky Kakeya roadmap compared with the actual compiled Lean proof, with witnessed dependencies and statement differences.">
+  <title>Sticky Kakeya · Mathematical and Lean proof atlas</title>
+  <link rel="stylesheet" href="../assets/atlas.css">
+  {% raw %}<script>
+    window.MathJax = {tex: {inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['\\[', '\\]'], ['$$', '$$']],
+      macros: {R: '\\mathbb{R}', N: '\\mathbb{N}', Z: '\\mathbb{Z}', T: '\\mathbb{T}',
+        eps: '\\varepsilon', cP: '\\mathcal{P}', cQ: '\\mathcal{Q}', cL: '\\mathcal{L}',
+        cF: '\\mathcal{F}', cH: '\\mathcal{H}', cE: '\\mathcal{E}', cD: '\\mathcal{D}',
+        vol: '\\operatorname{vol}', dist: '\\operatorname{dist}', diam: '\\operatorname{diam}',
+        supp: '\\operatorname{supp}', dir: '\\operatorname{dir}', Lip: '\\operatorname{Lip}',
+        graph: '\\operatorname{graph}', CWA: '\\mathrm{CWA}', AD: '\\mathrm{AD}', KT: '\\mathrm{KT}',
+        one: '\\mathbf{1}', mass: '\\mathsf{M}', energy: '\\mathsf{I}',
+        Ncov: ['\\mathcal{E}_{#1}(#2)', 2]}}};
+  </script>{% endraw %}
+  <script defer src="../assets/atlas.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+  <header class="atlas-header">
+    <div class="header-inner">
+      <div class="eyebrow">Wang–Zahl · WZ1 / WZ2 · Theorem 5.2</div>
+      <h1>Multi-scale convex Wolff</h1>
+      <p class="header-subtitle">A mathematical roadmap, checked against the Lean proof</p>
+      <p>{{ counts.expert_nodes }} expert nodes · {{ counts.expert_edges }} proposed connections · {{ counts.lean_versions }} reached Lean versions.</p>
+      <nav aria-label="Project">
+        <a href="../index.html">Project</a><a href="index.html">Manuscript</a>
+        <a href="../blueprint.pdf">PDF</a><a href="../lean/Documentation.html">Lean documentation</a>
+        <a href="atlas-audit.html">Edge witnesses</a><a href="lean_dependency_audit.html">Version audit</a>
+      </nav>
+      <button class="headergraph" data-open-map>Open the unified graph <span aria-hidden="true">↗</span></button>
+    </div>
+  </header>
+  <main>
+    <details class="scope surface">
+      <summary>Scope, sources and how to read the two kinds of connection</summary>
+      <p>The endpoint is the finite sticky estimate, WZ2 Theorem 5.2. The expert atlas supplies the branch structure, mathematical explanations and proposed connections. Its uncompiled Lean sketches have been replaced by links to audited declarations.</p>
+      <p><strong>Solid arrows</strong> have a nonempty path of references in the compiled sticky proof. Types, definitions and structural references count as dependencies too: a used proposition is not thereby proved. Intermediate declarations may be folded into an arrow; click it to inspect every step.</p>
+      <p><strong>Dashed arrows</strong> retain an expert connection without such a path between the selected versions in this root's closure. A missing match, an unused version and two cards sharing one declaration have different explanations in the edge audit. A dashed arrow does not assert that the mathematical argument is false.</p>
+      <p>Each card presents the reviewed manuscript formulation, its correspondence Remark and the actual Lean versions. The original expert formulation remains available for comparison. Branch colours do not indicate completion. The External view opens the implemented proofs inside labelled frames; Mathlib remains a library boundary.</p>
+      <p><a href="atlas-dependencies.json">Download the atlas and its witnesses</a> · <a href="lean-dependencies.json">Download the declaration audit</a> · <a href="lean_declarations.html">Inspect the declaration-level graph</a></p>
+    </details>
+    <div class="layout">
+      <aside class="sidenav" aria-label="Proof branches">
+        {% for view in views if view.id != 'all' %}
+        <button class="viewbtn{% if loop.first %} active{% endif %}" data-view="{{ view.id }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ loop.index }}. {{ view.title }}</button>
+        {% endfor %}
+        <button class="mapbutton" data-open-map>Unified dependency graph<small>All nodes · zoom · pan · inspect witnesses</small></button>
+        <div class="legend vertical"><span class="actual">Compiled Lean path</span><span class="expert">Expert connection without a supporting path</span></div>
+        <p>Arrows point from prerequisites to consumers. Ellipses represent Lean proof values; boxes represent definitions, interfaces or unmatched operations.</p>
+      </aside>
+      <section class="atlas-content">
+        <div class="surface graphs">
+          <div class="edge-filters" role="group" aria-label="Visible connections">
+            <label><input type="checkbox" id="show-actual" checked> Lean actual dependencies</label>
+            <label><input type="checkbox" id="show-expert" checked> Expert-only connections</label>
+          </div>
+          {% for view in views %}
+          <section class="graphview" id="view-{{ view.id }}"{% if not loop.first %} hidden{% endif %}>
+            <h2>{{ view.title }}</h2><p class="muted graph-description">{{ view.description }}</p>
+            {% if view.id == 'external' %}<div class="external-nav" role="group" aria-label="Focus an External group">
+              {% for group in atlas.external_groups %}<button data-external-group="{{ group.id }}" aria-pressed="false">{{ group.title }}</button>{% endfor %}
+            </div>{% endif %}
+            <div class="diagram-tools" role="group" aria-label="Diagram scale">
+              <button data-action="fit">Fit width</button><button data-action="readable">Readable size</button>
+              <button data-action="out" aria-label="Zoom out">−</button><button data-action="in" aria-label="Zoom in">+</button>
+              <output aria-label="Zoom level">100%</output><button data-action="clear">Clear selection</button>
+            </div>
+            <div class="diagram-scroll" data-diagram="{{ view.id }}">{{ view.svg }}</div>
+          </section>
+          {% endfor %}
+          <div class="legend"><span class="actual">Solid: Lean actual dependency</span><span class="expert">Dashed: expert connection, unsupported for these versions</span></div>
+          <div class="tracekey"><span class="selected-key">Selected</span><span class="input-key">Prerequisites</span><span class="output-key">Consumers</span></div>
+          <p class="graphstatus" aria-live="polite">Select a node to read its card. Select an arrow to inspect its witness.</p>
+          <p class="diagram-help">Drag the background to pan. Ctrl + scroll to zoom. Use the keyboard to focus a node and press Enter.</p>
+        </div>
+        <div class="cardsintro"><h2>Statements and correspondence</h2><p class="muted">Theorems, proposition interfaces and unused versions stay distinct. Each Remark records the scope of the match.</p></div>
+        <div class="toolbar" role="search">
+          <label class="search-label" for="search">Search nodes or Lean declarations<input id="search" type="search" placeholder="For example: L4_11, Frostman, smoothing…"></label>
+          <label for="group-filter">Branch<select id="group-filter"><option value="">All branches</option>{% for key, group in palette.items() %}<option value="{{ key }}">{{ group[0] }}</option>{% endfor %}</select></label>
+          <label for="status-filter">Lean status<select id="status-filter"><option value="">All statuses</option>{% for key, title in status.items() %}<option value="{{ key }}">{{ title }}</option>{% endfor %}</select></label>
+          <button id="reset-filters">Reset</button>
+        </div>
+        <p id="card-count" class="count" aria-live="polite">{{ cards|length }} node cards</p>
+        <p id="no-results" class="surface" hidden>No nodes match these filters. Try a paper number, an expert ID or a Lean declaration name.</p>
+        <div id="node-cards">
+          {% for card in cards %}
+          <article class="nodecard" id="node-{{ card.id }}" data-group="{{ card.group }}" data-status="{{ card.status }}" data-search="{{ card.search }}">
+            <div class="cardtop"><span class="group {{ card.group }}">{{ card.group_name }} <span class="origin">{{ card.origin }}</span></span><code>{{ card.id }}</code></div>
+            <h3>{{ card.paper }}</h3><p class="subtitle">{{ card.title }}</p>
+            {% if card.source %}<p class="source">Expert source: {{ card.source }}</p>{% endif %}
+            <p class="status {{ card.status }}">{{ card.status_label }}</p>
+            {% for statement in card.statements %}
+            <section class="mathematical-statement">
+              <h4>Reviewed manuscript · {{ statement.heading }}</h4>
+              {{ statement.content }}
+              <p class="statement-link"><a href="{{ statement.url }}">Read the statement and proof outline</a></p>
+            </section>
+            {% endfor %}
+            <aside class="correspondence-remark" aria-label="Correspondence Remark">
+              <h4>Remark · mathematical and Lean correspondence</h4><p>{{ card.remark }}</p>
+              {% if card.remark_links %}<p class="remark-links">Related Remarks: {% for link in card.remark_links %}<a href="{{ link.url }}">{{ link.label.removeprefix('rem:') }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
+            </aside>
+            {% if card.expert %}<details class="expert-formulation"><summary>Compare the original expert formulation</summary>{{ card.expert_statement_html }}<p class="mini muted">This is source material for comparison. The expert's Lean blocks were pseudocode; only the declarations below were audited.</p></details>{% endif %}
+            {% if card.versions %}
+            <details class="lean-versions"><summary>{{ card.versions|length }} actual Lean {{ 'version' if card.versions|length == 1 else 'versions' }} · types, usage and source</summary>
+              {% for version in card.versions %}
+              <section class="lean-version">
+                <p><span class="status {{ version.status }}">{{ version.status_label }}</span> <span class="mini">{{ version.kind }}{% if version.name == card.primary %} · graph anchor{% else %} · related version{% endif %}</span></p>
+                <a href="{{ version.doc_url }}"><code>{{ version.name }}</code></a>
+                {% if version.role == 'interface' %}<p class="mini">This declaration defines a proposition. Referencing it does not construct a proof of it.</p>{% elif version.role == 'constructor' %}<p class="mini">This constructor requires its fields as arguments; its existence does not supply those arguments.</p>{% elif version.role == 'proof' %}<p class="mini">The proof establishes its own Lean type, including every hypothesis shown there. The correspondence Remark records differences from the expert statement.</p>{% endif %}
+                <pre><code>{{ version.name }} : {{ version.expanded_type or version.type }}{% if version.definition %}
+:= {{ version.definition }}{% endif %}</code></pre>
+                {% if version.expanded_type and version.expanded_type != version.type %}<p class="mini muted">The named statement head is unfolded from the compiled type so that its hypotheses are visible.</p>{% endif %}
+                <div class="jump"><a href="{{ version.doc_url }}">Lean declaration</a><a href="{{ version.source_url }}">Source</a></div>
+                {{ version.path_html }}
+              </section>
+              {% endfor %}
+            </details>
+            {% else %}<p class="mini muted">No independently identified Lean declaration is assigned to this operation. Its expert connections remain dashed.</p>{% endif %}
+            <div class="jump"><button data-focus-node="{{ card.id }}">Locate in unified graph</button><a href="atlas-audit.html#expert-connections">Compare recorded connections</a></div>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+    </div>
+    <footer>The atlas combines the expert roadmap with the compiled proof of <code>{{ atlas.root }}</code>. <a href="atlas-audit.html">Inspect provenance and witnesses</a>.</footer>
+  </main>
+  <dialog id="unified-map" aria-labelledby="map-title" data-root-node="{{ atlas.root_node }}">
+    <div class="mapbar"><div class="maptitle"><h2 id="map-title">Unified dependency graph</h2><button id="close-map" aria-label="Close unified graph">Close ×</button></div>
+      <div class="diagram-tools" role="group" aria-label="Unified graph scale"><button data-action="fit">Fit width</button><button data-action="readable">Readable size</button><button data-action="out" aria-label="Zoom out">−</button><button data-action="in" aria-label="Zoom in">+</button><output>100%</output><button data-action="clear">Clear selection</button></div>
+    </div>
+    <div class="diagram-scroll mapstage" id="map-stage"></div>
+    <div class="mapfooter"><span>Drag to pan · scroll to zoom · click a node to read its card</span><a href="atlas-audit.html">Edge witnesses</a></div>
+  </dialog>
+</body>
+</html>

@@ -1,6 +1,7 @@
 """Dependency extraction must distinguish proofs, signatures, and unused versions."""
 
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -148,9 +149,74 @@ class ManuscriptPopupTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "No rendered blueprint statement for Unknown"):
             deps.render_graph(report, {"Unknown": ["thm:missing"]}, self.PAPER)
 
+    def test_chapter_remarks_keep_their_actual_page_and_content(self):
+        source = '''<div class="remark_thmwrapper theorem-style-remark" id="rem:scope">
+<div class="remark_thmheading"><span class="remark_thmcaption">Remark</span>
+<span class="remark_thmlabel">3.4</span><span class="remark_thmtitle">Scope</span></div>
+<div class="remark_thmcontent"><p>An interface is not its proof.</p></div></div>'''
+        statement = deps.PaperStatements(source, "chap-test.html").statements["rem:scope"]
+        self.assertEqual(statement["url"], "chap-test.html#rem:scope")
+        self.assertEqual(statement["kind"], "remark")
+        self.assertIn("An interface is not its proof.", statement["content"])
+
+    def test_copying_equations_does_not_invent_cross_statement_anchors(self):
+        content = '<div id="eq">x</div><a href="#eq">Equation</a><a href="#other">Other statement</a>'
+        rendered = deps.statement_content(content, "copy", "chap-test.html")
+        self.assertIn('id="copy-eq"', rendered)
+        self.assertIn('href="#copy-eq"', rendered)
+        self.assertIn('href="chap-test.html#other"', rendered)
+        self.assertNotIn('href="#copy-other"', rendered)
+
 
 @unittest.skipUnless(shutil.which("lake"), "Lean is needed for the metaprogram regression")
 class LeanExtractionTests(unittest.TestCase):
+    def test_compiled_prop_interface_proof_definition_and_constructor_are_distinct(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            payload = directory / "AtlasFixture.lean"
+            payload.write_text('''namespace AtlasFixture
+def Statement : Prop := True
+def proofValue : Statement := True.intro
+theorem proved : Statement := proofValue
+inductive RequiresInput : Prop where
+  | make (input : False) : RequiresInput
+end AtlasFixture
+''')
+            compiled = subprocess.run(["lake", "env", "lean", "--root=" + tmp,
+                                       "-o", str(directory / "AtlasFixture.olean"), str(payload)],
+                                      cwd=deps.ROOT, capture_output=True, text=True, timeout=90)
+            self.assertEqual(compiled.returncode, 0, compiled.stdout + compiled.stderr)
+            probe = directory / "Probe.lean"
+            probe.write_text("import AtlasFixture\nimport Lean\n" +
+                             deps.EXTRACTOR.with_name("audit.lean").read_text() + '''
+run_cmd blueprintAudit #[``AtlasFixture.Statement, ``AtlasFixture.proofValue,
+  ``AtlasFixture.proved, ``AtlasFixture.RequiresInput, ``AtlasFixture.RequiresInput.make]
+''')
+            configured_path = subprocess.check_output(["lake", "env", "printenv", "LEAN_PATH"],
+                                                       cwd=deps.ROOT, text=True).strip()
+            # Keep Lake's pinned compiler on PATH while prepending the fixture
+            # *after* Lake configures LEAN_PATH. Calling an ambient `lean`
+            # shim here can resolve a different toolchain or block on setup.
+            result = subprocess.run(["lake", "env", "env",
+                                     "LEAN_PATH=" + tmp + os.pathsep + configured_path,
+                                     "lean", str(probe)], cwd=deps.ROOT,
+                                    capture_output=True, text=True, timeout=90)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            records = {r["name"]: r for line in result.stdout.splitlines() if line.startswith("BLUEPRINT ")
+                       for r in [json.loads(line.removeprefix("BLUEPRINT "))]}
+            statement = records["AtlasFixture.Statement"]
+            self.assertTrue(statement["is_proposition"])
+            self.assertFalse(statement["is_proof"])
+            self.assertEqual(statement["definition"], "True")
+            proof = records["AtlasFixture.proofValue"]
+            self.assertTrue(proof["is_proof"])
+            self.assertFalse(proof["is_proposition"])
+            self.assertEqual(proof["expanded_type"], "True")
+            constructor = records["AtlasFixture.RequiresInput.make"]
+            self.assertEqual(constructor["kind"], "constructor")
+            self.assertTrue(constructor["is_proof"])
+            self.assertIn("False", constructor["type"])
+
     def test_private_and_opaque_bodies_are_followed_without_including_an_unused_proof(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "graph.jsonl"

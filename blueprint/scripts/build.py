@@ -30,7 +30,7 @@ class Links(HTMLParser):
         for name, value in attrs:
             if value is None:
                 continue
-            if name in ("href", "src"):
+            if name in ("href", "src", "xlink:href", "data-audit"):
                 self.links.append(value)
             if name == "id" or (tag == "a" and name == "name"):
                 self.ids.add(value)
@@ -38,6 +38,9 @@ class Links(HTMLParser):
 
 def validate_site(records: list[dict]) -> None:
     report = check_report(records, source_digest())
+    from atlas import check_correspondence
+    _, _, manuscript_nodes = inspect_content()
+    check_correspondence(manuscript_nodes, report)
     existing = {record["name"] for record in records}
     extra = [{"name": name, **report["evidence"][name]}
              for name in report["graph_nodes"] if name not in existing]
