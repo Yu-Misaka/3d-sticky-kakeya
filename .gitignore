@@ -21,3 +21,4 @@ __pycache__/
 /blueprint/src/*.synctex.gz
 /blueprint/lean_decls
 /.venv-blueprint/
+/artifacts/
