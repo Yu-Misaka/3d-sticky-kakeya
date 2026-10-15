@@ -189,7 +189,10 @@ The two sources remain separate:
 
 - `expert-atlas.json` is a reproducible snapshot of all 102 expert nodes, 237
   unified-graph records and ten branch views. It preserves natural-language
-  statements, source locations and source hashes. Original Lean sketches,
+  statements, source locations, source hashes and the diagram's plain-text
+  headings and short summaries. Nodes display a bold paper reference above
+  the summary, with Lean status in smaller muted text. IDs remain searchable
+  and appear in cards and tooltips. Original Lean sketches,
   scripts and rendered equation SVGs are not imported. Five further connections
   occur only in the branch views; the combined atlas and audit include them too.
 - `atlas-mapping.json` records each node's reviewed manuscript references,

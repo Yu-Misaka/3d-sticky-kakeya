@@ -42,8 +42,7 @@ STATUS = {
 }
 GRAPH_STATUS = {**STATUS, "used-proof": "Lean proof · used", "unused-proof": "Lean proof · outside root",
                 "used-interface": "Prop interface · used", "unused-interface": "Prop interface · outside root",
-                "used-definition": "Definition / data · used", "unused-definition": "Data · outside root",
-                "unmatched": "Expert operation · unassigned"}
+                "used-definition": "Definition / data · used", "unused-definition": "Data · outside root"}
 
 
 def edge_id(edge: dict) -> str:
@@ -63,6 +62,30 @@ def source_url(metadata: dict, revision: str) -> str:
     return url + (f"#L{metadata['line']}" if metadata.get("line") else "")
 
 
+def graph_label(node: dict) -> str:
+    """Give paper references, summaries and Lean status distinct visual roles."""
+    heading = node.get("graph_heading", node["paper"])
+    summary = node.get("graph_summary", node["title"])
+    if not node["expert"]:
+        summary, separator, reference = node["title"].partition("; ")
+        heading = reference.replace(", ", " ", 1) if separator else summary
+        if not separator:
+            summary = ""
+
+    def lines(text):
+        text = re.sub(r"\\[a-zA-Z]+|[{}$]", "", text)
+        return '<BR/>'.join(html.escape(line, quote=False) for line in
+                           textwrap.wrap(text, 29, break_long_words=False, break_on_hyphens=False))
+
+    status = GRAPH_STATUS.get(node["status"], node["status"])
+    rows = '<TR><TD><B>' + lines(heading) + '</B></TD></TR>'
+    if summary:
+        rows += '<TR><TD>' + lines(summary) + '</TD></TR>'
+    rows += ('<TR><TD CELLPADDING="3"><FONT POINT-SIZE="10" COLOR="#617389">' +
+             html.escape(status, quote=False) + '</FONT></TD></TR>')
+    return '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">' + rows + '</TABLE>'
+
+
 def render_svg(view: dict, nodes: dict[str, dict], groups: list[dict]) -> str:
     q = lambda value: json.dumps(value, ensure_ascii=False)
     dot = ['digraph atlas {',
@@ -75,17 +98,14 @@ def render_svg(view: dict, nodes: dict[str, dict], groups: list[dict]) -> str:
         _, background, border = PALETTE.get(node["group"], PALETTE["api"])
         entry = next((v for v in node["versions"] if v["name"] == node["primary"]), None)
         shape = "ellipse" if entry and declaration_role(entry) == "proof" else "box"
-        title = re.sub(r"\\[a-zA-Z]+|[{}$]", "", node["title"])
-        title = title if len(title) < 100 else title[:97] + "…"
-        name = node["id"] if node["expert"] else node["paper"].split(":")[-1]
         status = GRAPH_STATUS.get(node["status"], node["status"])
-        label = "\n".join([name, *textwrap.wrap(title, 29), status])
-        tooltip = f"{node['paper']}: {node['title']}. {status}. See the Remark for the scope of this version."
+        tooltip = f"{node['id']} | {node['paper']}: {node['title']}. {status}. See the Remark for the scope of this version."
         attrs = {"id": f"{view['id']}-node-{key}", "class": "graphnode " + node["status"],
-                 "label": label, "shape": shape, "style": "filled" if shape == "ellipse" else "rounded,filled",
+                 "shape": shape, "style": "filled" if shape == "ellipse" else "rounded,filled",
                  "fillcolor": background, "color": border, "fontcolor": "#243449",
                  "URL": "#node-" + key, "tooltip": tooltip}
-        dot.append(q(key) + " [" + ", ".join(k + "=" + q(v) for k, v in attrs.items()) + "];")
+        dot.append(q(key) + " [label=<" + graph_label(node) + ">, " +
+                   ", ".join(k + "=" + q(v) for k, v in attrs.items()) + "];")
 
     external = [key for key in view["nodes"] if nodes[key]["external_group"]]
     for key in view["nodes"]:
@@ -225,7 +245,8 @@ def write_atlas(site: Path, report: dict, paper_nodes: list[dict], paper_html: s
             card["versions"].append({**entry, "status_label": STATUS.get(entry["status"], entry["status"]),
                 "role": declaration_role(entry), "doc_url": "../lean/find/#doc/" + quote(entry["name"], safe="."),
                 "source_url": source_url(entry, revision), "path_html": Markup(path_html(entry["path"]))})
-        card["search"] = " ".join(str(node.get(key, "")) for key in ("id", "title", "paper", "remark", "lean", "status")).lower()
+        card["search"] = " ".join(str(node.get(key, "")) for key in
+                                  ("id", "title", "paper", "graph_heading", "graph_summary", "remark", "lean", "status")).lower()
         cards.append(card)
     views = [{**view, "svg": Markup(render_svg(view, nodes, atlas["external_groups"]))} for view in atlas["views"]]
     palette = {key: value for key, value in PALETTE.items() if any(node["group"] == key for node in nodes.values())}

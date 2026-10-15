@@ -27,6 +27,8 @@ class ExpertHTML(HTMLParser):
         self.cards = []
         self.views = []
         self.card = self.view = self.diagram = self.edge = None
+        self.graph_node = None
+        self.graph_labels = {}
         self.captures = []
         self.feed(text)
 
@@ -51,6 +53,8 @@ class ExpertHTML(HTMLParser):
             self.diagram_depth = self.depth
         if self.diagram is not None and "graphnode" in classes:
             self.diagram["nodes"].append(attrs["data-node"])
+            self.graph_node = {"id": attrs["data-node"], "graph_heading": [], "graph_summary": []}
+            self.graph_node_depth = self.depth
         if self.diagram is not None and "edgegroup" in classes:
             self.edge = {"from": attrs["data-from"], "to": attrs["data-to"],
                          "kind": attrs["data-kind"]}
@@ -72,6 +76,9 @@ class ExpertHTML(HTMLParser):
                 target, key = self.view, "description"
         if tag == "title" and self.diagram is not None and self.edge is not None:
             target, key = self.edge, "note"
+        if tag == "text" and self.graph_node is not None:
+            target = self.graph_node
+            key = "graph_heading" if attrs.get("font-weight") in {"700", "bold"} else "graph_summary"
         if key is not None:
             self.captures.append((self.depth, target, key, []))
         if tag not in self.VOID:
@@ -87,7 +94,19 @@ class ExpertHTML(HTMLParser):
         self.depth -= 1
         while self.captures and self.captures[-1][0] == self.depth:
             _, target, key, chunks = self.captures.pop()
-            target[key] = "".join(chunks).strip()
+            value = "".join(chunks).strip()
+            if key in {"graph_heading", "graph_summary"}:
+                target[key].append(value)
+            else:
+                target[key] = value
+        if self.graph_node is not None and self.depth == self.graph_node_depth:
+            key = self.graph_node["id"]
+            labels = {field: " ".join(self.graph_node[field])
+                      for field in ("graph_heading", "graph_summary")}
+            if key in self.graph_labels and self.graph_labels[key] != labels:
+                raise ValueError(f"Inconsistent expert diagram labels: {key}")
+            self.graph_labels[key] = labels
+            self.graph_node = None
         if self.card is not None and self.depth == self.card_depth:
             self.card = None
         if self.diagram is not None and self.depth == self.diagram_depth:
@@ -103,6 +122,11 @@ def import_atlas(html_file: Path, tex_file: Path) -> dict:
     if len(ids) != len(set(ids)) or not ids:
         raise ValueError("Missing or duplicate expert nodes")
     for card in parsed.cards:
+        labels = parsed.graph_labels.get(card["id"], {})
+        if not labels.get("graph_heading") or not labels.get("graph_summary"):
+            raise ValueError(f"Missing expert diagram labels: {card['id']}")
+        # Keep only the diagram's plain-text labels, never its SVG or scripts.
+        card.update(labels)
         for field in ("paper", "title", "statement", "source", "origin"):
             if not card.get(field):
                 raise ValueError(f"Missing {field} in {card['id']}")
