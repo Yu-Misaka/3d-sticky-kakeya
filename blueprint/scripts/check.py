@@ -99,6 +99,9 @@ def inspect_content() -> tuple[str, list[str], list[dict]]:
         node_labels = command_args(body, "label")
         if not node_labels:
             raise ValueError(f"Unlabelled {kind}: {title or body[:60]}")
+        if len(command_args(body, "lean")) > 1:
+            # leanblueprint keeps only the declarations of the last \lean.
+            raise ValueError(f"Several \\lean commands in {node_labels[0]}; list them in one")
         node = {"label": node_labels[0], "kind": kind, "title": title or "",
                 "lean": comma_args(body, "lean"), "uses": comma_args(body, "uses"),
                 "statement_complete": r"\leanok" in body or r"\mathlibok" in body,
