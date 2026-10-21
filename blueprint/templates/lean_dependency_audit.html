@@ -24,15 +24,15 @@
   </style>
 </head>
 <body><main>
-  <nav aria-label="Project"><a href="lean_dependencies.html">Proof atlas</a><a href="index.html">Manuscript</a><a href="lean_declarations.html">Declaration graph</a><a href="atlas-audit.html">Expert edge comparison</a><a href="../lean/Documentation.html">Lean documentation</a></nav>
+  <nav aria-label="Project"><a href="lean_dependencies.html">Proof atlas</a><a href="index.html">Manuscript</a><a href="atlas-cards.html">Node cards</a><a href="atlas-audit.html">Expert edge comparison</a><a href="../lean/Documentation.html">Lean documentation</a></nav>
   <h1>Lean dependency audit</h1>
   <p>Root: <code>{{ROOT}}</code>.</p>
   <p>{{COUNTS}}</p>
   <details><summary>How this graph is computed</summary>
   <p>References in declaration types, proof bodies, private helpers and inductive
-    data are followed. The <a href="lean_declarations.html">declaration graph</a> displays all reached blueprint-linked
+    data are followed. The unified graph of the <a href="lean_dependencies.html">proof atlas</a>, with every External frame open, displays all reached blueprint-linked
     declarations: theorems, definitions, types and statement interfaces. Its
-    popups show the corresponding manuscript statements and the exact Lean
+    cards show the corresponding manuscript statements and the exact Lean
     versions. Unlinked helpers are folded into edges; redundant edges are
     removed for readability. Every edge has a
     witness below. The proof atlas also retains expert nodes whose selected versions

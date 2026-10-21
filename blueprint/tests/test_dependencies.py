@@ -95,59 +95,12 @@ class DependencyGraphTests(unittest.TestCase):
                 deps.read_graph(file)
 
 
-class ManuscriptPopupTests(unittest.TestCase):
-    PAPER = r'''<!doctype html><html><head>
-<title>Dependency graph</title>
-<script>MathJax = {tex: {macros: {R: "\\mathbb{R}"}}};</script>
-<script src="mathjax.js"></script><link rel="stylesheet" href="styles/theme.css" />
-</head><body><div id="statements"><div class="thm" id="thm:bound">
-<div class="thm_thmheading"><span class="theorem_thmcaption">Theorem</span>
-<span class="theorem_thmlabel">2.3</span>
-<span class="theorem_thmtitle">A bound on \(\R\)</span></div>
-<div class="thm_thmcontent"><p>Every <em>nonempty</em> set satisfies<br /> the bound.</p>
-<div class="displaymath" id="bound-equation">\[ |E| \geq \delta^\varepsilon. \]</div>
-<p>See <a href="#bound-equation">the bound</a> and
-<a href="chapter.html#def:sets">Definition 2.1</a>.</p></div>
-<a class="latex_link" href="chapter.html#thm:bound">LaTeX</a>
-</div></div></body></html>'''
-
-    def test_versions_reuse_natural_statements_math_config_and_cross_references(self):
-        report = {"graph_nodes": ["Bound", "Bound.proof"], "edges": [],
-                  "evidence": {"Bound": {"kind": "definition"}, "Bound.proof": {"kind": "theorem"}}}
-        aliases = {name: ["thm:bound"] for name in report["graph_nodes"]}
-        rendered = deps.render_graph(report, aliases, self.PAPER)
-        self.assertIn('macros: {R: "\\\\mathbb{R}"}', rendered)
-        self.assertIn('<script src="mathjax.js"></script>', rendered)
-        self.assertEqual(rendered.count(r'\[ |E| \geq \delta^\varepsilon. \]'), 2)
-        self.assertEqual(rendered.count('Every <em>nonempty</em> set'), 2)
-        for index in range(2):
-            self.assertIn(f'id="lean-{index}-bound-equation"', rendered)
-            self.assertIn(f'href="#lean-{index}-bound-equation"', rendered)
-        self.assertNotIn('id="bound-equation"', rendered)
-        self.assertEqual(rendered.count('href="chapter.html#def:sets"'), 2)
-        self.assertEqual(rendered.count('href="chapter.html#thm:bound"'), 2)
-        statements = deps.PaperStatements(rendered).statements
-        for index, name in enumerate(report["graph_nodes"]):
-            content = statements[f"lean-{index}"]["content"]
-            self.assertNotIn('Lean', content)
-            self.assertNotIn('Version audit and paths', content)
-            # Each version has exactly one Lean action; all three actions are
-            # adjacent inline links after the statement, as in the paper graph.
-            link = f'../lean/find/#doc/{name}'
-            self.assertEqual(rendered.count(f'href="{link}"'), 1)
-            self.assertRegex(rendered,
-                r'<a class="latex_link" href="chapter.html#thm:bound">LaTeX</a>\s*'
-                rf'<a class="lean_link lean_decl" href="{re.escape(link)}">Lean</a>\s*'
-                r'<a class="issue_link audit_link" href="lean_dependency_audit.html#thm:bound">'
-                r'Version audit and paths</a>')
-        for removed in ('Proved Lean theorem:', 'Lean statement interface:',
-                        'Lean source', 'Lean documentation', 'lean-version'):
-            self.assertNotIn(removed, rendered)
-
-    def test_missing_manuscript_statement_does_not_silently_become_a_code_only_popup(self):
-        report = {"graph_nodes": ["Unknown"], "edges": []}
-        with self.assertRaisesRegex(ValueError, "No rendered blueprint statement for Unknown"):
-            deps.render_graph(report, {"Unknown": ["thm:missing"]}, self.PAPER)
+class ManuscriptStatementTests(unittest.TestCase):
+    def test_retired_routes_forward_with_their_fragment(self):
+        page = deps.redirect_page("lean_dependencies.html", "the proof atlas")
+        self.assertIn('url=lean_dependencies.html', page)
+        self.assertIn('location.replace("lean_dependencies.html" + location.hash)', page)
+        self.assertIn('href="lean_dependencies.html"', page)
 
     def test_chapter_remarks_keep_their_actual_page_and_content(self):
         source = '''<div class="remark_thmwrapper theorem-style-remark" id="rem:scope">

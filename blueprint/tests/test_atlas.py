@@ -132,7 +132,8 @@ class AtlasCorrespondenceTests(unittest.TestCase):
         from jinja2 import Environment, FileSystemLoader
         environment = Environment(loader=FileSystemLoader(atlas.BLUEPRINT / "templates"))
         template = environment.get_template("atlas.html")
-        rendered = template.render(atlas={"root": "Root"}, views=[], cards=[], palette={}, status={},
+        rendered = template.render(atlas={"root": "Root", "external_groups": [], "unified_variants": []},
+                                   views=[], cards=[], groups=[], palette={}, status={}, diff_titles={},
                                    counts={"expert_nodes": 0, "expert_edges": 0, "lean_versions": 0})
         self.assertIn('Ncov:', rendered)
         self.assertIn('{#1}(#2)', rendered)
@@ -157,6 +158,106 @@ class AtlasCorrespondenceTests(unittest.TestCase):
             self.assertEqual(len(connections), len(set(connections)), view["id"])
 
 
+class EdgeComparisonTests(unittest.TestCase):
+    def setUp(self):
+        def node(key, expert=True, group=None):
+            return {"id": key, "expert": expert, "external_group": group}
+        self.nodes = {key: node(key) for key in "ABCD"}
+        self.nodes.update({"L": node("L", expert=False), "X1": node("X1", False, "box"),
+                           "X2": node("X2", False, "box"), "Y": node("Y", group="single")})
+        # The roadmap connects A to C only through B, and says nothing about D.
+        self.reach = atlas.expert_reach([expert_edge("A", "B"), expert_edge("B", "C")])
+
+    def diff(self, source, target, kind="actual", classification="actual"):
+        return atlas.edge_diff({"from": source, "to": target, "kind": kind,
+                                "classification": classification}, self.nodes, self.reach)
+
+    def test_a_longer_roadmap_path_counts_as_agreement(self):
+        self.assertEqual(self.diff("A", "B"), "agree")
+        self.assertEqual(self.diff("A", "C"), "agree")
+
+    def test_lean_only_requires_no_roadmap_path_in_that_direction(self):
+        self.assertEqual(self.diff("A", "D"), "lean-only")
+        self.assertEqual(self.diff("C", "A"), "lean-only")
+
+    def test_an_added_lean_version_cannot_be_compared(self):
+        self.assertEqual(self.diff("L", "A"), "detail")
+        self.assertEqual(self.diff("A", "X1"), "detail")
+
+    def test_roadmap_only_edges_separate_a_different_route_from_no_comparison(self):
+        self.assertEqual(self.diff("D", "A", "expert", "different-route"), "expert-route")
+        for reason in ("unmapped", "outside-root", "shared-declaration"):
+            self.assertEqual(self.diff("D", "A", "expert", reason), "expert-unknown")
+
+    def test_folding_a_frame_keeps_every_member_edge_and_its_class(self):
+        def drawn(source, target, diff, kind="actual"):
+            return {"from": source, "to": target, "kind": kind, "diff": diff, "path": []}
+        view = {"id": "all", "title": "All", "description": "", "nodes": ["A", "X1", "X2", "Y", "L"],
+                "edges": [drawn("X1", "A", "detail"), drawn("X2", "A", "detail"),
+                          drawn("X1", "X2", "detail"), drawn("Y", "A", "expert-unknown", "expert"),
+                          drawn("L", "X2", "detail")]}
+        groups = atlas.collapsible_groups(view, self.nodes)
+        self.assertEqual(groups, ["box"], "a one-node frame is not folded")
+        folded = atlas.collapse_view(view, self.nodes, groups, "collapsed", "Folded")
+        self.assertEqual(folded["nodes"], ["A", "group-box", "Y", "L"])
+        arrows = {(e["from"], e["to"]): e for e in folded["edges"]}
+        self.assertEqual(set(arrows), {("group-box", "A"), ("Y", "A"), ("L", "group-box")})
+        self.assertEqual(len(arrows[("group-box", "A")]["members"]), 2)
+        members = sum(len(e.get("members", [e])) for e in folded["edges"])
+        self.assertEqual(members, len(view["edges"]) - 1, "only the edge inside the frame disappears")
+        self.assertEqual(atlas.collapse_view(view, self.nodes, [], "full", "Full")["edges"], view["edges"])
+
+    def test_checked_in_unified_variants_lose_no_connection(self):
+        import check
+        expert, mapping = atlas.load_sources()
+        combined = atlas.make_atlas(json.loads(atlas.REPORT.read_text()), expert, mapping,
+                                    check.inspect_content()[2])
+        unified = combined["views"][-1]
+        nodes = {node["id"]: node for node in combined["nodes"]}
+        inside = sum(1 for e in unified["edges"] if nodes[e["from"]]["external_group"]
+                     and nodes[e["from"]]["external_group"] == nodes[e["to"]]["external_group"])
+        variants = {variant["id"]: variant for variant in combined["unified_variants"]}
+        self.assertEqual(variants["full"]["edges"], unified["edges"])
+        groups = atlas.collapsible_groups(unified, nodes)
+        self.assertEqual(set(variants), {"collapsed", "full", *("expand-" + g for g in groups)})
+        for variant in variants.values():
+            for diff in atlas.DIFF_CLASSES:
+                kept = sum(len(e.get("members", [e])) for e in variant["edges"] if e["diff"] == diff)
+                total = sum(e["diff"] == diff for e in unified["edges"])
+                self.assertLessEqual(kept, total, (variant["id"], diff))
+                if diff != "detail":
+                    self.assertEqual(kept, total, (variant["id"], diff))
+        folded = sum(len(e.get("members", [e])) for e in variants["collapsed"]["edges"])
+        self.assertEqual(folded + inside, len(unified["edges"]))
+
+
+class AtlasPageTests(unittest.TestCase):
+    def render(self, name, **context):
+        from jinja2 import Environment, FileSystemLoader
+        environment = Environment(loader=FileSystemLoader(atlas.BLUEPRINT / "templates"), autoescape=True)
+        return environment.get_template(name).render(**context)
+
+    def test_cards_are_stored_once_and_anchors_stay_on_the_index(self):
+        card = {"id": "N1", "group": "setup", "group_name": "Setup", "origin": "WZ2", "paper": "Lemma 1",
+                "title": "A lemma", "status": "used-proof", "status_label": "Used", "search": "n1",
+                "statements": [], "remark": "Scope.", "remark_links": [], "expert": False, "versions": [],
+                "external_group": None, "heading": "Lemma 1", "primary": "Example.lemma"}
+        page = self.render("atlas.html", atlas={"root": "Root", "root_node": "N1", "external_groups": [],
+                           "unified_variants": [{"id": "collapsed"}]}, views=[], cards=[card], groups=[],
+                           palette={}, status={}, diff_titles=atlas_render.DIFF_TITLE,
+                           counts={"expert_nodes": 1, "expert_edges": 0, "lean_versions": 1})
+        self.assertNotIn('Scope.', page, "cards are stored once, in atlas-cards.html")
+        self.assertEqual(page.count('id="node-N1"'), 1)
+        self.assertIn('href="atlas-cards.html#node-N1"', page)
+        self.assertIn('data-variants="collapsed"', page)
+        for diff in atlas.DIFF_CLASSES:
+            self.assertEqual(page.count(f'data-diff="{diff}"'), 2, diff)
+        cards = self.render("atlas_cards.html", cards=[card])
+        self.assertEqual(cards.count('id="node-N1"'), 1)
+        self.assertIn('Scope.', cards)
+        self.assertIn('lean_dependencies.html#node-N1', cards)
+
+
 @unittest.skipUnless(shutil.which("dot"), "Graphviz is needed to check rendered evidence styles")
 class AtlasSVGTests(unittest.TestCase):
     def test_actual_and_expert_strokes_and_external_frame_survive_svg_rendering(self):
@@ -167,8 +268,9 @@ class AtlasSVGTests(unittest.TestCase):
         nodes = {"A": node("A", "setup"), "B": node("B", "external", "input"),
                  "C": node("C", "plane")}
         view = {"id": "test", "title": "Evidence styles", "nodes": ["A", "B", "C"],
-                "edges": [{"from": "B", "to": "A", "kind": "actual", "path": edge("A", "B")["path"]},
-                          {"from": "C", "to": "A", "kind": "expert", "path": [], "reason": "No supporting path"}]}
+                "edges": [{"from": "B", "to": "A", "kind": "actual", "diff": "agree", "path": edge("A", "B")["path"]},
+                          {"from": "C", "to": "A", "kind": "expert", "diff": "expert-route", "path": [],
+                           "reason": "No supporting path"}]}
         svg = ET.fromstring(atlas_render.render_svg(view, nodes, [{"id": "input", "title": "External test"}]))
         groups = list(svg.iter('{http://www.w3.org/2000/svg}g'))
         actual = next(g for g in groups if g.get('data-kind') == 'actual')
@@ -178,12 +280,32 @@ class AtlasSVGTests(unittest.TestCase):
         self.assertTrue(any('External inputs' in (e.text or '') for e in svg.iter()))
         self.assertEqual([g.get('data-external-group') for g in groups if g.get('data-external-group')], ['input'])
         self.assertTrue(actual.get('data-audit').startswith('atlas-audit.html#edge-'))
+        self.assertEqual((actual.get('data-diff'), expert.get('data-diff')), ('agree', 'expert-route'))
+        anchors = [a for a in svg.iter('{http://www.w3.org/2000/svg}a') if a.get('target')]
+        self.assertTrue(anchors and all(a.get('target') == '_blank' for a in anchors
+                        if '#edge-' in (a.get('{http://www.w3.org/1999/xlink}href') or a.get('href') or '')))
         self.assertEqual({g.get('data-node') for g in groups if g.get('data-node')}, {'A', 'B', 'C'})
         other = ET.fromstring(atlas_render.render_svg({**view, "id": "other"}, nodes,
                               [{"id": "input", "title": "External test"}]))
         ids = [element.get('id') for drawing in (svg, other)
                for element in drawing.iter() if element.get('id')]
         self.assertEqual(len(ids), len(set(ids)))
+
+    def test_a_folded_frame_is_one_clickable_node_with_compact_neighbours(self):
+        nodes = {"A": {"id": "A", "primary": "A", "group": "setup", "external_group": None, "title": "Summary text",
+                       "paper": "Theorem A", "expert": True, "status": "used-proof", "versions": [entry("A")]},
+                 "B": {"id": "B", "primary": "B", "group": "external", "external_group": "input", "title": "Inside",
+                       "paper": "Lemma B", "expert": False, "status": "used-proof", "versions": [entry("B")]}}
+        member = {"from": "B", "to": "A", "kind": "actual", "diff": "detail", "path": edge("A", "B")["path"]}
+        view = {"id": "map", "title": "Folded", "nodes": ["A", "group-input"], "collapsed": ["input"],
+                "edges": [{**member, "from": "group-input", "members": [member, {**member, "from": "C"}]}]}
+        svg = ET.fromstring(atlas_render.render_svg(view, nodes, [{"id": "input", "title": "External test"}], compact=True))
+        groups = {g.get('data-node'): g for g in svg.iter('{http://www.w3.org/2000/svg}g') if g.get('data-node')}
+        self.assertEqual(groups['group-input'].get('data-group'), 'input')
+        self.assertFalse(any('Summary text' in (e.text or '') for e in svg.iter()), "compact labels omit summaries")
+        self.assertEqual(groups['A'].get('data-title'), 'Summary text')
+        folded = next(g for g in svg.iter('{http://www.w3.org/2000/svg}g') if g.get('data-members'))
+        self.assertEqual(len(folded.get('data-members').split()), 2)
 
 
 if __name__ == "__main__":

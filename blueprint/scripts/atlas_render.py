@@ -9,12 +9,13 @@ import re
 import subprocess
 import textwrap
 import xml.etree.ElementTree as ET
+from collections import Counter
 from pathlib import Path
 from urllib.parse import quote
 
 from atlas import EXPERT, MAPPING, declaration_role, load_sources, make_atlas
 from dependencies import (BLUEPRINT, REPORT, ROOT, PaperStatements,
-                          manuscript_statements, statement_content)
+                          manuscript_statements, redirect_page, statement_content)
 
 PALETTE = {
     "setup": ("Wolff setup", "#e6eefb", "#56749c"),
@@ -62,8 +63,30 @@ def source_url(metadata: dict, revision: str) -> str:
     return url + (f"#L{metadata['line']}" if metadata.get("line") else "")
 
 
-def graph_label(node: dict) -> str:
-    """Give paper references, summaries and Lean status distinct visual roles."""
+# Graphviz strokes for each comparison class. Colour is never the only cue:
+# the classes also differ in dash pattern or weight.
+DIFF_STYLE = {
+    "agree": {"style": "solid", "color": "#355572", "penwidth": "1.4"},
+    "lean-only": {"style": "bold", "color": "#a3246f", "penwidth": "2.6"},
+    "detail": {"style": "solid", "color": "#9eacbb", "penwidth": "0.9"},
+    "expert-route": {"style": "dashed", "color": "#6f4aa8", "penwidth": "1.6"},
+    "expert-unknown": {"style": "dotted", "color": "#a9b2bd", "penwidth": "1.1"},
+}
+DIFF_TITLE = {
+    "agree": "Lean and roadmap agree",
+    "lean-only": "Lean only",
+    "detail": "Lean detail",
+    "expert-route": "Roadmap only · different Lean route",
+    "expert-unknown": "Roadmap only · not comparable",
+}
+
+
+def plain(text: str) -> str:
+    return re.sub(r"\\[a-zA-Z]+|[{}$]", "", text)
+
+
+def node_heading(node: dict) -> tuple[str, str]:
+    """A paper reference and a short summary; added Lean versions borrow their statement's."""
     heading = node.get("graph_heading", node["paper"])
     summary = node.get("graph_summary", node["title"])
     if not node["expert"]:
@@ -71,14 +94,22 @@ def graph_label(node: dict) -> str:
         heading = reference.replace(", ", " ", 1) if separator else summary
         if not separator:
             summary = ""
+    return heading, summary
+
+
+def graph_label(node: dict, compact: bool = False) -> str:
+    """Give paper references, summaries and Lean status distinct visual roles."""
+    heading, summary = node_heading(node)
 
     def lines(text):
-        text = re.sub(r"\\[a-zA-Z]+|[{}$]", "", text)
         return '<BR/>'.join(html.escape(line, quote=False) for line in
-                           textwrap.wrap(text, 29, break_long_words=False, break_on_hyphens=False))
+                           textwrap.wrap(plain(text), 29, break_long_words=False, break_on_hyphens=False))
 
     status = GRAPH_STATUS.get(node["status"], node["status"])
     rows = '<TR><TD><B>' + lines(heading) + '</B></TD></TR>'
+    if compact:
+        # The summary and status move to the tooltip and the details panel.
+        return '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">' + rows + '</TABLE>'
     if summary:
         rows += '<TR><TD>' + lines(summary) + '</TD></TR>'
     rows += ('<TR><TD CELLPADDING="3"><FONT POINT-SIZE="10" COLOR="#617389">' +
@@ -86,8 +117,20 @@ def graph_label(node: dict) -> str:
     return '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">' + rows + '</TABLE>'
 
 
-def render_svg(view: dict, nodes: dict[str, dict], groups: list[dict]) -> str:
+def drawn_id(edge: dict) -> str:
+    return edge_id(edge) + ("-" + edge["diff"] if "members" in edge else "")
+
+
+def edge_audit(edge: dict) -> str:
+    """A folded edge links to the witness of its first member."""
+    return "atlas-audit.html#" + edge_id(edge.get("members", [edge])[0])
+
+
+def render_svg(view: dict, nodes: dict[str, dict], groups: list[dict], compact: bool = False) -> str:
     q = lambda value: json.dumps(value, ensure_ascii=False)
+    titles = {group["id"]: group["title"] for group in groups}
+    folded = {"group-" + group for group in view.get("collapsed", [])}
+    sizes = Counter(node["external_group"] for node in nodes.values() if node["external_group"])
     dot = ['digraph atlas {',
            'graph [rankdir=BT, bgcolor="transparent", pad="0.25", nodesep="0.32", ranksep="0.65", compound=true, newrank=true];',
            'node [fontname="DejaVu Sans", fontsize=13, margin="0.16,0.10", penwidth=1.2];',
@@ -104,10 +147,22 @@ def render_svg(view: dict, nodes: dict[str, dict], groups: list[dict]) -> str:
                  "shape": shape, "style": "filled" if shape == "ellipse" else "rounded,filled",
                  "fillcolor": background, "color": border, "fontcolor": "#243449",
                  "URL": "#node-" + key, "tooltip": tooltip}
-        dot.append(q(key) + " [label=<" + graph_label(node) + ">, " +
+        dot.append(q(key) + " [label=<" + graph_label(node, compact) + ">, " +
                    ", ".join(k + "=" + q(v) for k, v in attrs.items()) + "];")
 
-    external = [key for key in view["nodes"] if nodes[key]["external_group"]]
+    def draw_group(key):
+        group = key.removeprefix("group-")
+        label = ('<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0"><TR><TD><B>' +
+                 html.escape(titles[group], quote=False) + '</B></TD></TR><TR><TD CELLPADDING="3">'
+                 '<FONT POINT-SIZE="10" COLOR="#617389">' + str(sizes[group]) +
+                 ' nodes · click to open</FONT></TD></TR></TABLE>')
+        attrs = {"id": f"{view['id']}-node-{key}", "class": "graphnode groupnode", "shape": "box3d",
+                 "style": "filled", "fillcolor": "#ffffff", "color": "#7c8c9f", "fontcolor": "#243449",
+                 "URL": "#group-" + group, "tooltip": titles[group] + ": folded External frame. Click to open it."}
+        dot.append(q(key) + " [label=<" + label + ">, " +
+                   ", ".join(k + "=" + q(v) for k, v in attrs.items()) + "];")
+
+    external = [key for key in view["nodes"] if key in folded or nodes[key]["external_group"]]
     for key in view["nodes"]:
         if key not in external:
             draw_node(key)
@@ -116,8 +171,12 @@ def render_svg(view: dict, nodes: dict[str, dict], groups: list[dict]) -> str:
                 'graph [label="External inputs · expanded Lean dependencies", labelloc=t, labeljust=l, '
                 'fontname="DejaVu Sans", fontsize=14, color="#a0afc2", fontcolor="#526981", '
                 'style="rounded,filled", fillcolor="#f5f7fb", margin=20];']
+        for key in external:
+            if key in folded:
+                draw_group(key)
         for group in groups:
-            members = [key for key in external if nodes[key]["external_group"] == group["id"]]
+            members = [key for key in external if key not in folded
+                       and nodes[key]["external_group"] == group["id"]]
             if not members:
                 continue
             dot += [f'subgraph cluster_{group["id"]} {{',
@@ -129,12 +188,17 @@ def render_svg(view: dict, nodes: dict[str, dict], groups: list[dict]) -> str:
         dot.append("}")
     for edge in view["edges"]:
         actual = edge["kind"] == "actual"
-        label = (f"Lean kernel path: {len(edge['path'])} references. Click for the witness." if actual
-                 else "Expert connection: " + edge["reason"])
-        attrs = {"id": view["id"] + "-" + edge_id(edge), "class": "depedge " + edge["kind"],
-                 "style": "solid" if actual else "dashed", "tooltip": label,
-                 "URL": "atlas-audit.html#" + edge_id(edge),
-                 "color": "#355572" if actual else "#8b829b"}
+        members = edge.get("members", [])
+        if len(members) > 1:
+            label = f"{len(members)} connections folded into this arrow. Click to open the frame."
+        elif actual:
+            label = f"Lean kernel path: {len(edge['path'])} references. Click to open the witness."
+        else:
+            label = "Expert connection: " + edge["reason"]
+        attrs = {"id": view["id"] + "-" + drawn_id(edge),
+                 "class": "depedge " + edge["kind"] + " diff-" + edge["diff"],
+                 "tooltip": DIFF_TITLE[edge["diff"]] + ". " + label,
+                 "URL": edge_audit(edge), "target": "_blank", **DIFF_STYLE[edge["diff"]]}
         if not actual:
             attrs["weight"] = "0.3"
         dot.append(q(edge["from"]) + " -> " + q(edge["to"]) + " [" +
@@ -156,7 +220,7 @@ def render_svg(view: dict, nodes: dict[str, dict], groups: list[dict]) -> str:
                        "aria-label": view["title"], "id": "graph-" + view["id"]})
     svg.attrib.pop("width", None)
     svg.attrib.pop("height", None)
-    edges = {view["id"] + "-" + edge_id(edge): edge for edge in view["edges"]}
+    edges = {view["id"] + "-" + drawn_id(edge): edge for edge in view["edges"]}
     for element in svg.iter():
         key = element.get("id", "")
         # Graphviz also emits graph0, clust1 and anchor IDs. All twelve SVGs
@@ -169,14 +233,27 @@ def render_svg(view: dict, nodes: dict[str, dict], groups: list[dict]) -> str:
         prefix = view["id"] + "-node-"
         if key.startswith(prefix):
             node_key = key.removeprefix(prefix)
-            element.attrib.update({"data-node": node_key, "tabindex": "0", "role": "button",
-                                   "aria-label": nodes[node_key]["paper"] + ": " + nodes[node_key]["title"]})
+            if node_key in folded:
+                group = node_key.removeprefix("group-")
+                element.attrib.update({"data-node": node_key, "data-group": group, "tabindex": "0",
+                                       "role": "button", "aria-label": "Open the External frame " + titles[group]})
+            else:
+                node = nodes[node_key]
+                element.attrib.update({"data-node": node_key, "tabindex": "0", "role": "button",
+                                       "aria-label": node["paper"] + ": " + node["title"],
+                                       "data-heading": plain(node_heading(node)[0]),
+                                       "data-title": plain(node["title"])})
+                if node["external_group"]:
+                    element.set("data-group", node["external_group"])
         if key in edges:
             edge = edges[key]
             element.attrib.update({"data-from": edge["from"], "data-to": edge["to"],
-                                   "data-kind": edge["kind"], "tabindex": "0", "role": "link",
-                                   "data-audit": "atlas-audit.html#" + edge_id(edge),
-                                   "aria-label": "Inspect " + edge["kind"] + " edge " + edge["from"] + " to " + edge["to"]})
+                                   "data-kind": edge["kind"], "data-diff": edge["diff"],
+                                   "tabindex": "0", "role": "link", "data-audit": edge_audit(edge),
+                                   "aria-label": DIFF_TITLE[edge["diff"]] + " edge " + edge["from"] + " to " + edge["to"]})
+            if len(edge.get("members", [])) > 1:
+                element.set("data-members", " ".join(
+                    member["from"] + ">" + member["to"] + ">" + edge_id(member) for member in edge["members"]))
     return ET.tostring(svg, encoding="unicode")
 
 
@@ -245,19 +322,40 @@ def write_atlas(site: Path, report: dict, paper_nodes: list[dict], paper_html: s
             card["versions"].append({**entry, "status_label": STATUS.get(entry["status"], entry["status"]),
                 "role": declaration_role(entry), "doc_url": "../lean/find/#doc/" + quote(entry["name"], safe="."),
                 "source_url": source_url(entry, revision), "path_html": Markup(path_html(entry["path"]))})
+        card["heading"] = plain(node_heading(node)[0])
         card["search"] = " ".join(str(node.get(key, "")) for key in
                                   ("id", "title", "paper", "graph_heading", "graph_summary", "remark", "lean", "status")).lower()
         cards.append(card)
-    views = [{**view, "svg": Markup(render_svg(view, nodes, atlas["external_groups"]))} for view in atlas["views"]]
+    groups = []
+    for group in atlas["external_groups"]:
+        members = [{"id": key, "heading": plain(node_heading(nodes[key])[0]),
+                    "title": nodes[key]["primary"].rsplit(".", 1)[-1] if not nodes[key]["expert"]
+                    else plain(nodes[key]["title"])}
+                   for key in atlas["views"][-1]["nodes"] if nodes[key]["external_group"] == group["id"]]
+        groups.append({**group, "members": members})
+    # The unified graph is not embedded: its variants are separate files,
+    # fetched when the dialog opens or a frame is opened.
+    branch_views = [view for view in atlas["views"] if view["id"] != "all"]
+    views = [{**view, "svg": Markup(render_svg(view, nodes, atlas["external_groups"]))} for view in branch_views]
     palette = {key: value for key, value in PALETTE.items() if any(node["group"] == key for node in nodes.values())}
-    output = template.render(atlas=atlas, views=views, cards=cards, palette=palette,
-                             status=STATUS, counts=atlas["counts"])
     destination = site / "blueprint"
+    for variant in atlas["unified_variants"]:
+        svg = render_svg({**variant, "id": "map"}, nodes, atlas["external_groups"], compact=True)
+        (destination / f"atlas-unified-{variant['id']}.svg").write_text(
+            '<?xml version="1.0" encoding="UTF-8"?>\n' + svg)
+    output = template.render(atlas=atlas, views=views, cards=cards, groups=groups, palette=palette,
+                             status=STATUS, counts=atlas["counts"], diff_titles=DIFF_TITLE)
     (destination / "lean_dependencies.html").write_text(output)
-    # The leanblueprint menu's historical graph route opens the same reviewed
+    # The leanblueprint menu's historical graph route forwards to the reviewed
     # atlas. The generated paper DOT must not keep unaudited solid arrows.
-    (destination / "dep_graph_document.html").write_text(output)
-    (destination / "atlas-dependencies.json").write_text(json.dumps(atlas, ensure_ascii=False) + "\n")
+    (destination / "dep_graph_document.html").write_text(
+        redirect_page("lean_dependencies.html", "the proof atlas"))
+    (destination / "atlas-cards.html").write_text(
+        environment.get_template("atlas_cards.html").render(cards=cards))
+    # The folded unified variants are derived from the "all" view and are
+    # published as SVG files; repeating their witnesses would double the file.
+    published = {key: value for key, value in atlas.items() if key != "unified_variants"}
+    (destination / "atlas-dependencies.json").write_text(json.dumps(published, ensure_ascii=False) + "\n")
 
     actual_edges = {}
     for view in atlas["views"]:
@@ -266,13 +364,15 @@ def write_atlas(site: Path, report: dict, paper_nodes: list[dict], paper_html: s
     edge_rows = []
     for key, edge in actual_edges.items():
         is_actual = edge["kind"] == "actual"
-        edge_rows.append({"id": key, "from": edge["from"], "to": edge["to"],
-            "kind": "Solid · compiled Lean path" if is_actual else "Dashed · " + edge["classification"],
+        edge_rows.append({"id": key, "from": edge["from"], "to": edge["to"], "diff": edge["diff"],
+            "kind": DIFF_TITLE[edge["diff"]] + (" · compiled Lean path" if is_actual else " · " + edge["classification"]),
             "reason": "Each step below is a type, value, or structural reference in a compiled declaration." if is_actual else edge["reason"],
             "path_html": Markup(path_html(edge["path"]))})
     comparisons = [{**edge, "path_html": Markup(path_html(edge["path"]))} for edge in atlas["expert_edges"]]
-    audit = audit_template.render(atlas=atlas, edges=edge_rows,
-                                 comparisons=comparisons, counts=atlas["counts"])
+    unified = {edge_id(edge) for edge in atlas["views"][-1]["edges"]}
+    lean_only = [row for row in edge_rows if row["diff"] == "lean-only" and row["id"] in unified]
+    audit = audit_template.render(atlas=atlas, edges=edge_rows, lean_only=lean_only,
+                                 comparisons=comparisons, counts=atlas["counts"], diff_titles=DIFF_TITLE)
     (destination / "atlas-audit.html").write_text(audit)
     print(f"Rendered atlas: {len(nodes)} display nodes, {len(views)} views, "
           f"{len(expert['nodes'])} expert correspondences, framed external proofs.", flush=True)

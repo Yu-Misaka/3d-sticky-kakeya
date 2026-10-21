@@ -10,9 +10,7 @@ import re
 import subprocess
 from collections import Counter, deque
 from html.parser import HTMLParser
-from importlib.resources import files
 from pathlib import Path
-from types import SimpleNamespace
 from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -298,106 +296,18 @@ def manuscript_statements(directory: Path) -> dict[str, dict]:
     return result
 
 
-def render_graph(report: dict, aliases: dict[str, list[str]], paper_html: str,
-                 manuscript: dict[str, dict] | None = None) -> str:
-    """Use the installed default blueprint graph template and modal interactions."""
-    from jinja2 import Template
-    from leanblueprint.Packages.blueprint import LEAN_LINKS_TPL
-
-    class GraphNode(SimpleNamespace):
-        def __str__(self):
-            return self.content
-
-    paper = PaperStatements(paper_html)
-    if manuscript is not None:
-        paper.statements.update(manuscript)
-    q = lambda text: json.dumps(text, ensure_ascii=False)
-    dot = ['strict digraph { graph [bgcolor=transparent];',
-           'node [penwidth=1.8]; edge [arrowhead=vee];']
-    nodes = []
-    groups: dict[str, list[str]] = {}
-    for name in report["graph_nodes"]:
-        labels = aliases.get(name, [])
-        if not labels or any(label not in paper.statements for label in labels):
-            raise ValueError(f"No rendered blueprint statement for {name}")
-        groups.setdefault(labels[0], []).append(name)
-
-    def role(name: str) -> str:
-        if report["evidence"][name]["kind"] == "theorem":
-            return "proof"
-        return "definition" if paper.statements[aliases[name][0]]["kind"] == "definition" else "statement"
-
-    for index, name in enumerate(report["graph_nodes"]):
-        # Stable safe DOM IDs also support Lean names with punctuation.
-        node_id = f"lean-{index}"
-        labels = aliases[name]
-        statement = paper.statements[labels[0]]
-        label = labels[0].split(":", 1)[-1]
-        if len(groups[labels[0]]) > 1:
-            versions = [other for other in groups[labels[0]] if role(other) == role(name)]
-            label += "\n" + role(name)
-            if len(versions) > 1:
-                label += f" {versions.index(name) + 1}"
-        theorem = report["evidence"][name]["kind"] == "theorem"
-        shape, color = ("ellipse", "#9CEC8B") if theorem else ("box", "#B0ECA3")
-        dot.append(f'{q(node_id)} [label={q(label)}, shape={shape}, '
-                   f'style=filled, color=green, fillcolor="{color}"];')
-        content = statement_content(statement["content"], node_id, statement["url"].split("#")[0])
-        for other in labels[1:]:
-            extra = paper.statements[other]
-            content += (f'<p><a href="{html.escape(extra["url"], quote=True)}">'
-                        f'{extra["caption"]} {extra["ref"]}: {extra["title"]}</a></p>'
-                        + statement_content(extra["content"], node_id, extra["url"].split("#")[0]))
-        link = "../lean/find/#doc/" + quote(name, safe=".")
-        nodes.append(GraphNode(id=node_id, thmName=statement["kind"], caption=statement["caption"],
-                               ref=statement["ref"], title=statement["title"], content=content,
-                               url=statement["url"], userdata={"lean_urls": [(name, link)]},
-                               audit_url="lean_dependency_audit.html#" + quote(labels[0], safe=":")))
-    ids = {name: node.id for name, node in zip(report["graph_nodes"], nodes)}
-    for edge in report["edges"]:
-        dot.append(f'{q(ids[edge["to"]])} -> {q(ids[edge["from"]])};')
-    dot.append("}")
-
-    template = files("plastexdepgraph").joinpath("templates/dep_graph.html").read_text()
-    # Inherit the manuscript's MathJax setup, macros and styles along with its
-    # rendered statements, without feeding that HTML back through Jinja.
-    template = re.sub(r"<head>.*?</head>", "<head>{{ paper_head }}</head>", template, flags=re.S)
-    # The upstream viewer embeds DOT in a JavaScript template literal. Use JSON
-    # quoting so Lean declaration names cannot be interpreted as JavaScript.
-    template = template.replace(".renderDot(`{{ dot.replace('\\n','') }}`)",
-                                ".renderDot({{ dot_json }})")
-    template = template.replace('<div class="content">', '<div class="content">\n'
-                                '<nav aria-label="Dependency views">'
-                                '<a href="lean_dependency_audit.html">Version audit and paths</a> · '
-                                '<a href="lean_dependencies.html">Reviewed proof atlas</a></nav>', 1)
-    return Template(template).render(
-        graph=SimpleNamespace(nodes=nodes), title="Lean dependencies",
-        paper_head=re.sub(r"<title>.*?</title>", "<title>Lean proof dependencies</title>", paper.head, flags=re.S),
-        config={"html5": {}},
-        legend=[("Boxes", "definitions, types and statement interfaces"),
-                ("Ellipses", "proved theorems and lemmas"),
-                ("Green border", "an audited Lean declaration; scope is recorded in its linked statement or Remark"),
-                ("Green background", "a proved Lean theorem, with its own hypotheses retained"),
-                ("Light green background", "the definition or type is formalized"),
-                ("Arrows", "from a dependency to the declaration using it; intermediate helpers are folded"),
-                ("Scope", f"all {len(nodes)} reached blueprint declarations; "
-                 '<a href="lean_dependency_audit.html">audit method and declaration versions</a>')],
-        # The upstream extension point puts these inline beside LaTeX, outside
-        # the natural-language statement. Reuse its Lean link and link styling.
-        extra_modal_links=[LEAN_LINKS_TPL, Template(
-            '<a class="issue_link audit_link" href="{{ thm.audit_url }}">'
-            'Version audit and paths</a>')],
-        dot_json=json.dumps("\n".join(dot), ensure_ascii=False).replace("<", "\\u003c"),
-    )
+def redirect_page(target: str, title: str) -> str:
+    """A retired route that forwards to its replacement, keeping any fragment."""
+    href = html.escape(target, quote=True)
+    return (f'<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><title>{html.escape(title)}</title>'
+            f'<meta http-equiv="refresh" content="0; url={href}">'
+            f'<script>location.replace({json.dumps(target)} + location.hash);</script></head>'
+            f'<body><p>This page has moved to <a href="{href}">{html.escape(title)}</a>.</p></body></html>\n')
 
 
 def write_site(site: Path, report: dict, paper_nodes: list[dict]) -> None:
-    """Publish the reviewed atlas, the declaration graph and their audits."""
+    """Publish the reviewed atlas and its audits."""
     entries = {entry["name"]: entry for entry in report["declarations"]}
-    aliases: dict[str, list[str]] = {}
-    for node in paper_nodes:
-        for name in node["lean"]:
-            aliases.setdefault(name, []).append(node["label"])
     edge_rows = []
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
 
@@ -453,8 +363,9 @@ def write_site(site: Path, report: dict, paper_nodes: list[dict]) -> None:
     paper = site / "blueprint/dep_graph_document.html"
     text = paper.read_text()
     (site / "blueprint/lean_dependency_audit.html").write_text(template)
-    book = manuscript_statements(site / "blueprint")
-    (site / "blueprint/lean_declarations.html").write_text(render_graph(report, aliases, text, book))
+    # The declaration-level graph is the unified atlas with every frame open.
+    (site / "blueprint/lean_declarations.html").write_text(
+        redirect_page("lean_dependencies.html", "the proof atlas"))
     (site / "blueprint/lean-dependencies.json").write_text(json.dumps(report, ensure_ascii=False) + "\n")
     from atlas_render import write_atlas
     write_atlas(site, report, paper_nodes, text)

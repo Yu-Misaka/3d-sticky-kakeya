@@ -201,6 +201,82 @@ def projected_edges(selected: list[str], nodes: dict[str, dict], paths: AuditedP
     return edges
 
 
+# How a drawn edge compares with the expert roadmap. Every edge has one class.
+DIFF_CLASSES = {
+    "agree": "Lean path; the roadmap also connects these nodes",
+    "lean-only": "Lean path; the roadmap has no path between these nodes",
+    "detail": "Lean path through a version absent from the roadmap",
+    "expert-route": "Roadmap connection; both versions are used, but Lean takes another route",
+    "expert-unknown": "Roadmap connection that cannot be compared with Lean",
+}
+
+
+def expert_reach(proposed: list[dict]) -> dict[str, set[str]]:
+    """Consumers reachable from each prerequisite in the expert graph, directly or not."""
+    consumers: dict[str, set[str]] = {}
+    for edge in proposed:
+        consumers.setdefault(edge["from"], set()).add(edge["to"])
+    reach = {}
+    for start in consumers:
+        seen, pending = set(), [start]
+        while pending:
+            for target in consumers.get(pending.pop(), ()):
+                if target not in seen:
+                    seen.add(target)
+                    pending.append(target)
+        reach[start] = seen
+    return reach
+
+
+def edge_diff(edge: dict, nodes: dict[str, dict], reach: dict[str, set[str]]) -> str:
+    if edge["kind"] == "expert":
+        return "expert-route" if edge["classification"] == "different-route" else "expert-unknown"
+    if not (nodes[edge["from"]]["expert"] and nodes[edge["to"]]["expert"]):
+        return "detail"
+    # A longer expert path still supports the connection.
+    return "agree" if edge["to"] in reach.get(edge["from"], ()) else "lean-only"
+
+
+def group_key(group: str) -> str:
+    return "group-" + group
+
+
+def collapsible_groups(view: dict, nodes: dict[str, dict]) -> list[str]:
+    """External frames with several members; a single node gains nothing from folding."""
+    counts = Counter(nodes[key]["external_group"] for key in view["nodes"]
+                     if nodes[key]["external_group"])
+    return sorted(group for group, count in counts.items() if count > 1)
+
+
+def collapse_view(view: dict, nodes: dict[str, dict], collapsed: list[str], key: str,
+                  title: str) -> dict:
+    """Fold the members of each collapsed frame into one node, keeping every edge's class.
+
+    A drawn edge stands for its member edges, all of which have the same class.
+    Edges inside one frame disappear with it.
+    """
+    def owner(name):
+        group = nodes[name]["external_group"]
+        return group_key(group) if group in collapsed else name
+
+    selected = list(dict.fromkeys(owner(name) for name in view["nodes"]))
+    merged: dict[tuple, dict] = {}
+    for edge in view["edges"]:
+        source, target = owner(edge["from"]), owner(edge["to"])
+        if source == target:
+            continue
+        drawn = merged.setdefault((source, target, edge["kind"], edge["diff"]), {
+            **edge, "from": source, "to": target, "members": []})
+        drawn["members"].append(edge)
+    edges = list(merged.values())
+    for edge in edges:
+        if len(edge["members"]) == 1 and edge["members"][0]["from"] == edge["from"] \
+                and edge["members"][0]["to"] == edge["to"]:
+            del edge["members"]
+    return {"id": key, "title": title, "description": view["description"],
+            "nodes": selected, "edges": edges, "collapsed": collapsed}
+
+
 def make_atlas(report: dict, expert: dict, mapping: dict, paper_nodes: list[dict]) -> dict:
     entries = {entry["name"]: entry for entry in report["declarations"]}
     validate_mapping(expert, mapping, paper_nodes, entries)
@@ -254,6 +330,7 @@ def make_atlas(report: dict, expert: dict, mapping: dict, paper_nodes: list[dict
     paths = AuditedPaths(report)
     proposed = expert_connections(expert)
     classified = [classify_expert_edge(edge, nodes, paths) for edge in proposed]
+    reach = expert_reach(proposed)
 
     def view_data(key, title, description, selected, proposed):
         selected = list(dict.fromkeys(selected))
@@ -268,6 +345,8 @@ def make_atlas(report: dict, expert: dict, mapping: dict, paper_nodes: list[dict
         displayed = {}
         for edge in actual + dashed:
             displayed.setdefault((edge["from"], edge["to"], edge["kind"]), edge)
+        for edge in displayed.values():
+            edge["diff"] = edge_diff(edge, nodes, reach)
         return {"id": key, "title": title, "description": description,
                 "nodes": selected, "edges": list(displayed.values()), "comparisons": comparisons}
 
@@ -283,17 +362,28 @@ def make_atlas(report: dict, expert: dict, mapping: dict, paper_nodes: list[dict
     views.append(view_data("all", "Unified proof atlas",
                           "All expert nodes and every reached linked Lean version. Conclusions sit above prerequisites. Colours identify branches, not completion.",
                           list(nodes), proposed))
+    unified = views[-1]
+    groups = collapsible_groups(unified, nodes)
+    # The unified graph opens with its frames folded; each one can be opened in turn.
+    variants = [collapse_view(unified, nodes, groups, "collapsed", "Unified proof atlas · frames folded")]
+    variants += [collapse_view(unified, nodes, [other for other in groups if other != group],
+                               "expand-" + group, "Unified proof atlas · one frame open")
+                 for group in groups]
+    variants.append({**unified, "id": "full", "collapsed": []})
+    diff_counts = {diff: sum(edge["diff"] == diff for edge in unified["edges"]) for diff in DIFF_CLASSES}
     result = {"format": 1, "root": report["root"],
               "root_node": next(key for key, node in nodes.items() if node["primary"] == report["root"]),
               "source_sha256": report["source_sha256"],
               "extractor_sha256": report["extractor_sha256"],
-              "nodes": list(nodes.values()), "views": views, "expert_edges": classified,
+              "nodes": list(nodes.values()), "views": views, "unified_variants": variants,
+              "expert_edges": classified,
               "external_groups": mapping["external_groups"],
               "counts": {"expert_nodes": len(expert["nodes"]),
                          "lean_versions": len(report["graph_nodes"]),
                          "expert_edges": len(classified),
                          "expert_unified_edges": len(expert["edges"]),
                          "expert_branch_only_edges": len(classified) - len(expert["edges"]),
+                         "unified_diff": diff_counts,
                          "classifications": dict(sorted(Counter(edge["classification"] for edge in classified).items())),
                          "node_statuses": dict(sorted(Counter(node["status"] for node in nodes.values() if node["expert"]).items()))}}
     return result

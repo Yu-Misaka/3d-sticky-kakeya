@@ -1,0 +1,46 @@
+{# One node card. atlas-cards.html lists every card; the atlas fetches that page and clones a card into its details panel. #}
+{% macro card_body(card) -%}
+            <div class="cardtop"><span class="group {{ card.group }}">{{ card.group_name }} <span class="origin">{{ card.origin }}</span></span><code>{{ card.id }}</code></div>
+            <h3>{{ card.paper }}</h3><p class="subtitle">{{ card.title }}</p>
+            {% if card.source %}<p class="source">Expert source: {{ card.source }}</p>{% endif %}
+            <p class="status {{ card.status }}">{{ card.status_label }}</p>
+            {% for statement in card.statements %}
+            <section class="mathematical-statement">
+              <h4>Reviewed manuscript · {{ statement.heading }}</h4>
+              {{ statement.content }}
+              <p class="statement-link"><a href="{{ statement.url }}">Read the statement and proof outline</a></p>
+            </section>
+            {% endfor %}
+            <aside class="correspondence-remark" aria-label="Correspondence Remark">
+              <h4>Remark · mathematical and Lean correspondence</h4><p>{{ card.remark }}</p>
+              {% if card.remark_links %}<p class="remark-links">Related Remarks: {% for link in card.remark_links %}<a href="{{ link.url }}">{{ link.label.removeprefix('rem:') }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
+            </aside>
+            {% if card.expert %}<details class="expert-formulation"><summary>Compare the original expert formulation</summary>{{ card.expert_statement_html }}<p class="mini muted">This is source material for comparison. The expert's Lean blocks were pseudocode; only the declarations below were audited.</p></details>{% endif %}
+            {% if card.versions %}
+            <details class="lean-versions"><summary>{{ card.versions|length }} actual Lean {{ 'version' if card.versions|length == 1 else 'versions' }} · types, usage and source</summary>
+              {% for version in card.versions %}
+              <section class="lean-version">
+                <p><span class="status {{ version.status }}">{{ version.status_label }}</span> <span class="mini">{{ version.kind }}{% if version.name == card.primary %} · graph anchor{% else %} · related version{% endif %}</span></p>
+                <a href="{{ version.doc_url }}"><code>{{ version.name }}</code></a>
+                {% if version.role == 'interface' %}<p class="mini">This declaration defines a proposition. Referencing it does not construct a proof of it.</p>{% elif version.role == 'constructor' %}<p class="mini">This constructor requires its fields as arguments; its existence does not supply those arguments.</p>{% elif version.role == 'proof' %}<p class="mini">The proof establishes its own Lean type, including every hypothesis shown there. The correspondence Remark records differences from the expert statement.</p>{% endif %}
+                <pre><code>{{ version.name }} : {{ version.expanded_type or version.type }}{% if version.definition %}
+:= {{ version.definition }}{% endif %}</code></pre>
+                {% if version.expanded_type and version.expanded_type != version.type %}<p class="mini muted">The named statement head is unfolded from the compiled type so that its hypotheses are visible.</p>{% endif %}
+                <div class="jump"><a href="{{ version.doc_url }}">Lean declaration</a><a href="{{ version.source_url }}">Source</a></div>
+                {{ version.path_html }}
+              </section>
+              {% endfor %}
+            </details>
+            {% else %}<p class="mini muted">No independently identified Lean declaration is assigned to this operation. Its expert connections remain dashed.</p>{% endif %}
+            <div class="jump card-links"><a href="lean_dependencies.html#node-{{ card.id }}">Open in the proof atlas</a><a href="atlas-audit.html#expert-connections">Compare recorded connections</a></div>
+{%- endmacro %}
+
+{% macro group_body(group) -%}
+<div class="cardtop"><span class="group external">External inputs</span><code>{{ group.id }}</code></div>
+<h3>{{ group.title }}</h3>
+<p class="subtitle">A framed External input and the reached project declarations behind it.</p>
+<p class="mini muted">The unified graph opens with this frame folded into one node. Arrows into and out of the folded node stand for the connections of its members, and keep their comparison class.</p>
+<h4>{{ group.members|length }} members</h4>
+<ul class="relation-list">{% for member in group.members %}<li><button class="relation" data-select-node="{{ member.id }}"><span class="relation-heading">{{ member.heading }}</span> <span class="muted">{{ member.title }}</span></button></li>{% endfor %}</ul>
+<div class="card-relations" data-relations></div>
+{%- endmacro %}

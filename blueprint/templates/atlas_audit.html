@@ -19,7 +19,13 @@
       {% for edge in comparisons %}<tr><td><a href="lean_dependencies.html#node-{{ edge.from }}">{{ edge.from }}</a> → <a href="lean_dependencies.html#node-{{ edge.to }}">{{ edge.to }}</a><br><small>Expert category: {{ edge.expert_kind }}</small></td><td>{{ edge.classification }}</td><td><p>{{ edge.reason }}</p><details><summary>Expert source / usage note</summary><p>{{ edge.expert_view_title }}</p><p>{{ edge.expert_note }}</p></details>{{ edge.path_html }}</td></tr>{% endfor %}
       </tbody></table></div>
     </section>
-    <section class="surface audit-section"><h2>Every displayed arrow</h2><p>Each row identifies the exact edge used in a branch view or in the unified graph. Witnesses run from a consumer back to its prerequisite; the drawn arrow points in the opposite direction.</p>
+    <section class="surface audit-section" id="lean-only"><h2>{{ lean_only|length }} Lean-only connections in the unified graph</h2>
+      <p>Both ends are roadmap nodes and the compiled proof connects them, but the roadmap has no path between them, neither directly nor through other nodes. These are the places where the roadmap omits a dependency that the Lean statements actually use, and they are the first rows to review.</p>
+      <div class="table-wrap"><table><thead><tr><th>Drawn arrow</th><th>Evidence</th></tr></thead><tbody>
+      {% for edge in lean_only %}<tr><td><a href="lean_dependencies.html#node-{{ edge.from }}">{{ edge.from }}</a> → <a href="lean_dependencies.html#node-{{ edge.to }}">{{ edge.to }}</a><br><small><a href="#{{ edge.id }}">Arrow record</a></small></td><td>{{ edge.path_html }}</td></tr>{% endfor %}
+      </tbody></table></div>
+    </section>
+    <section class="surface audit-section"><h2>Every displayed arrow</h2><p>Each row identifies the exact edge used in a branch view or in the unified graph, with its comparison class: {% for key, title in diff_titles.items() %}<span class="audit-count"><span class="swatch diff-{{ key }}" aria-hidden="true"></span>{{ title }}</span>{% endfor %}. An arrow drawn to a folded External frame links to the record of its first member. Witnesses run from a consumer back to its prerequisite; the drawn arrow points in the opposite direction.</p>
       <div class="table-wrap"><table><thead><tr><th>Drawn arrow</th><th>Line meaning</th><th>Evidence</th></tr></thead><tbody>
       {% for edge in edges %}<tr id="{{ edge.id }}"><td><a href="lean_dependencies.html#node-{{ edge.from }}">{{ edge.from }}</a> → <a href="lean_dependencies.html#node-{{ edge.to }}">{{ edge.to }}</a></td><td>{{ edge.kind }}</td><td><p>{{ edge.reason }}</p>{{ edge.path_html }}</td></tr>{% endfor %}
       </tbody></table></div>

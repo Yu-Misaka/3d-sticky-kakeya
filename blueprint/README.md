@@ -181,9 +181,16 @@ The audit establishes declaration existence and axiom dependencies. Comparing a 
 
 The homepage opens the **proof atlas** at `blueprint/lean_dependencies.html`.
 Its branch navigation, readable diagrams, unified zoomable graph and node cards
-follow the expert atlas supplied in `artifacts/`. The historical
-`blueprint/dep_graph_document.html` route opens the same reviewed atlas, so the
-published paper-graph route does not retain unaudited solid arrows.
+follow the expert atlas supplied in `artifacts/`. Selecting a node opens its
+card in a panel beside the graph (a bottom sheet on narrow screens) without
+scrolling the page; the panel lists the node's prerequisites and consumers by
+comparison class, and `#node-ID` links open it directly. Below the graph is a
+searchable index of every node. The cards are stored once, in
+`blueprint/atlas-cards.html`, which the atlas reads when a node is first
+selected and which also serves for printing and reading without JavaScript.
+The historical `blueprint/dep_graph_document.html` and `lean_declarations.html`
+routes forward to the atlas, so the published paper-graph route does not
+retain unaudited solid arrows.
 
 The two sources remain separate:
 
@@ -243,6 +250,22 @@ declaration, and two reached declarations connected differently in the code.
 For unused proofs it makes no assertion of global nondependence. The expert
 edges never enter the graph used to calculate actual reachability.
 
+Every drawn arrow also has one of five **comparison classes**, each with its
+own stroke and filter:
+
+- *agree*: a Lean path, and the roadmap connects the two nodes, directly or
+  through other roadmap nodes;
+- *Lean only*: a Lean path between two roadmap nodes that the roadmap does not
+  connect. `atlas-audit.html#lean-only` lists these for review;
+- *Lean detail*: a Lean path with an end that the roadmap does not show;
+- *roadmap only, different route*: both Lean versions are used, but the proof
+  connects them differently (dashed);
+- *roadmap only, not comparable*: an unmatched node, a version outside the
+  root, or two cards sharing one declaration (dotted).
+
+The roadmap's own reachability decides *agree* versus *Lean only*; it never
+enters the Lean reachability computation.
+
 The former expert categories (proof input, API, assembly and provenance) are
 retained as source metadata, not as competing stroke styles. Supported expert
 connections may appear as a sequence of solid edges rather than a redundant
@@ -261,14 +284,20 @@ blueprint-linked implementation declarations are grouped by the reviewed
 module boundaries. Shared mathematical definitions can remain in the main
 argument. Lean and Mathlib are library boundaries; explicitly linked Mathlib
 inputs are retained as terminal nodes with witnessed incoming references.
-Group buttons bring each framed input into view at a readable scale; the
-unified graph initially focuses the root theorem or the selected node.
+Group buttons bring each framed input into view at a readable scale.
 
-Click an arrow for its complete source-linked witness. The separate
-`blueprint/atlas-audit.html` compares all expert connections and explains every
-line in every view. `blueprint/atlas-dependencies.json` contains the generated
-atlas, paths and source fingerprints. The declaration-level graph remains
-available at `blueprint/lean_declarations.html`, with the version table at
+The unified graph is not embedded in the page. It opens with every External
+frame of several nodes folded into one node, compact labels, and the
+not-comparable class hidden. Clicking a folded frame opens it; "Open all
+frames" shows the complete graph, which contains every reached blueprint-linked
+declaration and so replaces the former declaration-level graph. Each state is
+a separate `blueprint/atlas-unified-*.svg`, fetched when needed. An arrow to a
+folded frame stands for its members' connections, which share its class.
+
+Click an arrow to open its complete source-linked witness in a new tab. The
+separate `blueprint/atlas-audit.html` compares all expert connections and
+explains every line in every view. `blueprint/atlas-dependencies.json` contains
+the generated atlas, paths and source fingerprints. The version table is
 `blueprint/lean_dependency_audit.html`.
 
 The extractor's non-`module` driver loads imported private bodies. Missing
