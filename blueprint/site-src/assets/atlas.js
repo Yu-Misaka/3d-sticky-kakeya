@@ -606,7 +606,7 @@ body.addEventListener('pointerleave', () => { if (state.peek) { state.peek = nul
 
 /* resizable panel: drag its left edge, arrow keys on the handle, double-click to reset */
 const resizer = $('#insp-resize'), WIDTH_KEY = 'atlas-panel-width';
-function panelBounds() { return [300, Math.max(300, Math.min(innerWidth * .62, innerWidth - wrap.getBoundingClientRect().left - 320))]; }
+function panelBounds() { return [300, Math.max(300, Math.min(innerWidth * .62, innerWidth - wrap.getBoundingClientRect().left - 520))]; }
 function setPanelWidth(px, save = true) {
   const [min, max] = panelBounds(), width = Math.round(Math.max(min, Math.min(max, px)));
   document.documentElement.style.setProperty('--insp-w', width + 'px');
@@ -686,8 +686,20 @@ pal.addEventListener('click', e => { if (e.target === pal) pal.close(); });
 
 /* ---------- MathJax ---------- */
 let mathReady = false; const mathQueue = new Set();
-function typeset(el) { if (mathReady) MathJax.typesetPromise([el]).catch(() => {}); else mathQueue.add(el); }
-function mathIsReady() { mathReady = true; const els = [...mathQueue].filter(e => e.isConnected); mathQueue.clear(); if (els.length) MathJax.typesetPromise(els).catch(() => {}); }
+// MathJax 3 does not break inline formulas. One wider than its text column scrolls on its own line.
+function fitWideMath(root = body) {
+  for (const prose of root.querySelectorAll('.prose')) {
+    const edge = prose.getBoundingClientRect().right + 0.5;
+    for (const math of prose.querySelectorAll('mjx-container:not([display="true"])')) {
+      math.classList.remove('mjx-wide');
+      if (math.getBoundingClientRect().right > edge) math.classList.add('mjx-wide');
+    }
+  }
+}
+function typeset(el) { if (mathReady) MathJax.typesetPromise([el]).then(() => fitWideMath(el)).catch(() => {}); else mathQueue.add(el); }
+function mathIsReady() { mathReady = true; const els = [...mathQueue].filter(e => e.isConnected); mathQueue.clear(); if (els.length) MathJax.typesetPromise(els).then(() => els.forEach(fitWideMath)).catch(() => {}); }
+let fitQueued = false;
+new ResizeObserver(() => { if (fitQueued) return; fitQueued = true; requestAnimationFrame(() => { fitQueued = false; fitWideMath(); }); }).observe(body);
 // MathJax may have started before the atlas data arrived; then its ready hook has already run.
 window.atlasMathReady = mathIsReady;
 if (typeof window.MathJax?.typesetPromise === 'function') MathJax.startup.promise.then(mathIsReady);

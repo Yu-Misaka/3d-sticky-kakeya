@@ -23,7 +23,7 @@ body.app::before { content: ""; position: fixed; inset: 0 0 auto; height: env(sa
 .vbtn.whole .num svg { width: 14px; height: 14px; vertical-align: -2px; }
 .rail-note { margin: auto 8px 0; padding-top: 16px; font-size: 12px; color: var(--muted); line-height: 1.5; }
 
-.canvas { position: relative; overflow: hidden; touch-action: none; cursor: grab; min-width: 0; min-height: 0;
+.canvas { container: canvas / inline-size; position: relative; overflow: hidden; touch-action: none; cursor: grab; min-width: 0; min-height: 0;
   background-color: var(--paper); background-image: radial-gradient(circle, var(--grid) 1px, transparent 1.3px); background-size: 24px 24px; }
 .canvas.dragging { cursor: grabbing; }
 #canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; user-select: none; -webkit-user-select: none; }
@@ -114,6 +114,16 @@ marker path { stroke: none; }
 .ov-mini { right: 16px; bottom: 16px; border-radius: 8px; border: 1px solid var(--line); box-shadow: var(--shadow); background: var(--surface); cursor: crosshair; touch-action: none; }
 .ov-hint { right: 16px; bottom: 16px; margin: 0; font-size: 11.5px; color: var(--muted); background: color-mix(in srgb, var(--paper) 80%, transparent); padding: 3px 8px; border-radius: 6px; pointer-events: none; }
 .has-mini .ov-hint { display: none; }
+/* The overlays follow the canvas's own width, which the panel changes. */
+@container canvas (max-width: 760px) {
+  .ov-hint { display: none; }
+  .vt-block p { -webkit-line-clamp: 1; }
+}
+@container canvas (max-width: 500px) {
+  .ov-mini { display: none !important; }
+  .lg-nodes { display: none; }
+  .ov-legend { width: 180px; }
+}
 .insp-open { display: none; }
 .insp-off .insp-open { display: inline-flex; }
 .mobile-only { display: none !important; }
@@ -128,6 +138,8 @@ marker path { stroke: none; }
 body.resizing { cursor: col-resize; user-select: none; -webkit-user-select: none; }
 body.resizing .canvas, body.resizing .inspector { pointer-events: none; }
 .insp-body { overflow: auto; min-height: 0; flex: 1; padding: 10px 22px 40px; overflow-wrap: anywhere; }
+/* A wide panel keeps readable lines. */
+.insp-body > :not(.insp-nav) { max-width: 48rem; }
 .insp-nav { position: sticky; top: -10px; z-index: 1; display: flex; align-items: center; gap: 2px; margin: -10px -22px 0; padding: 8px 14px; background: var(--surface); border-bottom: 1px solid transparent; }
 .insp-nav.stuck { border-bottom-color: var(--line); }
 .ibtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; background: none; height: 30px; min-width: 30px; border-radius: 6px; color: var(--muted); padding: 0 7px; font-size: 12.5px; }
@@ -163,8 +175,8 @@ body.resizing .canvas, body.resizing .inspector { pointer-events: none; }
 .cg li.filtered { opacity: .5; }
 .rel { display: flex; align-items: baseline; gap: 8px; min-width: 0; border: 0; background: none; text-align: left; padding: 4px 6px; margin-left: -6px; border-radius: 6px; font-size: 13px; color: var(--ink); }
 .rel:hover { background: var(--accent-soft); }
-.rel-h { font-weight: 600; white-space: nowrap; }
-.rel-t { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.rel-h { font-weight: 600; flex: 0 1 auto; min-width: 0; }
+.rel-t { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1 1 0; }
 .wit { border: 0; background: none; color: var(--accent); font-size: 12px; padding: 3px 6px; border-radius: 5px; }
 .wit:hover { background: var(--accent-soft); }
 .more-btn { border: 0; background: none; color: var(--accent); font-size: 12.5px; padding: 4px 0; }
@@ -175,6 +187,7 @@ body.resizing .canvas, body.resizing .inspector { pointer-events: none; }
 .prose p { margin: 0 0 .7em; }
 .prose .displaymath { overflow-x: auto; overflow-y: hidden; margin: .4em 0 .8em; }
 .prose mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; }
+.prose mjx-container.mjx-wide { display: block; max-width: 100%; overflow-x: auto; overflow-y: hidden; padding: 2px 0 4px; }
 .textlink { display: inline-flex; gap: 4px; font-size: 13px; margin-top: 2px; }
 .remark { margin-top: 22px; background: var(--remark-soft); border-radius: 10px; padding: 12px 15px 13px; }
 .remark .sec-h { color: var(--remark); margin-bottom: 5px; }
