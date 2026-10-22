@@ -160,3 +160,7 @@ Phone: site bar + view menu; full-screen canvas; details as a bottom sheet (peek
   - 字体暂用 Google Fonts。
 - **体积**：Pages 产物按 `build.py` 的估算从 995.9 MB 降到 989.8 MB。
 - **待定事项**：1–3 按原型的做法实现；5 保留"Uses"这个名字，弹出列表注明这是手稿里的引用，不是 Lean 依赖；6 暂用 Google Fonts，7 已按上面的方式精简，两页没有合并。浏览器测试仍未加入 CI。
+- **2026-10-22 修正**：
+  - 检视面板的公式在线上不渲染。原因：MathJax 比 1.6 MB 的 `atlas-view.json` 先就绪时，就绪钩子已经执行过，之后的排版请求只会排队。现在 `atlas.js` 启动时会先检查 MathJax 是否已就绪。
+  - 面板宽度可拖动左边缘调整（300 px 至窗口的 62%，并给画布至少留 320 px），双击恢复默认，宽度保存在 localStorage。拖动时图不移动，因为画布原点在左边。
+- CI 有时重建全部 doc-gen4 文档的原因记录在 `ci-docgen-rebuild.md`。

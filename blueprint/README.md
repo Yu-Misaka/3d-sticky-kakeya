@@ -191,7 +191,8 @@ The **proof atlas** is at `blueprint/lean_dependencies.html`. It fills the
 window: the branch views of the expert atlas supplied in `artifacts/` and the
 whole proof are listed on the left, the graph pans and zooms in the middle,
 and the details of the selection are on the right (a bottom sheet on narrow
-screens). Selecting a node lists what it depends on and what uses it, by
+screens). Drag the panel's left edge to resize it; double-click the edge to
+restore the default width. Selecting a node lists what it depends on and what uses it, by
 comparison class, then its reviewed statement, correspondence Remark and
 Lean versions. Selecting an arrow shows its kernel witness or the reason
 Lean has none. Search (`/` or `⌘K`) finds nodes by paper number, ID, title

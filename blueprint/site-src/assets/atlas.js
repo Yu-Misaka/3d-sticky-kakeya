@@ -604,6 +604,46 @@ body.addEventListener('pointerover', e => {
 });
 body.addEventListener('pointerleave', () => { if (state.peek) { state.peek = null; paint(); } });
 
+/* resizable panel: drag its left edge, arrow keys on the handle, double-click to reset */
+const resizer = $('#insp-resize'), WIDTH_KEY = 'atlas-panel-width';
+function panelBounds() { return [300, Math.max(300, Math.min(innerWidth * .62, innerWidth - wrap.getBoundingClientRect().left - 320))]; }
+function setPanelWidth(px, save = true) {
+  const [min, max] = panelBounds(), width = Math.round(Math.max(min, Math.min(max, px)));
+  document.documentElement.style.setProperty('--insp-w', width + 'px');
+  resizer.setAttribute('aria-valuenow', String(width));
+  if (save) try { localStorage.setItem(WIDTH_KEY, String(width)); } catch (_) { /* storage may be unavailable */ }
+}
+function resetPanelWidth() {
+  document.documentElement.style.removeProperty('--insp-w');
+  try { localStorage.removeItem(WIDTH_KEY); } catch (_) { /* storage may be unavailable */ }
+}
+try { const saved = Number(localStorage.getItem(WIDTH_KEY)); if (saved) setPanelWidth(saved, false); } catch (_) { /* storage may be unavailable */ }
+resizer.addEventListener('pointerdown', e => {
+  if (e.button !== 0) return;
+  e.preventDefault();
+  resizer.setPointerCapture(e.pointerId);
+  const startX = e.clientX, startWidth = insp.getBoundingClientRect().width;
+  document.body.classList.add('resizing');
+  const move = ev => setPanelWidth(startWidth + startX - ev.clientX, false);
+  const end = () => {
+    resizer.removeEventListener('pointermove', move);
+    resizer.removeEventListener('pointerup', end);
+    resizer.removeEventListener('pointercancel', end);
+    document.body.classList.remove('resizing');
+    setPanelWidth(insp.getBoundingClientRect().width);
+  };
+  resizer.addEventListener('pointermove', move);
+  resizer.addEventListener('pointerup', end);
+  resizer.addEventListener('pointercancel', end);
+});
+resizer.addEventListener('dblclick', resetPanelWidth);
+resizer.addEventListener('keydown', e => {
+  if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  e.preventDefault();
+  setPanelWidth(insp.getBoundingClientRect().width + (e.key === 'ArrowLeft' ? 32 : -32));
+});
+window.addEventListener('resize', () => { if (document.documentElement.style.getPropertyValue('--insp-w')) setPanelWidth(insp.getBoundingClientRect().width, false); });
+
 function setSheet(s) { insp.dataset.sheet = s; requestAnimationFrame(() => document.documentElement.style.setProperty('--sheet-cover', sheetCover() + 'px')); }
 $('#sheet-toggle').addEventListener('click', () => setSheet({ peek: 'half', half: 'full', full: 'peek' }[insp.dataset.sheet] || 'half'));
 
@@ -647,7 +687,10 @@ pal.addEventListener('click', e => { if (e.target === pal) pal.close(); });
 /* ---------- MathJax ---------- */
 let mathReady = false; const mathQueue = new Set();
 function typeset(el) { if (mathReady) MathJax.typesetPromise([el]).catch(() => {}); else mathQueue.add(el); }
-window.atlasMathReady = () => { mathReady = true; const els = [...mathQueue].filter(e => e.isConnected); mathQueue.clear(); if (els.length) MathJax.typesetPromise(els).catch(() => {}); };
+function mathIsReady() { mathReady = true; const els = [...mathQueue].filter(e => e.isConnected); mathQueue.clear(); if (els.length) MathJax.typesetPromise(els).catch(() => {}); }
+// MathJax may have started before the atlas data arrived; then its ready hook has already run.
+window.atlasMathReady = mathIsReady;
+if (typeof window.MathJax?.typesetPromise === 'function') MathJax.startup.promise.then(mathIsReady);
 
 /* ---------- global events ---------- */
 document.addEventListener('click', e => {
