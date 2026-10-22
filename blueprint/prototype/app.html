@@ -1,0 +1,1388 @@
+<title>Sticky Kakeya Atlas v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Sans+SC:wght@400;600&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Layout: an app shell. A slim site bar sits over (views rail | full-height pannable canvas | inspector);
+   the reading screens (home, manuscript, proposal) scroll inside the shell. */
+:root {
+  --paper: #f2f4f7; --grid: #d5dbe3; --surface: #ffffff; --raised: #f7f8fa;
+  --ink: #16202b; --ink-2: #3a4757; --muted: #5d6a7b; --line: #dbe0e7; --line-2: #c3cbd6;
+  --accent: #2254a3; --accent-soft: #e5edf9; --on-accent: #ffffff;
+  --used: #2a7650; --off: #8a94a2;
+  --e-agree: #2b394c; --e-lean: #b0215c; --e-detail: #a5afbc; --e-route: #6943b2; --e-unknown: #98a2b0;
+  --remark: #835d1d; --remark-soft: #f6efe2;
+  --frame: #eef1f5; --frame-outer: #f7f8fa; --frame-line: #cfd6df;
+  --node-s: 56%; --node-l: 95.5%; --node-bs: 26%; --node-bl: 63%;
+  --shadow: 0 1px 2px rgb(22 32 43 / .06), 0 8px 28px rgb(22 32 43 / .09);
+  --serif: "STIX Two Text", "STIX Two", Cambria, Georgia, "PingFang SC", "Noto Sans SC", serif;
+  --sans: "IBM Plex Sans", "Segoe UI", system-ui, "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "DejaVu Sans Mono", Menlo, monospace;
+  --rail-w: 236px; --insp-w: clamp(340px, 29vw, 432px); --bar-h: 50px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0e1318; --grid: #232b35; --surface: #151b22; --raised: #1a2129;
+  --ink: #e3e8ee; --ink-2: #c0c9d4; --muted: #8b97a6; --line: #28313c; --line-2: #3a4553;
+  --accent: #8db2f6; --accent-soft: #1b2940; --on-accent: #0b1421;
+  --used: #5fc28e; --off: #6f7a89;
+  --e-agree: #c3cedb; --e-lean: #f06a9d; --e-detail: #4f5a68; --e-route: #ab8df2; --e-unknown: #5e6977;
+  --remark: #d7ad6a; --remark-soft: #231d13;
+  --frame: #131920; --frame-outer: #11161c; --frame-line: #2c3540;
+  --node-s: 20%; --node-l: 16.5%; --node-bs: 24%; --node-bl: 38%;
+  --shadow: 0 1px 2px rgb(0 0 0 / .3), 0 8px 28px rgb(0 0 0 / .35); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --paper: #0e1318; --grid: #232b35; --surface: #151b22; --raised: #1a2129;
+  --ink: #e3e8ee; --ink-2: #c0c9d4; --muted: #8b97a6; --line: #28313c; --line-2: #3a4553;
+  --accent: #8db2f6; --accent-soft: #1b2940; --on-accent: #0b1421;
+  --used: #5fc28e; --off: #6f7a89;
+  --e-agree: #c3cedb; --e-lean: #f06a9d; --e-detail: #4f5a68; --e-route: #ab8df2; --e-unknown: #5e6977;
+  --remark: #d7ad6a; --remark-soft: #231d13;
+  --frame: #131920; --frame-outer: #11161c; --frame-line: #2c3540;
+  --node-s: 20%; --node-l: 16.5%; --node-bs: 24%; --node-bl: 38%;
+  --shadow: 0 1px 2px rgb(0 0 0 / .3), 0 8px 28px rgb(0 0 0 / .35); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+/* Screens and overlays set their own display; the hidden attribute must still win. */
+[hidden] { display: none !important; }
+html, body { height: 100%; overflow: hidden; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+a { color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+code, kbd, pre { font-family: var(--mono); }
+h1, h2, h3 { text-wrap: balance; }
+
+#app { height: 100%; display: grid; grid-template-rows: var(--bar-h) minmax(0, 1fr); }
+
+/* ---------- site bar ---------- */
+.bar { display: flex; align-items: center; gap: 20px; background: var(--surface); border-bottom: 1px solid var(--line);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); min-width: 0; }
+.brand { display: flex; align-items: center; gap: 9px; font: 600 15px/1 var(--serif); letter-spacing: .005em; white-space: nowrap; color: var(--ink); text-decoration: none; }
+.brand svg { width: 22px; height: 22px; flex: none; }
+.brand svg line { stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; }
+.brand svg line.hot { stroke: var(--accent); }
+.tabs { display: flex; align-items: center; gap: 2px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.tab { border: 0; background: none; padding: 7px 10px; border-radius: 6px; color: var(--muted); font-size: 13.5px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+.tab:hover { color: var(--ink); background: var(--raised); }
+.tab[aria-current="page"] { color: var(--ink); background: var(--accent-soft); }
+.tab.ext::after { content: " ↗"; font-size: 11px; color: var(--muted); }
+.tab.proposal { border: 1px dashed var(--line-2); margin-left: 6px; }
+.bar .grow { flex: 1; }
+.search-btn { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); background: var(--raised); color: var(--muted); border-radius: 8px; padding: 6px 8px 6px 10px; min-width: 210px; font-size: 13px; }
+.search-btn:hover { border-color: var(--line-2); color: var(--ink); }
+.search-btn svg { width: 15px; height: 15px; flex: none; }
+.search-btn kbd { margin-left: auto; font-size: 11px; border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; background: var(--surface); }
+.icon { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+.screen { min-height: 0; }
+.screen.reading { overflow: auto; }
+
+/* ---------- atlas shell ---------- */
+.atlas { display: grid; grid-template-columns: var(--rail-w) minmax(0, 1fr) var(--insp-w); height: 100%; }
+.atlas.insp-off { grid-template-columns: var(--rail-w) minmax(0, 1fr) 0; }
+.atlas.insp-off .inspector { display: none; }
+
+.rail { background: var(--surface); border-right: 1px solid var(--line); overflow: auto; padding: 14px 12px 18px; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+.rail-label { margin: 14px 8px 4px; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.views { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+.vbtn { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 8px; align-items: baseline; width: 100%; text-align: left; border: 0; background: none; border-radius: 7px; padding: 7px 8px; font-size: 13px; line-height: 1.35; color: var(--ink-2); }
+.vbtn:hover { background: var(--raised); color: var(--ink); }
+.vbtn[aria-current="true"] { background: var(--accent-soft); color: var(--ink); font-weight: 600; }
+.vbtn .num { font: 500 12px/1.35 var(--mono); color: var(--muted); text-align: right; }
+.vbtn .cnt { font: 12px/1.35 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.vbtn.whole .num svg { width: 14px; height: 14px; vertical-align: -2px; }
+.rail-note { margin: auto 8px 0; padding-top: 16px; font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+.canvas { position: relative; overflow: hidden; touch-action: none; cursor: grab; min-width: 0; min-height: 0;
+  background-color: var(--paper); background-image: radial-gradient(circle, var(--grid) 1px, transparent 1.3px); background-size: 24px 24px; }
+.canvas.dragging { cursor: grabbing; }
+#canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; user-select: none; -webkit-user-select: none; }
+#l-edges, #l-clusters { transition: opacity .3s; }
+
+/* nodes */
+.node { cursor: pointer; transition: transform .52s cubic-bezier(.2, .75, .25, 1), opacity .22s; outline: none; }
+.no-anim .node { transition: none !important; }
+.node .box { fill: hsl(var(--h) calc(var(--node-s) * var(--sx, 1)) var(--node-l)); stroke: hsl(var(--h) calc(var(--node-bs) * var(--sx, 1)) var(--node-bl)); stroke-width: calc(1px * var(--zs, 1)); }
+.node.unmatched .box { stroke-dasharray: calc(4px * var(--zs, 1)) calc(3px * var(--zs, 1)); }
+.node .hd { font: 600 13.5px var(--sans); fill: var(--ink); }
+.node .sm { font: 400 12px var(--sans); fill: var(--ink-2); }
+.lod-low .node .sm { display: none; }
+.lod-low .node .hg { transform: translateY(var(--dy, 0px)); }
+.lod-low .node .hd { font-size: 15px; }
+.lod-low .node.group .hd { font-size: 16px; }
+.lod-tiny .node text, .lod-tiny .node .mk, .lod-tiny .cluster text { display: none; }
+.lod-tiny .node .box { fill: hsl(var(--h) calc(var(--node-bs) * var(--sx, 1) * 1.7) calc(var(--node-bl) + (var(--node-l) - var(--node-bl)) * .45)); stroke: none; }
+.lod-tiny .node.sel .box { fill: var(--accent); }
+.lod-tiny .node.group .box, .lod-tiny .node.group .stack { fill: var(--line-2); stroke: none; }
+.node:hover .box, .node:focus-visible .box { stroke: var(--accent); stroke-width: calc(1.7px * var(--zs, 1)); }
+.node.hl .box { stroke: var(--ink-2); stroke-width: calc(1.6px * var(--zs, 1)); }
+.node.sel .box { stroke: var(--accent); stroke-width: calc(2.6px * var(--zs, 1)); fill: var(--accent-soft); }
+.node.peek .box { stroke: var(--accent); stroke-width: calc(2.4px * var(--zs, 1)); }
+.node.group .box { fill: var(--surface); stroke: var(--line-2); }
+.node.group .stack { fill: var(--raised); stroke: var(--line-2); stroke-width: calc(1px * var(--zs, 1)); }
+.node.group .open { font: 500 11.5px var(--sans); fill: var(--accent); }
+.mk { stroke-width: 1.3; }
+.mk.used { fill: var(--used); stroke: var(--used); }
+.mk.off { fill: var(--surface); stroke: var(--off); }
+.mk-none { fill: none; stroke: var(--off); stroke-width: 1.2; stroke-dasharray: 2 1.6; }
+.g-setup { --h: 214; } .g-plane { --h: 250; } .g-grains { --h: 150; } .g-regularity { --h: 284; } .g-slope { --h: 32; }
+.g-projection { --h: 197; } .g-cinematic { --h: 186; } .g-radial { --h: 74; }
+.g-external { --h: 218; --sx: .35; } .g-api { --h: 210; --sx: .3; } .g-implementation { --h: 200; --sx: .45; }
+
+/* clusters */
+.cluster rect { fill: var(--frame); stroke: var(--frame-line); stroke-width: calc(1px * var(--zs, 1)); }
+.cluster.outer rect { fill: var(--frame-outer); stroke-dasharray: calc(6px * var(--zs, 1)) calc(4px * var(--zs, 1)); }
+.cluster text { font: 600 14px var(--sans); fill: var(--muted); letter-spacing: .02em; cursor: zoom-in; }
+.cluster.outer text { font-size: 17px; }
+.lod-low .cluster text { font-size: 22px; }
+
+/* edges: one class per comparison; colour is never the only cue */
+.edge .hit { fill: none; stroke: transparent; stroke-width: calc(12px * var(--zs, 1)); pointer-events: stroke; cursor: pointer; }
+.edge .line, .sw .ln { fill: none; stroke: var(--ec); stroke-width: calc(var(--ew) * var(--zs, 1) * 1px); pointer-events: none; transition: opacity .15s; }
+.d-agree { --ec: var(--e-agree); --ew: 1.45; }
+.d-lean-only { --ec: var(--e-lean); --ew: 2.7; }
+.d-detail { --ec: var(--e-detail); --ew: 1; }
+.d-expert-route { --ec: var(--e-route); --ew: 1.6; --da: 6; --db: 4; }
+.d-expert-unknown { --ec: var(--e-unknown); --ew: 1.4; --da: 1.3; --db: 3.6; }
+.d-expert-route .line, .d-expert-unknown .line { stroke-dasharray: calc(var(--da) * var(--zs, 1) * 1px) calc(var(--db) * var(--zs, 1) * 1px); }
+.d-expert-unknown .line { stroke-linecap: round; }
+.sw .ln.d-expert-route { stroke-dasharray: 5 3.5; } .sw .ln.d-expert-unknown { stroke-dasharray: 1.2 3; stroke-linecap: round; }
+.sw .ln { stroke-width: calc(var(--ew) * 1px); }
+.edge:hover .line, .edge.hl .line { stroke-width: calc((var(--ew) + 1) * var(--zs, 1) * 1px); }
+.edge.peek .line { stroke-width: calc((var(--ew) + 1.8) * var(--zs, 1) * 1px); }
+.focusing .edge:not(.hl):not(.peek) { opacity: .09; }
+.focusing .node:not(.hl):not(.sel):not(.focus):not(.peek) { opacity: .3; }
+.focusing .cluster { opacity: .6; }
+.hide-agree .edge.d-agree, .hide-lean-only .edge.d-lean-only, .hide-detail .edge.d-detail,
+.hide-expert-route .edge.d-expert-route, .hide-expert-unknown .edge.d-expert-unknown { display: none; }
+svg[data-spot="agree"] .edge:not(.d-agree), svg[data-spot="lean-only"] .edge:not(.d-lean-only), svg[data-spot="detail"] .edge:not(.d-detail),
+svg[data-spot="expert-route"] .edge:not(.d-expert-route), svg[data-spot="expert-unknown"] .edge:not(.d-expert-unknown) { opacity: .06; }
+marker path { stroke: none; }
+
+/* canvas overlays */
+.ov { position: absolute; z-index: 2; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); }
+.ov-top { top: 14px; left: 16px; right: 220px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; pointer-events: none; }
+.ov-top > * { pointer-events: auto; }
+.vt-block { max-width: 640px; padding: 9px 13px 10px; }
+.vt-block h1 { margin: 0; font: 600 19px/1.25 var(--serif); }
+.vt-block p { margin: 3px 0 0; font-size: 12.5px; color: var(--muted); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.frames { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding: 5px 6px; font-size: 12px; }
+.frames > span { color: var(--muted); padding: 0 6px 0 4px; font-weight: 500; }
+.seg { border: 1px solid transparent; background: none; border-radius: 6px; padding: 4px 9px; font-size: 12px; color: var(--ink-2); }
+.seg:hover { background: var(--raised); }
+.seg[aria-pressed="true"] { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 35%, transparent); color: var(--ink); font-weight: 600; }
+.ov-zoom { top: 14px; right: 16px; display: flex; align-items: center; gap: 2px; padding: 4px; }
+.zbtn { border: 0; background: none; min-width: 30px; height: 30px; border-radius: 6px; font-size: 16px; line-height: 1; color: var(--ink-2); padding: 0 8px; }
+.zbtn:hover { background: var(--raised); color: var(--ink); }
+.zbtn.txt { font-size: 12.5px; font-weight: 500; }
+#zoom-level { min-width: 44px; text-align: center; font: 12px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.zsep { width: 1px; height: 18px; background: var(--line); margin: 0 3px; }
+.ov-legend { left: 16px; bottom: 16px; width: 212px; padding: 9px 8px 7px; font-size: 12px; }
+.lg-head { display: flex; align-items: center; justify-content: space-between; padding: 0 4px 6px; }
+.lg-head b { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.lg-head button { border: 0; background: none; color: var(--muted); font-size: 12px; padding: 2px 4px; border-radius: 4px; }
+.lg-head button:hover { color: var(--ink); background: var(--raised); }
+.lg-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+.lg-item { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; align-items: center; gap: 8px; width: 100%; border: 0; background: none; text-align: left; padding: 3px 4px; border-radius: 6px; color: var(--ink); }
+.lg-item:hover { background: var(--raised); }
+.lg-item .cnt { font: 11.5px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.lg-item[aria-checked="false"] { color: var(--muted); }
+.lg-item[aria-checked="false"] .sw { opacity: .3; }
+.lg-item[aria-checked="false"] .lbl { text-decoration: line-through; text-decoration-color: var(--line-2); }
+.lg-nodes { margin-top: 7px; padding: 8px 4px 2px; border-top: 1px solid var(--line); color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 12px; line-height: 1.4; }
+.lg-nodes span { display: inline-flex; align-items: center; gap: 5px; }
+.ov-legend.min .lg-list, .ov-legend.min .lg-nodes { display: none; }
+.ov-legend.min { width: auto; padding-bottom: 4px; }
+.ov-legend.min .lg-head { padding-bottom: 2px; gap: 10px; }
+.ov-mini { right: 16px; bottom: 16px; border-radius: 8px; border: 1px solid var(--line); box-shadow: var(--shadow); background: var(--surface); cursor: crosshair; touch-action: none; }
+.ov-hint { right: 16px; bottom: 16px; margin: 0; font-size: 11.5px; color: var(--muted); background: color-mix(in srgb, var(--paper) 80%, transparent); padding: 3px 8px; border-radius: 6px; pointer-events: none; }
+.has-mini .ov-hint { display: none; }
+.insp-open { display: none; }
+.insp-off .insp-open { display: inline-flex; }
+.mobile-only { display: none !important; }
+
+/* ---------- inspector ---------- */
+.inspector { background: var(--surface); border-left: 1px solid var(--line); min-height: 0; display: flex; flex-direction: column; }
+.insp-body { overflow: auto; min-height: 0; flex: 1; padding: 10px 22px 40px; overflow-wrap: anywhere; }
+.insp-nav { position: sticky; top: -10px; z-index: 1; display: flex; align-items: center; gap: 2px; margin: -10px -22px 0; padding: 8px 14px; background: var(--surface); border-bottom: 1px solid transparent; }
+.insp-nav.stuck { border-bottom-color: var(--line); }
+.ibtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; background: none; height: 30px; min-width: 30px; border-radius: 6px; color: var(--muted); padding: 0 7px; font-size: 12.5px; }
+.ibtn:hover:not(:disabled) { background: var(--raised); color: var(--ink); }
+.ibtn:disabled { opacity: .35; cursor: default; }
+.ibtn svg { width: 16px; height: 16px; }
+.crumb { font: 11.5px var(--mono); color: var(--muted); margin: 0 6px; font-variant-numeric: tabular-nums; }
+.grow { flex: 1; }
+.eyebrow { margin: 14px 0 6px; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 500; line-height: 1.5; }
+.eyebrow .bdot { display: inline-block; vertical-align: -1px; margin-right: 7px; }
+.bdot { width: 9px; height: 9px; border-radius: 2px; background: hsl(var(--h) calc(var(--node-bs) * var(--sx, 1) * 1.6) var(--node-bl)); flex: none; }
+.ttl { margin: 0; font: 600 25px/1.18 var(--serif); letter-spacing: -.005em; outline: none; }
+.ttl.edge-ttl { font-size: 21px; line-height: 1.3; }
+.ttl .link { font: inherit; border: 0; background: none; padding: 0; color: inherit; text-align: left; text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 4px; }
+.ttl .link:hover { text-decoration-color: var(--accent); }
+.ttl .arr { color: var(--muted); font-weight: 400; margin: 0 .2em; }
+.subttl { margin: 6px 0 0; font-size: 15px; color: var(--ink-2); line-height: 1.45; }
+.source { margin: 10px 0 0; font-size: 12px; color: var(--muted); }
+.facts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px 3px 7px; border-radius: 999px; border: 1px solid var(--line); background: var(--raised); font-size: 12px; color: var(--ink-2); }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 2px 8px; font-size: 12px; color: var(--ink-2); }
+.chip:hover { border-color: var(--line-2); color: var(--ink); }
+.chip.mono { font: 11.5px var(--mono); }
+.chip.on { background: var(--accent-soft); border-color: transparent; color: var(--ink); }
+.sec { margin-top: 24px; }
+.sec-h { margin: 0 0 8px; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); display: flex; align-items: baseline; gap: 8px; }
+.sec-h .n { font: 500 11.5px var(--mono); letter-spacing: 0; }
+.sec-h .src { text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 12px; }
+.conn-dir + .conn-dir { margin-top: 14px; }
+.cg { margin: 4px 0 8px; }
+.cg-h { display: flex; align-items: center; gap: 8px; margin: 0 0 2px; font-size: 11.5px; color: var(--muted); }
+.cg ul { list-style: none; margin: 0; padding: 0; }
+.cg li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px; }
+.cg li.filtered { opacity: .5; }
+.rel { display: flex; align-items: baseline; gap: 8px; min-width: 0; border: 0; background: none; text-align: left; padding: 4px 6px; margin-left: -6px; border-radius: 6px; font-size: 13px; color: var(--ink); }
+.rel:hover { background: var(--accent-soft); }
+.rel-h { font-weight: 600; white-space: nowrap; }
+.rel-t { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.wit { border: 0; background: none; color: var(--accent); font-size: 12px; padding: 3px 6px; border-radius: 5px; }
+.wit:hover { background: var(--accent-soft); }
+.more-btn { border: 0; background: none; color: var(--accent); font-size: 12.5px; padding: 4px 0; }
+.empty { color: var(--muted); font-size: 13px; margin: 2px 0; }
+.appears { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 18px; font-size: 12px; color: var(--muted); }
+.appears > span { margin-right: 4px; }
+.prose { font: 16px/1.62 var(--serif); color: var(--ink); }
+.prose p { margin: 0 0 .7em; }
+.prose .displaymath { overflow-x: auto; overflow-y: hidden; margin: .4em 0 .8em; }
+.prose mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; }
+.textlink { display: inline-flex; gap: 4px; font-size: 13px; margin-top: 2px; }
+.remark { margin-top: 22px; background: var(--remark-soft); border-radius: 10px; padding: 12px 15px 13px; }
+.remark .sec-h { color: var(--remark); margin-bottom: 5px; }
+.remark p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--ink); }
+.remark .rlinks { margin-top: 8px; font-size: 12px; color: var(--muted); }
+details > summary { cursor: pointer; list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+.ver { border-top: 1px solid var(--line); }
+.ver:last-child { border-bottom: 1px solid var(--line); }
+.ver > summary { display: grid; grid-template-columns: 14px minmax(0, 1fr) 14px; gap: 10px; align-items: start; padding: 9px 2px; }
+.ver > summary:hover { background: var(--raised); }
+.ver > summary .mark { margin-top: 4px; }
+.vname code { font-size: 12.5px; font-weight: 500; color: var(--ink); }
+.vmeta { display: block; font-size: 12px; color: var(--muted); }
+.chev { width: 14px; height: 14px; margin-top: 3px; transition: transform .15s; color: var(--muted); }
+details[open] > summary .chev { transform: rotate(90deg); }
+.ver-body { padding: 0 2px 14px 24px; font-size: 13px; }
+.ver-body .note { color: var(--muted); font-size: 12.5px; margin: 0 0 8px; }
+.full { font: 11.5px/1.5 var(--mono); color: var(--muted); margin: 0 0 8px; }
+.full b { color: var(--ink); font-weight: 500; }
+pre.type { margin: 0 0 10px; padding: 11px 12px; background: var(--raised); border: 1px solid var(--line); border-radius: 8px; font-size: 11.5px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 300px; overflow: auto; color: var(--ink); }
+.links { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 6px; font-size: 12.5px; }
+.reach > summary, .expert > summary { font-size: 12.5px; color: var(--accent); padding: 4px 0; display: inline-flex; align-items: center; gap: 6px; }
+.expert { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 10px; }
+.expert .prose { font-size: 15px; margin-top: 8px; }
+.expert .note { font-size: 12px; color: var(--muted); }
+.chain { list-style: none; margin: 6px 0 4px; padding: 0 0 0 14px; border-left: 1px solid var(--line-2); font-size: 12px; }
+.chain li { position: relative; }
+.chain .decl { padding: 2px 0; }
+.chain .decl::before { content: ""; position: absolute; left: -18px; top: 9px; width: 7px; height: 7px; border-radius: 50%; background: var(--surface); border: 1px solid var(--line-2); }
+.chain .decl a { font-family: var(--mono); font-size: 11.5px; text-decoration: none; color: var(--ink); }
+.chain .decl a:hover .nm { text-decoration: underline; }
+.chain .ns { color: var(--muted); }
+.chain .nm { font-weight: 500; color: var(--accent); }
+.chain .ref span { display: inline-block; margin: 1px 0; font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--remark); background: var(--remark-soft); border-radius: 4px; padding: 0 5px; }
+.explain { font-size: 13.5px; color: var(--ink-2); margin: 10px 0 0; }
+.reason { font-size: 13.5px; margin: 0 0 6px; }
+.member { border-top: 1px solid var(--line); padding: 8px 0; }
+.member-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 6px; font-size: 13px; }
+.vlist { list-style: none; margin: 0; padding: 0; }
+.vlist li button { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 9px; align-items: baseline; width: 100%; border: 0; background: none; text-align: left; padding: 5px 6px; margin-left: -6px; border-radius: 6px; font-size: 13px; }
+.vlist li button:hover { background: var(--accent-soft); }
+.vlist .t { color: var(--muted); }
+.tip { margin-top: 18px; font-size: 13px; color: var(--muted); }
+.sheet-handle { display: none; }
+
+/* ---------- search palette ---------- */
+#palette { width: min(640px, calc(100vw - 32px)); max-height: min(560px, calc(100dvh - 120px)); margin: 10vh auto auto; padding: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); box-shadow: var(--shadow); overflow: hidden; }
+#palette[open] { display: flex; flex-direction: column; }
+#palette::backdrop { background: rgb(10 16 24 / .38); }
+.pal-in { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.pal-in svg { width: 18px; height: 18px; color: var(--muted); flex: none; }
+#pal-input { flex: 1; border: 0; outline: none; background: none; font-size: 16px; min-width: 0; }
+#pal-list { list-style: none; margin: 0; padding: 6px; overflow: auto; min-height: 0; }
+.opt { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 7px 10px; border-radius: 7px; cursor: pointer; }
+.opt[aria-selected="true"] { background: var(--accent-soft); }
+.opt .h { font-weight: 600; }
+.opt .t { color: var(--muted); }
+.opt .r { font: 11px var(--mono); color: var(--muted); white-space: nowrap; }
+.opt .lean { display: block; font: 11.5px var(--mono); color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pal-foot { margin: 0; padding: 8px 16px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+
+/* ---------- reading screens ---------- */
+.page { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 56px 96px; }
+.home { max-width: 1040px; margin: 0 auto; }
+.home .kicker { margin: 0 0 14px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.home h1 { margin: 0; font: 600 clamp(32px, 5vw, 52px)/1.08 var(--serif); letter-spacing: -.015em; max-width: 15em; }
+.home .lead { margin: 18px 0 0; max-width: 40em; font-size: 17px; line-height: 1.6; color: var(--ink-2); }
+.thm { margin-top: 40px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px 26px 18px; max-width: 760px; }
+.thm-h { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
+.thm-h b { color: var(--ink); font-weight: 600; margin-right: 6px; }
+.thm .prose { font-size: 17.5px; line-height: 1.65; }
+.thm-f { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; }
+.thm-f code { font-size: 11.5px; color: var(--ink-2); }
+.entries { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 40px; }
+.entry { display: flex; flex-direction: column; gap: 6px; text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 18px 20px; color: var(--ink); text-decoration: none; min-width: 0; }
+.entry:hover { border-color: var(--line-2); box-shadow: var(--shadow); }
+.entry h2 { margin: 0; font: 600 19px/1.25 var(--serif); }
+.entry p { margin: 0; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+.entry .go { margin-top: auto; padding-top: 8px; font-size: 13px; color: var(--accent); font-weight: 500; }
+.entry.primary { background: var(--accent-soft); border-color: transparent; }
+.facts-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; margin-top: 48px; }
+.facts-grid h2 { margin: 0 0 4px; font: 600 17px/1.3 var(--serif); }
+.facts-grid .sub { margin: 0 0 12px; font-size: 13px; color: var(--muted); }
+.tally { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.tally li { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 7px 2px; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.tally .num { font: 500 13px var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+.tally .mark { justify-self: center; }
+.home-foot { margin-top: 48px; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 13px; }
+
+.ms { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 56px; max-width: 1160px; margin: 0 auto; }
+.ms-toc { position: sticky; top: 0; align-self: start; font-size: 13px; }
+.ms-toc p { margin: 0 0 8px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.ms-toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+.ms-toc a { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 6px; padding: 5px 8px; border-radius: 6px; color: var(--ink-2); text-decoration: none; line-height: 1.35; }
+.ms-toc a:hover { background: var(--surface); color: var(--ink); }
+.ms-toc a[aria-current="page"] { background: var(--accent-soft); color: var(--ink); font-weight: 600; }
+.ms-toc .r { font: 12px/1.35 var(--mono); color: var(--muted); text-align: right; }
+.ms-text { max-width: 44rem; font: 17px/1.65 var(--serif); min-width: 0; }
+.ms-text h1 { font: 600 34px/1.15 var(--serif); margin: 0 0 28px; letter-spacing: -.01em; }
+.ms-text h2 { font: 600 23px/1.25 var(--serif); margin: 2.2em 0 .6em; }
+.ms-text p { margin: 0 0 .8em; }
+.ms-text .displaymath { overflow-x: auto; overflow-y: hidden; }
+.ms-text [class*="_thmwrapper"] { margin: 1.5em 0; }
+.ms-text .theorem-style-plain { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 20px 6px; }
+.ms-text .theorem-style-remark { font-size: 15.5px; color: var(--ink-2); padding: 0 0 0 20px; }
+.ms-text [class$="_thmheading"] { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 7px; margin-bottom: 8px; font: 600 14px/1.4 var(--sans); }
+.ms-text [class$="_thmcaption"] { letter-spacing: .02em; }
+.ms-text [class$="_thmlabel"] { color: var(--ink); }
+.ms-text [class$="_thmtitle"] { font: italic 400 16px/1.4 var(--serif); color: var(--ink-2); }
+.ms-text .thm_header_extras, .ms-text .thm_header_hidden_extras { display: none; }
+.badges { margin-left: auto; display: inline-flex; gap: 6px; align-items: center; }
+.badge { display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line); background: var(--raised); border-radius: 999px; padding: 1px 9px; font: 500 12px/1.6 var(--sans); color: var(--ink-2); }
+.badge:hover { border-color: var(--line-2); color: var(--ink); }
+.badge.ok { color: var(--used); }
+.badge.atlas { color: var(--accent); }
+.decls { margin: -2px 0 10px; padding: 8px 12px; border-radius: 8px; background: var(--raised); font: 12px/1.6 var(--mono); }
+.decls a { display: block; }
+.proof_wrapper { margin: -.6em 0 1.5em; }
+.proof_heading { display: inline-flex; align-items: center; gap: 6px; font: 500 13px var(--sans); color: var(--accent); cursor: pointer; padding: 3px 0; }
+.proof_heading .expand-proof { font-size: 9px; transition: transform .15s; display: inline-block; }
+.proof_wrapper.open .expand-proof { transform: rotate(90deg); }
+.proof_content { display: none; padding: 4px 0 0 20px; border-left: 1px solid var(--line-2); margin-top: 4px; font-size: 16px; }
+.proof_wrapper.open .proof_content { display: block; }
+
+.notes { max-width: 52rem; margin: 0 auto; font-size: 15px; line-height: 1.75; }
+.notes h1 { font: 600 32px/1.2 var(--serif); margin: 0 0 18px; }
+.notes h2 { font: 600 22px/1.3 var(--serif); margin: 2.2em 0 .6em; padding-top: .6em; border-top: 1px solid var(--line); }
+.notes h3 { font: 600 17px/1.35 var(--sans); margin: 1.6em 0 .4em; }
+.notes table { border-collapse: collapse; font-size: 13.5px; width: 100%; }
+.notes .tw { overflow-x: auto; margin: 1em 0; }
+.notes th, .notes td { border-bottom: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+.notes th { font-weight: 600; background: var(--raised); }
+.notes pre { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px; overflow-x: auto; font-size: 12px; line-height: 1.45; }
+.notes code { font-size: .88em; }
+.notes li { margin: .2em 0; }
+.shots { display: grid; grid-template-columns: 1.6fr 1.6fr 1fr; gap: 14px; margin: 1.2em 0 1.6em; align-items: start; }
+.shots figure { margin: 0; min-width: 0; }
+.shots img { display: block; width: 100%; border: 1px solid var(--line); border-radius: 8px; }
+.shots figcaption { margin-top: 6px; font-size: 12.5px; line-height: 1.5; color: var(--muted); }
+@media (max-width: 860px) { .shots { grid-template-columns: minmax(0, 1fr); } .shots figure:last-child img { max-width: 260px; } }
+.notes blockquote { margin: 0; padding-left: 14px; border-left: 2px solid var(--line-2); color: var(--muted); }
+
+/* ---------- narrow screens ---------- */
+@media (max-width: 1080px) { :root { --rail-w: 210px; } .search-btn { min-width: 0; } .search-btn .lbl, .search-btn kbd { display: none; } }
+@media (max-width: 860px) {
+  .desk-only { display: none !important; }
+  .mobile-only { display: revert !important; }
+  .bar { gap: 8px; }
+  .brand span { display: none; }
+  .tab { padding: 7px 8px; font-size: 13px; }
+  .tab.proposal { margin-left: 2px; }
+  .atlas, .atlas.insp-off { grid-template-columns: minmax(0, 1fr); }
+  .rail { display: none; }
+  .ov-top { left: 12px; right: 12px; top: 10px; }
+  .vt-block { padding: 7px 10px 8px; max-width: calc(100% - 132px); }
+  .vt-block h1 { font-size: 16px; }
+  .vt-block p { display: none; }
+  #view-select { appearance: none; -webkit-appearance: none; font: 600 15px/1.2 var(--serif); border: 0; background: none; padding: 0 18px 0 0; max-width: 100%; color: var(--ink);
+    background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position: right 6px top 55%, right 1px top 55%; background-size: 5px 5px; background-repeat: no-repeat; }
+  .vt-block h1.desk-title { display: none; }
+  .ov-zoom { top: 10px; right: 12px; }
+  .ov-zoom .zbtn.txt, .ov-zoom #zoom-level, .ov-zoom .zsep { display: none; }
+  .frames { max-width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+  .ov-legend { left: 12px; bottom: calc(var(--sheet-cover, 0px) + 12px); width: min(260px, calc(100% - 24px)); }
+  .ov-mini, .ov-hint { display: none !important; }
+  .inspector { position: fixed; z-index: 5; left: 0; right: 0; bottom: 0; border-left: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; box-shadow: var(--shadow);
+    height: var(--sheet-h, 168px); transition: height .25s cubic-bezier(.2, .75, .25, 1); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .inspector[data-sheet="peek"] { --sheet-h: 168px; }
+  .inspector[data-sheet="half"] { --sheet-h: 56%; }
+  .inspector[data-sheet="full"] { --sheet-h: calc(100% - 64px); }
+  .inspector[data-sheet="peek"] .insp-body { overflow: hidden; }
+  .sheet-handle { display: flex; justify-content: center; padding-top: 6px; }
+  .sheet-handle button { width: 64px; height: 18px; border: 0; background: none; display: flex; align-items: center; justify-content: center; }
+  .sheet-handle button::before { content: ""; width: 38px; height: 4px; border-radius: 2px; background: var(--line-2); }
+  .insp-body { padding: 0 16px 32px; }
+  .insp-nav { margin: 0 -16px; padding: 2px 8px 6px; top: 0; }
+  .insp-nav [data-insp="hide"] { display: none; }
+  .ttl { font-size: 22px; }
+  .eyebrow { margin-top: 8px; }
+  .entries, .facts-grid { grid-template-columns: minmax(0, 1fr); }
+  .facts-grid { gap: 28px; }
+  .ms { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .ms-toc { position: static; }
+  .ms-toc ol { display: flex; overflow-x: auto; gap: 4px; padding-bottom: 6px; }
+  .ms-toc li { flex: none; }
+  .ms-toc a { white-space: nowrap; }
+  .page { padding-block: 28px 72px; }
+  .ms-text .theorem-style-plain { padding: 12px 14px 4px; }
+}
+@media (max-width: 480px) { .tab.ext { display: none; } .search-btn { padding: 6px; } }
+@media (prefers-reduced-motion: reduce) { .node, #l-edges, #l-clusters, .inspector, .chev { transition: none !important; } }
+</style>
+
+<div id="app">
+  <header class="bar">
+    <a class="brand" href="#home" data-screen="home" aria-label="Sticky Kakeya home">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="18" x2="20" y2="6"/><line x1="5" y1="12" x2="19" y2="12" class="hot"/><line x1="8" y1="4" x2="16" y2="20"/></svg>
+      <span>Sticky Kakeya</span>
+    </a>
+    <nav class="tabs" aria-label="Site">
+      <a class="tab" href="#home" data-screen="home">Home</a>
+      <a class="tab" href="#atlas" data-screen="atlas">Atlas</a>
+      <a class="tab" href="#manuscript" data-screen="manuscript">Manuscript</a>
+      <a class="tab ext desk-only" href="https://yu-misaka.github.io/3d-sticky-kakeya/blueprint/atlas-audit.html" target="_blank" rel="noopener">Evidence</a>
+      <a class="tab ext desk-only" href="https://yu-misaka.github.io/3d-sticky-kakeya/lean/Documentation.html" target="_blank" rel="noopener">Lean docs</a>
+      <a class="tab ext desk-only" href="https://yu-misaka.github.io/3d-sticky-kakeya/blueprint.pdf" target="_blank" rel="noopener">PDF</a>
+      <a class="tab proposal" href="#notes" data-screen="notes">Proposal</a>
+    </nav>
+    <span class="grow"></span>
+    <button class="search-btn" data-open-palette aria-label="Search nodes">
+      <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6"/><path d="m10.5 10.5 3.5 3.5"/></svg>
+      <span class="lbl">Search nodes and Lean names</span><kbd>⌘K</kbd>
+    </button>
+  </header>
+
+  <section id="screen-home" class="screen reading" hidden>
+    <div class="page"><div class="home">
+      <p class="kicker">A Lean formalization · Wang–Zahl, Theorem 5.2</p>
+      <h1>The Sticky Kakeya Theorem in Three Dimensions</h1>
+      <p class="lead">A blueprint for Wang and Zahl’s finite-scale sticky Kakeya estimate. An expert’s roadmap of the proof is compared, arrow by arrow, with the dependencies of the compiled Lean proof.</p>
+      <article class="thm" aria-labelledby="thm-name">
+        <p class="thm-h" id="thm-name"><b>Theorem 3.1</b>Sticky Kakeya estimate; WZ2, Theorem 5.2</p>
+        <div class="prose" id="home-statement"></div>
+        <p class="thm-f"><span>Lean: <code id="home-root"></code></span><a href="#node-W2T5_2" data-go-node="W2T5_2">Open in the atlas</a></p>
+      </article>
+      <div class="entries">
+        <a class="entry primary" href="#atlas" data-screen="atlas"><h2>Proof atlas</h2><p id="entry-atlas"></p><span class="go">Explore the roadmap →</span></a>
+        <a class="entry" href="#manuscript" data-screen="manuscript"><h2>Manuscript</h2><p>Reviewed statements and proof outlines. Each result shows its Lean declarations and its place in the atlas.</p><span class="go">Read the manuscript →</span></a>
+        <a class="entry" href="https://yu-misaka.github.io/3d-sticky-kakeya/lean/Documentation.html" target="_blank" rel="noopener"><h2>Lean documentation</h2><p>doc-gen4 pages for every linked declaration, with types, docstrings and source.</p><span class="go">Browse the documentation ↗</span></a>
+      </div>
+      <div class="facts-grid">
+        <section><h2>Roadmap nodes in Lean</h2><p class="sub" id="tally-nodes-sub"></p><ul class="tally" id="tally-nodes"></ul></section>
+        <section><h2>Arrows of the whole proof</h2><p class="sub" id="tally-edges-sub"></p><ul class="tally" id="tally-edges"></ul></section>
+      </div>
+      <p class="home-foot"><a href="https://yu-misaka.github.io/3d-sticky-kakeya/blueprint.pdf" target="_blank" rel="noopener">Download the PDF ↗</a><a href="https://yu-misaka.github.io/3d-sticky-kakeya/blueprint/atlas-audit.html" target="_blank" rel="noopener">Inspect dependency witnesses ↗</a><a href="https://github.com/Yu-Misaka/3d-sticky-kakeya" target="_blank" rel="noopener">Repository ↗</a></p>
+    </div></div>
+  </section>
+
+  <section id="screen-atlas" class="screen atlas" hidden>
+    <nav class="rail" aria-label="Atlas views">
+      <p class="rail-label">Branches of the roadmap</p>
+      <ol class="views" id="view-list"></ol>
+      <p class="rail-label">Complete graph</p>
+      <button class="vbtn whole" data-view="all" id="whole-btn"><span class="num"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/><path d="M7 4.5h4.5V9M9 11.5H4.5V7"/></svg></span><span>Whole proof</span><span class="cnt" id="whole-count"></span></button>
+      <p class="rail-note">Arrows point from a prerequisite up to the result that uses it. Branch colours group the roadmap; they do not indicate completion.</p>
+    </nav>
+    <div class="canvas" id="canvas-wrap">
+      <svg id="canvas" aria-label="Dependency graph" role="application">
+        <defs id="markers"></defs>
+        <g id="world"><g id="l-clusters"></g><g id="l-edges"></g><g id="l-nodes"></g></g>
+      </svg>
+      <div class="ov ov-top">
+        <div class="vt-block panel">
+          <select id="view-select" class="mobile-only" aria-label="Atlas view"></select>
+          <h1 id="view-title" class="desk-title"></h1>
+          <p id="view-desc"></p>
+        </div>
+        <div class="frames panel" id="frames" hidden></div>
+      </div>
+      <div class="ov ov-zoom panel" role="group" aria-label="Zoom">
+        <button class="zbtn" data-zoom="out" aria-label="Zoom out">−</button>
+        <output id="zoom-level">100%</output>
+        <button class="zbtn" data-zoom="in" aria-label="Zoom in">+</button>
+        <span class="zsep"></span>
+        <button class="zbtn txt" data-zoom="fit">Fit</button>
+        <button class="zbtn txt insp-open" data-insp="show">Details</button>
+      </div>
+      <div class="ov ov-legend panel" id="legend">
+        <div class="lg-head"><b>Lean vs roadmap</b><button id="lg-min" aria-expanded="true">Hide</button></div>
+        <ul class="lg-list" id="lg-list"></ul>
+        <div class="lg-nodes" id="lg-nodes"></div>
+      </div>
+      <canvas id="minimap" class="ov ov-mini" hidden aria-label="Overview map"></canvas>
+      <p class="ov ov-hint">Drag to pan · ⌘/Ctrl + scroll to zoom · / to search</p>
+    </div>
+    <aside class="inspector" id="inspector" data-sheet="peek" aria-label="Details">
+      <div class="sheet-handle"><button id="sheet-toggle" aria-label="Resize the details sheet"></button></div>
+      <div class="insp-body" id="insp-body"></div>
+    </aside>
+  </section>
+
+  <section id="screen-manuscript" class="screen reading" hidden>
+    <div class="page"><div class="ms">
+      <nav class="ms-toc" aria-label="Chapters"><p>Chapters</p><ol id="ms-toc"></ol></nav>
+      <article class="ms-text" id="ms-text"></article>
+    </div></div>
+  </section>
+
+  <section id="screen-notes" class="screen reading" hidden>
+    <div class="page"><article class="notes" id="notes">{{NOTES}}</article></div>
+  </section>
+</div>
+
+<dialog id="palette" aria-label="Search nodes">
+  <div class="pal-in"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6"/><path d="m10.5 10.5 3.5 3.5"/></svg>
+    <input id="pal-input" type="search" placeholder="Paper number, ID, title or Lean name. For example: 6.3, Frostman" autocomplete="off" spellcheck="false" role="combobox" aria-controls="pal-list" aria-expanded="true"></div>
+  <ol id="pal-list" role="listbox" aria-label="Matching nodes"></ol>
+  <p class="pal-foot">↑ ↓ to choose · Enter to open in the atlas · Esc to close</p>
+</dialog>
+
+<script type="application/json" id="atlas-data">{{ATLAS}}</script>
+<script type="application/json" id="layout-data">{{LAYOUTS}}</script>
+<script type="application/json" id="chapter-data">{{CHAPTER}}</script>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[', '\\]'], ['$$', '$$']],
+    macros: { R: '\\mathbb{R}', N: '\\mathbb{N}', Z: '\\mathbb{Z}', T: '\\mathbb{T}', eps: '\\varepsilon',
+      cP: '\\mathcal{P}', cQ: '\\mathcal{Q}', cL: '\\mathcal{L}', cF: '\\mathcal{F}', cH: '\\mathcal{H}', cE: '\\mathcal{E}', cD: '\\mathcal{D}',
+      vol: '\\operatorname{vol}', dist: '\\operatorname{dist}', diam: '\\operatorname{diam}', supp: '\\operatorname{supp}',
+      dir: '\\operatorname{dir}', Lip: '\\operatorname{Lip}', graph: '\\operatorname{graph}', CWA: '\\mathrm{CWA}',
+      AD: '\\mathrm{AD}', KT: '\\mathrm{KT}', one: '\\mathbf{1}', mass: '\\mathsf{M}', energy: '\\mathsf{I}',
+      Ncov: ['\\mathcal{E}_{#1}(#2)', 2] } },
+  svg: { fontCache: 'global' },
+  startup: { typeset: false, ready() { MathJax.startup.defaultReady(); MathJax.startup.promise.then(() => window.__mathReady && window.__mathReady()); } }
+};
+</script>
+<script>
+'use strict';
+(() => {
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const LIVE = 'https://yu-misaka.github.io/3d-sticky-kakeya/';
+const REPO = 'https://github.com/Yu-Misaka/3d-sticky-kakeya';
+const D = JSON.parse($('#atlas-data').textContent);
+const LAYOUTS = JSON.parse($('#layout-data').textContent);
+const CH = JSON.parse($('#chapter-data').textContent);
+const nodes = new Map(D.nodes.map(n => [n.id, n]));
+const groups = new Map(D.groups.map(g => [g.id, g]));
+const edgeIndex = new Map(D.edges.map(e => [`${e.from}>${e.to}>${e.kind}`, e]));
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const narrow = () => matchMedia('(max-width: 860px)').matches;
+const FRAME_SHORT = { multilinear: 'Multilinear', cinematic: 'Cinematic', radial: 'Radial', incidence: 'Furstenberg', projection: 'Projections', extension: 'Scalar extension' };
+const VIEW_SHORT = { overview: 'Core proof DAG', scales: 'Wolff infrastructure', plane: 'Plane map', grains: 'Grains', regularity: 'C2 regularity',
+  slope: 'Nonsingular slope', projection: 'Twisted projection', cinematic: 'Cinematic', bootstrap: 'Radial bootstrap', reductions: 'Strip reduction', external: 'External', all: 'Whole proof' };
+const DIFFS = ['agree', 'lean-only', 'detail', 'expert-route', 'expert-unknown'];
+const DIFF = {
+  'agree': { name: 'Agree', title: 'Lean and roadmap agree', text: 'Lean has a path, and the roadmap connects the two nodes, directly or through other roadmap nodes.' },
+  'lean-only': { name: 'Lean only', title: 'Lean only', text: 'Lean has a path between two roadmap nodes that the roadmap does not connect. These are the first arrows to review.' },
+  'detail': { name: 'Lean detail', title: 'Lean detail', text: 'Lean has a path, and one end is a Lean version that the roadmap does not show.' },
+  'expert-route': { name: 'Different route', title: 'Roadmap only · different Lean route', text: 'Both Lean versions are used, but the proof connects them another way.' },
+  'expert-unknown': { name: 'Not comparable', title: 'Roadmap only · not comparable', text: 'A node has no Lean match, a version lies outside the root, or two cards share one declaration.' },
+};
+const ROLE = { proof: 'Lean proof', interface: 'Proposition interface', definition: 'Definition / data', constructor: 'Constructor', axiom: 'Axiom' };
+const ROLE_NOTE = {
+  interface: 'This declaration defines a proposition. Referencing it does not construct a proof of it.',
+  constructor: 'This constructor requires its fields as arguments; its existence does not supply those arguments.',
+  proof: 'The proof establishes its own Lean type, including every hypothesis shown there. The correspondence Remark records differences from the expert statement.',
+};
+const ICON = {
+  back: '<svg class="icon" viewBox="0 0 16 16"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>',
+  fwd: '<svg class="icon" viewBox="0 0 16 16"><path d="M6 3.5 10.5 8 6 12.5"/></svg>',
+  link: '<svg class="icon" viewBox="0 0 16 16"><path d="M6.8 9.2a3 3 0 0 0 4.2 0l2-2a3 3 0 0 0-4.2-4.2l-.8.8M9.2 6.8a3 3 0 0 0-4.2 0l-2 2a3 3 0 0 0 4.2 4.2l.8-.8"/></svg>',
+  hide: '<svg class="icon" viewBox="0 0 16 16"><path d="M3 3.5h10M3 8h6M3 12.5h10M11 6l2 2-2 2"/></svg>',
+  chev: '<svg class="icon chev" viewBox="0 0 16 16"><path d="M6 3.5 10.5 8 6 12.5"/></svg>',
+};
+
+/* ---------- small renderers ---------- */
+function statusParts(s) { if (!s || s === 'unmatched') return { role: null, used: false }; const i = s.indexOf('-'); return { used: s.slice(0, i) === 'used', role: s.slice(i + 1) }; }
+function markShape(status, x, y, r = 4.2) {
+  const { role, used } = statusParts(status);
+  if (!role) return '';
+  const c = used ? 'mk used' : 'mk off';
+  if (role === 'proof') return `<circle class="${c}" cx="${x}" cy="${y}" r="${r}"/>`;
+  if (role === 'interface') { const q = r + .9; return `<path class="${c}" d="M${x} ${y - q}L${x + q} ${y}L${x} ${y + q}L${x - q} ${y}Z"/>`; }
+  if (role === 'definition') { const q = r - .5; return `<rect class="${c}" x="${x - q}" y="${y - q}" width="${2 * q}" height="${2 * q}"/>`; }
+  const q = r + .6; return `<path class="${c}" d="M${x} ${y - q}L${x + q} ${y + q * .8}L${x - q} ${y + q * .8}Z"/>`;
+}
+function markIcon(status) {
+  if (status === 'group') return '<svg class="mark" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect class="mk off" x="4" y="1.5" width="8.5" height="8" rx="1.5"/><rect class="mk off" x="1.5" y="4.5" width="8.5" height="8" rx="1.5"/></svg>';
+  const inner = status === 'unmatched' ? '<rect class="mk-none" x="1.5" y="1.5" width="11" height="11" rx="2.5"/>' : markShape(status, 7, 7, 4.1);
+  return `<svg class="mark" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">${inner}</svg>`;
+}
+const swatch = diff => `<svg class="sw" width="28" height="8" viewBox="0 0 28 8" aria-hidden="true"><line class="ln d-${diff}" x1="1" y1="4" x2="27" y2="4"/></svg>`;
+const statusLabel = s => D.status[s] || s;
+const verStatus = v => (v.reached ? 'used-' : 'unused-') + v.role;
+const docUrl = name => LIVE + 'lean/find/#doc/' + encodeURIComponent(name).replace(/%2E/g, '.');
+function sourceUrl(v) {
+  if (v.module.startsWith('Mathlib.')) return 'https://github.com/leanprover-community/mathlib4/blob/master/' + v.module.replace(/\./g, '/') + '.lean' + (v.line ? '#L' + v.line : '');
+  return `${REPO}/blob/${D.revision}/${v.module.replace(/\./g, '/')}.lean${v.line ? '#L' + v.line : ''}`;
+}
+function splitName(name) { const i = name.lastIndexOf('.'); return i < 0 ? ['', name] : [name.slice(0, i + 1), name.slice(i + 1)]; }
+function nameOf(key) { if (key.startsWith('group-')) return groups.get(key.slice(6))?.title.split(' · ')[0] || key; const n = nodes.get(key); return n ? n.full_heading || n.heading.join(' ') : key; }
+function subOf(key) { if (key.startsWith('group-')) return 'Folded External frame'; const n = nodes.get(key); return n ? (n.expert ? n.title : n.summary.join(' ') || splitName(n.primary)[1]) : ''; }
+function membersOf(g) { return D.nodes.filter(n => n.external === g); }
+
+/* ---------- state ---------- */
+const state = { screen: null, layoutId: null, L: null, wholeVariant: 'all', selected: null, hover: null, peek: null,
+  hidden: new Set(), history: [], hpos: -1, nodeEls: new Map(), edgeEls: [] };
+const hiddenDefaults = id => id.startsWith('all') ? new Set(['expert-unknown']) : new Set();
+
+/* ---------- canvas ---------- */
+const wrap = $('#canvas-wrap'), svg = $('#canvas'), world = $('#world');
+const L_CL = $('#l-clusters'), L_ED = $('#l-edges'), L_ND = $('#l-nodes');
+let cam = { x: 0, y: 0, k: 1 }, camAnim = 0;
+$('#markers').innerHTML = DIFFS.map(d => `<marker id="ah-${d}" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="${d === 'lean-only' ? 3.4 : 4.6}" markerHeight="${d === 'lean-only' ? 3.4 : 4.6}" orient="auto"><path d="M0 1.2 10 5 0 8.8 2.2 5Z" style="fill: var(--e-${{ 'agree': 'agree', 'lean-only': 'lean', 'detail': 'detail', 'expert-route': 'route', 'expert-unknown': 'unknown' }[d]})"/></marker>`).join('');
+
+function applyCam() {
+  world.setAttribute('transform', `translate(${cam.x.toFixed(2)} ${cam.y.toFixed(2)}) scale(${cam.k.toFixed(5)})`);
+  svg.style.setProperty('--zs', Math.min(4, Math.max(1, .85 / cam.k)).toFixed(3));
+  svg.classList.toggle('lod-low', cam.k < .72);
+  svg.classList.toggle('lod-tiny', cam.k < .3);
+  $('#zoom-level').textContent = Math.round(cam.k * 100) + '%';
+  let g = 24 * cam.k; while (g < 14) g *= 2; while (g > 40) g /= 2;
+  wrap.style.backgroundSize = `${g}px ${g}px`;
+  wrap.style.backgroundPosition = `${cam.x.toFixed(1)}px ${cam.y.toFixed(1)}px`;
+  drawMini();
+}
+const clampK = k => Math.max(.04, Math.min(2.5, k));
+function viewport() {
+  const w = wrap.clientWidth; let h = wrap.clientHeight;
+  if (narrow()) h -= sheetCover();
+  return { w, h: Math.max(140, h) };
+}
+function sheetCover() {
+  // The bottom sheet's resting height, known before its transition ends.
+  if (!narrow()) return 0;
+  const s = $('#inspector').dataset.sheet;
+  return s === 'full' ? innerHeight - 64 : s === 'half' ? innerHeight * .56 : 168;
+}
+function animateTo(t, ms = 380) {
+  cancelAnimationFrame(camAnim);
+  if (reduceMotion || ms <= 0) { cam = { ...t }; applyCam(); return; }
+  const s = { ...cam }, t0 = performance.now();
+  const step = now => {
+    const p = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - p, 3);
+    cam = { x: s.x + (t.x - s.x) * e, y: s.y + (t.y - s.y) * e, k: s.k * Math.pow(t.k / s.k, e) };
+    applyCam(); if (p < 1) camAnim = requestAnimationFrame(step);
+  };
+  camAnim = requestAnimationFrame(step);
+}
+function overlayTop() { const o = $('.ov-top').getBoundingClientRect(), w = wrap.getBoundingClientRect(); return Math.max(56, o.bottom - w.top + 14); }
+function camFor(b, { maxK = 1, pad = 56, k = null } = {}) {
+  const v = viewport();
+  const top = overlayTop(); // keep clear of the title overlay
+  const kk = k ?? Math.max(.04, Math.min(maxK, (v.w - 2 * pad) / b.w, (v.h - top - pad) / b.h));
+  return { k: kk, x: (v.w - b.w * kk) / 2 - b.x * kk, y: top + (v.h - top - b.h * kk) / 2 - b.y * kk };
+}
+function initialCam() {
+  const L = state.L, v = viewport(), top = overlayTop();
+  if (L.id.startsWith('all')) { fitAll(0); return; }
+  const inner = L.clusters.filter(c => c.id !== 'external');
+  if (inner.length > 1) { zoomToCluster(inner[0].id, 0); return; }
+  const fit = camFor({ x: 0, y: 0, w: L.w, h: L.h }, { maxK: 1 });
+  if (fit.k >= .74) { animateTo(fit, 0); return; }
+  const k = .78; animateTo({ k, x: (v.w - L.w * k) / 2, y: top }, 0);
+}
+function fitAll(ms = 380) { const L = state.L; animateTo(camFor({ x: 0, y: 0, w: L.w, h: L.h }, { maxK: 1 }), ms); }
+function boxOf(key, L = state.L) { const b = L.nodes[key]; return b && { x: b[0], y: b[1], w: b[2], h: b[3] }; }
+function centreOn(key, { k = null, ms = 380, ifHidden = false } = {}) {
+  const b = boxOf(key); if (!b) return;
+  if (ifHidden) {
+    const v = viewport(), sx = b.x * cam.k + cam.x, sy = b.y * cam.k + cam.y;
+    if (sx > 24 && sy > 80 && sx + b.w * cam.k < v.w - 24 && sy + b.h * cam.k < v.h - 24 && cam.k > .42) return;
+  }
+  const kk = clampK(k ?? Math.max(cam.k, .78));
+  const v = viewport(), top = overlayTop() - 20;
+  animateTo({ k: kk, x: v.w / 2 - (b.x + b.w / 2) * kk, y: top + (v.h - top) / 2 - (b.y + b.h / 2) * kk }, ms);
+}
+function zoomAt(k, px, py) { k = clampK(k); const wx = (px - cam.x) / cam.k, wy = (py - cam.y) / cam.k; cam = { k, x: px - wx * k, y: py - wy * k }; applyCam(); }
+function zoomBy(f) { const v = viewport(); cancelAnimationFrame(camAnim); const k = clampK(cam.k * f), px = v.w / 2, py = v.h / 2, wx = (px - cam.x) / cam.k, wy = (py - cam.y) / cam.k; animateTo({ k, x: px - wx * k, y: py - wy * k }, 200); }
+
+function nodeSVG(key, [x, y, w, h]) {
+  if (key.startsWith('group-')) {
+    const g = groups.get(key.slice(6)), n = membersOf(key.slice(6)).length, title = g.title.split(' · ')[0];
+    return `<g class="node group g-external" data-node="${key}" tabindex="0" role="button" aria-label="Open the folded frame ${esc(title)}" style="transform: translate(${x}px, ${y}px)"><title>${esc(g.title)}: folded External frame with ${n} Lean nodes. Click to open it.</title>
+      <rect class="stack" x="7" y="-6" width="${w - 7}" height="${h}" rx="8"/><rect class="box" x="0" y="0" width="${w - 7}" height="${h}" rx="8"/>
+      <text class="hd" x="12" y="26">${esc(title)}</text><text class="sm" x="12" y="44">${n} Lean nodes</text><text class="open" x="${w - 19}" y="${h - 12}" text-anchor="end">Open ↗</text></g>`;
+  }
+  const n = nodes.get(key);
+  let t = `<g class="hg" style="--dy: ${((h - 17 * n.heading.length) / 2 - 8).toFixed(1)}px">`;
+  n.heading.forEach((line, i) => { t += `<text class="hd" x="10" y="${21.5 + i * 17}">${esc(line)}</text>`; });
+  t += '</g>';
+  const sy = 8 + 17 * n.heading.length;
+  n.summary.forEach((line, i) => { t += `<text class="sm" x="10" y="${sy + 12.5 + i * 15.5}">${esc(line)}</text>`; });
+  const tip = `${n.id} · ${n.paper}: ${n.title}. ${statusLabel(n.status)}.`;
+  return `<g class="node g-${n.group}${n.status === 'unmatched' ? ' unmatched' : ''}" data-node="${key}" tabindex="0" role="button" aria-label="${esc(n.heading.join(' ') + ': ' + n.title)}" style="transform: translate(${x}px, ${y}px)"><title>${esc(tip)}</title><rect class="box" width="${w}" height="${h}" rx="6"/>${t}${markShape(n.status, w - 11, 11)}</g>`;
+}
+function edgeSVG(e, i) {
+  const many = e.members && e.members.length > 1;
+  const tip = `${DIFF[e.diff].title}: ${nameOf(e.from)} → ${nameOf(e.to)}${many ? ` (${e.members.length} folded connections)` : ''}`;
+  return `<g class="edge d-${e.diff}" data-i="${i}"><title>${esc(tip)}</title><path class="hit" d="${e.d}"/><path class="line" d="${e.d}" marker-end="url(#ah-${e.diff})"/></g>`;
+}
+function clusterSVG(c) {
+  const outer = c.id === 'external';
+  const title = outer ? 'External inputs · opened in Lean' : (groups.get(c.id)?.title || c.id);
+  return `<g class="cluster${outer ? ' outer' : ''}" data-cluster="${c.id}"><rect x="${c.x}" y="${c.y}" width="${c.w}" height="${c.h}" rx="${outer ? 18 : 12}"/><text x="${c.x + 16}" y="${c.y + (outer ? 26 : 22)}">${esc(title)}</text></g>`;
+}
+
+function draw(id, transition = null) {
+  const prevL = state.L, prevCam = { ...cam };
+  const L = LAYOUTS[id];
+  const viewChanged = !prevL || (id.startsWith('all') !== state.layoutId.startsWith('all')) || (!id.startsWith('all') && id !== state.layoutId);
+  state.L = L; state.layoutId = id; state.hover = null; state.peek = null;
+  if (id.startsWith('all')) state.wholeVariant = id;
+  if (viewChanged) state.hidden = hiddenDefaults(id);
+  L_CL.innerHTML = L.clusters.map(clusterSVG).join('');
+  L_ED.innerHTML = L.edges.map(edgeSVG).join('');
+  L_ND.innerHTML = Object.entries(L.nodes).map(([k, b]) => nodeSVG(k, b)).join('');
+  state.nodeEls = new Map($$('.node', L_ND).map(el => [el.dataset.node, el]));
+  state.edgeEls = $$('.edge', L_ED);
+  if (transition && prevL && !reduceMotion) runTransition(prevL, L, transition, prevCam);
+  for (const d of DIFFS) svg.classList.toggle('hide-' + d, state.hidden.has(d));
+  updateChrome();
+  setupMini();
+  paint();
+}
+
+function runTransition(prevL, L, { mode, group }, prevCam) {
+  const ctr = b => b && { x: b[0] + b[2] / 2, y: b[1] + b[3] / 2 };
+  const cctr = c => c && { x: c.x + c.w / 2, y: c.y + c.h / 2 };
+  const oldA = mode === 'open' ? ctr(prevL.nodes['group-' + group]) : cctr(prevL.clusters.find(c => c.id === group));
+  const newA = mode === 'open' ? cctr(L.clusters.find(c => c.id === group)) : ctr(L.nodes['group-' + group]);
+  if (oldA && newA) { cam = { k: prevCam.k, x: prevCam.x + (oldA.x - newA.x) * prevCam.k, y: prevCam.y + (oldA.y - newA.y) * prevCam.k }; applyCam(); }
+  const dx = (prevCam.x - cam.x) / cam.k, dy = (prevCam.y - cam.y) / cam.k;
+  const members = new Set(membersOf(group).map(n => n.id));
+  let centroid = null;
+  if (mode === 'fold') {
+    const pts = [...members].map(k => prevL.nodes[k]).filter(Boolean);
+    if (pts.length) centroid = [pts.reduce((s, b) => s + b[0] + b[2] / 2, 0) / pts.length, pts.reduce((s, b) => s + b[1] + b[3] / 2, 0) / pts.length];
+  }
+  world.classList.add('no-anim');
+  L_ED.style.opacity = 0; L_CL.style.opacity = 0;
+  for (const [k, el] of state.nodeEls) {
+    const b = L.nodes[k]; let from = prevL.nodes[k];
+    if (!from && mode === 'open' && members.has(k)) { const g = prevL.nodes['group-' + group]; from = [g[0] + g[2] / 2 - b[2] / 2, g[1] + g[3] / 2 - b[3] / 2]; el.style.opacity = .2; }
+    if (!from && mode === 'fold' && k === 'group-' + group && centroid) from = [centroid[0] - b[2] / 2, centroid[1] - b[3] / 2];
+    if (from) el.style.transform = `translate(${from[0] + dx}px, ${from[1] + dy}px)`; else el.style.opacity = 0;
+  }
+  world.getBoundingClientRect();
+  requestAnimationFrame(() => {
+    world.classList.remove('no-anim');
+    for (const [k, el] of state.nodeEls) { const b = L.nodes[k]; el.style.transform = `translate(${b[0]}px, ${b[1]}px)`; el.style.opacity = ''; }
+    setTimeout(() => { L_ED.style.opacity = ''; L_CL.style.opacity = ''; }, 430);
+  });
+}
+
+function owner(id, L = state.L) {
+  if (!L || !id) return null;
+  if (L.nodes[id]) return id;
+  const ext = nodes.get(id)?.external;
+  return ext && L.nodes['group-' + ext] ? 'group-' + ext : null;
+}
+const sameEdge = (e, s) => e.from === s.from && e.to === s.to && e.kind === s.kind;
+function paint() {
+  const L = state.L, sel = state.selected;
+  const selNode = sel?.type === 'node' ? owner(sel.id) : sel?.type === 'group' ? owner('group-' + sel.id) : null;
+  const focus = state.hover || selNode;
+  const selEdge = sel?.type === 'edge' ? sel : null;
+  const hl = new Set();
+  state.edgeEls.forEach((el, i) => {
+    const e = L.edges[i];
+    let on = false;
+    if (focus) on = !state.hidden.has(e.diff) && (e.from === focus || e.to === focus);
+    else if (selEdge) on = sameEdge(e, selEdge);
+    el.classList.toggle('hl', on);
+    el.classList.toggle('peek', state.peek?.edge === i);
+    if (on) { hl.add(e.from); hl.add(e.to); }
+  });
+  for (const [k, el] of state.nodeEls) {
+    el.classList.toggle('sel', k === selNode);
+    el.classList.toggle('focus', k === focus);
+    el.classList.toggle('hl', hl.has(k) && k !== focus);
+    el.classList.toggle('peek', state.peek?.node === k);
+  }
+  svg.classList.toggle('focusing', Boolean(focus || selEdge));
+  drawMini();
+}
+
+/* view chrome: rail, title, frames, legend */
+const BRANCHES = D.views;
+$('#view-list').innerHTML = BRANCHES.map((v, i) => `<li><button class="vbtn" data-view="${v.id}"><span class="num">${i + 1}</span><span>${esc(v.title)}</span><span class="cnt">${v.count}</span></button></li>`).join('');
+$('#whole-count').textContent = D.nodes.length;
+$('#view-select').innerHTML = BRANCHES.map((v, i) => `<option value="${v.id}">${i + 1}. ${esc(v.title)}</option>`).join('') + '<option value="all">Whole proof</option>';
+function viewIdOf(layoutId) { return layoutId.startsWith('all') ? 'all' : layoutId; }
+function viewMeta(layoutId) {
+  if (layoutId.startsWith('all')) return { title: 'Whole proof', description: `Every expert node and every reached, linked Lean version (${D.nodes.length} nodes). External frames fold into single nodes; open one to see its members.` };
+  return BRANCHES.find(v => v.id === layoutId);
+}
+function updateChrome() {
+  const id = state.layoutId, v = viewIdOf(id), meta = viewMeta(id);
+  $$('.vbtn').forEach(b => b.setAttribute('aria-current', String(b.dataset.view === v)));
+  $('#view-select').value = v;
+  $('#view-title').textContent = meta.title;
+  $('#view-desc').textContent = meta.description;
+  const frames = $('#frames');
+  if (id.startsWith('all')) {
+    const opts = [['all', 'All folded'], ...['cinematic', 'incidence', 'multilinear', 'projection'].filter(g => LAYOUTS['all-' + g]).map(g => ['all-' + g, FRAME_SHORT[g]]), ['all-full', 'All open']];
+    frames.innerHTML = '<span>Frames</span>' + opts.map(([k, t]) => `<button class="seg" data-variant="${k}" aria-pressed="${k === id}">${t}</button>`).join('');
+    frames.hidden = false;
+  } else if (state.L.clusters.length > 1) {
+    frames.innerHTML = '<span>Go to frame</span>' + state.L.clusters.filter(c => c.id !== 'external').map(c => `<button class="seg" data-frame="${c.id}">${FRAME_SHORT[c.id] || c.id}</button>`).join('');
+    frames.hidden = false;
+  } else frames.hidden = true;
+  const counts = Object.fromEntries(DIFFS.map(d => [d, 0]));
+  for (const e of state.L.edges) counts[e.diff]++;
+  $('#lg-list').innerHTML = DIFFS.map(d => `<li><button class="lg-item" role="switch" aria-checked="${!state.hidden.has(d)}" data-diff="${d}" title="${esc(DIFF[d].text)}">${swatch(d)}<span class="lbl">${DIFF[d].name}</span><span class="cnt">${counts[d]}</span></button></li>`).join('');
+  $('#lg-nodes').innerHTML = `<span>${markIcon('used-proof')}proof</span><span>${markIcon('used-interface')}interface</span><span>${markIcon('used-definition')}data</span><span>${markIcon('unused-proof')}not used</span><span>${markIcon('unmatched')}no Lean</span>`;
+}
+
+/* minimap */
+const mini = $('#minimap'); let miniOn = false, miniScale = 1, miniOff = [0, 0], miniQueued = false;
+const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+function setupMini() {
+  const L = state.L; miniOn = Object.keys(L.nodes).length > 40 && !narrow();
+  mini.hidden = !miniOn; wrap.classList.toggle('has-mini', miniOn);
+  if (!miniOn) return;
+  const W = 210, H = Math.round(Math.min(150, Math.max(70, W * L.h / L.w))), dpr = window.devicePixelRatio || 1;
+  mini.style.width = W + 'px'; mini.style.height = H + 'px'; mini.width = W * dpr; mini.height = H * dpr;
+  miniScale = Math.min((W - 12) / L.w, (H - 12) / L.h); miniOff = [(W - L.w * miniScale) / 2, (H - L.h * miniScale) / 2];
+  drawMini();
+}
+function drawMini() {
+  if (!miniOn || miniQueued) return; miniQueued = true;
+  requestAnimationFrame(() => {
+    miniQueued = false; if (!miniOn) return;
+    const ctx = mini.getContext('2d'), dpr = window.devicePixelRatio || 1, s = miniScale, [ox, oy] = miniOff;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, mini.width, mini.height);
+    ctx.fillStyle = cssVar('--surface'); ctx.fillRect(0, 0, mini.width / dpr, mini.height / dpr);
+    ctx.strokeStyle = cssVar('--frame-line'); ctx.lineWidth = 1;
+    for (const c of state.L.clusters) ctx.strokeRect(ox + c.x * s, oy + c.y * s, c.w * s, c.h * s);
+    const base = cssVar('--line-2'), hot = cssVar('--accent'), warm = cssVar('--ink-2');
+    for (const [k, b] of Object.entries(state.L.nodes)) {
+      const el = state.nodeEls.get(k);
+      ctx.fillStyle = el?.classList.contains('sel') ? hot : el?.classList.contains('hl') ? warm : base;
+      ctx.fillRect(ox + b[0] * s, oy + b[1] * s, Math.max(1.5, b[2] * s), Math.max(1.5, b[3] * s));
+    }
+    const v = viewport();
+    ctx.strokeStyle = hot; ctx.lineWidth = 1.5;
+    ctx.strokeRect(ox + (-cam.x / cam.k) * s, oy + (-cam.y / cam.k) * s, (v.w / cam.k) * s, (v.h / cam.k) * s);
+  });
+}
+function miniJump(e) {
+  const r = mini.getBoundingClientRect(), wx = (e.clientX - r.left - miniOff[0]) / miniScale, wy = (e.clientY - r.top - miniOff[1]) / miniScale, v = viewport();
+  cancelAnimationFrame(camAnim); cam = { k: cam.k, x: v.w / 2 - wx * cam.k, y: v.h / 2 - wy * cam.k }; applyCam();
+}
+let miniDrag = false;
+mini.addEventListener('pointerdown', e => { e.stopPropagation(); miniDrag = true; mini.setPointerCapture(e.pointerId); miniJump(e); });
+mini.addEventListener('pointermove', e => { if (miniDrag) miniJump(e); });
+mini.addEventListener('pointerup', () => { miniDrag = false; });
+
+/* gestures */
+const ptrs = new Map(); let drag = null, pinch = null, moved = 0, suppressClick = false;
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y), mid = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
+wrap.addEventListener('pointerdown', e => {
+  if (e.target.closest('.ov')) return;
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  cancelAnimationFrame(camAnim); suppressClick = false;
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (ptrs.size === 1) { drag = { x: e.clientX, y: e.clientY, cx: cam.x, cy: cam.y }; moved = 0; }
+  else if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch = { d: dist(a, b) || 1, m: mid(a, b), cam: { ...cam } }; drag = null; }
+});
+window.addEventListener('pointermove', e => {
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pinch && ptrs.size === 2) {
+    const [a, b] = [...ptrs.values()], r = wrap.getBoundingClientRect(), m = mid(a, b), k = clampK(pinch.cam.k * dist(a, b) / pinch.d);
+    const wx = (pinch.m.x - r.left - pinch.cam.x) / pinch.cam.k, wy = (pinch.m.y - r.top - pinch.cam.y) / pinch.cam.k;
+    cam = { k, x: m.x - r.left - wx * k, y: m.y - r.top - wy * k }; applyCam(); moved = 99; return;
+  }
+  if (drag) {
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    moved = Math.max(moved, Math.abs(dx) + Math.abs(dy));
+    if (moved > 4) { wrap.classList.add('dragging'); cam.x = drag.cx + dx; cam.y = drag.cy + dy; applyCam(); }
+  }
+});
+const endPtr = e => {
+  if (!ptrs.delete(e.pointerId)) return;
+  if (ptrs.size < 2) pinch = null;
+  if (ptrs.size === 1) { const [p] = [...ptrs.values()]; drag = { x: p.x, y: p.y, cx: cam.x, cy: cam.y }; }
+  if (ptrs.size === 0) { drag = null; wrap.classList.remove('dragging'); suppressClick = moved > 4; }
+};
+window.addEventListener('pointerup', endPtr); window.addEventListener('pointercancel', endPtr);
+wrap.addEventListener('wheel', e => {
+  if (e.target.closest('.ov')) return;
+  e.preventDefault(); cancelAnimationFrame(camAnim);
+  const r = wrap.getBoundingClientRect(), unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? r.height : 1;
+  if (e.ctrlKey || e.metaKey) zoomAt(cam.k * Math.exp(-Math.max(-60, Math.min(60, e.deltaY * unit)) * .0085), e.clientX - r.left, e.clientY - r.top);
+  else { const sx = e.shiftKey && !e.deltaX ? e.deltaY : e.deltaX, sy = e.shiftKey && !e.deltaX ? 0 : e.deltaY; cam.x -= sx * unit; cam.y -= sy * unit; applyCam(); }
+}, { passive: false });
+let gestureK = 1;
+wrap.addEventListener('gesturestart', e => { e.preventDefault(); gestureK = cam.k; });
+wrap.addEventListener('gesturechange', e => { e.preventDefault(); const r = wrap.getBoundingClientRect(); zoomAt(gestureK * e.scale, e.clientX - r.left, e.clientY - r.top); });
+
+svg.addEventListener('click', e => {
+  if (suppressClick) { suppressClick = false; return; }
+  const n = e.target.closest('.node');
+  if (n) { activateNode(n.dataset.node); return; }
+  const ed = e.target.closest('.edge');
+  if (ed) { const x = state.L.edges[+ed.dataset.i]; select({ type: 'edge', from: x.from, to: x.to, kind: x.kind, diff: x.diff, members: x.members }); return; }
+  const c = e.target.closest('.cluster text');
+  if (c) { zoomToCluster(c.parentNode.dataset.cluster); return; }
+  if (state.selected) select(null);
+});
+svg.addEventListener('dblclick', e => {
+  const n = e.target.closest('.node');
+  const r = wrap.getBoundingClientRect();
+  if (n) centreOn(n.dataset.node, { k: Math.max(1, cam.k) });
+  else { const k = clampK(cam.k * 1.8), px = e.clientX - r.left, py = e.clientY - r.top, wx = (px - cam.x) / cam.k, wy = (py - cam.y) / cam.k; animateTo({ k, x: px - wx * k, y: py - wy * k }, 260); }
+});
+svg.addEventListener('pointerover', e => {
+  if (e.pointerType !== 'mouse' || drag && moved > 4) return;
+  const n = e.target.closest('.node');
+  if (n && n.dataset.node !== state.hover) { state.hover = n.dataset.node; paint(); }
+});
+svg.addEventListener('pointerout', e => {
+  const n = e.target.closest('.node');
+  if (n && !n.contains(e.relatedTarget) && state.hover) { state.hover = null; paint(); }
+});
+function activateNode(key) {
+  if (key.startsWith('group-')) {
+    const g = key.slice(6);
+    if (state.layoutId.startsWith('all') && LAYOUTS['all-' + g]) { draw('all-' + g, { mode: 'open', group: g }); select({ type: 'group', id: g }); zoomToCluster(g, 650); }
+    else select({ type: 'group', id: g });
+    return;
+  }
+  select({ type: 'node', id: key });
+}
+function zoomToCluster(id, ms = 380) {
+  const c = state.L.clusters.find(c => c.id === id); if (!c) return;
+  const fit = camFor({ x: c.x, y: c.y, w: c.w, h: c.h }, { maxK: 1, pad: 40 });
+  if (fit.k >= .6) { animateTo(fit, ms); return; }
+  // Too wide to read when fitted: start at its left edge at a readable scale.
+  const k = .7, v = viewport(), top = overlayTop();
+  animateTo({ k, x: 32 - c.x * k, y: top + Math.max(0, (v.h - top - c.h * k) / 2) - c.y * k }, ms);
+}
+
+/* switching views */
+function bestLayout(id) {
+  const has = lid => Boolean(LAYOUTS[lid]?.nodes[id]);
+  if (has(state.layoutId)) return state.layoutId;
+  const ext = nodes.get(id)?.external;
+  if (state.layoutId.startsWith('all')) return ext && LAYOUTS['all-' + ext] ? 'all-' + ext : 'all-full';
+  const v = BRANCHES.find(v => has(v.id));
+  if (v) return v.id;
+  if (ext && LAYOUTS['all-' + ext]) return 'all-' + ext;
+  return has('all') ? 'all' : 'all-full';
+}
+function showView(viewId, { node = null } = {}) {
+  const layout = viewId === 'all' ? state.wholeVariant : viewId;
+  const sameWhole = layout.startsWith('all') && state.layoutId?.startsWith('all');
+  const prev = state.layoutId;
+  let moving = false;
+  if (layout !== prev) {
+    const ext = node && nodes.get(node)?.external;
+    moving = Boolean(sameWhole && ext && layout === 'all-' + ext);
+    draw(layout, moving ? { mode: 'open', group: ext } : null);
+  }
+  const sel = state.selected;
+  if (sel?.type === 'edge' && !state.L.edges.some(e => sameEdge(e, sel))) { state.selected = null; paint(); }
+  else if (sel?.type === 'group' && !state.L.nodes['group-' + sel.id] && !state.L.clusters.some(c => c.id === sel.id)) { state.selected = null; paint(); }
+  const focus = node || (state.selected?.type === 'node' ? state.selected.id : state.selected?.type === 'edge' ? state.selected.to : null);
+  const o = focus && owner(focus);
+  if (layout === prev && o) centreOn(o, { ifHidden: !node });
+  else if (moving && o) centreOn(o, { k: Math.max(cam.k, .78), ms: 620 });
+  else if (o && (layout.startsWith('all') || node)) centreOn(o, { k: layout.startsWith('all') ? .78 : Math.max(.78, Math.min(1, camFor({ x: 0, y: 0, w: state.L.w, h: state.L.h }).k)), ms: 0 });
+  else initialCam();
+  renderInspector();
+}
+function goNode(id, { push = true } = {}) {
+  if (state.screen !== 'atlas') show('atlas');
+  const target = bestLayout(id);
+  select({ type: 'node', id }, { push, centre: false });
+  showView(viewIdOf(target) === 'all' ? (state.wholeVariant = target, 'all') : target, { node: id });
+}
+
+/* ---------- selection, history, inspector ---------- */
+const insp = $('#inspector'), body = $('#insp-body');
+function keyOf(s) { return s ? (s.type === 'edge' ? `e:${s.from}>${s.to}>${s.kind}` : `${s.type}:${s.id}`) : ''; }
+function select(sel, { push = true, centre = false } = {}) {
+  state.selected = sel; state.peek = null;
+  if (sel && push && keyOf(state.history[state.hpos]) !== keyOf(sel)) { state.history = state.history.slice(0, state.hpos + 1); state.history.push(sel); state.hpos = state.history.length - 1; }
+  try { history.replaceState(null, '', sel?.type === 'node' ? '#node-' + sel.id : '#atlas'); } catch (_) { /* sandboxed */ }
+  if (sel) { $('#screen-atlas').classList.remove('insp-off'); if (narrow() && insp.dataset.sheet === 'peek') setSheet('half'); }
+  else if (narrow()) setSheet('peek');
+  renderInspector(); paint();
+  if ((centre || narrow()) && sel?.type === 'node' && owner(sel.id)) centreOn(owner(sel.id), { ifHidden: true });
+}
+function stepHistory(d) {
+  const i = state.hpos + d; if (i < 0 || i >= state.history.length) return;
+  state.hpos = i; const s = state.history[i];
+  if (s.type === 'node') goNode(s.id, { push: false });
+  else select(s, { push: false });
+}
+function navBar() {
+  const n = state.history.length;
+  return `<div class="insp-nav"><button class="ibtn" data-hist="-1" ${state.hpos <= 0 ? 'disabled' : ''} aria-label="Previous selection" title="Previous ( [ )">${ICON.back}</button><button class="ibtn" data-hist="1" ${state.hpos >= n - 1 ? 'disabled' : ''} aria-label="Next selection" title="Next ( ] )">${ICON.fwd}</button><span class="crumb">${n ? `${state.hpos + 1} / ${n}` : ''}</span><span class="grow"></span>${state.selected?.type === 'node' ? `<button class="ibtn" data-copy-link="${esc(state.selected.id)}" title="Copy a link to this node">${ICON.link}<span>Link</span></button>` : ''}<button class="ibtn" data-insp="hide" aria-label="Hide the panel" title="Hide the panel">${ICON.hide}</button></div>`;
+}
+function renderInspector() {
+  const s = state.selected;
+  if (window.MathJax?.typesetClear) try { MathJax.typesetClear([body]); } catch (_) { /* not ready */ }
+  if (!s) body.innerHTML = viewSummary();
+  else if (s.type === 'node') body.innerHTML = nodeCard(s.id);
+  else if (s.type === 'group') body.innerHTML = groupCard(s.id);
+  else body.innerHTML = edgeCard(s);
+  body.scrollTop = 0;
+  typeset(body);
+}
+function connections(key) {
+  const L = state.L, o = owner(key), dep = [], use = [];
+  if (!o) return null;
+  L.edges.forEach((e, i) => { if (e.to === o) dep.push([e, i, e.from]); if (e.from === o) use.push([e, i, e.to]); });
+  return { dep, use };
+}
+function connList(items) {
+  if (!items.length) return '<p class="empty">None in this view.</p>';
+  let h = '';
+  for (const d of DIFFS) {
+    const m = items.filter(([e]) => e.diff === d); if (!m.length) continue;
+    h += `<div class="cg"><p class="cg-h">${swatch(d)}${DIFF[d].name}<span>· ${m.length}</span></p><ul>` + m.map(([e, i, other]) => {
+      const many = e.members && e.members.length > 1;
+      return `<li class="${state.hidden.has(d) ? 'filtered' : ''}"><button class="rel" data-sel-node="${esc(other)}" data-peek-node="${esc(other)}" data-peek-edge="${i}"><span class="rel-h">${esc(nameOf(other))}</span><span class="rel-t">${esc(subOf(other))}</span></button><button class="wit" data-sel-edge="${i}" data-peek-edge="${i}">${many ? e.members.length + ' links' : 'evidence'}</button></li>`;
+    }).join('') + '</ul></div>';
+  }
+  return h;
+}
+function connSection(key) {
+  const c = connections(key);
+  if (!c) return '';
+  const where = viewMeta(state.layoutId).title;
+  return `<section class="sec"><div class="conn-dir"><h3 class="sec-h">Depends on <span class="n">${c.dep.length}</span><span class="src">in ${esc(where)}</span></h3>${connList(c.dep)}</div>
+    <div class="conn-dir"><h3 class="sec-h">Used by <span class="n">${c.use.length}</span></h3>${connList(c.use)}</div></section>`;
+}
+function chain(path) {
+  if (!path?.length) return '';
+  const li = name => { const [ns, nm] = splitName(name); return `<li class="decl"><a href="${docUrl(name)}" target="_blank" rel="noopener"><span class="ns">${esc(ns)}</span><span class="nm">${esc(nm)}</span></a></li>`; };
+  let h = '<ol class="chain">' + li(path[0].from);
+  for (const s of path) h += `<li class="ref"><span>${esc(s.kind)}</span></li>` + li(s.to);
+  return h + '</ol>';
+}
+function nodeCard(id) {
+  const n = nodes.get(id);
+  if (!n) return viewSummary();
+  const views = [...BRANCHES.filter(v => LAYOUTS[v.id].nodes[id]), ...(owner(id, LAYOUTS.all) || LAYOUTS['all-full'].nodes[id] ? [{ id: 'all', title: 'Whole proof' }] : [])];
+  const cur = viewIdOf(state.layoutId);
+  const st = (n.statements || []).map(s => {
+    const local = s.url && s.url.startsWith('chap-sticky.html#');
+    const href = local ? '#manuscript' : LIVE + 'blueprint/' + (s.url || 'index.html');
+    return `<section class="sec"><h3 class="sec-h">Statement <span class="src">${esc(s.heading)}</span></h3><div class="prose">${s.html}</div>
+      <a class="textlink" href="${esc(href)}" ${local ? `data-ms-anchor="${esc(s.url.split('#')[1])}"` : 'target="_blank" rel="noopener"'}>Read it in the manuscript${local ? ' →' : ' ↗'}</a></section>`;
+  }).join('');
+  const rl = (n.remark_links || []).map(r => `<a href="${LIVE}blueprint/${esc(r.url)}" target="_blank" rel="noopener">${esc(r.label)}</a>`).join(' · ');
+  const vers = n.versions.length ? `<section class="sec"><h3 class="sec-h">Lean versions <span class="n">${n.versions.length}</span></h3>` + n.versions.map(v => {
+    const [ns, nm] = splitName(v.name);
+    return `<details class="ver"><summary>${markIcon(verStatus(v))}<span class="vname"><code>${esc(nm)}</code><span class="vmeta">${ROLE[v.role] || v.role} · ${v.reached ? 'used by the root' : 'outside the root'}${v.name === n.primary ? ' · graph anchor' : ''}</span></span>${ICON.chev}</summary>
+      <div class="ver-body"><p class="full">${esc(ns)}<b>${esc(nm)}</b> · ${esc(v.kind)}</p>${ROLE_NOTE[v.role] ? `<p class="note">${ROLE_NOTE[v.role]}</p>` : ''}
+      <pre class="type"><code>${esc(nm)} : ${esc(v.type || '')}${v.definition ? '\n:= ' + esc(v.definition) : ''}</code></pre>
+      <p class="links"><a href="${docUrl(v.name)}" target="_blank" rel="noopener">Lean documentation ↗</a><a href="${sourceUrl(v)}" target="_blank" rel="noopener">Source ↗</a></p>
+      ${v.path.length ? `<details class="reach"><summary>${ICON.chev}Reached from the root through ${v.path.length} references</summary>${chain(v.path)}</details>` : ''}</div></details>`;
+  }).join('') + '</section>' : `<section class="sec"><h3 class="sec-h">Lean versions</h3><p class="empty">No independently identified Lean declaration is assigned to this operation. Its roadmap connections remain dashed or dotted.</p></section>`;
+  return `${navBar()}<header>
+    <p class="eyebrow"><span class="bdot g-${n.group}"></span>${esc(D.palette[n.group] || n.group)}${n.origin ? ' · ' + esc(n.origin) : ''}</p>
+    <h2 class="ttl" id="insp-title" tabindex="-1">${esc(n.expert ? n.paper : n.full_heading)}</h2>
+    <p class="subttl">${esc(n.expert ? n.title : (n.summary.join(' ') || n.title))}</p>
+    <div class="facts"><span class="pill">${markIcon(n.status)}${esc(statusLabel(n.status))}</span><button class="chip mono" data-copy="${esc(n.id)}" title="Copy the node ID">${esc(n.id)}</button></div>
+    ${n.source ? `<p class="source">Expert source: ${esc(n.source)}</p>` : ''}
+  </header>
+  ${connSection(id)}
+  ${views.length ? `<div class="appears"><span>Appears in</span>${views.map(v => `<button class="chip${v.id === cur ? ' on' : ''}" data-goto-view="${v.id}" data-node="${esc(id)}">${esc(VIEW_SHORT[v.id] || v.title)}</button>`).join('')}</div>` : ''}
+  ${st}
+  ${n.remark ? `<aside class="remark"><h3 class="sec-h">Correspondence remark</h3><p>${esc(n.remark)}</p>${rl ? `<p class="rlinks">Related remarks: ${rl}</p>` : ''}</aside>` : ''}
+  ${vers}
+  ${n.expert && n.expert_html ? `<details class="expert"><summary>${ICON.chev}The expert’s original formulation</summary><div class="prose">${n.expert_html}</div><p class="note">Source material for comparison. The expert’s Lean blocks were pseudocode; only the declarations above were audited.</p></details>` : ''}`;
+}
+function groupCard(g) {
+  const G = groups.get(g), ms = membersOf(g), folded = Boolean(state.L.nodes['group-' + g]);
+  const canOpen = state.layoutId.startsWith('all') && LAYOUTS['all-' + g];
+  return `${navBar()}<header><p class="eyebrow"><span class="bdot g-external"></span>External input</p>
+    <h2 class="ttl" id="insp-title" tabindex="-1">${esc(G.title)}</h2>
+    <p class="subttl">${ms.length} reached project declarations, grouped by their reviewed module boundary.</p>
+    <div class="facts">${folded && canOpen ? `<button class="chip on" data-variant="all-${g}">Open this frame</button>` : ''}${!folded && state.layoutId === 'all-' + g ? '<button class="chip" data-variant="all">Fold it again</button>' : ''}</div></header>
+    ${folded ? connSection('group-' + g) : ''}
+    <section class="sec"><h3 class="sec-h">Members <span class="n">${ms.length}</span></h3><ul class="vlist">${ms.map(n => `<li><button data-sel-node="${esc(n.id)}">${markIcon(n.status)}<span><b>${esc(n.full_heading)}</b> <span class="t">${esc(n.summary.join(' '))}</span></span></button></li>`).join('')}</ul></section>
+    <p class="tip">An arrow to a folded frame stands for its members’ connections, which share its class.</p>`;
+}
+function edgeCard(s) {
+  const many = s.members && (s.members.length > 1 || s.members[0][0] !== s.from || s.members[0][1] !== s.to);
+  const info = edgeIndex.get(`${s.from}>${s.to}>${s.kind}`);
+  const end = k => `<button class="link" data-sel-node="${esc(k)}">${esc(nameOf(k))}</button>`;
+  let evidence = '';
+  if (many) {
+    evidence = `<section class="sec"><h3 class="sec-h">Folded connections <span class="n">${s.members.length}</span></h3>` + s.members.map(([f, t, k]) => {
+      const m = edgeIndex.get(`${f}>${t}>${k}`);
+      return `<div class="member"><div class="member-h"><button class="rel" data-sel-node="${esc(f)}"><span class="rel-h">${esc(nameOf(f))}</span></button>→<button class="rel" data-sel-node="${esc(t)}"><span class="rel-h">${esc(nameOf(t))}</span></button></div>
+        ${m?.path?.length ? `<details class="reach"><summary>${ICON.chev}Kernel witness · ${m.path.length} references</summary>${chain(m.path)}</details>` : m?.reason ? `<p class="reason">${esc(m.reason)}</p>` : ''}</div>`;
+    }).join('') + '</section>';
+  } else if (s.kind === 'actual' && info) {
+    evidence = `<section class="sec"><h3 class="sec-h">Kernel witness <span class="n">${info.path.length}</span><span class="src">references</span></h3>${chain(info.path)}
+      <p class="tip">The chain reads from the consumer down to its prerequisite; the drawn arrow points the other way. Every step is a type, value or structural reference in a compiled declaration.</p></section>`;
+  } else if (info) {
+    evidence = `<section class="sec"><h3 class="sec-h">Why Lean has no such path</h3><p class="reason">${esc(info.reason)}</p>${info.expert_note ? `<p class="tip">Roadmap note: ${esc(info.expert_note)}</p>` : ''}</section>`;
+  }
+  return `${navBar()}<header><p class="eyebrow">Arrow · ${esc(viewMeta(state.layoutId).title)}</p>
+    <h2 class="ttl edge-ttl" id="insp-title" tabindex="-1">${end(s.from)}<span class="arr">→</span>${end(s.to)}</h2>
+    <div class="facts"><span class="pill">${swatch(s.diff)}${esc(DIFF[s.diff].title)}</span></div>
+    <p class="explain">${esc(DIFF[s.diff].text)}</p></header>
+    ${evidence}
+    ${info?.audit ? `<p class="tip"><a href="${LIVE}blueprint/atlas-audit.html#${info.audit}" target="_blank" rel="noopener">Open this arrow in the audit table ↗</a></p>` : ''}`;
+}
+function viewSummary() {
+  const L = state.L, meta = viewMeta(state.layoutId);
+  const idx = BRANCHES.findIndex(v => v.id === state.layoutId);
+  const list = Object.entries(L.nodes).sort((a, b) => a[1][1] - b[1][1] || a[1][0] - b[1][0]);
+  return `${navBar()}<header><p class="eyebrow">${idx >= 0 ? `Branch ${idx + 1} of ${BRANCHES.length}` : 'Complete graph'}</p><h2 class="ttl" id="insp-title" tabindex="-1">${esc(meta.title)}</h2><p class="subttl">${esc(meta.description)}</p></header>
+    <section class="sec"><h3 class="sec-h">Nodes in this view <span class="n">${list.length}</span><span class="src">conclusions first</span></h3><ul class="vlist">${list.map(([k]) => {
+      const n = nodes.get(k);
+      return `<li><button data-sel-node="${esc(k)}">${n ? markIcon(n.status) : markIcon('group')}<span><b>${esc(nameOf(k))}</b> <span class="t">${esc(subOf(k))}</span></span></button></li>`;
+    }).join('')}</ul></section><p class="tip">Select a node or an arrow to see its statement and evidence. Press / to search every node.</p>`;
+}
+body.addEventListener('scroll', () => $('.insp-nav', body)?.classList.toggle('stuck', body.scrollTop > 4));
+body.addEventListener('pointerover', e => {
+  const t = e.target.closest('[data-peek-node], [data-peek-edge]');
+  const peek = t ? { node: t.dataset.peekNode ? owner(t.dataset.peekNode) : null, edge: t.dataset.peekEdge != null ? +t.dataset.peekEdge : null } : null;
+  if (JSON.stringify(peek) !== JSON.stringify(state.peek)) { state.peek = peek; paint(); }
+});
+body.addEventListener('pointerleave', () => { if (state.peek) { state.peek = null; paint(); } });
+
+function setSheet(s) { insp.dataset.sheet = s; requestAnimationFrame(() => document.documentElement.style.setProperty('--sheet-cover', sheetCover() + 'px')); }
+$('#sheet-toggle').addEventListener('click', () => setSheet({ peek: 'half', half: 'full', full: 'peek' }[insp.dataset.sheet] || 'half'));
+
+/* ---------- search palette ---------- */
+const pal = $('#palette'), palIn = $('#pal-input'), palList = $('#pal-list');
+const HAY = D.nodes.map(n => ({ n, id: n.id.toLowerCase(), head: (n.full_heading + ' ' + n.paper).toLowerCase(), title: (n.title + ' ' + n.summary.join(' ')).toLowerCase(), lean: n.versions.map(v => v.name).join(' ').toLowerCase() }));
+let palHits = [], palActive = 0;
+function searchNodes(q) {
+  const toks = q.toLowerCase().split(/\s+/).filter(Boolean);
+  if (!toks.length) return HAY.filter(h => h.n.expert).slice(0, 40).map(h => h.n);
+  const out = [];
+  for (const h of HAY) {
+    let score = 0, ok = true;
+    for (const t of toks) {
+      const s = (h.id === t ? 60 : h.id.includes(t) ? 25 : 0) + (h.head.includes(t) ? 20 : 0) + (h.title.includes(t) ? 9 : 0) + (h.lean.includes(t) ? 4 : 0);
+      if (!s) { ok = false; break; } score += s;
+    }
+    if (ok) out.push([score + (h.n.expert ? 12 : 0), h.n]);
+  }
+  return out.sort((a, b) => b[0] - a[0]).slice(0, 50).map(x => x[1]);
+}
+function renderPal() {
+  palHits = searchNodes(palIn.value); palActive = Math.min(palActive, Math.max(0, palHits.length - 1));
+  const q = palIn.value.trim().toLowerCase();
+  palList.innerHTML = palHits.length ? palHits.map((n, i) => {
+    const leanHit = q && !n.title.toLowerCase().includes(q) && n.versions.find(v => v.name.toLowerCase().includes(q));
+    return `<li class="opt" role="option" id="opt-${i}" data-i="${i}" aria-selected="${i === palActive}">${markIcon(n.status)}<span><span class="h">${esc(n.full_heading)}</span> <span class="t">${esc(n.expert ? n.title : n.summary.join(' '))}</span>${leanHit ? `<span class="lean">${esc(leanHit.name)}</span>` : ''}</span><span class="r">${esc(n.id.startsWith('lean-') ? 'Lean version' : n.id)}</span></li>`;
+  }).join('') : '<li class="empty" style="padding:10px">No node matches. Try a paper number such as 7.6, an ID such as W2L7_6, or part of a Lean name.</li>';
+  palIn.setAttribute('aria-activedescendant', palHits.length ? 'opt-' + palActive : '');
+}
+function openPalette() { if (pal.open) return; palIn.value = ''; palActive = 0; renderPal(); pal.showModal(); palIn.focus(); }
+function choosePal(i) { const n = palHits[i]; if (!n) return; pal.close(); goNode(n.id); }
+palIn.addEventListener('input', () => { palActive = 0; renderPal(); });
+palIn.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); palActive = (palActive + (e.key === 'ArrowDown' ? 1 : -1) + palHits.length) % Math.max(1, palHits.length); renderPal(); $('#opt-' + palActive)?.scrollIntoView({ block: 'nearest' }); }
+  if (e.key === 'Enter') { e.preventDefault(); choosePal(palActive); }
+});
+palList.addEventListener('click', e => { const o = e.target.closest('.opt'); if (o) choosePal(+o.dataset.i); });
+pal.addEventListener('click', e => { if (e.target === pal) pal.close(); });
+
+/* ---------- MathJax ---------- */
+let mathReady = false; const mathQueue = new Set();
+function typeset(el) { if (mathReady) MathJax.typesetPromise([el]).catch(() => {}); else mathQueue.add(el); }
+window.__mathReady = () => { mathReady = true; const els = [...mathQueue].filter(e => e.isConnected); mathQueue.clear(); if (els.length) MathJax.typesetPromise(els).catch(() => {}); };
+
+/* ---------- home, manuscript ---------- */
+let homeBuilt = false, msBuilt = false;
+function buildHome() {
+  if (homeBuilt) return; homeBuilt = true;
+  const root = nodes.get(D.root_node);
+  $('#home-statement').innerHTML = root.statements[0]?.html || '';
+  $('#home-root').textContent = D.root;
+  const c = D.counts;
+  $('#entry-atlas').textContent = `The expert’s roadmap: ${c.expert_nodes} nodes and ${c.expert_edges} connections in ${BRANCHES.length} branch views, checked against ${c.lean_versions} reached Lean versions.`;
+  const ns = c.node_statuses, order = ['used-proof', 'used-interface', 'used-definition', 'unused-proof', 'unused-interface', 'unused-definition', 'unmatched'];
+  $('#tally-nodes-sub').textContent = `How each of the ${c.expert_nodes} expert nodes corresponds to the compiled proof of the root theorem. A used interface is referenced, not thereby proved.`;
+  $('#tally-nodes').innerHTML = order.filter(k => ns[k]).map(k => `<li>${markIcon(k)}<span>${esc(statusLabel(k))}</span><span class="num">${ns[k]}</span></li>`).join('');
+  const ud = c.unified_diff, total = DIFFS.reduce((s, d) => s + ud[d], 0);
+  $('#tally-edges-sub').textContent = `The ${total} arrows of the whole proof with every frame open, by comparison class.`;
+  $('#tally-edges').innerHTML = DIFFS.map(d => `<li>${swatch(d)}<span>${esc(DIFF[d].title)}</span><span class="num">${ud[d]}</span></li>`).join('');
+  typeset($('#home-statement'));
+}
+const labelNodes = new Map();
+for (const n of D.nodes) for (const l of n.labels) { if (!labelNodes.has(l)) labelNodes.set(l, []); labelNodes.get(l).push(n.id); }
+function buildManuscript() {
+  if (msBuilt) return; msBuilt = true;
+  $('#ms-toc').innerHTML = CH.toc.map(t => {
+    const here = t.href === 'chap-sticky.html';
+    return `<li><a href="${here ? '#manuscript' : LIVE + 'blueprint/' + esc(t.href)}" ${here ? 'aria-current="page"' : 'target="_blank" rel="noopener"'}><span class="r">${esc(t.ref)}</span><span>${esc(t.title)}</span></a></li>`;
+  }).join('');
+  const art = $('#ms-text');
+  art.innerHTML = CH.html;
+  for (const a of $$('a[href]', art)) {
+    const h = a.getAttribute('href');
+    if (/^(https?:|mailto:)/.test(h)) continue;
+    if (h.startsWith('chap-sticky.html#') || h.startsWith('#')) { a.dataset.msAnchor = h.split('#')[1]; a.setAttribute('href', '#manuscript'); continue; }
+    a.href = new URL(h, LIVE + 'blueprint/').href; a.target = '_blank'; a.rel = 'noopener';
+  }
+  for (const w of $$('[class*="_thmwrapper"]', art)) {
+    const head = $('[class$="_thmheading"]', w); if (!head) continue;
+    const ok = w.hasAttribute('data-leanok');
+    const decls = (w.dataset.decls || '').split(' ').filter(Boolean);
+    const badges = document.createElement('span'); badges.className = 'badges';
+    if (decls.length) {
+      const b = document.createElement('button'); b.className = 'badge' + (ok ? ' ok' : '');
+      b.textContent = (ok ? '✓ ' : '') + `Lean · ${decls.length}`; b.title = ok ? 'Marked \\leanok in the manuscript. Show the linked declarations.' : 'Show the linked Lean declarations';
+      b.setAttribute('aria-expanded', 'false');
+      b.addEventListener('click', () => {
+        let box = w.querySelector(':scope > .decls');
+        if (box) { box.remove(); b.setAttribute('aria-expanded', 'false'); return; }
+        box = document.createElement('div'); box.className = 'decls';
+        box.innerHTML = decls.map(d => `<a href="${docUrl(d)}" target="_blank" rel="noopener">${esc(d)}</a>`).join('');
+        head.after(box); b.setAttribute('aria-expanded', 'true');
+      });
+      badges.append(b);
+    }
+    const cands = labelNodes.get(w.id) || [];
+    const node = (cands.find(k => decls.includes(nodes.get(k).primary)) || cands.find(k => nodes.get(k).expert) || cands[0]);
+    if (node) { const a = document.createElement('a'); a.className = 'badge atlas'; a.href = '#node-' + node; a.dataset.goNode = node; a.textContent = 'Atlas →'; a.title = 'Show this result in the proof atlas'; badges.append(a); }
+    head.append(badges);
+  }
+  for (const p of $$('.proof_wrapper', art)) {
+    const h = $('.proof_heading', p); h.setAttribute('role', 'button'); h.tabIndex = 0; h.setAttribute('aria-expanded', 'false');
+    const toggle = () => { p.classList.toggle('open'); h.setAttribute('aria-expanded', String(p.classList.contains('open'))); };
+    h.addEventListener('click', toggle); h.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  }
+  typeset(art); typeset($('#ms-toc'));
+}
+function msScroll(id) { const t = document.getElementById(id); if (t) t.scrollIntoView({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' }); }
+
+/* ---------- screens ---------- */
+let atlasReady = false;
+function show(screen) {
+  state.screen = screen;
+  for (const s of ['home', 'atlas', 'manuscript', 'notes']) $('#screen-' + s).hidden = s !== screen;
+  $$('.tab[data-screen]').forEach(t => { if (t.dataset.screen === screen) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current'); });
+  if (screen === 'home') buildHome();
+  if (screen === 'manuscript') buildManuscript();
+  if (screen === 'atlas' && !atlasReady) {
+    atlasReady = true;
+    draw('overview');
+    if (narrow()) { setSheet('peek'); $('#legend').classList.add('min'); $('#lg-min').textContent = 'Show'; $('#lg-min').setAttribute('aria-expanded', 'false'); }
+    renderInspector();
+    requestAnimationFrame(() => { if (!state.selected) initialCam(); setupMini(); });
+  }
+}
+
+/* ---------- global events ---------- */
+document.addEventListener('click', e => {
+  const t = e.target;
+  const scr = t.closest('[data-screen]');
+  if (scr) { e.preventDefault(); show(scr.dataset.screen); try { history.replaceState(null, '', '#' + scr.dataset.screen); } catch (_) {} return; }
+  const go = t.closest('[data-go-node]');
+  if (go) { e.preventDefault(); goNode(go.dataset.goNode); return; }
+  const ms = t.closest('[data-ms-anchor]');
+  if (ms) { e.preventDefault(); show('manuscript'); requestAnimationFrame(() => msScroll(ms.dataset.msAnchor)); return; }
+  if (t.closest('[data-open-palette]')) { openPalette(); return; }
+  const v = t.closest('[data-view]');
+  if (v) { showView(v.dataset.view); return; }
+  const gv = t.closest('[data-goto-view]');
+  if (gv) { const id = gv.dataset.gotoView; if (id === 'all') state.wholeVariant = bestLayoutWhole(gv.dataset.node); showView(id, { node: gv.dataset.node }); return; }
+  const variant = t.closest('[data-variant]');
+  if (variant) {
+    const next = variant.dataset.variant, prev = state.layoutId;
+    if (next === prev) return;
+    const g = next.startsWith('all-') && next !== 'all-full' ? next.slice(4) : null, pg = prev.startsWith('all-') && prev !== 'all-full' ? prev.slice(4) : null;
+    draw(next, g && prev === 'all' ? { mode: 'open', group: g } : pg && next === 'all' ? { mode: 'fold', group: pg } : null);
+    if (g && prev === 'all') zoomToCluster(g, 650);
+    else if (pg && next === 'all') centreOn('group-' + pg, { k: Math.max(cam.k, .62), ms: 650 });
+    else if (g) zoomToCluster(g, 0);
+    else { const o = state.selected?.type === 'node' && owner(state.selected.id); if (o) centreOn(o, { ms: 0 }); else fitAll(0); }
+    renderInspector(); return;
+  }
+  const fr = t.closest('[data-frame]');
+  if (fr) { zoomToCluster(fr.dataset.frame); return; }
+  const z = t.closest('[data-zoom]');
+  if (z) { const a = z.dataset.zoom; if (a === 'in') zoomBy(1.3); else if (a === 'out') zoomBy(1 / 1.3); else fitAll(); return; }
+  const sn = t.closest('[data-sel-node]');
+  if (sn) { const k = sn.dataset.selNode; if (k.startsWith('group-')) select({ type: 'group', id: k.slice(6) }); else if (state.L.nodes[k]) select({ type: 'node', id: k }, { centre: true }); else goNode(k); return; }
+  const se = t.closest('[data-sel-edge]');
+  if (se) { const x = state.L.edges[+se.dataset.selEdge]; select({ type: 'edge', from: x.from, to: x.to, kind: x.kind, diff: x.diff, members: x.members }); return; }
+  const hs = t.closest('[data-hist]');
+  if (hs) { stepHistory(+hs.dataset.hist); return; }
+  const ih = t.closest('[data-insp]');
+  if (ih) { $('#screen-atlas').classList.toggle('insp-off', ih.dataset.insp === 'hide'); setupMini(); return; }
+  const cp = t.closest('[data-copy], [data-copy-link]');
+  if (cp) {
+    const text = cp.dataset.copy ?? LIVE + 'blueprint/lean_dependencies.html#node-' + cp.dataset.copyLink;
+    const done = () => { const old = cp.innerHTML; cp.textContent = 'Copied'; setTimeout(() => { cp.innerHTML = old; }, 1100); };
+    Promise.resolve(navigator.clipboard?.writeText(text)).then(done, () => { cp.title = text; });
+    return;
+  }
+  const lg = t.closest('.lg-item');
+  if (lg) { const d = lg.dataset.diff; state.hidden.has(d) ? state.hidden.delete(d) : state.hidden.add(d); svg.classList.toggle('hide-' + d, state.hidden.has(d)); lg.setAttribute('aria-checked', String(!state.hidden.has(d))); paint(); if (state.selected?.type === 'node') renderInspector(); return; }
+});
+function bestLayoutWhole(id) { const ext = nodes.get(id)?.external; if (owner(id, LAYOUTS[state.wholeVariant])) return state.wholeVariant; return ext && LAYOUTS['all-' + ext] ? 'all-' + ext : 'all'; }
+$('#view-select').addEventListener('change', e => showView(e.target.value));
+$('#lg-list').addEventListener('pointerover', e => { const it = e.target.closest('.lg-item'); if (it && !state.hidden.has(it.dataset.diff)) svg.dataset.spot = it.dataset.diff; });
+$('#lg-list').addEventListener('pointerleave', () => { delete svg.dataset.spot; });
+$('#lg-min').addEventListener('click', e => { const l = $('#legend'); l.classList.toggle('min'); const min = l.classList.contains('min'); e.target.textContent = min ? 'Show' : 'Hide'; e.target.setAttribute('aria-expanded', String(!min)); });
+document.addEventListener('keydown', e => {
+  const typing = e.target.closest('input, textarea, select, [contenteditable]');
+  if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) { e.preventDefault(); openPalette(); return; }
+  if (e.key === '/' && !typing && !pal.open) { e.preventDefault(); openPalette(); return; }
+  if (typing || pal.open || state.screen !== 'atlas') return;
+  const node = e.target.closest?.('.node');
+  if (node && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); activateNode(node.dataset.node); return; }
+  if (e.key === 'Escape') { if (state.selected) select(null); return; }
+  if (e.key === '+' || e.key === '=') zoomBy(1.3);
+  else if (e.key === '-' || e.key === '_') zoomBy(1 / 1.3);
+  else if (e.key === '0') fitAll();
+  else if (e.key === '[') stepHistory(-1);
+  else if (e.key === ']') stepHistory(1);
+  else if (e.key.startsWith('Arrow') && !node && !e.target.closest('button, a')) {
+    e.preventDefault(); const s = 80; cam.x += e.key === 'ArrowLeft' ? s : e.key === 'ArrowRight' ? -s : 0; cam.y += e.key === 'ArrowUp' ? s : e.key === 'ArrowDown' ? -s : 0; applyCam();
+  }
+});
+svg.addEventListener('focusin', e => { const n = e.target.closest('.node'); if (n) centreOn(n.dataset.node, { ifHidden: true, ms: 200 }); });
+new ResizeObserver(() => { if (state.L) { setupMini(); drawMini(); } }).observe(wrap);
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', drawMini);
+
+/* ---------- boot ---------- */
+function route() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (h.startsWith('node-') && nodes.has(h.slice(5))) { show('atlas'); goNode(h.slice(5)); return; }
+  show(['home', 'manuscript', 'notes'].includes(h) ? h : 'atlas');
+}
+route();
+window.addEventListener('hashchange', route);
+})();
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
