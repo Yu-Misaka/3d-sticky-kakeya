@@ -1,6 +1,6 @@
 # Blueprint 前端重做方案
 
-状态：提案，待确认，尚未改动站点代码。可交互原型用的是当前构建出的真实数据，部署在 <https://yu-misaka.github.io/3d-sticky-kakeya/preview/>；源码在 `blueprint/prototype/`，生成的页面是 `blueprint/site-src/preview/index.html`（1.95 MB，正式实现后删除）。
+状态：Home、Atlas、Manuscript 和 Evidence 已于 2026-10-22 上线，原型和 `/preview/` 已删除（原型源码见提交 `8323a9d`）。与方案不同之处见文末"实施记录"。
 
 ## 现在用着不舒服的地方
 
@@ -130,3 +130,33 @@ Phone: site bar + view menu; full-screen canvas; details as a bottom sheet (peek
 5. 定理旁的"Uses"（TeX `\uses`）弹窗：改名还是隐藏？
 6. 字体自托管还是用 Google Fonts？
 7. 两个审计页是否合并？
+
+## 实施记录（2026-10-22）
+
+- **Atlas**（`lean_dependencies.html`）：按原型实现。
+  - `scripts/atlas_render.py` 的 `layout_view()` 用 `dot -Tjson` 布局，缓存在 `build/atlas-layout/`。
+  - `page_data()` 把卡片、17 个布局、每条边的比较记录和见证路径写进 `atlas-view.json`（1.64 MB，见证路径去重后存成一张表），页面本身 36 KB。
+  - 页面脚本是 `site-src/assets/atlas.js`。6 个 `atlas-unified-*.svg` 和 `render_svg()` 已删除。
+  - 原型里见证链的声明链接到 doc-gen4，但链上有 private helper，doc-gen4 没有它们的页面，因此改为链接到源码。
+  - 数据里的链接（陈述、Remark、doc-gen4、审计页锚点）在 `build.py` 的站点链接检查中一并检查。
+- **Evidence**（`atlas-audit.html`，948 KB → 287 KB）：
+  - 删去"每条画出的箭头"一节，这部分改由检视面板显示。
+  - 保留：Lean only 清单、242 条路线图连接（可按分类筛选和搜索）、方法说明和来源指纹。
+  - Lean only 清单从整体图的 13 条改为所有视图的 17 条，其中 4 条只出现在分支视图里。
+  - "有 Lean 路径但没有单独箭头"的 5 条连接带有标记。
+  - 行锚点改为 `#connection-FROM-TO` 和 `#lean-only-FROM-TO`；专家把两对连接各记录了两次，第二条加 `-2`。旧的 `#edge-<hash>` 锚点不再存在。
+- **`lean_dependency_audit.html`**（1.57 MB → 1.1 MB）：换成新样式，删去"Inspect the paths behind graph edges"一节。这些见证在 atlas 和 `lean-dependencies.json` 中都有。
+- **Manuscript**：`scripts/manuscript.py` 在 atlas 读完 plasTeX 的陈述之后转换 15 个 plasTeX 页面。
+  - 页面套上统一顶栏，左侧是章节目录，正文保留 plasTeX 生成的全部内容和锚点。
+  - 定理标题旁的图标换成"Lean · N""Uses · N""Atlas →"三个徽章。徽章用 `<details>` 实现，没有 JS 也能用。
+  - 证明折叠成 `<details>`；页首有"Open all proofs"，链接指向某个证明时自动展开。
+  - leanblueprint 主题的 `js/`、`styles/`、`symbol-defs.svg` 和 `src/extra_styles.css` 已删除。
+  - 新增依赖 `beautifulsoup4==4.12.3`。
+- **Home**：由 `templates/home.html` 在构建 atlas 时生成。定理陈述取自手稿，计数取自 atlas；`site-src/index.html` 和 `site.css` 已删除。
+- **样式**：
+  - `assets/theme.css`：颜色和字体 token、顶栏、状态标记和边类色样。
+  - `assets/atlas.css`：atlas 页面。
+  - `assets/pages.css`：首页、手稿、证据页和卡片页。
+  - 字体暂用 Google Fonts。
+- **体积**：Pages 产物按 `build.py` 的估算从 995.9 MB 降到 989.8 MB。
+- **待定事项**：1–3 按原型的做法实现；5 保留"Uses"这个名字，弹出列表注明这是手稿里的引用，不是 Lean 依赖；6 暂用 Google Fonts，7 已按上面的方式精简，两页没有合并。浏览器测试仍未加入 CI。

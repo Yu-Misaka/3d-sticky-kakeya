@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import shutil
 import subprocess
@@ -50,6 +51,10 @@ def validate_site(records: list[dict]) -> None:
     # above. Keep this pass focused on the manuscript and the site's navigation.
     files = [*SITE.glob("*.html"), *(SITE / "blueprint").rglob("*.html")]
     pages = {path: Links(path.read_text()) for path in files}
+    # The atlas draws its cards and arrows from data; check those links as the page's own.
+    from atlas_render import atlas_links
+    atlas_page = SITE / "blueprint/lean_dependencies.html"
+    pages[atlas_page].links += atlas_links(json.loads((SITE / "blueprint/atlas-view.json").read_text()))
     errors = []
     for page, document in pages.items():
         for link in document.links:

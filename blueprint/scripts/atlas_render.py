@@ -1,4 +1,4 @@
-"""Render the reviewed atlas using the expert's branch-and-card presentation."""
+"""Write the proof atlas: its data and layouts, the home page, the node cards and the roadmap evidence."""
 
 from __future__ import annotations
 
@@ -8,7 +8,6 @@ import json
 import re
 import subprocess
 import textwrap
-import xml.etree.ElementTree as ET
 from collections import Counter
 from pathlib import Path
 from urllib.parse import quote
@@ -18,17 +17,17 @@ from dependencies import (BLUEPRINT, REPORT, ROOT, PaperStatements,
                           manuscript_statements, redirect_page, statement_content)
 
 PALETTE = {
-    "setup": ("Wolff setup", "#e6eefb", "#56749c"),
-    "plane": ("Plane maps", "#eaeafa", "#7874a5"),
-    "grains": ("Grains", "#e6f3ec", "#578d75"),
-    "regularity": ("Slope regularity", "#f0e9f8", "#8a6ca2"),
-    "slope": ("Nonsingular slope", "#fff0df", "#b17b3f"),
-    "projection": ("Twisted projections", "#e6f1f8", "#507f9d"),
-    "cinematic": ("Twisted projections and cinematic curves", "#e6f1f8", "#507f9d"),
-    "radial": ("Radial projections", "#eff3df", "#829358"),
-    "external": ("External inputs", "#f0f2f6", "#7c8c9f"),
-    "api": ("Definitions and operations", "#edf2f8", "#75889f"),
-    "implementation": ("Additional Lean versions", "#eaf1f6", "#657d94"),
+    "setup": "Wolff setup",
+    "plane": "Plane maps",
+    "grains": "Grains",
+    "regularity": "Slope regularity",
+    "slope": "Nonsingular slope",
+    "projection": "Twisted projections",
+    "cinematic": "Twisted projections and cinematic curves",
+    "radial": "Radial projections",
+    "external": "External inputs",
+    "api": "Definitions and operations",
+    "implementation": "Additional Lean versions",
 }
 STATUS = {
     "used-proof": "Used Lean proof",
@@ -41,16 +40,6 @@ STATUS = {
     "unused-constructor": "Constructor · outside root",
     "unmatched": "No primary Lean correspondence",
 }
-GRAPH_STATUS = {**STATUS, "used-proof": "Lean proof · used", "unused-proof": "Lean proof · outside root",
-                "used-interface": "Prop interface · used", "unused-interface": "Prop interface · outside root",
-                "used-definition": "Definition / data · used", "unused-definition": "Data · outside root"}
-
-
-def edge_id(edge: dict) -> str:
-    data = [edge["from"], edge["to"], edge.get("kind", "expert"), edge.get("path", [])]
-    return "edge-" + hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
-
-
 def source_url(metadata: dict, revision: str) -> str:
     module = metadata["module"]
     if module.startswith("Mathlib."):
@@ -63,21 +52,20 @@ def source_url(metadata: dict, revision: str) -> str:
     return url + (f"#L{metadata['line']}" if metadata.get("line") else "")
 
 
-# Graphviz strokes for each comparison class. Colour is never the only cue:
-# the classes also differ in dash pattern or weight.
-DIFF_STYLE = {
-    "agree": {"style": "solid", "color": "#355572", "penwidth": "1.4"},
-    "lean-only": {"style": "bold", "color": "#a3246f", "penwidth": "2.6"},
-    "detail": {"style": "solid", "color": "#9eacbb", "penwidth": "0.9"},
-    "expert-route": {"style": "dashed", "color": "#6f4aa8", "penwidth": "1.6"},
-    "expert-unknown": {"style": "dotted", "color": "#a9b2bd", "penwidth": "1.1"},
-}
 DIFF_TITLE = {
     "agree": "Lean and roadmap agree",
     "lean-only": "Lean only",
     "detail": "Lean detail",
     "expert-route": "Roadmap only · different Lean route",
     "expert-unknown": "Roadmap only · not comparable",
+}
+# How each roadmap connection compares with the compiled proof.
+CLASSIFICATION_TITLE = {
+    "actual": "Lean path",
+    "different-route": "Different Lean route",
+    "outside-root": "Version outside the root",
+    "shared-declaration": "Shared declaration",
+    "unmapped": "No Lean match",
 }
 
 
@@ -97,164 +85,107 @@ def node_heading(node: dict) -> tuple[str, str]:
     return heading, summary
 
 
-def graph_label(node: dict, compact: bool = False) -> str:
-    """Give paper references, summaries and Lean status distinct visual roles."""
+# Node boxes have a fixed width; Graphviz reads points, which the browser draws 1:1.
+NODE_WIDTH = 216
+HEADING_CHARS, SUMMARY_CHARS = 23, 30
+
+
+def label_lines(node: dict) -> tuple[list[str], list[str]]:
+    """At most two lines each of paper reference and summary, as drawn in a node box."""
     heading, summary = node_heading(node)
-
-    def lines(text):
-        return '<BR/>'.join(html.escape(line, quote=False) for line in
-                           textwrap.wrap(plain(text), 29, break_long_words=False, break_on_hyphens=False))
-
-    status = GRAPH_STATUS.get(node["status"], node["status"])
-    rows = '<TR><TD><B>' + lines(heading) + '</B></TD></TR>'
-    if compact:
-        # The summary and status move to the tooltip and the details panel.
-        return '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">' + rows + '</TABLE>'
-    if summary:
-        rows += '<TR><TD>' + lines(summary) + '</TD></TR>'
-    rows += ('<TR><TD CELLPADDING="3"><FONT POINT-SIZE="10" COLOR="#617389">' +
-             html.escape(status, quote=False) + '</FONT></TD></TR>')
-    return '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">' + rows + '</TABLE>'
+    heading, summary = plain(heading).strip().rstrip(":"), plain(summary).strip()
+    heads = textwrap.wrap(heading, HEADING_CHARS, break_long_words=False) or [node["id"]]
+    lines = textwrap.wrap(summary, SUMMARY_CHARS, break_long_words=False)
+    for wrapped, width in ((heads, HEADING_CHARS), (lines, SUMMARY_CHARS)):
+        if len(wrapped) > 2:
+            del wrapped[2:]
+            wrapped[1] = wrapped[1][:width - 1].rstrip(" ,;") + "…"
+    return heads, lines
 
 
-def drawn_id(edge: dict) -> str:
-    return edge_id(edge) + ("-" + edge["diff"] if "members" in edge else "")
+def node_size(key: str, nodes: dict[str, dict]) -> tuple[float, float]:
+    if key.startswith("group-"):
+        return NODE_WIDTH + 24, 70
+    heads, lines = label_lines(nodes[key])
+    return NODE_WIDTH, round(16 + 17 * len(heads) + 15.5 * len(lines), 1)
 
 
-def edge_audit(edge: dict) -> str:
-    """A folded edge links to the witness of its first member."""
-    return "atlas-audit.html#" + edge_id(edge.get("members", [edge])[0])
+def layout_view(view: dict, nodes: dict[str, dict], groups: list[dict]) -> dict:
+    """Lay out one view with Graphviz. The browser draws the boxes and splines.
 
-
-def render_svg(view: dict, nodes: dict[str, dict], groups: list[dict], compact: bool = False) -> str:
-    q = lambda value: json.dumps(value, ensure_ascii=False)
-    titles = {group["id"]: group["title"] for group in groups}
+    Returns node boxes [x, y, width, height], one cubic spline per edge in the
+    order of view["edges"], and the frames of the External clusters, all with
+    the origin at the top left.
+    """
+    q = json.dumps
     folded = {"group-" + group for group in view.get("collapsed", [])}
-    sizes = Counter(node["external_group"] for node in nodes.values() if node["external_group"])
     dot = ['digraph atlas {',
-           'graph [rankdir=BT, bgcolor="transparent", pad="0.25", nodesep="0.32", ranksep="0.65", compound=true, newrank=true];',
-           'node [fontname="DejaVu Sans", fontsize=13, margin="0.16,0.10", penwidth=1.2];',
-           'edge [arrowhead=vee, arrowsize=0.65, color="#355572", penwidth=1.3];']
+           'graph [rankdir=BT, nodesep=0.28, ranksep=0.55, newrank=true, compound=true, pad=0.2];',
+           'node [shape=box, fixedsize=true, label=""];', 'edge [arrowhead=none];']
 
-    def draw_node(key):
-        node = nodes[key]
-        _, background, border = PALETTE.get(node["group"], PALETTE["api"])
-        entry = next((v for v in node["versions"] if v["name"] == node["primary"]), None)
-        shape = "ellipse" if entry and declaration_role(entry) == "proof" else "box"
-        status = GRAPH_STATUS.get(node["status"], node["status"])
-        tooltip = f"{node['id']} | {node['paper']}: {node['title']}. {status}. See the Remark for the scope of this version."
-        attrs = {"id": f"{view['id']}-node-{key}", "class": "graphnode " + node["status"],
-                 "shape": shape, "style": "filled" if shape == "ellipse" else "rounded,filled",
-                 "fillcolor": background, "color": border, "fontcolor": "#243449",
-                 "URL": "#node-" + key, "tooltip": tooltip}
-        dot.append(q(key) + " [label=<" + graph_label(node, compact) + ">, " +
-                   ", ".join(k + "=" + q(v) for k, v in attrs.items()) + "];")
-
-    def draw_group(key):
-        group = key.removeprefix("group-")
-        label = ('<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0"><TR><TD><B>' +
-                 html.escape(titles[group], quote=False) + '</B></TD></TR><TR><TD CELLPADDING="3">'
-                 '<FONT POINT-SIZE="10" COLOR="#617389">' + str(sizes[group]) +
-                 ' nodes · click to open</FONT></TD></TR></TABLE>')
-        attrs = {"id": f"{view['id']}-node-{key}", "class": "graphnode groupnode", "shape": "box3d",
-                 "style": "filled", "fillcolor": "#ffffff", "color": "#7c8c9f", "fontcolor": "#243449",
-                 "URL": "#group-" + group, "tooltip": titles[group] + ": folded External frame. Click to open it."}
-        dot.append(q(key) + " [label=<" + label + ">, " +
-                   ", ".join(k + "=" + q(v) for k, v in attrs.items()) + "];")
+    def draw(key):
+        width, height = node_size(key, nodes)
+        dot.append(f"{q(key)} [width={width / 72:.3f}, height={height / 72:.3f}];")
 
     external = [key for key in view["nodes"] if key in folded or nodes[key]["external_group"]]
     for key in view["nodes"]:
         if key not in external:
-            draw_node(key)
+            draw(key)
     if external:
-        dot += ['subgraph cluster_external {',
-                'graph [label="External inputs · expanded Lean dependencies", labelloc=t, labeljust=l, '
-                'fontname="DejaVu Sans", fontsize=14, color="#a0afc2", fontcolor="#526981", '
-                'style="rounded,filled", fillcolor="#f5f7fb", margin=20];']
+        # Space for the frame titles, which the browser writes.
+        dot.append('subgraph cluster_external { graph [margin=18, label=" ", fontsize=22];')
         for key in external:
             if key in folded:
-                draw_group(key)
+                draw(key)
         for group in groups:
             members = [key for key in external if key not in folded
                        and nodes[key]["external_group"] == group["id"]]
-            if not members:
-                continue
-            dot += [f'subgraph cluster_{group["id"]} {{',
-                    'graph [id=' + q(view["id"] + '-external-' + group["id"]) +
-                    ', label=' + q(group["title"]) + ', labelloc=t, labeljust=l, fontsize=11, style="rounded", margin=14];']
-            for key in members:
-                draw_node(key)
-            dot.append("}")
+            if members:
+                dot.append(f'subgraph cluster_{group["id"]} {{ graph [margin=12, label=" ", fontsize=18];')
+                for key in members:
+                    draw(key)
+                dot.append("}")
         dot.append("}")
-    for edge in view["edges"]:
-        actual = edge["kind"] == "actual"
-        members = edge.get("members", [])
-        if len(members) > 1:
-            label = f"{len(members)} connections folded into this arrow. Click to open the frame."
-        elif actual:
-            label = f"Lean kernel path: {len(edge['path'])} references. Click to open the witness."
-        else:
-            label = "Expert connection: " + edge["reason"]
-        attrs = {"id": view["id"] + "-" + drawn_id(edge),
-                 "class": "depedge " + edge["kind"] + " diff-" + edge["diff"],
-                 "tooltip": DIFF_TITLE[edge["diff"]] + ". " + label,
-                 "URL": edge_audit(edge), "target": "_blank", **DIFF_STYLE[edge["diff"]]}
-        if not actual:
-            attrs["weight"] = "0.3"
-        dot.append(q(edge["from"]) + " -> " + q(edge["to"]) + " [" +
-                   ", ".join(k + "=" + q(v) for k, v in attrs.items()) + "];")
+    for index, edge in enumerate(view["edges"]):
+        weight = ", weight=0.3" if edge["kind"] != "actual" else ""
+        dot.append(f'{q(edge["from"])} -> {q(edge["to"])} [id="e{index}"{weight}];')
     dot.append("}")
-    dot_text = "\n".join(dot)
-    cache = BLUEPRINT / "build/atlas-svg"
+    text = "\n".join(dot)
+    cache = BLUEPRINT / "build/atlas-layout"
     cache.mkdir(parents=True, exist_ok=True)
-    cache_file = cache / (hashlib.sha256(dot_text.encode()).hexdigest() + ".svg")
+    cache_file = cache / (hashlib.sha256(text.encode()).hexdigest() + ".json")
     if not cache_file.is_file():
-        result = subprocess.run(["dot", "-Tsvg"], input=dot_text, capture_output=True,
+        result = subprocess.run(["dot", "-Tjson"], input=text, capture_output=True,
                                 text=True, check=True, timeout=120)
         cache_file.write_text(result.stdout)
-    svg = ET.fromstring(cache_file.read_text())
-    ns = "http://www.w3.org/2000/svg"
-    ET.register_namespace("", ns)
-    ET.register_namespace("xlink", "http://www.w3.org/1999/xlink")
-    svg.attrib.update({"class": "depgraph", "data-view": view["id"], "role": "img",
-                       "aria-label": view["title"], "id": "graph-" + view["id"]})
-    svg.attrib.pop("width", None)
-    svg.attrib.pop("height", None)
-    edges = {view["id"] + "-" + drawn_id(edge): edge for edge in view["edges"]}
-    for element in svg.iter():
-        key = element.get("id", "")
-        # Graphviz also emits graph0, clust1 and anchor IDs. All twelve SVGs
-        # share one HTML document, so these generated IDs need a view prefix.
-        if key and key != svg.get("id") and not key.startswith(view["id"] + "-"):
-            element.set("id", view["id"] + "-" + key)
-        group_prefix = view["id"] + "-external-"
-        if key.startswith(group_prefix):
-            element.set("data-external-group", key.removeprefix(group_prefix))
-        prefix = view["id"] + "-node-"
-        if key.startswith(prefix):
-            node_key = key.removeprefix(prefix)
-            if node_key in folded:
-                group = node_key.removeprefix("group-")
-                element.attrib.update({"data-node": node_key, "data-group": group, "tabindex": "0",
-                                       "role": "button", "aria-label": "Open the External frame " + titles[group]})
-            else:
-                node = nodes[node_key]
-                element.attrib.update({"data-node": node_key, "tabindex": "0", "role": "button",
-                                       "aria-label": node["paper"] + ": " + node["title"],
-                                       "data-heading": plain(node_heading(node)[0]),
-                                       "data-title": plain(node["title"])})
-                if node["external_group"]:
-                    element.set("data-group", node["external_group"])
-        if key in edges:
-            edge = edges[key]
-            element.attrib.update({"data-from": edge["from"], "data-to": edge["to"],
-                                   "data-kind": edge["kind"], "data-diff": edge["diff"],
-                                   "tabindex": "0", "role": "link", "data-audit": edge_audit(edge),
-                                   "aria-label": DIFF_TITLE[edge["diff"]] + " edge " + edge["from"] + " to " + edge["to"]})
-            if len(edge.get("members", [])) > 1:
-                element.set("data-members", " ".join(
-                    member["from"] + ">" + member["to"] + ">" + edge_id(member) for member in edge["members"]))
-    return ET.tostring(svg, encoding="unicode")
+    raw = json.loads(cache_file.read_text())
+    x0, y0, x1, y1 = map(float, raw["bb"].split(","))
+    # A small margin keeps rounded boxes inside the drawing.
+    margin = 8
+    flip = lambda x, y: (round(x - x0 + margin), round(y1 - y + margin))
+    boxes, clusters = {}, []
+    for item in raw.get("objects", []):
+        if item["name"].startswith("cluster_"):
+            left, bottom, right, top = map(float, item["bb"].split(","))
+            (ax, ay), (bx, by) = flip(left, top), flip(right, bottom)
+            clusters.append({"id": item["name"].removeprefix("cluster_"), "x": ax, "y": ay, "w": bx - ax, "h": by - ay})
+        elif "pos" in item:
+            x, y = flip(*map(float, item["pos"].split(",")))
+            width, height = float(item["width"]) * 72, float(item["height"]) * 72
+            boxes[item["name"]] = [round(x - width / 2), round(y - height / 2), round(width, 1), round(height, 1)]
+    splines = {}
+    for item in raw.get("edges", []):
+        points = [flip(*map(float, point.split(","))) for point in item["pos"].split()
+                  if not point.startswith(("e,", "s,"))]
+        path = f"M{points[0][0]},{points[0][1]}" + "".join(
+            f"C{points[i][0]},{points[i][1]} {points[i + 1][0]},{points[i + 1][1]} {points[i + 2][0]},{points[i + 2][1]}"
+            for i in range(1, len(points) - 2, 3))
+        splines[int(item["id"][1:]) if "id" in item else item["_gvid"]] = path
+    missing = set(view["nodes"]) - boxes.keys()
+    if missing or len(splines) != len(view["edges"]):
+        raise ValueError(f"Graphviz did not place every node and edge of {view['id']}")
+    return {"w": round(x1 - x0 + 2 * margin), "h": round(y1 - y0 + 2 * margin), "nodes": {key: boxes[key] for key in view["nodes"]},
+            "splines": [splines[i] for i in range(len(view["edges"]))], "clusters": clusters}
 
 
 def expert_math_html(text: str) -> str:
@@ -265,6 +196,159 @@ def expert_math_html(text: str) -> str:
     return "".join("<p>" + paragraph.replace("\n", " ") + "</p>" for paragraph in text.split("\n\n"))
 
 
+def status_mark(status: str) -> str:
+    """The node mark for a Lean status: shape for the role, filled when the root uses it."""
+    if status == "unmatched":
+        inner = '<rect class="mk-none" x="1.5" y="1.5" width="11" height="11" rx="2.5"/>'
+    else:
+        reached, role = status.split("-", 1)
+        cls = "mk used" if reached == "used" else "mk off"
+        inner = {"proof": f'<circle class="{cls}" cx="7" cy="7" r="4.1"/>',
+                 "interface": f'<path class="{cls}" d="M7 2 12 7 7 12 2 7Z"/>',
+                 "definition": f'<rect class="{cls}" x="3.4" y="3.4" width="7.2" height="7.2"/>'}.get(
+            role, f'<path class="{cls}" d="M7 2.3 11.7 10.8 2.3 10.8Z"/>')
+    return f'<svg class="mark" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">{inner}</svg>'
+
+
+def sitebar(current: str) -> str:
+    """The site bar, for pages under blueprint/ that are not Jinja templates."""
+    from jinja2 import Environment, FileSystemLoader
+    environment = Environment(loader=FileSystemLoader(BLUEPRINT / "templates"), autoescape=True)
+    return environment.get_template("_sitebar.html").module.sitebar(current)
+
+
+def connection_anchor(edge: dict) -> str:
+    return f"connection-{edge['from']}-{edge['to']}"
+
+
+def lean_only_anchor(edge: dict) -> str:
+    return f"lean-only-{edge['from']}-{edge['to']}"
+
+
+def audit_rows(atlas: dict) -> tuple[list[dict], list[dict]]:
+    """Rows of the evidence page: every roadmap connection, and every Lean-only arrow."""
+    drawn = {(edge["from"], edge["to"]) for view in atlas["views"] for edge in view["edges"]}
+    seen = Counter()
+    connections = []
+    for edge in atlas["expert_edges"]:
+        anchor = connection_anchor(edge)
+        seen[anchor] += 1
+        # The expert records two categories for a few connections; both rows stay.
+        connections.append({**edge, "anchor": anchor if seen[anchor] == 1 else f"{anchor}-{seen[anchor]}",
+                            "drawn": (edge["from"], edge["to"]) in drawn})
+    lean_only = {}
+    for view in atlas["views"]:
+        for edge in view["edges"]:
+            if edge["diff"] == "lean-only":
+                row = lean_only.setdefault((edge["from"], edge["to"]),
+                                           {**edge, "anchor": lean_only_anchor(edge), "views": []})
+                row["views"].append(view["title"])
+    return connections, list(lean_only.values())
+
+
+def connection_records(atlas: dict) -> dict[str, dict]:
+    """One record per drawn (from, to, kind): its class, reason, roadmap notes and evidence row."""
+    notes: dict[tuple, list[str]] = {}
+    for edge in atlas["expert_edges"]:
+        notes.setdefault((edge["from"], edge["to"]), []).append(edge["expert_note"])
+    records = {}
+    for view in atlas["views"]:
+        for edge in view["edges"]:
+            key = f"{edge['from']}>{edge['to']}>{edge['kind']}"
+            pair = (edge["from"], edge["to"])
+            if key in records:
+                continue
+            anchor = (lean_only_anchor(edge) if edge["diff"] == "lean-only"
+                      else connection_anchor(edge) if pair in notes else None)
+            records[key] = {"diff": edge["diff"], "classification": edge.get("classification"),
+                            "reason": edge.get("reason"), "notes": notes.get(pair, []),
+                            "audit": "atlas-audit.html#" + anchor if anchor else None}
+    return records
+
+
+def layout_key(variant: str) -> str:
+    """Whole-proof layouts: "all" folds every frame, "all-<group>" opens one, "all-full" opens all."""
+    return {"collapsed": "all", "full": "all-full"}.get(variant, "all-" + variant.removeprefix("expand-"))
+
+
+def atlas_links(data: dict) -> list[str]:
+    """Links the atlas page builds from its data, checked with the site's other links."""
+    links = [edge["audit"] for edge in data["connections"].values() if edge["audit"]]
+    for node in data["nodes"]:
+        links += [statement["url"] for statement in node["statements"]]
+        links += [link["url"] for link in node["remark_links"]]
+        links += [version["doc"] for version in node["versions"]]
+    return links
+
+
+def page_data(atlas: dict, nodes: dict[str, dict], cards: list[dict], evidence: dict, revision: str) -> dict:
+    """Everything the atlas page draws: nodes and cards, layouts, connections and witnesses."""
+    paths: dict[str, int] = {}
+    table: list[list] = []
+
+    def path_index(path):
+        steps = [[step["from"], step["to"], step["kind"]] for step in path]
+        key = json.dumps(steps)
+        if key not in paths:
+            paths[key] = len(table)
+            table.append(steps)
+        return paths[key]
+
+    def drawn(edge, spline=None):
+        record = {"from": edge["from"], "to": edge["to"], "kind": edge["kind"], "diff": edge["diff"]}
+        if spline:
+            record["d"] = spline
+        if edge.get("path"):
+            record["p"] = path_index(edge["path"])
+        if "members" in edge:
+            record["members"] = [[m["from"], m["to"], m["kind"], path_index(m["path"]) if m.get("path") else None]
+                                 for m in edge["members"]]
+        return record
+
+    groups = atlas["external_groups"]
+    sources = [(view["id"], view) for view in atlas["views"] if view["id"] != "all"]
+    sources += [(layout_key(variant["id"]), variant) for variant in atlas["unified_variants"]]
+    layouts = {}
+    for key, view in sources:
+        placed = layout_view(view, nodes, groups)
+        layouts[key] = {"w": placed["w"], "h": placed["h"], "nodes": placed["nodes"], "clusters": placed["clusters"],
+                        "edges": [drawn(edge, spline) for edge, spline in zip(view["edges"], placed["splines"])]}
+    records = []
+    for card in cards:
+        heads, lines = label_lines(card)
+        records.append({
+            "id": card["id"], "group": card["group"], "expert": card["expert"], "origin": card.get("origin"),
+            "paper": card["paper"], "title": card["title"], "source": card.get("source"),
+            "heading": heads, "summary": lines, "full_heading": card["heading"].rstrip(":"),
+            "status": card["status"], "primary": card["primary"], "external": card["external_group"],
+            "remark": card["remark"], "labels": card["labels"],
+            "statements": [{"heading": str(statement["heading"]), "url": statement["url"],
+                            "html": str(statement["content"])} for statement in card["statements"]],
+            "expert_html": str(card["expert_statement_html"]) if card["expert"] else "",
+            "remark_links": [{"label": link["label"].removeprefix("rem:"), "url": link["url"]}
+                             for link in card["remark_links"]],
+            "versions": [{"name": version["name"], "kind": version["kind"], "role": version["role"],
+                          "reached": version["reached"], "type": version.get("expanded_type") or version.get("type"),
+                          "definition": version.get("definition"), "doc": version["doc_url"],
+                          "src": version["source_url"], "p": path_index(version["path"]) if version["path"] else None}
+                         for version in card["versions"]]})
+    modules: dict[str, int] = {}
+    located = {}
+    for name in sorted({name for steps in table for step in steps for name in step[:2]}):
+        metadata = evidence[name]
+        located[name] = [modules.setdefault(metadata["module"], len(modules)), metadata.get("line")]
+    packages = json.loads((ROOT / "lake-manifest.json").read_text())["packages"]
+    return {"format": 1, "root": atlas["root"], "root_node": atlas["root_node"], "counts": atlas["counts"],
+            "repository": "https://github.com/Yu-Misaka/3d-sticky-kakeya", "revision": revision,
+            "mathlib_revision": next(p["rev"] for p in packages if p["name"].strip("«»") == "mathlib"),
+            "views": [{"id": view["id"], "title": view["title"], "description": view["description"],
+                       "count": len(view["nodes"])} for view in atlas["views"] if view["id"] != "all"],
+            "groups": [{"id": group["id"], "title": group["title"]} for group in groups],
+            "branches": PALETTE, "status": STATUS, "diff_titles": DIFF_TITLE,
+            "nodes": records, "connections": connection_records(atlas), "layouts": layouts,
+            "paths": table, "modules": list(modules), "sources": located}
+
+
 def write_atlas(site: Path, report: dict, paper_nodes: list[dict], paper_html: str) -> None:
     from jinja2 import Environment, FileSystemLoader, select_autoescape
     from markupsafe import Markup
@@ -272,8 +356,6 @@ def write_atlas(site: Path, report: dict, paper_nodes: list[dict], paper_html: s
     expert, mapping = load_sources()
     environment = Environment(loader=FileSystemLoader(BLUEPRINT / "templates"),
                               autoescape=select_autoescape(["html"]))
-    template = environment.get_template("atlas.html")
-    audit_template = environment.get_template("atlas_audit.html")
     atlas = make_atlas(report, expert, mapping, paper_nodes)
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     atlas["provenance"] = {"expert_sources": expert["sources"], "revision": revision,
@@ -301,7 +383,7 @@ def write_atlas(site: Path, report: dict, paper_nodes: list[dict], paper_html: s
 
     cards = []
     for node in atlas["nodes"]:
-        card = {**node, "group_name": PALETTE.get(node["group"], PALETTE["api"])[0],
+        card = {**node, "group_name": PALETTE.get(node["group"], PALETTE["api"]),
                 "status_label": STATUS.get(node["status"], node["status"]), "statements": [],
                 "expert_statement_html": Markup(expert_math_html(node["statement"])),
                 "remark_links": [], "versions": []}
@@ -323,56 +405,48 @@ def write_atlas(site: Path, report: dict, paper_nodes: list[dict], paper_html: s
                 "role": declaration_role(entry), "doc_url": "../lean/find/#doc/" + quote(entry["name"], safe="."),
                 "source_url": source_url(entry, revision), "path_html": Markup(path_html(entry["path"]))})
         card["heading"] = plain(node_heading(node)[0])
-        card["search"] = " ".join(str(node.get(key, "")) for key in
-                                  ("id", "title", "paper", "graph_heading", "graph_summary", "remark", "lean", "status")).lower()
         cards.append(card)
-    groups = []
-    for group in atlas["external_groups"]:
-        members = [{"id": key, "heading": plain(node_heading(nodes[key])[0]),
-                    "title": nodes[key]["primary"].rsplit(".", 1)[-1] if not nodes[key]["expert"]
-                    else plain(nodes[key]["title"])}
-                   for key in atlas["views"][-1]["nodes"] if nodes[key]["external_group"] == group["id"]]
-        groups.append({**group, "members": members})
-    # The unified graph is not embedded: its variants are separate files,
-    # fetched when the dialog opens or a frame is opened.
-    branch_views = [view for view in atlas["views"] if view["id"] != "all"]
-    views = [{**view, "svg": Markup(render_svg(view, nodes, atlas["external_groups"]))} for view in branch_views]
-    palette = {key: value for key, value in PALETTE.items() if any(node["group"] == key for node in nodes.values())}
     destination = site / "blueprint"
-    for variant in atlas["unified_variants"]:
-        svg = render_svg({**variant, "id": "map"}, nodes, atlas["external_groups"], compact=True)
-        (destination / f"atlas-unified-{variant['id']}.svg").write_text(
-            '<?xml version="1.0" encoding="UTF-8"?>\n' + svg)
-    output = template.render(atlas=atlas, views=views, cards=cards, groups=groups, palette=palette,
-                             status=STATUS, counts=atlas["counts"], diff_titles=DIFF_TITLE)
-    (destination / "lean_dependencies.html").write_text(output)
+    data = page_data(atlas, nodes, cards, evidence, revision)
+    (destination / "atlas-view.json").write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")))
+    branch_views = [view for view in atlas["views"] if view["id"] != "all"]
+    (destination / "lean_dependencies.html").write_text(environment.get_template("atlas.html").render(
+        atlas=atlas, views=branch_views, counts=atlas["counts"]))
     # The leanblueprint menu's historical graph route forwards to the reviewed
     # atlas. The generated paper DOT must not keep unaudited solid arrows.
     (destination / "dep_graph_document.html").write_text(
         redirect_page("lean_dependencies.html", "the proof atlas"))
     (destination / "atlas-cards.html").write_text(
         environment.get_template("atlas_cards.html").render(cards=cards))
-    # The folded unified variants are derived from the "all" view and are
-    # published as SVG files; repeating their witnesses would double the file.
+    # The whole-proof variants are derived from the "all" view; their layouts
+    # are in atlas-view.json and their witnesses are those of the "all" view.
     published = {key: value for key, value in atlas.items() if key != "unified_variants"}
     (destination / "atlas-dependencies.json").write_text(json.dumps(published, ensure_ascii=False) + "\n")
 
-    actual_edges = {}
-    for view in atlas["views"]:
-        for edge in view["edges"]:
-            actual_edges[edge_id(edge)] = edge
-    edge_rows = []
-    for key, edge in actual_edges.items():
-        is_actual = edge["kind"] == "actual"
-        edge_rows.append({"id": key, "from": edge["from"], "to": edge["to"], "diff": edge["diff"],
-            "kind": DIFF_TITLE[edge["diff"]] + (" · compiled Lean path" if is_actual else " · " + edge["classification"]),
-            "reason": "Each step below is a type, value, or structural reference in a compiled declaration." if is_actual else edge["reason"],
-            "path_html": Markup(path_html(edge["path"]))})
-    comparisons = [{**edge, "path_html": Markup(path_html(edge["path"]))} for edge in atlas["expert_edges"]]
-    unified = {edge_id(edge) for edge in atlas["views"][-1]["edges"]}
-    lean_only = [row for row in edge_rows if row["diff"] == "lean-only" and row["id"] in unified]
-    audit = audit_template.render(atlas=atlas, edges=edge_rows, lean_only=lean_only,
-                                 comparisons=comparisons, counts=atlas["counts"], diff_titles=DIFF_TITLE)
+    def ends(row):
+        heading = lambda key: plain(node_heading(nodes[key])[0]).strip().rstrip(":")
+        return {"from_heading": heading(row["from"]), "to_heading": heading(row["to"]),
+                "path_html": Markup(path_html(row["path"]))}
+
+    connections, lean_only = audit_rows(atlas)
+    # The expert's notes repeat the arrow before a colon; the table shows it already.
+    connections = [{**row, **ends(row), "title": CLASSIFICATION_TITLE[row["classification"]],
+                    "note": row["expert_note"].removeprefix(f"{row['from']} → {row['to']}: ")} for row in connections]
+    lean_only = [{**row, **ends(row)} for row in lean_only]
+    audit = environment.get_template("atlas_audit.html").render(
+        atlas=atlas, connections=connections, lean_only=lean_only, counts=atlas["counts"],
+        classifications=CLASSIFICATION_TITLE, diff_titles=DIFF_TITLE)
     (destination / "atlas-audit.html").write_text(audit)
-    print(f"Rendered atlas: {len(nodes)} display nodes, {len(views)} views, "
-          f"{len(expert['nodes'])} expert correspondences, framed external proofs.", flush=True)
+    # The home page shows the theorem as the manuscript states it, and the atlas's own counts.
+    root = paper.statements["thm:sticky"]
+    order = ["used-proof", "used-interface", "used-definition", "used-constructor", "unused-proof",
+             "unused-interface", "unused-definition", "unused-constructor", "unmatched"]
+    statuses = atlas["counts"]["node_statuses"]
+    tally = [(key, statuses[key]) for key in order if statuses.get(key)]
+    (site / "index.html").write_text(environment.get_template("home.html").render(
+        atlas=atlas, counts=atlas["counts"], views=branch_views, status=STATUS, diff_titles=DIFF_TITLE,
+        node_tally=tally, marks={key: Markup(status_mark(key)) for key, _ in tally},
+        edge_total=sum(atlas["counts"]["unified_diff"].values()),
+        statement={**root, "content": Markup(statement_content(root["content"], "home", root["url"].split("#")[0]))}))
+    print(f"Rendered atlas: {len(nodes)} display nodes, {len(branch_views)} views, "
+          f"{len(expert['nodes'])} expert correspondences, {len(data['layouts'])} layouts.", flush=True)

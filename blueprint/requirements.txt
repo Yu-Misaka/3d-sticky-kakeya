@@ -3,3 +3,4 @@ plasTeX==3.1
 plastexdepgraph==0.0.5
 plastexshowmore==0.0.2
 pygraphviz==2.0.3
+beautifulsoup4==4.12.3

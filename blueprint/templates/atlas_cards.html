@@ -1,22 +1,22 @@
-{% from "_card.html" import card_body %}<!doctype html>
+{% from "_card.html" import card_body %}{% from "_sitebar.html" import sitebar, head %}<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Every node card of the sticky Kakeya proof atlas on one page, for reading, searching and printing.">
-  <title>Sticky Kakeya · All atlas node cards</title>
-  <link rel="stylesheet" href="../assets/atlas.css">
+  {{ head("Sticky Kakeya · All atlas node cards", "Every node card of the sticky Kakeya proof atlas on one page, for reading, searching and printing.") }}
+  <link rel="stylesheet" href="../assets/pages.css">
   {% include "_mathjax.html" %}
   <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 </head>
-<body>
-  <header class="atlas-header"><div class="header-inner"><div class="eyebrow">Theorem 5.2 · Node cards</div><h1>All {{ cards|length }} atlas node cards</h1>
-    <p>The cards shown beside the proof atlas, in its order, on one page. Use the browser's search or print this page.</p>
-    <nav aria-label="Project"><a href="lean_dependencies.html">Proof atlas</a><a href="index.html">Manuscript</a><a href="atlas-audit.html">Edge witnesses</a><a href="lean_dependency_audit.html">Version audit</a></nav></div></header>
-  <main class="cards-page">
+<body class="doc">
+  {{ sitebar("atlas") }}
+  <main class="doc-main narrow">
+    <p class="kicker">Proof atlas · node cards</p>
+    <h1>All {{ cards|length }} atlas node cards</h1>
+    <p class="lead">The cards shown beside the <a href="lean_dependencies.html">proof atlas</a>, in its order, on one page. Use the browser's search, or print this page.</p>
+    <div class="cards">
     {% for card in cards %}
     <article class="nodecard" id="node-{{ card.id }}">{{ card_body(card) }}</article>
     {% endfor %}
+    </div>
   </main>
 </body>
 </html>

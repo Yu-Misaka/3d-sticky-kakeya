@@ -1,0 +1,37 @@
+{# The site bar shared by the home page, the atlas and the evidence pages.
+   `root` leads to the site root and `here` to the blueprint directory. #}
+{% macro sitebar(current, root="../", here="", search=False) -%}
+<header class="bar">
+  <a class="brand" href="{{ root }}index.html" aria-label="Sticky Kakeya home">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="18" x2="20" y2="6"/><line x1="5" y1="12" x2="19" y2="12" class="hot"/><line x1="8" y1="4" x2="16" y2="20"/></svg>
+    <span>Sticky Kakeya</span>
+  </a>
+  <nav class="tabs" aria-label="Site">
+    {%- for key, href, title in [("home", root ~ "index.html", "Home"), ("atlas", here ~ "lean_dependencies.html", "Atlas"),
+                                 ("manuscript", here ~ "index.html", "Manuscript"), ("evidence", here ~ "atlas-audit.html", "Evidence"),
+                                 ("lean", root ~ "lean/Documentation.html", "Lean docs"), ("pdf", root ~ "blueprint.pdf", "PDF")] %}
+    <a class="tab{% if key in ('lean', 'pdf') %} wide-only{% endif %}" href="{{ href }}"{% if key == current %} aria-current="page"{% endif %}>{{ title }}</a>
+    {%- endfor %}
+  </nav>
+  <span class="grow"></span>
+  {% if search -%}
+  <button class="search-btn" id="search" data-open-palette aria-label="Search the atlas">
+  {%- else -%}
+  <a class="search-btn" href="{{ here }}lean_dependencies.html#search" aria-label="Search the atlas">
+  {%- endif %}
+    <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6"/><path d="m10.5 10.5 3.5 3.5"/></svg>
+    <span class="lbl">Search nodes and Lean names</span>{% if search %}<kbd>⌘K</kbd>{% endif %}
+  {% if search %}</button>{% else %}</a>{% endif %}
+</header>
+{%- endmacro %}
+
+{% macro head(title, description, root="../") -%}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="{{ description }}">
+  <title>{{ title }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap">
+  <link rel="stylesheet" href="{{ root }}assets/theme.css">
+{%- endmacro %}

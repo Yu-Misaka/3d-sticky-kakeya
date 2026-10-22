@@ -7,6 +7,7 @@ import hashlib
 import html
 import json
 import re
+import shutil
 import subprocess
 from collections import Counter, deque
 from html.parser import HTMLParser
@@ -308,7 +309,6 @@ def redirect_page(target: str, title: str) -> str:
 def write_site(site: Path, report: dict, paper_nodes: list[dict]) -> None:
     """Publish the reviewed atlas and its audits."""
     entries = {entry["name"]: entry for entry in report["declarations"]}
-    edge_rows = []
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
 
     def source_link(name: str, label: str | None = None) -> str:
@@ -325,9 +325,6 @@ def write_site(site: Path, report: dict, paper_nodes: list[dict]) -> None:
                         f'{source_link(step["to"])}</li>' for step in path)
         return f'<details><summary>Witness: {len(path)} references</summary><ol>{steps}</ol></details>'
 
-    for edge in report["edges"]:
-        edge_rows.append(f'<li>{source_link(edge["to"])} → {source_link(edge["from"])}'
-                         f'{path_details(edge["path"])}</li>')
     rows = []
     for node in paper_nodes:
         if node["kind"] == "remark" and not node["label"].startswith("rem:atlas-"):
@@ -352,11 +349,13 @@ def write_site(site: Path, report: dict, paper_nodes: list[dict]) -> None:
     used = sum(entry["reached"] for entry in entries.values())
     unused_proofs = sum(not entry["reached"] and entry["kind"] == "theorem" for entry in entries.values())
     template = (BLUEPRINT / "templates/lean_dependency_audit.html").read_text()
+    from atlas_render import sitebar
     substitutions = {
         "ROOT": html.escape(report["root"]),
         "COUNTS": f"{report['project_declarations']:,} project declarations inspected; {used}/{len(entries)} linked declarations reached; {unused_proofs} linked theorems proved but unused by this root.",
-        "ROWS": "\n".join(rows), "EDGES": "\n".join(edge_rows),
-        "SHA": html.escape(revision),
+        "ROWS": "\n".join(rows), "SHA": html.escape(revision),
+        # The witness of every graph edge is shown by the atlas and kept in lean-dependencies.json.
+        "SITEBAR": sitebar("evidence"),
     }
     for name, text in substitutions.items():
         template = template.replace("{{" + name + "}}", text)
@@ -369,3 +368,10 @@ def write_site(site: Path, report: dict, paper_nodes: list[dict]) -> None:
     (site / "blueprint/lean-dependencies.json").write_text(json.dumps(report, ensure_ascii=False) + "\n")
     from atlas_render import write_atlas
     write_atlas(site, report, paper_nodes, text)
+    # The atlas has read plasTeX's statements; now give the manuscript the site's design.
+    from manuscript import restyle_manuscript
+    converted = restyle_manuscript(site / "blueprint")
+    for theme in ("js", "styles"):
+        shutil.rmtree(site / "blueprint" / theme, ignore_errors=True)
+    (site / "blueprint/symbol-defs.svg").unlink(missing_ok=True)
+    print(f"Restyled {converted} manuscript pages.", flush=True)

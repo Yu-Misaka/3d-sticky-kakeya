@@ -1,112 +1,83 @@
-{% from "_card.html" import group_body %}
-{% macro filters(scope, defaults) -%}
-<div class="edge-filters" role="group" aria-label="Visible connections" data-filters="{{ scope }}">
-  {% for key, title in diff_titles.items() %}<label class="diff-toggle"><input type="checkbox" data-diff="{{ key }}"{% if defaults.get(key, True) %} checked{% endif %}><span class="swatch diff-{{ key }}" aria-hidden="true"></span>{{ title }} <span class="diff-count" data-count="{{ key }}"></span></label>
-  {% endfor %}
-</div>
-{%- endmacro %}
-<!doctype html>
+{% from "_sitebar.html" import sitebar, head %}<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="The expert's sticky Kakeya roadmap compared with the actual compiled Lean proof, with witnessed dependencies and statement differences.">
-  <title>Sticky Kakeya · Mathematical and Lean proof atlas</title>
+  {{ head("Sticky Kakeya · Proof atlas", "The expert's sticky Kakeya roadmap compared with the compiled Lean proof, with witnessed dependencies and statement differences.") }}
   <link rel="stylesheet" href="../assets/atlas.css">
   {% include "_mathjax.html" %}
+  <script>
+    // The atlas typesets each panel itself once MathJax is ready.
+    window.MathJax.startup = {typeset: false, ready() {
+      MathJax.startup.defaultReady();
+      MathJax.startup.promise.then(() => window.atlasMathReady && window.atlasMathReady());
+    }};
+  </script>
   <script defer src="../assets/atlas.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 </head>
-<body>
-  <header class="atlas-header">
-    <div class="header-inner">
-      <div class="eyebrow">Wang–Zahl · WZ1 / WZ2 · Theorem 5.2</div>
-      <h1>Multi-scale convex Wolff</h1>
-      <p class="header-subtitle">A mathematical roadmap, checked against the Lean proof</p>
-      <p>{{ counts.expert_nodes }} expert nodes · {{ counts.expert_edges }} proposed connections · {{ counts.lean_versions }} reached Lean versions.</p>
-      <nav aria-label="Project">
-        <a href="../index.html">Project</a><a href="index.html">Manuscript</a>
-        <a href="../blueprint.pdf">PDF</a><a href="../lean/Documentation.html">Lean documentation</a>
-        <a href="atlas-cards.html">All node cards</a>
-        <a href="atlas-audit.html">Edge witnesses</a><a href="lean_dependency_audit.html">Version audit</a>
-      </nav>
-      <button class="headergraph" data-open-map>Open the unified graph <span aria-hidden="true">↗</span></button>
-    </div>
-  </header>
-  <main>
-    <details class="scope surface">
-      <summary>Scope, sources and how to read the connections</summary>
-      <p>The endpoint is the finite sticky estimate, WZ2 Theorem 5.2. The expert atlas supplies the branch structure, mathematical explanations and proposed connections. Its uncompiled Lean sketches have been replaced by links to audited declarations.</p>
-      <p><strong>Solid arrows</strong> have a nonempty path of references in the compiled sticky proof. Types, definitions and structural references count as dependencies too: a used proposition is not thereby proved. Intermediate declarations may be folded into an arrow; open it to inspect every step.</p>
-      <p>Each solid arrow is also compared with the roadmap. It <em>agrees</em> when the roadmap connects the two nodes, directly or through other nodes; it is <em>Lean only</em> when the roadmap has no such path; it is a <em>Lean detail</em> when one end is a Lean version that the roadmap does not show.</p>
-      <p><strong>Dashed and dotted arrows</strong> are roadmap connections without a supporting path. A dashed arrow means both Lean versions are used and the proof takes another route. A dotted arrow cannot be compared: a node has no Lean match, its version is outside the root's closure, or two cards share one declaration. Neither asserts that the mathematical argument is false.</p>
-      <p>Click a node to read its card beside the graph. Branch colours do not indicate completion. The External view opens the implemented proofs inside labelled frames; Mathlib remains a library boundary.</p>
-      <p><a href="atlas-dependencies.json">Download the atlas and its witnesses</a> · <a href="lean-dependencies.json">Download the declaration audit</a></p>
-    </details>
-    <div class="layout">
-      <aside class="sidenav" aria-label="Proof branches">
-        {% for view in views %}
-        <button class="viewbtn{% if loop.first %} active{% endif %}" data-view="{{ view.id }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ loop.index }}. {{ view.title }}</button>
+<body class="app">
+  {{ sitebar("atlas", search=True) }}
+  <main class="atlas" id="atlas" data-root-node="{{ atlas.root_node }}">
+    <nav class="rail" aria-label="Atlas views">
+      <p class="rail-label">Branches of the roadmap</p>
+      <ol class="views" id="view-list">
+        {% for view in views %}<li><button class="vbtn" data-view="{{ view.id }}"><span class="num">{{ loop.index }}</span><span>{{ view.title }}</span><span class="cnt">{{ view.nodes|length }}</span></button></li>
         {% endfor %}
-        <button class="mapbutton" data-open-map>Unified dependency graph<small>External frames folded · open one at a time</small></button>
-        <p>Arrows point from prerequisites to consumers. Ellipses represent Lean proof values; boxes represent definitions, interfaces or nodes without a primary Lean correspondence.</p>
-      </aside>
-      <section class="atlas-content">
-        <div class="surface graphs">
-          {{ filters("page", {}) }}
-          {% for view in views %}
-          <section class="graphview" id="view-{{ view.id }}"{% if not loop.first %} hidden{% endif %}>
-            <h2>{{ view.title }}</h2><p class="muted graph-description">{{ view.description }}</p>
-            {% if view.id == 'external' %}<div class="external-nav" role="group" aria-label="Focus an External group">
-              {% for group in atlas.external_groups %}<button data-external-group="{{ group.id }}" aria-pressed="false">{{ group.title }}</button>{% endfor %}
-            </div>{% endif %}
-            <div class="diagram-tools" role="group" aria-label="Diagram scale">
-              <button data-action="fit">Fit width</button><button data-action="readable">Readable size</button>
-              <button data-action="out" aria-label="Zoom out">−</button><button data-action="in" aria-label="Zoom in">+</button>
-              <output aria-label="Zoom level">100%</output><button data-action="clear">Clear selection</button>
-            </div>
-            <div class="diagram-scroll" data-diagram="{{ view.id }}">{{ view.svg }}</div>
-          </section>
-          {% endfor %}
-          <div class="tracekey"><span class="selected-key">Selected</span><span class="input-key">Prerequisites</span><span class="output-key">Consumers</span></div>
-          <p class="graphstatus" aria-live="polite">Select a node to read its card. Select an arrow to open its witness in a new tab.</p>
-          <p class="diagram-help">Drag the background to pan. Ctrl + scroll to zoom. Use the keyboard to focus a node and press Enter; Esc closes the card.</p>
+      </ol>
+      <p class="rail-label">Complete graph</p>
+      <button class="vbtn whole" data-view="all"><span class="num"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/><path d="M7 4.5h4.5V9M9 11.5H4.5V7"/></svg></span><span>Whole proof</span><span class="cnt">{{ atlas.nodes|length }}</span></button>
+      <p class="rail-note">Arrows point from a prerequisite up to the result that uses it. Branch colours group the roadmap; they do not indicate completion. <a href="atlas-audit.html">How the arrows are checked</a></p>
+    </nav>
+    <div class="canvas" id="canvas-wrap">
+      <svg id="canvas" aria-label="Dependency graph" role="application">
+        <defs id="markers"></defs>
+        <g id="world"><g id="l-clusters"></g><g id="l-edges"></g><g id="l-nodes"></g></g>
+      </svg>
+      <p class="loading" id="loading" role="status">Loading the atlas…</p>
+      <div class="ov ov-top">
+        <div class="vt-block panel">
+          <label class="visually-hidden" for="view-select">Atlas view</label>
+          <select id="view-select" class="mobile-only">
+            {% for view in views %}<option value="{{ view.id }}">{{ loop.index }}. {{ view.title }}</option>{% endfor %}
+            <option value="all">Whole proof</option>
+          </select>
+          <h1 id="view-title" class="desk-title">Proof atlas</h1>
+          <p id="view-desc"></p>
         </div>
-        <div class="cardsintro"><h2>Node index</h2><p class="muted">Every node of the atlas. Select one to show it in the graph and read its card. <a href="atlas-cards.html">Read all cards on one page</a>.</p></div>
-        <div class="toolbar" role="search">
-          <label class="search-label" for="search">Search nodes or Lean declarations<input id="search" type="search" placeholder="For example: L4_11, Frostman, smoothing…"></label>
-          <label for="group-filter">Branch<select id="group-filter"><option value="">All branches</option>{% for key, group in palette.items() %}<option value="{{ key }}">{{ group[0] }}</option>{% endfor %}</select></label>
-          <label for="status-filter">Lean status<select id="status-filter"><option value="">All statuses</option>{% for key, title in status.items() %}<option value="{{ key }}">{{ title }}</option>{% endfor %}</select></label>
-          <button id="reset-filters">Reset</button>
-        </div>
-        <p id="card-count" class="count" aria-live="polite">{{ cards|length }} nodes</p>
-        <p id="no-results" class="surface" hidden>No nodes match these filters. Try a paper number, an expert ID or a Lean declaration name.</p>
-        <ol id="node-index" class="node-index">
-          {% for card in cards %}
-          <li class="index-row" id="node-{{ card.id }}" data-group="{{ card.group }}" data-status="{{ card.status }}" data-search="{{ card.search }}"{% if card.external_group %} data-external="{{ card.external_group }}"{% endif %}>
-            <a href="atlas-cards.html#node-{{ card.id }}" data-select-node="{{ card.id }}"><span class="group {{ card.group }}">{{ card.group_name }}</span><span class="index-heading">{{ card.heading }}</span><span class="index-title">{% if card.expert %}{{ card.title }}{% else %}Lean version · <code>{{ card.primary.rsplit(".", 1)[-1] }}</code>{% endif %}</span><span class="status {{ card.status }}">{{ card.status_label }}</span><code>{{ card.id }}</code></a>
-          </li>
-          {% endfor %}
-        </ol>
-      </section>
+        <div class="frames panel" id="frames" hidden></div>
+      </div>
+      <div class="ov ov-zoom panel" role="group" aria-label="Zoom">
+        <button class="zbtn" data-zoom="out" aria-label="Zoom out">−</button>
+        <output id="zoom-level">100%</output>
+        <button class="zbtn" data-zoom="in" aria-label="Zoom in">+</button>
+        <span class="zsep"></span>
+        <button class="zbtn txt" data-zoom="fit">Fit</button>
+        <button class="zbtn txt insp-open" data-insp="show">Details</button>
+      </div>
+      <div class="ov ov-legend panel" id="legend">
+        <div class="lg-head"><b>Lean vs roadmap</b><button id="lg-min" aria-expanded="true">Hide</button></div>
+        <ul class="lg-list" id="lg-list"></ul>
+        <div class="lg-nodes" id="lg-nodes"></div>
+      </div>
+      <canvas id="minimap" class="ov ov-mini" hidden aria-label="Overview map"></canvas>
+      <p class="ov ov-hint">Drag to pan · ⌘/Ctrl + scroll to zoom · / to search</p>
     </div>
-    <footer>The atlas combines the expert roadmap with the compiled proof of <code>{{ atlas.root }}</code>. <a href="atlas-audit.html">Inspect provenance and witnesses</a>.</footer>
+    <aside class="inspector" id="inspector" data-sheet="peek" aria-label="Details">
+      <div class="sheet-handle"><button id="sheet-toggle" aria-label="Resize the details sheet"></button></div>
+      <div class="insp-body" id="insp-body"></div>
+    </aside>
   </main>
-  {# Node cards are fetched from atlas-cards.html when a node is first selected. #}
-  {% for group in groups %}<template id="card-group-{{ group.id }}">{{ group_body(group) }}</template>
-  {% endfor %}
-  <aside id="details" class="details" aria-labelledby="details-title" hidden>
-    <div class="details-bar"><p id="details-title" class="details-title" tabindex="-1"></p><button id="details-close" aria-label="Close the card">Close ×</button></div>
-    <div id="details-body" class="details-body"></div>
-  </aside>
-  <dialog id="unified-map" aria-labelledby="map-title" data-root-node="{{ atlas.root_node }}" data-variants="{{ atlas.unified_variants|map(attribute='id')|join(' ') }}">
-    <div class="mapbar"><div class="maptitle"><h2 id="map-title">Unified dependency graph</h2><button id="close-map" aria-label="Close unified graph">Close ×</button></div>
-      <div class="diagram-tools" role="group" aria-label="Unified graph scale"><button data-action="fit">Fit width</button><button data-action="readable">Readable size</button><button data-action="out" aria-label="Zoom out">−</button><button data-action="in" aria-label="Zoom in">+</button><output>100%</output><button data-action="clear">Clear selection</button>
-        <span class="variant-tools" role="group" aria-label="External frames"><button data-variant="collapsed">Fold all frames</button><button data-variant="full">Open all frames</button><span id="variant-status" class="muted" aria-live="polite"></span></span></div>
-      {{ filters("map", {"expert-unknown": False}) }}
-    </div>
-    <div class="diagram-scroll mapstage" id="map-stage"></div>
-    <div class="mapfooter"><span>Drag to pan · scroll to zoom · click a node to read its card · click a folded frame to open it</span><a href="atlas-audit.html" target="_blank" rel="noopener">Edge witnesses</a></div>
+  <dialog id="palette" aria-label="Search nodes">
+    <div class="pal-in"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6"/><path d="m10.5 10.5 3.5 3.5"/></svg>
+      <input id="pal-input" type="search" placeholder="Paper number, ID, title or Lean name. For example: 6.3, Frostman" autocomplete="off" spellcheck="false" role="combobox" aria-controls="pal-list" aria-expanded="true" aria-label="Search nodes"></div>
+    <ol id="pal-list" role="listbox" aria-label="Matching nodes"></ol>
+    <p class="pal-foot">↑ ↓ to choose · Enter to open in the atlas · Esc to close</p>
   </dialog>
+  <noscript>
+    <section class="noscript">
+      <h1>Proof atlas</h1>
+      <p>The interactive atlas needs JavaScript. Every node card is also on <a href="atlas-cards.html">one page</a>, and every roadmap connection with its evidence is on <a href="atlas-audit.html">the evidence page</a>.</p>
+      <ol>{% for node in atlas.nodes %}<li id="node-{{ node.id }}"><a href="atlas-cards.html#node-{{ node.id }}">{{ node.paper if node.expert else node.title }}</a> <code>{{ node.id }}</code></li>{% endfor %}</ol>
+    </section>
+  </noscript>
 </body>
 </html>

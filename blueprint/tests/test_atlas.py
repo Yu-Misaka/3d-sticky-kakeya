@@ -5,7 +5,6 @@ import json
 import shutil
 import sys
 import unittest
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -131,10 +130,8 @@ class AtlasCorrespondenceTests(unittest.TestCase):
     def test_mathjax_parameter_macros_survive_template_compilation(self):
         from jinja2 import Environment, FileSystemLoader
         environment = Environment(loader=FileSystemLoader(atlas.BLUEPRINT / "templates"))
-        template = environment.get_template("atlas.html")
-        rendered = template.render(atlas={"root": "Root", "external_groups": [], "unified_variants": []},
-                                   views=[], cards=[], groups=[], palette={}, status={}, diff_titles={},
-                                   counts={"expert_nodes": 0, "expert_edges": 0, "lean_versions": 0})
+        rendered = environment.get_template("atlas.html").render(
+            atlas={"root": "Root", "root_node": "N1", "nodes": []}, views=[], counts={})
         self.assertIn('Ncov:', rendered)
         self.assertIn('{#1}(#2)', rendered)
 
@@ -231,81 +228,161 @@ class EdgeComparisonTests(unittest.TestCase):
         self.assertEqual(folded + inside, len(unified["edges"]))
 
 
+class EvidenceAnchorTests(unittest.TestCase):
+    def test_every_arrow_link_reaches_a_row_of_the_evidence_page(self):
+        import check
+        expert, mapping = atlas.load_sources()
+        combined = atlas.make_atlas(json.loads(atlas.REPORT.read_text()), expert, mapping,
+                                    check.inspect_content()[2])
+        connections, lean_only = atlas_render.audit_rows(combined)
+        anchors = [row["anchor"] for row in connections + lean_only]
+        self.assertEqual(len(anchors), len(set(anchors)))
+        self.assertEqual(len(connections), len(combined["expert_edges"]), "every roadmap connection has a row")
+        records = atlas_render.connection_records(combined)
+        for key, record in records.items():
+            if record["audit"]:
+                self.assertIn(record["audit"].removeprefix("atlas-audit.html#"), anchors, key)
+        drawn_lean_only = {(e["from"], e["to"]) for view in combined["views"] for e in view["edges"]
+                           if e["diff"] == "lean-only"}
+        self.assertEqual({(row["from"], row["to"]) for row in lean_only}, drawn_lean_only)
+        # Roadmap connections whose Lean path runs through other displayed nodes have no arrow of their own.
+        self.assertTrue(any(row["classification"] == "actual" and not row["drawn"] for row in connections))
+        for record in records.values():
+            if record["diff"] in ("expert-route", "expert-unknown"):
+                self.assertTrue(record["audit"] and record["reason"] and record["notes"])
+
+
 class AtlasPageTests(unittest.TestCase):
     def render(self, name, **context):
         from jinja2 import Environment, FileSystemLoader
         environment = Environment(loader=FileSystemLoader(atlas.BLUEPRINT / "templates"), autoescape=True)
         return environment.get_template(name).render(**context)
 
-    def test_cards_are_stored_once_and_anchors_stay_on_the_index(self):
+    def test_the_atlas_page_is_a_shell_and_the_cards_page_holds_the_cards(self):
         card = {"id": "N1", "group": "setup", "group_name": "Setup", "origin": "WZ2", "paper": "Lemma 1",
-                "title": "A lemma", "status": "used-proof", "status_label": "Used", "search": "n1",
-                "statements": [], "remark": "Scope.", "remark_links": [], "expert": False, "versions": [],
+                "title": "A lemma", "status": "used-proof", "status_label": "Used",
+                "statements": [], "remark": "Scope.", "remark_links": [], "expert": True, "versions": [],
                 "external_group": None, "heading": "Lemma 1", "primary": "Example.lemma"}
-        page = self.render("atlas.html", atlas={"root": "Root", "root_node": "N1", "external_groups": [],
-                           "unified_variants": [{"id": "collapsed"}]}, views=[], cards=[card], groups=[],
-                           palette={}, status={}, diff_titles=atlas_render.DIFF_TITLE,
-                           counts={"expert_nodes": 1, "expert_edges": 0, "lean_versions": 1})
+        views = [{"id": "overview", "title": "Core proof DAG", "nodes": ["N1"]}]
+        page = self.render("atlas.html", atlas={"root": "Root", "root_node": "N1", "nodes": [card]},
+                           views=views, counts={})
         self.assertNotIn('Scope.', page, "cards are stored once, in atlas-cards.html")
-        self.assertEqual(page.count('id="node-N1"'), 1)
+        self.assertEqual(page.count('id="node-N1"'), 1, "the no-script index keeps the node anchor")
         self.assertIn('href="atlas-cards.html#node-N1"', page)
-        self.assertIn('data-variants="collapsed"', page)
-        for diff in atlas.DIFF_CLASSES:
-            self.assertEqual(page.count(f'data-diff="{diff}"'), 2, diff)
+        self.assertIn('data-view="overview"', page)
+        self.assertIn('data-view="all"', page)
+        self.assertIn('../assets/atlas.js', page)
         cards = self.render("atlas_cards.html", cards=[card])
         self.assertEqual(cards.count('id="node-N1"'), 1)
         self.assertIn('Scope.', cards)
         self.assertIn('lean_dependencies.html#node-N1', cards)
 
+    def test_long_labels_keep_two_lines_and_mark_the_cut(self):
+        node = {"id": "N", "expert": True, "paper": "P", "title": "T", "graph_heading": "WZ2 Lemma 7.12",
+                "graph_summary": "A summary long enough to need more than two lines in a node box here"}
+        heads, lines = atlas_render.label_lines(node)
+        self.assertEqual(heads, ["WZ2 Lemma 7.12"])
+        self.assertEqual(len(lines), 2)
+        self.assertTrue(lines[1].endswith("…"))
+        self.assertTrue(all(len(line) <= atlas_render.SUMMARY_CHARS for line in lines))
 
-@unittest.skipUnless(shutil.which("dot"), "Graphviz is needed to check rendered evidence styles")
-class AtlasSVGTests(unittest.TestCase):
-    def test_actual_and_expert_strokes_and_external_frame_survive_svg_rendering(self):
-        def node(key, group, external=None):
-            return {"id": key, "primary": key, "group": group, "external_group": external,
-                    "title": "A mathematical statement", "paper": "Theorem " + key,
-                    "expert": True, "status": "used-proof", "versions": [entry(key)]}
-        nodes = {"A": node("A", "setup"), "B": node("B", "external", "input"),
-                 "C": node("C", "plane")}
-        view = {"id": "test", "title": "Evidence styles", "nodes": ["A", "B", "C"],
-                "edges": [{"from": "B", "to": "A", "kind": "actual", "diff": "agree", "path": edge("A", "B")["path"]},
-                          {"from": "C", "to": "A", "kind": "expert", "diff": "expert-route", "path": [],
-                           "reason": "No supporting path"}]}
-        svg = ET.fromstring(atlas_render.render_svg(view, nodes, [{"id": "input", "title": "External test"}]))
-        groups = list(svg.iter('{http://www.w3.org/2000/svg}g'))
-        actual = next(g for g in groups if g.get('data-kind') == 'actual')
-        expert = next(g for g in groups if g.get('data-kind') == 'expert')
-        self.assertFalse(any(p.get('stroke-dasharray') for p in actual.iter('{http://www.w3.org/2000/svg}path')))
-        self.assertTrue(any(p.get('stroke-dasharray') for p in expert.iter('{http://www.w3.org/2000/svg}path')))
-        self.assertTrue(any('External inputs' in (e.text or '') for e in svg.iter()))
-        self.assertEqual([g.get('data-external-group') for g in groups if g.get('data-external-group')], ['input'])
-        self.assertTrue(actual.get('data-audit').startswith('atlas-audit.html#edge-'))
-        self.assertEqual((actual.get('data-diff'), expert.get('data-diff')), ('agree', 'expert-route'))
-        anchors = [a for a in svg.iter('{http://www.w3.org/2000/svg}a') if a.get('target')]
-        self.assertTrue(anchors and all(a.get('target') == '_blank' for a in anchors
-                        if '#edge-' in (a.get('{http://www.w3.org/1999/xlink}href') or a.get('href') or '')))
-        self.assertEqual({g.get('data-node') for g in groups if g.get('data-node')}, {'A', 'B', 'C'})
-        other = ET.fromstring(atlas_render.render_svg({**view, "id": "other"}, nodes,
-                              [{"id": "input", "title": "External test"}]))
-        ids = [element.get('id') for drawing in (svg, other)
-               for element in drawing.iter() if element.get('id')]
-        self.assertEqual(len(ids), len(set(ids)))
 
-    def test_a_folded_frame_is_one_clickable_node_with_compact_neighbours(self):
-        nodes = {"A": {"id": "A", "primary": "A", "group": "setup", "external_group": None, "title": "Summary text",
-                       "paper": "Theorem A", "expert": True, "status": "used-proof", "versions": [entry("A")]},
-                 "B": {"id": "B", "primary": "B", "group": "external", "external_group": "input", "title": "Inside",
-                       "paper": "Lemma B", "expert": False, "status": "used-proof", "versions": [entry("B")]}}
+@unittest.skipUnless(shutil.which("dot"), "Graphviz is needed to lay out a view")
+class AtlasLayoutTests(unittest.TestCase):
+    def node(self, key, external=None):
+        return {"id": key, "primary": key, "group": "external" if external else "setup", "external_group": external,
+                "title": "A statement", "paper": "Theorem " + key, "expert": True, "status": "used-proof",
+                "versions": [entry(key)]}
+
+    def test_every_node_edge_and_frame_is_placed(self):
+        nodes = {"A": self.node("A"), "B": self.node("B", "input"), "C": self.node("C", "input"), "D": self.node("D")}
+        view = {"id": "test", "nodes": ["A", "B", "C", "D"],
+                "edges": [{"from": "B", "to": "A", "kind": "actual", "diff": "detail"},
+                          {"from": "C", "to": "B", "kind": "actual", "diff": "detail"},
+                          {"from": "D", "to": "A", "kind": "expert", "diff": "expert-route"}]}
+        placed = atlas_render.layout_view(view, nodes, [{"id": "input", "title": "External test"}])
+        self.assertEqual(set(placed["nodes"]), set(view["nodes"]))
+        self.assertEqual(len(placed["splines"]), len(view["edges"]))
+        self.assertTrue(all(spline.startswith("M") and "C" in spline for spline in placed["splines"]))
+        self.assertEqual({cluster["id"] for cluster in placed["clusters"]}, {"external", "input"})
+        frame = next(c for c in placed["clusters"] if c["id"] == "input")
+        for key in ("B", "C"):
+            x, y, w, h = placed["nodes"][key]
+            self.assertTrue(frame["x"] <= x and x + w <= frame["x"] + frame["w"], key)
+            self.assertTrue(frame["y"] <= y and y + h <= frame["y"] + frame["h"], key)
+        for x, y, w, h in placed["nodes"].values():
+            self.assertTrue(0 <= x and x + w <= placed["w"] and 0 <= y and y + h <= placed["h"])
+        # Conclusions sit above their prerequisites.
+        self.assertLess(placed["nodes"]["A"][1], placed["nodes"]["B"][1])
+
+    def test_a_folded_frame_is_one_box(self):
+        nodes = {"A": self.node("A"), "B": self.node("B", "input")}
         member = {"from": "B", "to": "A", "kind": "actual", "diff": "detail", "path": edge("A", "B")["path"]}
-        view = {"id": "map", "title": "Folded", "nodes": ["A", "group-input"], "collapsed": ["input"],
-                "edges": [{**member, "from": "group-input", "members": [member, {**member, "from": "C"}]}]}
-        svg = ET.fromstring(atlas_render.render_svg(view, nodes, [{"id": "input", "title": "External test"}], compact=True))
-        groups = {g.get('data-node'): g for g in svg.iter('{http://www.w3.org/2000/svg}g') if g.get('data-node')}
-        self.assertEqual(groups['group-input'].get('data-group'), 'input')
-        self.assertFalse(any('Summary text' in (e.text or '') for e in svg.iter()), "compact labels omit summaries")
-        self.assertEqual(groups['A'].get('data-title'), 'Summary text')
-        folded = next(g for g in svg.iter('{http://www.w3.org/2000/svg}g') if g.get('data-members'))
-        self.assertEqual(len(folded.get('data-members').split()), 2)
+        view = {"id": "map", "nodes": ["A", "group-input"], "collapsed": ["input"],
+                "edges": [{**member, "from": "group-input", "members": [member]}]}
+        placed = atlas_render.layout_view(view, nodes, [{"id": "input", "title": "External test"}])
+        self.assertEqual(set(placed["nodes"]), {"A", "group-input"})
+        self.assertGreater(placed["nodes"]["group-input"][2], placed["nodes"]["A"][2])
+        self.assertEqual([c["id"] for c in placed["clusters"]], ["external"], "a folded frame draws no inner cluster")
+
+
+class ManuscriptTests(unittest.TestCase):
+    PAGE = """<!DOCTYPE html><html><head><meta name="generator" content="plasTeX" /><title>Chapter</title>
+<link rel="next" href="chap-next.html" title="Next chapter" /><link rel="stylesheet" href="styles/theme-white.css" /></head>
+<body><header><h1 id="doc_title">Old title</h1></header><div class="wrapper"><nav class="toc"><ul class="sub-toc-0">
+<li class=" active current"><a href="chap-test.html"><span class="toc_ref">1</span> <span class="toc_entry">Test chapter</span></a>
+<ul class="sub-toc-1"><li><a href="chap-test.html#s1"><span class="toc_ref">1.1</span> <span class="toc_entry">A section</span></a></li></ul></li>
+<li><a href="dep_graph_document.html">Dependency graph</a></li></ul></nav>
+<div class="content"><div class="content-wrapper"><div class="main-text"><h1 id="chap:test">1 Test chapter</h1>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:t"><div class="theorem_thmheading">
+<span class="theorem_thmcaption">Theorem</span><span class="theorem_thmlabel">1.1</span><span class="theorem_thmtitle">Test</span>
+<div class="thm_header_extras"> ✓ </div><div class="thm_header_hidden_extras"><a class="icon proof" href="chap-test.html#thm:t">#</a>
+<button class="modal">u</button><div class="modal-container"><div class="modal-content"><header><h1>Uses</h1></header>
+<ul class="uses"><li><a href="chap-test.html#def:d">Definition 1.0</a></li></ul></div></div>
+<button class="modal lean">L</button><div class="modal-container"><div class="modal-content"><header><h1>Lean declarations</h1></header>
+<ul class="uses"><li><a href="../lean/find/#doc/Example.statement" class="lean_decl">Example.statement</a></li>
+<li><a href="../lean/find/#doc/Example.proof" class="lean_decl">Example.proof</a></li></ul></div></div></div></div>
+<div class="theorem_thmcontent"><p>A statement.</p></div></div>
+<div class="proof_wrapper" id="a01"><div class="proof_heading"><span class="proof_caption">Proof</span><span class="expand-proof">▶</span></div>
+<div class="proof_content"><p>An argument.</p></div></div>
+</div></div></div></div><nav class="prev_up_next"></nav><script src="js/plastex.js"></script></body></html>"""
+
+    def test_a_plastex_page_keeps_its_content_and_gains_labelled_badges(self):
+        import manuscript
+        from jinja2 import Environment, FileSystemLoader
+        from markupsafe import Markup
+        from bs4 import BeautifulSoup
+        environment = Environment(loader=FileSystemLoader(atlas.BLUEPRINT / "templates"), autoescape=True)
+        environment.filters["markup"] = Markup
+        soup = BeautifulSoup(self.PAGE, "html.parser")
+        chapters = manuscript.chapter_list(soup)
+        self.assertEqual([c["title"] for c in chapters], ["Test chapter"], "the paper graph route is not a chapter")
+        nodes = manuscript.atlas_nodes({"nodes": [
+            {"id": "Other", "labels": ["thm:t"], "primary": "Example.other", "expert": True},
+            {"id": "Match", "labels": ["thm:t"], "primary": "Example.proof", "expert": False}]})
+        page = manuscript.restyle_page(self.PAGE, "chap-test.html", chapters, nodes,
+                                       environment.get_template("manuscript.html"))
+        self.assertFalse(manuscript.is_plastex(page), "a converted page is not converted twice")
+        result = BeautifulSoup(page, "html.parser")
+        self.assertIsNotNone(result.find(id="thm:t"))
+        self.assertIsNotNone(result.find(id="chap:test"))
+        self.assertIn("A statement.", page)
+        self.assertEqual(result.select_one("a.badge.atlas")["href"], "lean_dependencies.html#node-Match",
+                         "the node anchored at a linked declaration is preferred")
+        lean = result.select_one("details.pop.lean")
+        self.assertIn("ok", lean["class"])
+        self.assertEqual([a["href"] for a in lean.select("a")],
+                         ["../lean/find/#doc/Example.statement", "../lean/find/#doc/Example.proof"])
+        uses = [pop for pop in result.select("details.pop") if "lean" not in pop["class"]][0]
+        self.assertIn("not Lean dependencies", uses.get_text())
+        proof = result.find(id="a01")
+        self.assertEqual(proof.name, "details")
+        self.assertIn("An argument.", proof.get_text())
+        self.assertNotIn("modal", page)
+        self.assertNotIn("styles/theme-white.css", page)
+        self.assertNotIn("js/plastex.js", page)
+        self.assertIn('href="chap-next.html"', page)
+        self.assertIn('aria-current="page"', page)
 
 
 if __name__ == "__main__":

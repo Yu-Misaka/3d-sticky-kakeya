@@ -40,11 +40,19 @@ python -m http.server 8000 --directory blueprint/site
 ```
 
 Open <http://localhost:8000>. The complete site contains the HTML manuscript,
-interactive dependency graph, PDF, and standard **doc-gen4 Lean documentation**
-under `/lean/`. Declaration links open their rendered Lean types and docstrings;
-doc-gen4 provides module navigation, declaration search, and source buttons.
-MathJax loads from a CDN. The PDF is also available directly at
-`blueprint/print/print.pdf`.
+the proof atlas, the roadmap evidence, the PDF, and standard **doc-gen4 Lean
+documentation** under `/lean/`. Every page except doc-gen4 shares one site bar
+and design, in light and dark themes. Declaration links open their rendered
+Lean types and docstrings; doc-gen4 provides module navigation, declaration
+search, and source buttons. MathJax and the web fonts load from CDNs. The PDF
+is also available directly at `blueprint/print/print.pdf`.
+
+plasTeX writes the manuscript pages. After the atlas has read their
+statements, `scripts/manuscript.py` gives them the site's design: a chapter
+list, proofs folded under their caption, and labelled badges for each result's
+Lean declarations, the results it cites (its TeX `\uses`, which are not Lean
+dependencies) and its node in the atlas. Every anchor plasTeX writes is kept.
+The home page is generated with the atlas, so its counts are the atlas's own.
 
 The documentation entry page includes the full Lean statement of the sticky
 theorem, checked against `PureWZ2/Core.lean`. Doc-gen4 omits long automatically
@@ -179,15 +187,21 @@ The audit establishes declaration existence and axiom dependencies. Comparing a 
 
 ## Expert roadmap and actual Lean dependencies
 
-The homepage opens the **proof atlas** at `blueprint/lean_dependencies.html`.
-Its branch navigation, readable diagrams, unified zoomable graph and node cards
-follow the expert atlas supplied in `artifacts/`. Selecting a node opens its
-card in a panel beside the graph (a bottom sheet on narrow screens) without
-scrolling the page; the panel lists the node's prerequisites and consumers by
-comparison class, and `#node-ID` links open it directly. Below the graph is a
-searchable index of every node. The cards are stored once, in
-`blueprint/atlas-cards.html`, which the atlas reads when a node is first
-selected and which also serves for printing and reading without JavaScript.
+The **proof atlas** is at `blueprint/lean_dependencies.html`. It fills the
+window: the branch views of the expert atlas supplied in `artifacts/` and the
+whole proof are listed on the left, the graph pans and zooms in the middle,
+and the details of the selection are on the right (a bottom sheet on narrow
+screens). Selecting a node lists what it depends on and what uses it, by
+comparison class, then its reviewed statement, correspondence Remark and
+Lean versions. Selecting an arrow shows its kernel witness or the reason
+Lean has none. Search (`/` or `⌘K`) finds nodes by paper number, ID, title
+or Lean name, and `#node-ID` links open a node directly.
+
+Graphviz still lays out every view at build time, but as JSON: the atlas
+draws the boxes and splines itself, so styles, themes and the animation that
+opens a folded frame are all CSS and JavaScript. Everything the atlas draws is
+in `blueprint/atlas-view.json`. The same cards are printed on
+`blueprint/atlas-cards.html`, for printing and reading without JavaScript.
 The historical `blueprint/dep_graph_document.html` and `lean_declarations.html`
 routes forward to the atlas, so the published paper-graph route does not
 retain unaudited solid arrows.
@@ -198,8 +212,10 @@ The two sources remain separate:
   unified-graph records and ten branch views. It preserves natural-language
   statements, source locations, source hashes and the diagram's plain-text
   headings and short summaries. Nodes display a bold paper reference above
-  the summary, with Lean status in smaller muted text. IDs remain searchable
-  and appear in cards and tooltips. Original Lean sketches,
+  the summary; a mark in the corner gives the Lean status, its shape the
+  role (proof, proposition interface, definition or constructor) and its fill
+  whether the root uses it. IDs remain searchable and appear in cards and
+  tooltips. Original Lean sketches,
   scripts and rendered equation SVGs are not imported. Five further connections
   occur only in the branch views; the combined atlas and audit include them too.
 - `atlas-mapping.json` records each node's reviewed manuscript references,
@@ -256,7 +272,8 @@ own stroke and filter:
 - *agree*: a Lean path, and the roadmap connects the two nodes, directly or
   through other roadmap nodes;
 - *Lean only*: a Lean path between two roadmap nodes that the roadmap does not
-  connect. `atlas-audit.html#lean-only` lists these for review;
+  connect. `atlas-audit.html#lean-only` lists these for review, from every
+  view;
 - *Lean detail*: a Lean path with an end that the roadmap does not show;
 - *roadmap only, different route*: both Lean versions are used, but the proof
   connects them differently (dashed);
@@ -284,20 +301,24 @@ blueprint-linked implementation declarations are grouped by the reviewed
 module boundaries. Shared mathematical definitions can remain in the main
 argument. Lean and Mathlib are library boundaries; explicitly linked Mathlib
 inputs are retained as terminal nodes with witnessed incoming references.
-Group buttons bring each framed input into view at a readable scale.
+Frame buttons bring each framed input into view at a readable scale.
 
-The unified graph is not embedded in the page. It opens with every External
-frame of several nodes folded into one node, compact labels, and the
-not-comparable class hidden. Clicking a folded frame opens it; "Open all
-frames" shows the complete graph, which contains every reached blueprint-linked
-declaration and so replaces the former declaration-level graph. Each state is
-a separate `blueprint/atlas-unified-*.svg`, fetched when needed. An arrow to a
-folded frame stands for its members' connections, which share its class.
+The **whole proof** opens with every External frame of several nodes folded
+into one node and the not-comparable class hidden. Clicking a folded frame
+opens it in place: the layouts of each state are computed in advance, and the
+members move out of the frame's node. "All open" shows the complete graph,
+which contains every reached blueprint-linked declaration and so replaces the
+former declaration-level graph. An arrow to a folded frame stands for its
+members' connections, which share its class. When zoomed out, nodes show only
+their paper reference, then only their branch colour.
 
-Click an arrow to open its complete source-linked witness in a new tab. The
-separate `blueprint/atlas-audit.html` compares all expert connections and
-explains every line in every view. `blueprint/atlas-dependencies.json` contains
-the generated atlas, paths and source fingerprints. The version table is
+`blueprint/atlas-audit.html` presents the evidence from the roadmap's side:
+every Lean-only arrow, and every roadmap connection with its classification,
+reason, kernel witness and the expert's note, including the agreeing
+connections whose Lean path runs through other displayed nodes and so have no
+arrow of their own. An arrow in the atlas links to its row there.
+`blueprint/atlas-dependencies.json` contains the generated atlas, paths and
+source fingerprints. The version table is
 `blueprint/lean_dependency_audit.html`.
 
 The extractor's non-`module` driver loads imported private bodies. Missing

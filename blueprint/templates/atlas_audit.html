@@ -1,34 +1,95 @@
+{% from "_sitebar.html" import sitebar, head %}
+{% macro arrow(edge) -%}
+<a href="lean_dependencies.html#node-{{ edge.from }}">{{ edge.from_heading }}</a> → <a href="lean_dependencies.html#node-{{ edge.to }}">{{ edge.to_heading }}</a>
+<span class="sub"><code>{{ edge.from }}</code> → <code>{{ edge.to }}</code></span>
+{%- endmacro %}
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Atlas correspondence and edge witnesses · Sticky Kakeya</title><link rel="stylesheet" href="../assets/atlas.css">
-</head><body>
-  <header class="atlas-header"><div class="header-inner"><div class="eyebrow">Theorem 5.2 · Evidence</div><h1>Connections and their witnesses</h1><p>The expert's proposed edges, checked against compiled Lean references.</p><nav><a href="lean_dependencies.html">Proof atlas</a><a href="index.html">Manuscript</a><a href="lean_dependency_audit.html">Declaration versions</a></nav></div></header>
-  <main class="audit-content">
-    <section class="surface"><h2>What the audit establishes</h2>
-      <p>Root: <code>{{ atlas.root }}</code>. Each solid arrow below has a nonempty kernel-reference path. The expert's graph never participates in the reachability computation.</p>
-      <p>Reachability is checked in the full projected declaration graph, including paths through other displayed nodes. Failure to find a direct displayed edge is not enough to declare a connection unsupported. When a selected declaration is outside the root closure, the comparison records that fact rather than asserting that its own independent proof has no such dependency.</p>
-      <p>References in types, proof or definition bodies, private helpers, projections, constructors and recursors are distinguished in the paths. A constructor or a proposition-valued definition is not classified as an independent proof. References retained in a proof term are counted even if a later simplification could eliminate them.</p>
-      <p>Shared declarations are explicitly identified: two mathematical cards using the same Lean declaration do not create a self-dependency. Correspondence Remarks, rather than graph reachability, delimit the mathematical scope of each match.</p>
-      <p><a href="atlas-dependencies.json">Atlas data and paths</a> · <a href="lean-dependencies.json">Compiled declaration audit</a></p>
-      <details><summary>Source fingerprints</summary><dl><dt>Lean sources</dt><dd><code>{{ atlas.source_sha256 }}</code></dd><dt>Extractor</dt><dd><code>{{ atlas.extractor_sha256 }}</code></dd><dt>Reviewed mapping</dt><dd><code>{{ atlas.provenance.mapping_sha256 }}</code></dd><dt>Expert snapshot</dt><dd><code>{{ atlas.provenance.expert_sha256 }}</code></dd></dl></details>
+<html lang="en">
+<head>
+  {{ head("Sticky Kakeya · Roadmap evidence", "Every connection of the expert's sticky Kakeya roadmap compared with the compiled Lean proof, with kernel witnesses.") }}
+  <link rel="stylesheet" href="../assets/pages.css">
+</head>
+<body class="doc">
+  {{ sitebar("evidence") }}
+  <main class="doc-main">
+    <p class="kicker">Theorem 5.2 · Evidence</p>
+    <h1>The roadmap, connection by connection</h1>
+    <p class="lead">Each connection the expert draws is checked against the compiled proof of <code>{{ atlas.root }}</code>. The atlas shows the witness of any arrow when you select it; this page lists the same evidence from the roadmap's side, for review, search and citation.</p>
+    <nav class="doc-toc" aria-label="On this page">
+      <a href="#lean-only">{{ lean_only|length }} Lean-only arrows</a>
+      <a href="#expert-connections">All {{ connections|length }} roadmap connections</a>
+      <a href="#method">How the comparison is made</a>
+      <a href="lean_dependency_audit.html">Lean versions of each manuscript result</a>
+    </nav>
+
+    <section class="doc-section" id="lean-only">
+      <h2>{{ lean_only|length }} Lean-only arrows to review</h2>
+      <p>Both ends are roadmap nodes and the compiled proof connects them, but the roadmap has no path between them, neither directly nor through other nodes. These are the places where the roadmap omits a dependency that the Lean statements actually use.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Arrow</th><th>Drawn in</th><th>Kernel witness</th></tr></thead>
+        <tbody>
+        {% for edge in lean_only %}<tr id="{{ edge.anchor }}"><td class="arrow">{{ arrow(edge) }}</td><td>{{ edge.views|join(' · ') }}</td><td>{{ edge.path_html }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table></div>
     </section>
-    <section class="surface audit-section" id="expert-connections"><h2>All {{ counts.expert_edges }} expert connections</h2>
-      <p>The expert's unified graph records {{ counts.expert_unified_edges }} connections. Its branch views add {{ counts.expert_branch_only_edges }} further connections; these are included in the combined atlas too.</p>
-      <p>{% for kind, count in counts.classifications.items() %}<span class="audit-count">{{ count }} {{ kind }}</span>{% endfor %}</p>
-      <div class="table-wrap"><table><thead><tr><th>Prerequisite → consumer</th><th>Comparison</th><th>Reason and witness</th></tr></thead><tbody>
-      {% for edge in comparisons %}<tr><td><a href="lean_dependencies.html#node-{{ edge.from }}">{{ edge.from }}</a> → <a href="lean_dependencies.html#node-{{ edge.to }}">{{ edge.to }}</a><br><small>Expert category: {{ edge.expert_kind }}</small></td><td>{{ edge.classification }}</td><td><p>{{ edge.reason }}</p><details><summary>Expert source / usage note</summary><p>{{ edge.expert_view_title }}</p><p>{{ edge.expert_note }}</p></details>{{ edge.path_html }}</td></tr>{% endfor %}
-      </tbody></table></div>
+
+    <section class="doc-section" id="expert-connections">
+      <h2>All {{ connections|length }} roadmap connections</h2>
+      <p>The expert's unified graph records {{ counts.expert_unified_edges }} connections and the branch views add {{ counts.expert_branch_only_edges }} more. A connection with a Lean path agrees with the atlas even when the path runs through other displayed nodes; where it does, no separate arrow is drawn.</p>
+      <div class="counts" role="group" aria-label="Show connections by comparison">
+        <button class="filter" data-filter="" aria-pressed="true">All <span class="n">{{ connections|length }}</span></button>
+        {% for key, title in classifications.items() %}<button class="filter" data-filter="{{ key }}" aria-pressed="false">{{ title }} <span class="n">{{ counts.classifications.get(key, 0) }}</span></button>
+        {% endfor %}
+      </div>
+      <label class="visually-hidden" for="find">Filter connections</label>
+      <input class="find" id="find" type="search" placeholder="Filter by node ID, paper number or Lean name" autocomplete="off">
+      <div class="table-wrap"><table>
+        <thead><tr><th>Prerequisite → consumer</th><th>Comparison</th><th>Reason and witness</th><th>Roadmap note</th></tr></thead>
+        <tbody id="connection-rows">
+        {% for edge in connections %}<tr id="{{ edge.anchor }}" data-classification="{{ edge.classification }}"><td class="arrow">{{ arrow(edge) }}</td>
+          <td>{{ edge.title }}{% if edge.classification == 'actual' and not edge.drawn %}<br><span class="tag">no separate arrow</span>{% endif %}</td>
+          <td><p>{{ edge.reason }}</p>{{ edge.path_html }}</td>
+          <td><p>{{ edge.note }}</p><p class="note-src">{{ edge.expert_view_title }} · {{ edge.expert_kind }}</p></td></tr>
+        {% endfor %}
+        <tr class="empty-row" id="no-connections" hidden><td colspan="4">No connection matches. Clear the filter or try another name.</td></tr>
+        </tbody>
+      </table></div>
     </section>
-    <section class="surface audit-section" id="lean-only"><h2>{{ lean_only|length }} Lean-only connections in the unified graph</h2>
-      <p>Both ends are roadmap nodes and the compiled proof connects them, but the roadmap has no path between them, neither directly nor through other nodes. These are the places where the roadmap omits a dependency that the Lean statements actually use, and they are the first rows to review.</p>
-      <div class="table-wrap"><table><thead><tr><th>Drawn arrow</th><th>Evidence</th></tr></thead><tbody>
-      {% for edge in lean_only %}<tr><td><a href="lean_dependencies.html#node-{{ edge.from }}">{{ edge.from }}</a> → <a href="lean_dependencies.html#node-{{ edge.to }}">{{ edge.to }}</a><br><small><a href="#{{ edge.id }}">Arrow record</a></small></td><td>{{ edge.path_html }}</td></tr>{% endfor %}
-      </tbody></table></div>
-    </section>
-    <section class="surface audit-section"><h2>Every displayed arrow</h2><p>Each row identifies the exact edge used in a branch view or in the unified graph, with its comparison class: {% for key, title in diff_titles.items() %}<span class="audit-count"><span class="swatch diff-{{ key }}" aria-hidden="true"></span>{{ title }}</span>{% endfor %}. An arrow drawn to a folded External frame links to the record of its first member. Witnesses run from a consumer back to its prerequisite; the drawn arrow points in the opposite direction.</p>
-      <div class="table-wrap"><table><thead><tr><th>Drawn arrow</th><th>Line meaning</th><th>Evidence</th></tr></thead><tbody>
-      {% for edge in edges %}<tr id="{{ edge.id }}"><td><a href="lean_dependencies.html#node-{{ edge.from }}">{{ edge.from }}</a> → <a href="lean_dependencies.html#node-{{ edge.to }}">{{ edge.to }}</a></td><td>{{ edge.kind }}</td><td><p>{{ edge.reason }}</p>{{ edge.path_html }}</td></tr>{% endfor %}
-      </tbody></table></div>
+
+    <section class="doc-section" id="method">
+      <h2>How the comparison is made</h2>
+      <p>Every solid arrow has a nonempty path of kernel references in the compiled sticky proof, and the expert's graph never takes part in that reachability computation. Reachability is checked in the full projected declaration graph, including paths through other displayed nodes, so a missing direct arrow is not enough to call a connection unsupported. When a selected declaration lies outside the root's closure, the comparison records that fact rather than asserting that its own proof has no such dependency.</p>
+      <p>References in types, proof or definition bodies, private helpers, projections, constructors and recursors are distinguished in the witnesses. A constructor or a proposition-valued definition is not classified as an independent proof, and references kept in a proof term count even if a later simplification could remove them.</p>
+      <p>Two cards that share one Lean declaration do not create a self-dependency. Correspondence remarks, rather than graph reachability, delimit the mathematical scope of each match.</p>
+      <p><a href="atlas-dependencies.json">Atlas data and witnesses</a> · <a href="lean-dependencies.json">Compiled declaration audit</a> · <a href="atlas-cards.html">All node cards</a></p>
+      <details><summary>Source fingerprints</summary><dl class="prints"><dt>Lean sources</dt><dd><code>{{ atlas.source_sha256 }}</code></dd><dt>Extractor</dt><dd><code>{{ atlas.extractor_sha256 }}</code></dd><dt>Reviewed mapping</dt><dd><code>{{ atlas.provenance.mapping_sha256 }}</code></dd><dt>Expert snapshot</dt><dd><code>{{ atlas.provenance.expert_sha256 }}</code></dd></dl></details>
     </section>
   </main>
-</body></html>
+  <script>
+    (() => {
+      // Filters only hide rows; without JavaScript the full table stays readable.
+      const rows = Array.from(document.querySelectorAll('#connection-rows tr[data-classification]'));
+      const find = document.getElementById('find');
+      let kind = '';
+      function apply() {
+        const query = find.value.trim().toLowerCase();
+        let shown = 0;
+        for (const row of rows) {
+          row.hidden = Boolean((kind && row.dataset.classification !== kind) || (query && !row.textContent.toLowerCase().includes(query)));
+          if (!row.hidden) shown += 1;
+        }
+        document.getElementById('no-connections').hidden = shown > 0;
+      }
+      for (const button of document.querySelectorAll('[data-filter]')) {
+        button.addEventListener('click', () => {
+          kind = button.dataset.filter;
+          for (const other of document.querySelectorAll('[data-filter]')) other.setAttribute('aria-pressed', String(other === button));
+          apply();
+        });
+      }
+      find.addEventListener('input', apply);
+    })();
+  </script>
+</body>
+</html>

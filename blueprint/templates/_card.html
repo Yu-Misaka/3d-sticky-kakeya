@@ -1,6 +1,6 @@
-{# One node card. atlas-cards.html lists every card; the atlas fetches that page and clones a card into its details panel. #}
+{# One node card, as printed on atlas-cards.html; the atlas shows the same content from atlas-view.json. #}
 {% macro card_body(card) -%}
-            <div class="cardtop"><span class="group {{ card.group }}">{{ card.group_name }} <span class="origin">{{ card.origin }}</span></span><code>{{ card.id }}</code></div>
+            <div class="cardtop"><span class="group g-{{ card.group }}">{{ card.group_name }} <span class="origin">{{ card.origin }}</span></span><code>{{ card.id }}</code></div>
             <h3>{{ card.paper }}</h3><p class="subtitle">{{ card.title }}</p>
             {% if card.source %}<p class="source">Expert source: {{ card.source }}</p>{% endif %}
             <p class="status {{ card.status }}">{{ card.status_label }}</p>
@@ -33,14 +33,4 @@
             </details>
             {% else %}<p class="mini muted">No independently identified Lean declaration is assigned to this operation. Its expert connections remain dashed.</p>{% endif %}
             <div class="jump card-links"><a href="lean_dependencies.html#node-{{ card.id }}">Open in the proof atlas</a><a href="atlas-audit.html#expert-connections">Compare recorded connections</a></div>
-{%- endmacro %}
-
-{% macro group_body(group) -%}
-<div class="cardtop"><span class="group external">External inputs</span><code>{{ group.id }}</code></div>
-<h3>{{ group.title }}</h3>
-<p class="subtitle">A framed External input and the reached project declarations behind it.</p>
-<p class="mini muted">The unified graph opens with this frame folded into one node. Arrows into and out of the folded node stand for the connections of its members, and keep their comparison class.</p>
-<h4>{{ group.members|length }} members</h4>
-<ul class="relation-list">{% for member in group.members %}<li><button class="relation" data-select-node="{{ member.id }}"><span class="relation-heading">{{ member.heading }}</span> <span class="muted">{{ member.title }}</span></button></li>{% endfor %}</ul>
-<div class="card-relations" data-relations></div>
 {%- endmacro %}

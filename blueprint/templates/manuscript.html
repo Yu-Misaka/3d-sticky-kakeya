@@ -1,0 +1,38 @@
+{% from "_sitebar.html" import sitebar, head %}<!doctype html>
+<html lang="en">
+<head>
+  {{ head(title ~ " · Sticky Kakeya", "The reviewed manuscript of the sticky Kakeya blueprint: statements, proof outlines and correspondence remarks.") }}
+  <link rel="stylesheet" href="../assets/pages.css">
+  {% if neighbours.prev %}<link rel="prev" href="{{ neighbours.prev.href }}">{% endif %}
+  {% if neighbours.next %}<link rel="next" href="{{ neighbours.next.href }}">{% endif %}
+  <script>
+    MathJax = {tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]}};
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <script defer src="../assets/manuscript.js"></script>
+</head>
+<body class="doc manuscript">
+  {{ sitebar("manuscript") }}
+  <div class="ms doc-main">
+    <nav class="ms-toc" aria-label="Chapters">
+      <p><a href="index.html">Contents</a></p>
+      <ol>
+        {% for chapter in chapters %}
+        <li{% if chapter.href == page %} class="here"{% endif %}><a href="{{ chapter.href }}"{% if chapter.href == page %} aria-current="page"{% endif %}><span class="r">{{ chapter.ref }}</span><span>{{ chapter.title }}</span></a>
+          {% if chapter.href == page and chapter.sections %}<ol class="sections">{% for section in chapter.sections %}<li><a href="{{ section.href }}"><span class="r">{{ section.ref }}</span><span>{{ section.title }}</span></a></li>{% endfor %}</ol>{% endif %}
+        </li>
+        {% endfor %}
+        <li class="atlas-link"><a href="lean_dependencies.html"><span class="r">→</span><span>Proof atlas</span></a></li>
+      </ol>
+    </nav>
+    <main class="ms-text">
+      {{ main|markup }}
+      {% if contents %}<div class="ms-contents">{{ contents|markup }}</div>{% endif %}
+      {% if neighbours %}<nav class="pager" aria-label="Chapters">
+        {% if neighbours.prev %}<a class="prev" href="{{ neighbours.prev.href }}"><span>Previous</span>{{ neighbours.prev.title }}</a>{% endif %}
+        {% if neighbours.next %}<a class="next" href="{{ neighbours.next.href }}"><span>Next</span>{{ neighbours.next.title }}</a>{% endif %}
+      </nav>{% endif %}
+    </main>
+  </div>
+</body>
+</html>

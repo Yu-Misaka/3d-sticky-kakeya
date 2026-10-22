@@ -1,0 +1,38 @@
+{% from "_sitebar.html" import sitebar, head %}<!doctype html>
+<html lang="en">
+<head>
+  {{ head("The Sticky Kakeya Theorem in Three Dimensions", "A blueprint for the Lean formalization of Wang and Zahl's sticky Kakeya estimate in three dimensions.", root="") }}
+  <link rel="stylesheet" href="assets/pages.css">
+  {% include "_mathjax.html" %}
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body class="doc">
+  {{ sitebar("home", root="", here="blueprint/") }}
+  <main class="doc-main home">
+    <p class="kicker">A Lean formalization · Wang–Zahl, Theorem 5.2</p>
+    <h1>The Sticky Kakeya Theorem in Three Dimensions</h1>
+    <p class="lead">A blueprint for Wang and Zahl’s finite-scale sticky Kakeya estimate. An expert’s roadmap of the proof is compared, arrow by arrow, with the dependencies of the compiled Lean proof.</p>
+    <article class="thm" aria-labelledby="thm-name">
+      <p class="thm-h" id="thm-name"><b>{{ statement.caption }} {{ statement.ref }}</b>{{ statement.title }}</p>
+      <div class="prose">{{ statement.content }}</div>
+      <p class="thm-f"><span>Lean: <code>{{ atlas.root }}</code></span><a href="blueprint/lean_dependencies.html#node-{{ atlas.root_node }}">Open in the atlas</a><a href="blueprint/{{ statement.url }}">Read in the manuscript</a></p>
+    </article>
+    <div class="entries">
+      <a class="entry primary" href="blueprint/lean_dependencies.html"><h2>Proof atlas</h2><p>The expert’s roadmap: {{ counts.expert_nodes }} nodes and {{ counts.expert_edges }} connections in {{ views|length }} branch views, checked against {{ counts.lean_versions }} reached Lean versions.</p><span class="go">Explore the roadmap →</span></a>
+      <a class="entry" href="blueprint/index.html"><h2>Manuscript</h2><p>Reviewed statements and proof outlines, with correspondence remarks wherever a Lean version differs from the paper.</p><span class="go">Read the manuscript →</span></a>
+      <a class="entry" href="lean/Documentation.html"><h2>Lean documentation</h2><p>doc-gen4 pages for every linked declaration, with types, docstrings and source.</p><span class="go">Browse the documentation →</span></a>
+    </div>
+    <div class="facts-grid">
+      <section><h2>Roadmap nodes in Lean</h2><p class="sub">How each of the {{ counts.expert_nodes }} expert nodes corresponds to the compiled proof of the root theorem. A used interface is referenced, not thereby proved.</p>
+        <ul class="tally">{% for key, count in node_tally %}<li>{{ marks[key] }}<span>{{ status[key] }}</span><span class="num">{{ count }}</span></li>{% endfor %}</ul></section>
+      <section><h2>Arrows of the whole proof</h2><p class="sub">The {{ edge_total }} arrows of the whole-proof graph with every frame open, by comparison class. <a href="blueprint/atlas-audit.html">How they are checked</a></p>
+        <ul class="tally">{% for key, title in diff_titles.items() %}<li><svg class="sw" width="28" height="8" viewBox="0 0 28 8" aria-hidden="true"><line class="ln d-{{ key }}" x1="1" y1="4" x2="27" y2="4"/></svg><span>{{ title }}</span><span class="num">{{ counts.unified_diff[key] }}</span></li>{% endfor %}</ul></section>
+    </div>
+    <div class="authors">
+      <p>Mingfeng Chen · Shaoming Guo · Yixuan Pang · Minxing Shen · Zhihong Wang · Zheng Yuan · Huanyu Zheng · Thomas Zhu</p>
+      <p class="affiliation">Nankai University &amp; ByteDance Seed AI4Math Team</p>
+    </div>
+    <p class="home-foot"><a href="blueprint.pdf">Download the PDF</a><a href="blueprint/atlas-audit.html">Inspect the roadmap evidence</a><a href="lean/index.html">Documentation index</a><a href="https://github.com/Yu-Misaka/3d-sticky-kakeya">Repository</a><a href="https://github.com/Yu-Misaka/3d-sticky-kakeya/blob/main/blueprint/README.md">Writing and building</a></p>
+  </main>
+</body>
+</html>
