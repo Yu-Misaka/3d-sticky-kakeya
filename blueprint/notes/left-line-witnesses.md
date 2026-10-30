@@ -22,7 +22,7 @@ implemented scope, remaining paper-level gaps and verification results.
 | Proposition 6.5 | `pure_wz2_node06_large_slope_retained` | `PureWZ2LargeSlopeConstruction`, retaining the common-y source, terminal geometry, cleanup, source regularization, requested CWA selection and terminal certificate |
 | Lemma 6.7 | `pure_wz2_node7_from_large_slope` | The actual large-slope configuration and its projection certificate |
 | Normalized Lemma 6.7 | `pure_wz2_node7b_normalized_from_retained_large_slope` | The actual Node-6 paper family, shading, public slope, CWA and projection bound, with explicit affine/slab/cleanup transport |
-| Common-height normalized Lemma 6.7 | `pure_wz2_left_line_common_height_projection` | The same terminal also retains exact common-height unit segments; this supplies the ordinary capsule Tube Wolff lower bound used by the final root |
+| Common-height normalized Lemma 6.7 | `pure_wz2_left_line_common_height_projection` | The same terminal also retains exact common-height unit segments; this supplies the retained ordinary capsule lower bound; the final root uses the length-32 correction and needs only the normalized output |
 
 The closed entries are `pure_wz2_left_line_lemma67` and
 `pure_wz2_left_line_lemma67_preparation`.  Their only mathematical input is

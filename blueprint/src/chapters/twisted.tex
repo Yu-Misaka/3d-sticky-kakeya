@@ -324,8 +324,9 @@ corresponding original slab shading. Its slope is exactly $f-f(0)$,
 and the projected-area comparison with the original terminal is proved.
 Node 7b uses the retained common source only for the numerical bound
 on this actual $f(0)$. All source and target cutoffs precede the single
-Node 6 invocation. The general preparation in Lemma 6.6 remains the
-separate open left-line requirement.
+Node 6 invocation. The prepared Lemma 6.6 used by this construction and
+its distinction from the printed general statement are recorded in
+Remark~\ref{rem:lemma66-mass-normalization}.
 \end{remark}
 
 \begin{remark}[The sign in WZ2 Lemma 6.7]
@@ -356,18 +357,19 @@ satisfies
 for $0<\delta\leq\delta_0$ and every slope with
 $1\leq|f'|\leq2$, $|f''|\leq1/100$ on the height window.
 \end{proposition}
-\begin{remark}[Scope of the proposed specialization]
+\begin{remark}[Scope of the CWA specialization]
 \label{rem:twisted-cwa-scope}
-\uses{prop:twisted-tube-wolff}
-A radius-$r$ tube has volume $O(r^2)$. Applying CWA to that convex
-body gives the dimension-$2$ Tube Wolff count, with a fixed change
-of constant. The proposed next step is the paper's Tube Wolff estimate.
-Its uniform unrestricted-offset formulation is refuted below. The literal
-ordinary-capsule version with arbitrary longitudinal positions is also
-refuted even for $f(z)=z$. Thus this paragraph is not a proof of the
-unrestricted CWA statement. The normalized CWA theorems later in this
-chapter are proved independently. Neither counterexample supplies the
-CWA hypothesis.
+\uses{cor:twisted-cwa-dilated}
+The implemented route applies CWA to finite coarse capsules of axis
+length $32$, then uses the corrected normalized Proposition 7.1 below.
+These tests have volume $O(r^2)$ for $r\leq1$ and allow the given fine
+unit segments to keep arbitrary longitudinal positions. CWA supplies
+their counts on the same family, without an extra hypothesis.
+The actual left-terminal transport proves the bounded vertical chart,
+height window and slope normalization needed by this lower bound.
+This gives the specialization used in the final contradiction, rather
+than an unrestricted statement for every supplied slope and chart.
+The two Tube Wolff counterexamples below have no asserted CWA certificate.
 \end{remark}
 
 \begin{proposition}[Tube Wolff version; WZ2, Proposition 7.1]
@@ -393,9 +395,10 @@ scope correction. ``Nonsingular'' controls $f'$ and $f''$ and does not by
 itself impose this condition. The actual left terminal is transported to
 this normalization by the proved affine, slab and cleanup construction,
 with CWA, density, scale and projected-area losses all controlled on the
-same configuration. Consequently the arbitrary-offset caveat is not a
-remaining obstruction to the adopted final contradiction. It does not
-discharge the separate Lemma 6.6 preparation or tube-model reductions.
+same configuration. The same construction proves the bounded vertical
+chart, base bound and shading window required by the lower theorem.
+Uniform estimates for arbitrarily supplied offsets remain outside this
+normalization.
 
 WZ2 Remark 7.4 identifies the Tube Wolff condition with Frostman
 nonconcentration in the space of line parameters. For the repository's
@@ -403,31 +406,24 @@ ordinary unit-segment carriers these are distinct predicates:
 containment of a complete segment in a coarse tube does not, by itself,
 count every segment with nearby supporting-line parameters. Segments
 on the same line can have different longitudinal positions.
-The legacy proof supplies the indexed four-parameter Frostman bound
-explicitly. The polynomial-budget iteration below removes the extremal
-cardinality restriction, and packing removes its polynomial budget for
-essentially distinct families. A physical full-line Tube Wolff theorem
-is now also proved: its coarse tests are neighborhoods of entire supporting
-lines clipped to $B(0,6)$, while its fine bodies are ordinary capsules.
-The geometric count-to-parameter implication for those tests is proved,
-and CWA supplies them directly. Those earlier CWA endpoints remain available.
-For the actual terminal, the common-height witness now gives a direct
-ordinary-capsule reduction: a radius-$r$ parameter cluster lies in one
-ordinary radius-$8r$ capsule. The final contradiction therefore uses the
-ordinary Tube Wolff theorem below. Its segment model and vertical chart
-are proved by the terminal construction. For arbitrary longitudinal
-positions the literal ordinary-capsule implication is false even with
-$f(0)=0$, by Theorem~\ref{thm:twisted-longitudinal-obstruction}.
-Theorem~\ref{thm:twisted-dilated} supplies a concrete finite-capsule
-correction: coarse tests have length $32$, and fine segments keep their
-arbitrary longitudinal positions. CWA supplies those tests directly.
-Identifying this correction with the paper's intended convention and
-extending the chart transport remain separate scope requirements;
-the failed unit-length implication is not used.
-A cutoff uniform over
-arbitrary offsets under Tube Wolff alone is impossible, by the next theorem.
-The normalization above resolves the actual left terminal using its proved
-small-power offset bound; it does not cover an arbitrary supplied slope.
+For arbitrary longitudinal positions the literal ordinary-capsule
+implication is false even with $f(0)=0$, by
+Theorem~\ref{thm:twisted-longitudinal-obstruction}.
+The adopted correction is Theorem~\ref{thm:twisted-dilated}: finite
+coarse tests have length $32$, while the fine segments retain their
+original unit length and positions. A parameter cluster of radius $r$
+fits in a coarse capsule of radius $20r$, giving parameter Frostman
+constant $128000C$. Absorb this fixed factor before the runtime
+configuration, apply the complete one-step and GridOS iteration,
+and remove its cardinality budget by packing.
+The final CWA lower bound and contradiction use this finite-capsule
+route. Its difference from the literal paper model is recorded in
+Remark~\ref{rem:longitudinal-tube-model}; no equivalence with the
+refuted unit-length tests is asserted.
+The full-line and common-height unit-capsule theorems remain independently
+proved alternatives. The latter uses the additional common-height witness
+retained by the actual terminal, but that witness is not required by the
+adopted lower bound.
 \end{remark}
 
 \begin{theorem}[Obstruction to a uniform arbitrary slope offset]
@@ -514,21 +510,31 @@ $\delta^{-\eta}$ and to have
 $24\sqrt\delta\leq\delta^{3/8}<\delta^{1/4}$.
 \end{proof}
 
-\begin{remark}[Scope of the longitudinal example]
+\begin{remark}[The coarse-tube correction to Proposition 7.1]
 \label{rem:longitudinal-tube-model}
-The example satisfies no asserted CWA condition. It does not refute
-Proposition 6.8 under its stronger CWA hypothesis, or the common-height
-ordinary Tube Wolff specialization used by the final proof. The latter
-model is proved by the actual terminal construction. The example records
-an independent issue with forgetting the longitudinal position when
-coarse tests are literal capsules of the same unit length as the fine
-segments. Stronger full-line tests and common-height segments have their
-own proved lower bounds below. A finite-capsule version with coarse
-length $32$ is also proved for arbitrary longitudinal positions, with
-its stronger tests supplied by CWA. Its identification with the intended
-paper scope and transport beyond the bounded vertical chart remain
-unestablished. This model correction is not silently included in the
-accepted slope-offset normalization Remark.
+The completed Core route adopts the following explicit difference from
+the literal unit-capsule reading of WZ2 Proposition 7.1: fine axes retain
+length $1$, but the hypothesis tests full containment in every finite
+coarse capsule of axis length $32$ and positive radius. This supplies
+longitudinal margin without moving or replacing any given fine segment.
+Theorem~\ref{thm:twisted-dilated} proves the projection estimate from
+these tests, and Corollary~\ref{cor:twisted-cwa-dilated} obtains them
+directly from CWA on the same family.
+
+This is a stronger coarse-test requirement than the literal length-$1$
+condition. No implication from length-$1$ tests to length-$32$ tests,
+or identification with every intended paper convention, is claimed.
+The normalized slope and bounded vertical chart also remain explicit
+in the right-side theorem; their applicability to the actual left
+terminal is proved by its transport. A theorem for arbitrary externally
+supplied charts is not claimed. None of these internal conditions is
+added to the final Theorem 5.2 statement.
+
+The preceding counterexample uses $f(z)=z$, so this geometric issue
+is independent of the slope-offset normalization in
+Remark~\ref{rem:parameter-frostman}. It has no asserted CWA certificate
+and does not refute Proposition 6.8 under CWA, the corrected coarse-test
+theorem, or the retained common-height unit-capsule theorem.
 \end{remark}
 
 \begin{theorem}[The parameter-Frostman specialization of WZ2, Proposition 7.1]
@@ -715,6 +721,8 @@ preceding theorem on the given fine family and shading. This supplies
 the explicit route $\mathrm{CWA}\Rightarrow$ finite coarse Tube Wolff
 tests $\Rightarrow$ the corrected projection theorem, without using
 the full-line projection theorem or the direct CWA-to-parameter shortcut.
+This is the lower-bound route evaluated on the actual normalized terminal
+in the final contradiction.
 \end{proof}
 
 \begin{lemma}[Ordinary capsule containment for common-height segments]
@@ -782,8 +790,10 @@ parameter Frostman or cardinality premise is required.
 Apply CWA to every convex ordinary capsule. Since $|T_1|\geq1$,
 the normalized CWA inequality implies the actual-volume Tube Wolff count
 with the same constant. Apply the preceding ordinary-tube theorem.
-This is the lower-bound route used in the final contradiction, on the
-common-height terminal constructed in Lemma~\ref{lem:common-height-terminal}.
+This remains an alternative lower-bound route on the common-height
+terminal constructed in Lemma~\ref{lem:common-height-terminal}.
+The final contradiction uses Corollary~\ref{cor:twisted-cwa-dilated},
+whose lower bound permits arbitrary longitudinal positions.
 \end{proof}
 
 \begin{theorem}[Normalized CWA lower bound without a cardinality premise]
@@ -811,8 +821,8 @@ scales. Each full-line test $Q_r$ is convex, and $|T_1|\geq1$ converts
 the normalized CWA count to the required indexed full-line count.
 Apply the preceding Tube Wolff theorem with $D=7$.
 This earlier API does not assume common-height unit representatives.
-The final contradiction now uses Corollary~\ref{cor:twisted-cwa-common-height}
-on its actual constructed representatives.
+The final contradiction uses Corollary~\ref{cor:twisted-cwa-dilated}
+on the actual normalized terminal.
 \end{proof}
 
 

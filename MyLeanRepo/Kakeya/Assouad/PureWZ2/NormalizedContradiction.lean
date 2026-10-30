@@ -1,5 +1,6 @@
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.NormalizedTerminal
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.NormalizedProjectionLowerBound
+import MyLeanRepo.Kakeya.Assouad.PureWZ2.DilatedTubeWolffLowerBound
 
 /-!
 # Contradiction on one normalized Convex-Wolff configuration
@@ -7,6 +8,9 @@ import MyLeanRepo.Kakeya.Assouad.PureWZ2.NormalizedProjectionLowerBound
 The lower-bound loss and cutoff are fixed first.  The upper-bound producer
 then returns one family, shading, and slope satisfying those conditions.
 Both area inequalities below refer to that same literal twisted union.
+The lower bound follows CWA to finite length-32 coarse capsule tests and
+the corrected Proposition 7.1. The given fine segments keep their original
+longitudinal positions; no common-height hypothesis enters this comparison.
 -/
 
 namespace Kakeya.Assouad
@@ -17,7 +21,7 @@ theorem pure_wz2_no_critical_package_of_normalized_projection
     (upper : PureWZ2NormalizedProjectionStatement)
     {sigma : ℝ} (critical : PureWZ2CriticalPackage sigma) : False := by
   obtain ⟨eta, delta₀, heta, hetaEpsilon, hdelta₀, _, lower⟩ :=
-    pure_wz2_convex_wolff_lower_bound_in_vertical_chart (sigma / 4)
+    pure_wz2_convex_wolff_lower_bound_via_dilated_tubes (sigma / 4)
       (by linarith [critical.sigma_pos])
   have hetaSigma : eta < sigma := by linarith [critical.sigma_pos]
   obtain ⟨delta, hdelta, hdeltaBound, hdeltaOne, ⟨data⟩⟩ :=

@@ -327,7 +327,7 @@ of $\delta^{O(\eta)}$, which fit inside $\eps$.
 
 \begin{proof}[Proof of Theorem~\ref{thm:sticky}]
 \proves{thm:sticky}
-\uses{lem:critical-exponent,lem:common-height-terminal,cor:twisted-cwa-common-height}
+\uses{lem:critical-exponent,lem:normalized-small-twisted-projection,cor:twisted-cwa-dilated}
 \leanok
 Assume the conclusion fails, and choose $0<\sigma<1$ as in
 Lemma~\ref{lem:critical-exponent}. The grain and large-slope arguments
@@ -335,13 +335,15 @@ give configurations at arbitrarily small scales whose twisted
 projection has area at most $\delta^{\sigma-a}$, where $a>0$ may be
 chosen as small as needed. The same normalized terminal carries CWA
 and every geometric hypothesis required by
-Corollary~\ref{cor:twisted-cwa-common-height}. In particular, its actual
-unit segments have the proved common center height. First choose the output loss
+Corollary~\ref{cor:twisted-cwa-dilated}. Its bounded vertical chart and
+centered nonsingular slope come from the proved transport of the actual
+large-slope terminal. First choose the output loss
 $b=\sigma/4$ and obtain its admissible input loss and scale threshold.
 Then request the terminal at that input loss $a\leq\sigma/4$
 and take its fine scale below the threshold. The lower bound derives
-its ordinary capsule Tube Wolff count, parameter count and packing budget
-internally from this same CWA family.
+its finite length-$32$ coarse-capsule count, parameter count and packing
+budget internally from this same CWA family. The fine unit segments
+retain their original longitudinal positions.
 The two bounds give
 \[
  \delta^{\sigma/4}\leq |\pi_f(E_Y)|

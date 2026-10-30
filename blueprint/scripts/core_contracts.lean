@@ -43,6 +43,12 @@ example {sigma loss delta : ℝ} (d : PureWZ2NormalizedProjectionData sigma loss
     ConvexWolffBound d.toPureWZ2ParameterFrostmanPreparationData.family
       (Kakeya.realRpowENN delta (-loss)) := d.convex_wolff
 
+-- The corrected coarse tests use exactly that family and the same loss.
+example {sigma loss delta : ℝ} (d : PureWZ2NormalizedProjectionData sigma loss delta) :
+    DilatedTubeWolffVolumeBound d.family 32
+      (Kakeya.realRpowENN delta (-loss)) :=
+  dilatedTubeWolffVolumeBound_of_convexWolffBound d.convex_wolff
+
 -- The refinement carries actual tube and shading transport, not just an origin label.
 example {delta : ℝ} {F : Kakeya.Streamlined.TubeFamily delta}
     {Y : Kakeya.Streamlined.TubeShading F} {f : SlopeFunction} {sigma loss : ℝ}

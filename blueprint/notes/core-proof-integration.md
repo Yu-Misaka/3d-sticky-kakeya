@@ -1,40 +1,40 @@
 # Core proof integration, 2026-10-30
 
-This is a partial mathematical alignment with a compiled normalized final
-contradiction. The actual Proposition 6.5 terminal is transported into one
-normalized configuration, retaining its common-height unit segments.
-The final CWA lower bound uses the **ordinary capsule** Tube Wolff theorem
-with actual-volume tests. The complete paper Core DAG is **not** proved:
-general Lemma 6.6 preparation remains open, and the ordinary-tube model
-for arbitrary longitudinal positions needs a scope correction beyond the
-proved terminal specialization. The literal normalized ordinary-capsule
-claim is now refuted by a finite grid with fixed slope `f(z)=z`.
-A concrete finite-capsule correction is also proved: coarse axes have
-length 32, and every fine unit segment keeps its arbitrary longitudinal
-position. CWA supplies these corrected tests directly. The resulting
-projection theorem still uses a bounded vertical chart; its identification
-with the intended paper convention is not silently assumed.
-The user has accepted the slope-offset
-difference as an explicit Remark: the roadmap uses the normalized
-Proposition 7.1/6.8 interfaces, and the actual left-terminal transport proves
-their applicability. Thus removing the slope-zero condition for arbitrary
-supplied slopes is not a remaining requirement for the adopted route.
-The kernel-checked arbitrary-offset counterexample records why this scope
-correction is necessary; it is kept separate from the final proof.
+The constructive Core route is assembled with the explicitly recorded
+intermediate scopes. The actual Proposition 6.5 terminal is transported
+into one normalized configuration with its projection upper bound and
+CWA. The final lower bound now follows **CWA -> finite length-32 coarse
+capsule tests -> corrected Proposition 7.1 -> parameter iteration** on
+that same family, shading and slope. The public
+`PureWZ2Theorem5_2Unconditional` statement is unchanged and has no external
+proof inputs.
 
-The requirement-by-requirement [completion audit](core-goal-completion-audit.md)
-separates verified implementation from full paper scope. The literal
-unit-length Tube Wolff claim remains refuted after the accepted slope
-normalization; adopting the compiled length-32 repair is a separate model
-decision. Neither that decision nor this audit discharges generic Lemma 6.6
-or the remaining chart transport.
+Following the user's instruction to record the Prop. 7.1 discrepancy in
+a Remark and finish the goal, the length-32 correction is now the adopted
+right route. Fine axes retain length 1 and their original longitudinal
+positions. The corrected theorem requires no common-height model.
+Its bounded vertical chart, base bound, shading window and `f(0)=0`
+are all proved by the actual left-terminal transport. CWA supplies the
+corrected coarse tests directly. The common-height ordinary-capsule and
+full-line alternatives remain independently proved compatibility APIs.
 
-The current left-focused work removes the frame prerequisite from the
-normalized Lemma 6.6 for **every supplied configuration and interval**.
-It keeps the previous normalized mass, cover and fine-cap hypotheses
-exactly. The every-interval C2 source now calls this theorem after
-constructing only a global cap. The remaining left gap is deriving that
-normalized mass and cap from the printed absolute-mass hypotheses.
+This completes the constructed route, not every generic printed
+intermediate statement. Remark `rem:longitudinal-tube-model` records
+the stronger coarse-test convention and the normalized chart scope;
+`rem:parameter-frostman` records slope normalization. The literal
+length-1 arbitrary-position claim is refuted even for `f(z)=z`.
+Neither counterexample is used by the final proof, and neither has an
+asserted CWA certificate. No identification with every intended paper
+convention is claimed.
+
+On the left, the actual construction supplies the preparation consumed
+by Lemma 6.6 and Proposition 6.5. The separately proved normalized
+interval theorem also derives frame compatibility on any supplied C2
+configuration and interval, retaining its normalized mass, cover and cap
+hypotheses. The unproved extension from the printed absolute mass and
+cover alone remains recorded in `rem:lemma66-mass-normalization`.
+The [completion audit](core-goal-completion-audit.md) distinguishes these
+literature gaps from the proved inputs of the adopted final route.
 
 ## Integrated work and the compatible terminal
 
@@ -76,17 +76,17 @@ no new configuration choice.
 
 The root `PureWZ2Theorem5_2Unconditional` retains exactly
 `PureWZ2Theorem5_2Statement` and has no external proof arguments. It now uses
-`CommonHeightContradiction`: choose the independent common-height CWA lower bound
+`NormalizedContradiction`: choose the independent finite-coarse-capsule CWA lower bound
 at `epsilon = sigma/4`, obtaining `eta <= sigma/4` and its scale threshold;
 then ask the left producer for **one** terminal at that `eta` below that
 threshold. The lower bound and upper bound both refer to
 `twistedUnion data.shading data.analysisSlope`. Since
 `sigma/4 < sigma-eta`, their inequalities contradict `0 < delta < 1`.
-The lower bound obtains ordinary capsule actual-volume Tube Wolff from
-CWA, derives parameter counting by containment of the common-height
-segments in an ordinary coarse capsule, and derives its polynomial
-cardinality budget from packing. The old `NormalizedContradiction` API
-remains available separately.
+The lower bound obtains length-32 capsule actual-volume Tube Wolff from
+CWA, derives parameter counting by containing the original fine unit
+segments in one longer coarse capsule, and removes its polynomial
+cardinality budget by packing. The ordinary common-height contradiction
+remains available separately with its original type.
 
 ## Transport of the actual Node-6 terminal
 
@@ -163,10 +163,11 @@ this stronger result, preserving its historical type.
 | Actual Prop. 6.5 terminal to normalized Lemma 6.7 | The returned paper family, shading, slope, CWA and upper bound enter the explicit affine/slab/retubing/cleanup transport. |
 | Curve/JetCount and corrected Thm. 7.13 to parameter Lemma 7.12 | The representative cinematic pullback, Katz–Tao count and PYZ estimate are actual inputs of the complete one-step proof. |
 | Parameter Lemma 7.12 to parameter Prop. 7.1 | The completed one-step theorem is used by finite GridOS scheduling, coarsening, termination and telescoping. |
-| Ordinary Tube Wolff to parameter Prop. 7.1 on the actual model | Common-height parameter clusters are contained in ordinary radius-`8r` coarse capsules. Radius-squared tests give `64 C`, and actual-volume tests give `640 C`. |
+| Corrected finite-capsule Tube Wolff to parameter Prop. 7.1 | A parameter cluster is contained in one length-32, radius-`20r` coarse capsule without moving the fine segments. Actual-volume tests give `128000 C`, absorbed before the runtime family and slope. |
+| Ordinary Tube Wolff alternative on common-height segments | Parameter clusters are contained in ordinary radius-`8r` coarse capsules. Radius-squared tests give `64 C`, and actual-volume tests give `640 C`. |
 | Physical full-line Tube Wolff to parameter Prop. 7.1, retained API | Parameter clusters are contained in radius-`20r` full-line tests; the volume bound gives Frostman constant `172800 C`. |
 | Ordinary capsule radius-squared to actual-volume tests | Exact capsule volume proves the forward implication for every positive radius with constant `C`, and the converse with `10 C`. This does not identify capsules with full-line tests. |
-| CWA to ordinary Tube Wolff to normalized Prop. 6.8 | CWA supplies ordinary actual-volume tube tests. The final lower bound calls the ordinary-tube Proposition 7.1 and packing supplies `D=7`. The common-height model and chart are proved by the actual terminal construction. |
+| CWA to finite coarse Tube Wolff to normalized Prop. 6.8 | CWA supplies length-32 actual-volume tests on the same family. The final lower bound calls the corrected Proposition 7.1 and packing supplies `D=7`. The actual terminal proves its chart and slope conditions. |
 | Normalized upper and lower bounds to contradiction | CWA, all normalization conditions and the upper bound belong to one cleanup configuration. |
 
 The table distinguishes the prepared and normalized statements from the
@@ -201,14 +202,16 @@ convex ordinary capsule. The normalization factor `deltaTubeVolume 1 >= 1`
 gives the actual-volume count with the same constant. Consequently
 `pure_wz2_convex_wolff_lower_bound_in_common_height_chart` follows
 `CWA -> ordinary capsule Tube Wolff -> ordinary Proposition 7.1`.
-`CommonHeightContradiction` evaluates it on exactly the family, shading
+`CommonHeightContradiction` can evaluate it on exactly the family, shading
 and slope produced by `pure_wz2_left_line_common_height_projection`.
 
 The common-height property is proved upstream by
 `PureWZ2PaperTerminalProjectionRefinement.common_height`; it is not an
 extra hypothesis of the final theorem. No new density, CWA or volume loss
-is needed to retain it. The final proof-value audit excludes both the
-old full-line projection theorem and the direct CWA-to-parameter shortcut.
+is needed to retain it. This alternative is checked in its own
+supplementary proof-value closure. The final proof uses length-32 coarse
+tests and excludes the common-height and full-line projection theorems
+as well as the direct CWA-to-parameter shortcut.
 The ordinary projection theorem itself has no CWA or left-line input.
 
 ## Physical full-line Tube Wolff route, retained interface
@@ -379,7 +382,7 @@ producer. Its caller supplies no whole-cell, frame or multiplicity data.
 This source API and the historical frame APIs have their own compiled
 closures; no dummy references are inserted into the final proof.
 
-## Remaining requirements
+## Literature statements outside the adopted route
 
 1. **Printed Lemma 6.6 from its absolute mass and cover.** The new theorem
    accepts arbitrary supplied configurations and constructs the slab
@@ -394,15 +397,17 @@ closures; no dummy references are inserted into the final proof.
    conclusion directly. Global refinements and the constructed-source
    theorem do not establish that retention for an arbitrary input slab.
    This is recorded in `rem:lemma66-mass-normalization`, without asserting
-   the printed lemma false or treating it as an accepted scope correction.
+   the printed lemma false. The actual constructed route supplies its
+   prepared lemma's hypotheses upstream; it does not need this standalone
+   extension to every configuration satisfying only the printed premises.
 
 2. **Arbitrarily supplied ordinary tubes and charts.** `TubeWolffBound` tests
    containment of complete unit-segment capsules in coarse unit-segment
    capsules. The four-parameter map forgets longitudinal base position.
-   For the actual terminal, the proved common-height property now gives
-   parameter-cluster containment in a single ordinary coarse capsule and
-   the final contradiction uses that ordinary-tube theorem. For an
-   arbitrary supplied family, the four line parameters alone still do not
+   The retained common-height alternative gives parameter-cluster
+   containment in a single ordinary coarse capsule. The final contradiction
+   now uses the length-32 correction, permitting arbitrary longitudinal
+   positions in the bounded vertical chart. The four line parameters alone do not
    locate the unit segments longitudinally. The paper defines
    unit-segment tubes in Section 2.1 (page 6 of the pinned v2), invokes the
    line-parameter identification in Remark 7.4 (page 40), and uses cropped
@@ -415,34 +420,34 @@ closures; no dummy references are inserted into the final proof.
    is recorded below. The new finite-capsule theorem provides a concrete
    change of coarse tests: length 32 instead of length 1. Its geometric
    parameter reduction works for arbitrary longitudinal positions, and
-   CWA supplies its stronger tests. Identifying that model with the intended
-   paper convention and extending the chart transport remain separate
-   unresolved scope requirements, not accepted normalization corrections.
+   CWA supplies its stronger tests. This is the explicitly adopted
+   intermediate correction, recorded in `rem:longitudinal-tube-model`.
+   Identifying it with every intended paper convention or transporting
+   every externally supplied chart remains outside the proved scope.
+   The actual terminal's chart and slope conditions are proved upstream.
    Both the actual common-height ordinary-tube specialization and the earlier
    full-line specialization remain proved. The original final theorem is
    not used in either counterexample or to make a generic intermediate
    statement vacuous.
 
-## Scope note accepted for the roadmap
+## Scope notes adopted for the roadmap
 
-The slope-offset caveat is recorded in `rem:parameter-frostman` and in the
-Prop. 7.1/6.8 atlas correspondences. It is an adopted normalization
-correction, not a reason to stop alignment. The mathematical requirement
-is the already-proved transport of the actual left terminal into the
-same normalized configuration used for both projection bounds. This
-acceptance does not replace any missing proof of the arbitrary-interval
-Lemma 6.6 or of tube/chart reductions for an arbitrary supplied family.
-The actual common-height terminal now has its own proved ordinary-capsule
-specialization, as described above.
+The slope-offset caveat is recorded in `rem:parameter-frostman`, and the
+coarse-test correction in `rem:longitudinal-tube-model`. The Prop. 7.1/6.8
+atlas primaries now point to the finite length-32 proofs actually used by
+the final root. The mathematical requirement is the proved transport of
+the actual left terminal into the same normalized configuration used for
+both projection bounds, followed by CWA's supply of the corrected tests.
+Recording the scope does not itself prove any missing lemma: the precise
+standalone literature extensions are still listed above, and the
+prepared Lemma 6.6 used in the construction has its own proved inputs.
 
-**Full paper Prop. 6.8 scope.** The normalized specialization now does
-   follow `CWA -> ordinary capsule Tube Wolff -> common-height Prop. 7.1`.
-   The unrestricted CWA statement remains open. It cannot be obtained
-   through the refuted unrestricted Tube-Wolff-only claim. Extending the
-   adopted result to that unrestricted scope would need either
-   an argument using the stronger CWA condition or a justified correction
-   with proved normalization. The original final theorem is never used
-   to prove either side or any intermediate lemma.
+**Prop. 6.8 in the final proof.** The normalized specialization follows
+   `CWA -> finite length-32 coarse tests -> corrected Prop. 7.1`.
+   Its given fine segments retain arbitrary longitudinal positions.
+   General externally supplied slopes and charts are not covered by
+   this endpoint. The original final theorem is never used to prove
+   either side or any intermediate lemma.
 
 ## Verified obstruction to arbitrary slope offsets in Proposition 7.1
 
@@ -559,7 +564,7 @@ contradiction is unaffected. The blueprint records the new result in
 `thm:twisted-longitudinal-obstruction` and `rem:longitudinal-tube-model`.
 It refutes the literal broad ordinary-capsule claim, not the main Kakeya
 theorem, the CWA-only claim, or every intended convention for the paper's
-tubes. The outstanding paper-model requirement remains explicit.
+tubes. The adopted model difference remains explicit in the Remark.
 
 ## Finite coarse capsules at arbitrary longitudinal positions
 
@@ -602,13 +607,14 @@ most 4 in the vertical chart:
 
 These endpoints do not use the full-line projection theorem, the direct
 CWA-to-parameter shortcut, a final theorem or either counterexample.
-The audit checks their proof-value paths in independent supplemental
-closures. The original final root continues to use its proved common-height
-ordinary unit-capsule specialization, with its unchanged statement.
+The normalized endpoint is now reached by the final root through
+`NormalizedContradiction`; the unit-ball variant has its own supplementary
+closure. The common-height ordinary-capsule contradiction also has a
+separate closure. The public final statement is unchanged.
 
-The new result supplies a concrete positive correction for the longitudinal
-issue. It is not presented as proof of the refuted unit-length statement,
-nor as completion of arbitrary-chart transport or printed Lemma 6.6.
+This result is the adopted positive correction for the longitudinal
+issue. The refuted unit-length statement, arbitrary supplied charts and
+the generic printed Lemma 6.6 remain distinct from this constructed route.
 The blueprint records its exact hypotheses in `lem:dilated-tube-cluster`,
 `thm:twisted-dilated` and `cor:twisted-cwa-dilated`.
 
@@ -630,14 +636,15 @@ statement, 105 transitive axiom sets and 53 actual upstream-argument uses.
 `check_core_proof.py` reads the kernel graph generated by the blueprint audit,
 follows only proof/definition **value** edges, checks required and absent
 paths, and scans changed Lean sources for proof placeholders and additional
-axioms. Thirteen APIs are checked in supplementary kernel closures: the old
-full-line unit-ball endpoint, the transport record's projected-volume
-corollary, the offset counterexample, the prescribed-interval C2 source,
-the forward ordinary-volume conversion, the old normalized contradiction,
-the old normalized upper-bound entry, the new ordinary-tube unit-ball
-endpoint, the normalized longitudinal obstruction, and the two new CWA
-endpoints through finite length-32 coarse capsules, plus the historical global-frame prescribed-interval theorem and frame-ready C2 source. The new normalized interval lemma is reached through the closed every-interval source. The reverse ordinary
-volume conversion is now used in the final root.
+axioms. Thirteen supplementary roots cover the retained common-height
+contradiction and upper-bound entry, the historical full-line CWA endpoints,
+the ordinary and length-32 unit-ball endpoints, both counterexamples, the
+transport record's projected-volume theorem, the ordinary-volume conversion,
+and the independently proved prescribed-interval and frame-ready C2 APIs.
+Their exact names are recorded in `core-proof-audit.json`.
+The normalized interval lemma is reached through the closed every-interval
+source. The corrected finite-capsule normalized endpoint is now checked
+inside the actual final root.
 Shared records are checked for
 identical dependency data and declaration metadata before merging them for
 the audit. The supplementary driver uses exactly the blueprint import
@@ -647,31 +654,36 @@ module set can expose another proof of the same proposition. The audit
 keeps its strict equality check and compares one consistent environment.
 No reference
 to these APIs is inserted into the final proof merely to make them reachable.
-Its result separately lists both refuted claims and remaining paper-level gaps.
+Its result separately lists the adopted route, both refuted claims and
+the literature statements outside that route.
 The full blueprint audit regenerates declaration and dependency data.
-These checks certify the implemented scope, not completion of the remaining
-missing mathematical requirements.
+These checks certify the constructed route with its recorded intermediate
+scopes; they do not assert the generic literature extensions listed above.
 
 Validation for the implemented scope passed and is recorded in the generated logs and
 `blueprint/build/core-integration/core-proof-audit.json`:
 
-- Related left/right modules, both ordinary finite-capsule lower-bound
-  routes, the unchanged final entry and both finite counterexamples:
-  `lake build`, 9,125 jobs, exit 0 (`build-left-frame-core.log`).
-- `python3 blueprint/scripts/check.py --lean`: 43,859 project declarations,
-  186 of 298 linked declarations reached, 102 atlas correspondences and
+- Related left/right modules, both finite-capsule lower-bound routes,
+  the unchanged final entry and both counterexamples: the build run by
+  `check.py --lean` completed 9,125 jobs, exit 0
+  (`blueprint/build/lake-build.log`). The separate final-entry build
+  passed as well (`build-right-final-root.log`).
+- `python3 blueprint/scripts/check.py --lean`: 43,861 project declarations,
+  187 of 298 linked declarations reached, 102 atlas correspondences and
   242 proposed edges compared; exit 0. The compiled audit data were regenerated.
 - `core_contracts.lean`: all historical interfaces, 105 axiom checks and 53
   upstream-argument checks passed; all axiom sets are within
   `propext`, `Classical.choice`, `Quot.sound`.
-- `check_core_proof.py`: 124 required proof-value paths, 95 absent paths,
-  and 89 changed Lean source scans passed. The absence targets are checked
+- `check_core_proof.py`: 128 required proof-value paths, 105 absent paths,
+  and 5 changed Lean source scans since the committed checkpoint passed.
+  The absence targets are checked
   as existing Lean constants; a misspelled target cannot pass silently.
 - `git diff --check`: passed.
 
-The absence audit explicitly confirms that neither the old full-line
-projection theorem nor the direct CWA-to-parameter theorem lies in the
-new final proof-value closure. It also checks that the ordinary Tube Wolff
+The absence audit explicitly confirms that neither the common-height
+projection theorem, the old full-line projection theorem nor the direct
+CWA-to-parameter theorem lies in the final proof-value closure.
+It also checks that the ordinary Tube Wolff
 theorem does not depend on the left upper bound or on a CWA supplier.
 Both counterexamples are absent from the final and ordinary/full-line
 projection proof closures. The new longitudinal negation uses neither
@@ -681,17 +693,14 @@ the earlier projection bounds. Its two CWA corollaries call it through
 the proved finite-capsule tests, without the direct CWA-to-parameter
 shortcut or the full-line projection theorem.
 
-Current logs: `build-dilated-core.log`,
-`check-blueprint-dilated.log`, `core-contracts.log`, and
-`check-core-proof-dilated.log`, all under
-`blueprint/build/core-integration/`. The atlas's contradiction primary
-points to the actual common-height contradiction; the subsequent
-static check is in `check-blueprint-dilated-static.log`.
-The separate LSP axiom checks of both
-`not_pureWZ2UnrestrictedTubeWolffProjectionStatement` and
-`not_pureWZ2NormalizedOrdinaryTubeWolffProjectionStatement` returned only
-the three standard axioms and no source-scan warnings.
-The separate checks of
-`tubeParameterFrostmanBound_of_dilatedTubeWolffBound` and
-`pure_wz2_convex_wolff_lower_bound_in_unit_ball_via_dilated_tubes`
-returned the same standard basis and no source-scan warnings.
+Current logs: `build-right-final-root.log`,
+`check-blueprint-right-final.log`, `core-contracts.log`, and
+`check-core-proof-right-final.log`, all under
+`blueprint/build/core-integration/`.
+The atlas primaries for the final contradiction, Lemma 6.7, Prop. 7.1
+and Prop. 6.8 point to the actual normalized finite-coarse route.
+All twelve selected Core primaries, including JetCount and the normalized
+Thm. 7.13 input, are reached by the final proof's value closure.
+The old `b1122e5` checkpoint's 89-file source scan remains historical
+evidence for the integrated left/right work; the current five-file scan
+covers the Lean changes made after that checkpoint.

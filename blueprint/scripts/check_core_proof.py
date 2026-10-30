@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Audit Core proof-value paths after check.py --lean and core_contracts.lean.
 
-This checks the implemented normalized route.  The explicit missing paper
-transports below are not converted into passing mathematical requirements.
+This checks the normalized route with the explicitly adopted coarse-tube
+correction. Literal paper statements outside that scope remain recorded.
 """
 
 from collections import deque
@@ -31,10 +31,10 @@ def add_supplementary_graphs(graph):
              NS + "not_pureWZ2NormalizedOrdinaryTubeWolffProjectionStatement",
              NS + "pure_wz2_left_line_c2_prescribed_intervals",
              NS + "TubeWolffBound.to_ordinaryVolume",
-             NS + "pure_wz2_no_critical_package_of_normalized_projection",
-             NS + "pure_wz2_left_line_normalized_projection",
+             NS + "pure_wz2_theorem5_2_of_common_height_projection",
+             NS + "pure_wz2_left_line_common_height_projection",
              NS + "pure_wz2_ordinary_tube_wolff_lower_bound_in_unit_ball",
-             NS + "pure_wz2_convex_wolff_lower_bound_via_dilated_tubes",
+             NS + "pure_wz2_convex_wolff_lower_bound_in_vertical_chart",
              NS + "pure_wz2_convex_wolff_lower_bound_in_unit_ball_via_dilated_tubes",
              NS + "pure_wz2_lemma66_prescribed_interval",
              NS + "pureWZ2_interval_ready_c2_source"]
@@ -152,6 +152,16 @@ def main():
     assert "PureWZ2C2GrainConfiguration" in normalized_interval_type
     assert "FrameNormalCompatibility" not in normalized_interval_type
     assert "PureWZ2CriticalPackage" not in normalized_interval_type
+    corrected_projection_type = next(row["type"] for row in axioms
+                                     if row["name"] == NS + "pure_wz2_proposition7_1_dilated_tube_wolff")
+    assert "DilatedTubeWolffVolumeBound" in corrected_projection_type
+    assert "HasCommonHeightTubeModel" not in corrected_projection_type
+    assert "ConvexWolffBound" not in corrected_projection_type
+    corrected_cwa_type = next(row["type"] for row in axioms
+                             if row["name"] == NS + "pure_wz2_convex_wolff_lower_bound_via_dilated_tubes")
+    assert "ConvexWolffBound" in corrected_cwa_type
+    assert "HasCommonHeightTubeModel" not in corrected_cwa_type
+    assert "PureWZ2CriticalPackage" not in corrected_cwa_type
 
     pairs = [
         ("pure_wz2_lemma66_normalized_interval", "pureWZ2_prescribed_slab_frame_preparation"),
@@ -172,9 +182,13 @@ def main():
         ("pure_wz2_lemma66_prepared_interval_on", "PureWZ2Lemma31SlabAssembly.derivative_lower"),
         ("pure_wz2_lemma66_prepared_interval", "pure_wz2_lemma66_prepared_interval_on"),
         ("PureWZ2Lemma31SlabAssembly.derivative_lower", "pureWZ2_faithful_step4_producer_of_frame_lower"),
-        ("PureWZ2Theorem5_2Unconditional", "pure_wz2_theorem5_2_of_common_height_projection"),
-        ("PureWZ2Theorem5_2Unconditional", "pure_wz2_left_line_common_height_projection"),
-        ("PureWZ2Theorem5_2Unconditional", "pure_wz2_convex_wolff_lower_bound_in_common_height_chart"),
+        ("PureWZ2Theorem5_2Unconditional", "pure_wz2_theorem5_2_of_normalized_projection"),
+        ("PureWZ2Theorem5_2Unconditional", "pure_wz2_left_line_normalized_projection"),
+        ("PureWZ2Theorem5_2Unconditional", "pure_wz2_convex_wolff_lower_bound_via_dilated_tubes"),
+        ("PureWZ2Theorem5_2Unconditional", "dilatedTubeWolffVolumeBound_of_convexWolffBound"),
+        ("PureWZ2Theorem5_2Unconditional", "pure_wz2_proposition7_1_dilated_tube_wolff"),
+        ("PureWZ2Theorem5_2Unconditional", "pure_wz2_lemma7_12_parameter_frostman_sharp_density"),
+        ("pure_wz2_theorem5_2_of_common_height_projection", "pure_wz2_convex_wolff_lower_bound_in_common_height_chart"),
         ("pure_wz2_left_line_common_height_projection", "PureWZ2PaperTerminalProjectionRefinement.common_height"),
         ("pure_wz2_left_line_common_height_projection", "pure_wz2_paper_terminal_normalization_cutoff"),
         ("pure_wz2_convex_wolff_lower_bound_in_common_height_chart", "ordinaryTubeWolffVolumeBound_of_convexWolffBound"),
@@ -188,7 +202,7 @@ def main():
         ("commonHeight_segment_point_dist", "commonHeight_direction_dist"),
         ("pure_wz2_ordinary_tube_wolff_lower_bound_in_unit_ball", "pure_wz2_proposition7_1_ordinary_tube_wolff"),
         ("pure_wz2_ordinary_tube_wolff_lower_bound_in_unit_ball", "PureWZ2.wz2_ed_packing_bound"),
-        ("pure_wz2_no_critical_package_of_normalized_projection", "pure_wz2_convex_wolff_lower_bound_in_vertical_chart"),
+        ("pure_wz2_no_critical_package_of_normalized_projection", "pure_wz2_convex_wolff_lower_bound_via_dilated_tubes"),
         ("pure_wz2_left_line_c2_grains", "pure_wz2_node04_reentrant_grains"),
         ("pure_wz2_node04_reentrant_grains", "pure_wz2_node03_rich_prop62_kernel"),
         ("pure_wz2_left_line_c2_grains", "pureWZ2_c2_grains_from_reentrant"),
@@ -384,8 +398,8 @@ def main():
         assert NS + target not in previous
         absent.append({"from": source, "to": NS + target})
 
-    # The final root uses ordinary capsule tests. The old full-line theorem
-    # remains verified as a separate API, without a proof-value path from root.
+    # Neither the corrected final route nor the retained ordinary route uses
+    # the old full-line projection theorem or direct CWA-to-parameter shortcut.
     for source in [THEOREM, NS + "pure_wz2_proposition7_1_ordinary_tube_wolff",
                    NS + "pure_wz2_convex_wolff_lower_bound_in_common_height_chart"]:
         previous = walk(graph, source)
@@ -395,6 +409,16 @@ def main():
             assert NS + target in known, f"Unknown absence-check target: {target}"
             assert NS + target not in previous, f"Unexpected lower-bound route from {source}"
             absent.append({"from": source, "to": NS + target})
+    # The root now uses the arbitrary-longitudinal finite-capsule theorem.
+    # Keep the common-height lower bound as an independently checked API.
+    previous = walk(graph, THEOREM)
+    for target in ["pure_wz2_theorem5_2_of_common_height_projection",
+                   "pure_wz2_no_critical_package_of_common_height_projection",
+                   "pure_wz2_convex_wolff_lower_bound_in_common_height_chart",
+                   "pure_wz2_proposition7_1_ordinary_tube_wolff"]:
+        assert NS + target in known
+        assert NS + target not in previous, f"Unexpected common-height lower bound: {target}"
+        absent.append({"from": THEOREM, "to": NS + target})
     ordinary = walk(graph, NS + "pure_wz2_proposition7_1_ordinary_tube_wolff")
     for target in ["pure_wz2_left_line_common_height_projection",
                    "ordinaryTubeWolffVolumeBound_of_convexWolffBound"]:
@@ -423,7 +447,10 @@ def main():
         previous = walk(graph, NS + source)
         for target in ["pure_wz2_proposition7_1_full_line_tube_wolff",
                        "fullLineTubeWolffBound_of_convexWolffBound",
-                       "tubeParameterFrostmanBound_of_convexWolffBound"]:
+                       "tubeParameterFrostmanBound_of_convexWolffBound",
+                       "pure_wz2_proposition7_1_ordinary_tube_wolff",
+                       "pure_wz2_left_line_normalized_projection",
+                       "pure_wz2_node06_large_slope_retained"]:
             assert NS + target in known
             assert NS + target not in previous
             absent.append({"from": NS + source, "to": NS + target})
@@ -438,6 +465,15 @@ def main():
         assert not re.search(r"\b(sorry|admit|axiom|native_decide)\b",
                              uncomment((ROOT / path).read_text())), path
     result = {"status": "passed_for_implemented_scope",
+              "adopted_final_route": {
+                  "contradiction": NS + "pure_wz2_no_critical_package_of_normalized_projection",
+                  "upper": NS + "pure_wz2_left_line_normalized_projection",
+                  "lower": NS + "pure_wz2_convex_wolff_lower_bound_via_dilated_tubes",
+                  "tube_wolff": NS + "pure_wz2_proposition7_1_dilated_tube_wolff",
+                  "model": "Original fine unit segments at arbitrary longitudinal positions; finite coarse capsules with axis length 32",
+                  "normalization": "The actual left-terminal transport proves bounded bases, the vertical chart, dense height-window shading and f(0)=0 on the same CWA configuration",
+                  "quantifier_order": "Fix lower epsilon=sigma/4, then eta and cutoff, then request the upper configuration below that cutoff; compare the same twisted union",
+                  "final_statement": "PureWZ2Theorem5_2Statement is unchanged and has no external proof inputs"},
               "root_project_graph_size": root_graph_size,
               "audited_graph_size": len(graph), "supplementary_roots": supplementary_roots,
               "axioms": axioms,
@@ -451,13 +487,20 @@ def main():
                   "proof": NS + "not_pureWZ2NormalizedOrdinaryTubeWolffProjectionStatement",
                   "scope": "Uniform ordinary unit-segment capsule actual-volume Tube Wolff projection bound with arbitrary longitudinal centers, even for f(z)=z, bounded vertical chart, paper distinctness, unit-ball containment and full shading",
                   "construction": "delta=1/(4096 n^2), n^5 tubes, absolute Tube Wolff constant 2^60 and projected area at most 24 sqrt(delta)",
-                  "limitation": "No CWA certificate; the common-height terminal and its final contradiction are unaffected. This separate model discrepancy is not an accepted scope correction."}],
+                  "limitation": "No CWA certificate; the corrected final route and the retained common-height alternative are unaffected. The coarse-test difference is explicitly recorded in rem:longitudinal-tube-model."}],
               "accepted_scope_corrections": [{
                   "name": "Slope-offset normalization",
                   "remark": "rem:parameter-frostman",
                   "requirement": "Apply normalized Proposition 7.1/6.8 to the configuration transported from the actual left terminal, with the proved CWA, density, scale and area losses",
                   "evidence": NS + "pure_wz2_paper_terminal_normalization_cutoff",
-                  "outside_adopted_scope": "Uniform lower bounds for arbitrarily supplied offsets without the actual-terminal normalization"}],
+                  "outside_adopted_scope": "Uniform lower bounds for arbitrarily supplied offsets without the actual-terminal normalization"}, {
+                  "name": "Finite coarse capsules with longitudinal margin",
+                  "remark": "rem:longitudinal-tube-model",
+                  "requirement": "Retain the original fine unit segments; use finite length-32 coarse tests supplied directly by CWA, and apply the proved normalized Proposition 7.1 to the same left-terminal configuration",
+                  "evidence": [NS + "dilatedTubeWolffVolumeBound_of_convexWolffBound",
+                               NS + "pure_wz2_proposition7_1_dilated_tube_wolff",
+                               NS + "pure_wz2_no_critical_package_of_normalized_projection"],
+                  "outside_adopted_scope": "An implication from literal length-1 tests to length-32 tests, identification with every intended paper convention, or projection-compatible transport of every externally supplied chart"}],
               "proved_additional_scope": [{
                   "name": "One constructed C2 source for every later prescribed interval",
                   "proof": NS + "pure_wz2_left_line_c2_prescribed_intervals",
@@ -471,7 +514,7 @@ def main():
                   "proof": NS + "pure_wz2_proposition7_1_ordinary_tube_wolff",
                   "geometry": "Radius-r parameter clusters fit in one radius-8r ordinary coarse capsule; factors 64 for radius-squared tests and 640 for actual-volume tests",
                   "terminal_evidence": NS + "PureWZ2PaperTerminalProjectionRefinement.common_height",
-                  "final_route": "CWA -> ordinary capsule actual-volume Tube Wolff -> ordinary Proposition 7.1 -> parameter iteration, on the same common-height upper-bound configuration",
+                  "retained_route": "CWA -> ordinary capsule actual-volume Tube Wolff -> ordinary Proposition 7.1 -> parameter iteration, on the same common-height upper-bound configuration; audited independently of the final lower bound",
                   "scope": "Bounded vertical chart, common-height unit segments and normalized slope. The actual terminal satisfies these by proved construction. Arbitrarily supplied segments and charts are not covered."}, {
                   "name": "Finite coarse capsules with fixed longitudinal margin",
                   "proof": NS + "pure_wz2_proposition7_1_dilated_tube_wolff",
@@ -480,15 +523,15 @@ def main():
                   "cwa_endpoints": [NS + "pure_wz2_convex_wolff_lower_bound_via_dilated_tubes",
                                     NS + "pure_wz2_convex_wolff_lower_bound_in_unit_ball_via_dilated_tubes"],
                   "quantifiers": "Uniform cutoff before every family and longitudinal position; packing removes the cardinality premise; bounded vertical chart and normalized slope remain explicit",
-                  "limitation": "CWA supplies the corrected coarse tests directly. No implication from literal unit-length Tube Wolff to these tests is asserted, and this is not silently treated as an accepted paper-scope correction."}],
+                  "limitation": "CWA supplies the corrected coarse tests directly. This is the explicitly adopted final route; no implication from literal unit-length Tube Wolff to these tests or general arbitrary-chart transport is asserted."}],
               "not_proved": [
                   "Paper Lemma 6.6 from absolute slab mass delta^eta |J| and covering alone. The normalized lemma now accepts every supplied Prop. 6.4 configuration and derives slab frame control internally, but still requires mass (pi/4) delta^(eta/16+2) #T |J| and the slab cap delta^(2-sigma-eta/8192) #T; neither follows here from the printed hypotheses",
-                  "Paper model and chart scope: literal unit-length ordinary Tube Wolff at arbitrary longitudinal centers is refuted. A finite length-32 coarse-test correction is proved for all bounded vertical-chart families and supplied by CWA, but its identification with the paper scope and transport beyond that chart are not established"]}
+                  "Literal paper model and arbitrary supplied charts: length-1 ordinary Tube Wolff at arbitrary longitudinal centers is refuted. The adopted length-32 correction is proved and CWA supplies it directly. The actual terminal has all chart and slope conditions by proved transport; identification with every intended paper convention and transport of arbitrary supplied charts are not claimed"]}
     (OUT / "core-proof-audit.json").write_text(json.dumps(result, indent=2) + "\n")
     print(f"PASS: {len(axioms)} axiom checks; {len(binders)} upstream arguments; "
           f"{len(paths)} proof-value paths; {len(absent)} absent paths; "
           f"{len(sources)} changed Lean source scans.")
-    print("The actual terminal uses common-height ordinary capsules. Length-32 coarse capsules now give a separate CWA projection route for arbitrary longitudinal positions. General Lemma 6.6 and the remaining paper-model/chart scope are unresolved; literal unit-length arbitrary-longitudinal Tube Wolff is refuted.")
+    print("The final proof uses CWA -> length-32 finite coarse capsules -> corrected Proposition 7.1 on the same normalized left terminal. The common-height and full-line alternatives remain independently audited. Literal Lemma 6.6 and arbitrary supplied chart differences remain recorded as literature gaps.")
 
 
 if __name__ == "__main__":

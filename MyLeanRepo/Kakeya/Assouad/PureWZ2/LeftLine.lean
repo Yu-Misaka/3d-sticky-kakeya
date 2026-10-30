@@ -67,7 +67,8 @@ theorem pure_wz2_left_line_common_height_projection :
   pure_wz2_node7b_common_height_from_retained_large_slope
     pure_wz2_left_line_large_slope_retained
 
-/-- Historical normalized upper bound on the same common-height terminal. -/
+/-- The normalized upper bound used by the final contradiction, obtained
+from the same actual terminal by forgetting its extra common-height field. -/
 theorem pure_wz2_left_line_normalized_projection :
     PureWZ2NormalizedProjectionStatement :=
   pure_wz2_node7b_normalized_from_retained_large_slope

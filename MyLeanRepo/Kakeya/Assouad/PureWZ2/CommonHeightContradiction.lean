@@ -1,8 +1,9 @@
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.CommonHeightNormalizedTerminal
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.OrdinaryTubeWolffLowerBound
 
-/-! The final comparison on one common-height ordinary-tube terminal.
-The independent lower bound now uses the ordinary capsule Tube Wolff route. -/
+/-! A retained comparison on one common-height ordinary-tube terminal.
+This independent lower bound uses ordinary unit-capsule Tube Wolff tests.
+The final root uses the length-32 correction in `NormalizedContradiction`. -/
 
 namespace Kakeya.Assouad
 
