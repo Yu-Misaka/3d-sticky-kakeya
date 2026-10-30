@@ -19,8 +19,8 @@ open MeasureTheory Set
 
 namespace Kakeya.Assouad
 
-theorem parameter_block_projection_uniformization_from_os :
-    ParameterBlockProjectionUniformizationFromOSStatement := by
+theorem parameter_block_projection_uniformization_from_os_with_density (densityPower : ℝ) :
+    ParameterBlockProjectionUniformizationFromOSWithDensityStatement densityPower := by
   intro hArithmetic hPrune hPreparation hLevelSystem hCorridor hGlobalization
   intro epsilon rhoMax eta hepsilon hepsilon_small
     hrhoMax hrhoMax_one hrhoMax_lower heta heta_small
@@ -51,7 +51,7 @@ theorem parameter_block_projection_uniformization_from_os :
   rcases hPrepare delta hdelta hdelta_prep
       F hF_nonempty hF_vertical hF_bounds
       Y hY_dense hY_slab f hf hf_zero with
-    ⟨prepared, hprepared_base⟩
+    ⟨prepared, hprepared_base, hretainedDensity⟩
   let globalShading := prepared.density.globalShading
   rcases hPrune delta (4 * eta) hdelta hdelta_one
       (by positivity) F globalShading
@@ -69,7 +69,7 @@ theorem parameter_block_projection_uniformization_from_os :
     full_mass := hfull_mass
     full_per_tube := hfull_per_tube
     globalize := ?_
-  }⟩
+  }, hretainedDensity⟩
   intro c0 windowedShading hwindow_sub _hwindow_mass
     _hwindow_whole hwindow_c
   dsimp only
@@ -317,5 +317,25 @@ theorem parameter_block_projection_uniformization_from_os :
       dsimp only [rho]
       nlinarith [localBlock.blockScale_pos],
       hrho_max, hprojection⟩
+
+/-- Historical API, retaining its original proof-input types. -/
+theorem parameter_block_projection_uniformization_from_os :
+    ParameterBlockProjectionUniformizationFromOSStatement := by
+  intro ha hp hprepare hl hc hg
+  have hprepare4 : ProjectedFiberOSPreparationWithDensityStatement 4 := by
+    intro eta heta
+    obtain ⟨base, hb, delta₀, hd, hd1, h⟩ := hprepare eta heta
+    refine ⟨base, hb, delta₀, hd, hd1, ?_⟩
+    intro delta hdelta hsmall F hn hv hbounds Y hy hw f hf h0
+    obtain ⟨data, hbase⟩ := h delta hdelta hsmall F hn hv hbounds Y hy hw f hf h0
+    exact ⟨data, hbase, data.density.density⟩
+  have strong := parameter_block_projection_uniformization_from_os_with_density
+    4 ha hp hprepare4 hl hc hg
+  intro epsilon rhoMax eta he he1 hr hr1 hrl heta hetasmall
+  obtain ⟨delta₀, hd, hd1, h⟩ := strong epsilon rhoMax eta he he1 hr hr1 hrl heta hetasmall
+  refine ⟨delta₀, hd, hd1, ?_⟩
+  intro delta hdelta hsmall F hn hv hbounds C hC hCtop hCb hF Y hy hw f hf h0
+  obtain ⟨data, _⟩ := h delta hdelta hsmall F hn hv hbounds C hC hCtop hCb hF Y hy hw f hf h0
+  exact ⟨data⟩
 
 end Kakeya.Assouad

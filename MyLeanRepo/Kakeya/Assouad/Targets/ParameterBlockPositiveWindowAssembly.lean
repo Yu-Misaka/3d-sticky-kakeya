@@ -19,8 +19,8 @@ premises with a single coherent chain of dependent witnesses.
 
 namespace Kakeya.Assouad
 
-theorem parameter_block_positive_window_assembly :
-    ParameterBlockPositiveWindowAssemblyStatement := by
+theorem parameter_block_positive_window_assembly_with_density (densityPower : ℝ) :
+    ParameterBlockPositiveWindowAssemblyWithDensityStatement densityPower := by
   intro h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 _holder _pyzinput
     epsilon rhoMax h_eps_pos h_eps_lt1 h_rho_pos h_rho_le1 h_rho_lower
 
@@ -146,9 +146,8 @@ theorem parameter_block_positive_window_assembly :
   intro F hF_nonempty hF_vertical hF_params C hC1 hC_top hC_le hFrostman Y hY_dense hY_slab f hf_nonsing hf0
 
   -- Apply h11 to get projection uniform data
-  have h_data : Nonempty (ParameterBlockProjectionUniformData (epsilon := epsilon) (eta := eta) (rhoMax := rhoMax) C Y f) :=
+  obtain ⟨data, hretainedDensity⟩ :=
     h_uniform delta h_delta_pos h_delta_le_uniform F hF_nonempty hF_vertical hF_params C hC1 hC_top hC_le hFrostman Y hY_dense hY_slab f hf_nonsing hf0
-  rcases h_data with ⟨data⟩
 
   let Z := data.globalShading
   have hZ_sub_Y : IsSubshading Z Y := data.subshading
@@ -403,6 +402,20 @@ theorem parameter_block_positive_window_assembly :
 
   rcases h_final with ⟨rho, h_rho_lower, h_rho_upper, h_volume⟩
 
-  exact ⟨rho, h_rho_lower, h_rho_upper, Z, hZ_sub_Y, hZ_dense, h_volume⟩
+  exact ⟨rho, h_rho_lower, h_rho_upper, Z, hZ_sub_Y, hretainedDensity, h_volume⟩
+
+/-- Historical API, with its original density and input contracts. -/
+theorem parameter_block_positive_window_assembly :
+    ParameterBlockPositiveWindowAssemblyStatement := by
+  intro h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11
+  have h11strong : ParameterBlockProjectionUniformizationWithDensityStatement 4 := by
+    intro epsilon rhoMax eta he he1 hr hr1 hrl heta hetasmall
+    obtain ⟨delta₀, hd, hd1, h⟩ := h11 epsilon rhoMax eta he he1 hr hr1 hrl heta hetasmall
+    refine ⟨delta₀, hd, hd1, ?_⟩
+    intro delta hdelta hsmall F hn hv hbounds C hC hCtop hCb hF Y hy hw f hf h0
+    obtain ⟨data⟩ := h delta hdelta hsmall F hn hv hbounds C hC hCtop hCb hF Y hy hw f hf h0
+    exact ⟨data, data.density⟩
+  exact parameter_block_positive_window_assembly_with_density 4
+    h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11strong
 
 end Kakeya.Assouad

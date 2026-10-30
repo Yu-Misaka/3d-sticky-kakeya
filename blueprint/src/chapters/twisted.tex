@@ -26,9 +26,162 @@ hypothesis then concentrate many shaded tube pieces in a thin prism.
 The balanced-cover and multiplicity bounds turn shaded mass in that
 prism into a count of whole tubes in a slightly enlarged convex body.
 Its volume is too small for that count to satisfy CWA. The
-formalized argument retains the selected shading, its per-tube mass,
-and the actual enclosing prism throughout this step.
+formalized prepared version below retains those data. A strengthened
+C2 producer now supplies the frame and multiplicity bounds before $J$
+is chosen, and a cubical hull retains the mass of any prescribed slab.
+The normalized theorem below now also accepts an arbitrary supplied C2
+configuration: its slab frame is prepared internally, using the stated
+fine multiplicity cap. It uses mass normalized by $\delta^2\#\T$.
+Deriving the conclusion for an arbitrary supplied configuration from
+only the two printed hypotheses above remains open.
 \end{proof}
+
+\begin{lemma}[The prepared interval version of Lemma 6.6]
+\label{lem:large-slope-prepared}
+\lean{Kakeya.Assouad.PureWZ2Lemma66PreparedInterval,Kakeya.Assouad.pure_wz2_lemma66_prepared_interval,Kakeya.Assouad.pure_wz2_lemma66_prepared,Kakeya.Assouad.PureWZ2Lemma66PreparedIntervalOn,Kakeya.Assouad.pure_wz2_lemma66_prepared_interval_on}
+\leanok
+\uses{prop:c2-grains,def:cwa}
+Fix $0<\sigma<1$, $0<\eps\leq1/2$, and $\eta>0$ with
+$1000\eta\leq\eps\sigma^2$. There is a uniform $\delta_0>0$
+for the following prepared data at $0<\delta\leq\delta_0$.
+Let a C2 configuration have loss
+$\eta/8$, and let $f$ be its global slope representative with
+$|f|,|f'|,|f''|\leq1$ on $[-1,1]$. Let $Y_J$ be a whole-cell
+subshading supported on $J=[a,b]\subset[-1,1]$, put $r=b-a$, and
+assume $\delta^{1/2}\leq r\leq\delta^\eps$,
+\[
+ \|Y_J\|\geq(\pi/4)\delta^{\eta/8+2}\#\T\,r,
+ \qquad E_{Y_J}\text{ is covered by at most }
+ \delta^{-\eta/8}r^{-2+\sigma}\text{ balls of radius }r.
+\]
+Require both point-multiplicity upper bounds
+$(\delta/r)^{2-\sigma-\eta/8}\#\T$ and
+$\delta^{2-\sigma-\eta/4096}r^{-\eta/4096}\#\T$.
+Finally require the frame-normal compatibility recorded in the linked
+input: whenever the source slope is within $1/50$ of the chosen frame
+slope, the projected local normal has norm at least $1/16$.
+Then $|f'(z)|\geq r$ for all $z\in J$.
+\end{lemma}
+\begin{proof}
+\leanok
+Write $r=\delta^p$ inside the proof, with $\eps\leq p\leq1/2$.
+Choose all scalar cutoffs uniformly at the worst endpoint $p=1/2$,
+and use $r\leq\delta^\eps$ for the convex overload estimate.
+The retained slab and multiplicity bounds yield a common slice and
+faithful prisms; the AD direction estimate contradicts CWA.
+The earlier $r=\delta^\eps$ theorem is a specialization.
+The core proof only needs frame compatibility on the retained slab;
+the original global-frame interface is preserved as a specialization.
+\end{proof}
+
+\begin{lemma}[Cubical preparation of a prescribed interval]
+\label{lem:large-slope-prescribed}
+\lean{Kakeya.Assouad.pureWZ2PrescribedSlabHull_mass,Kakeya.Assouad.pureWZ2PrescribedSlabHull_cover,Kakeya.Assouad.pureWZ2PrescribedSlabHull_multiplicity,Kakeya.Assouad.pure_wz2_lemma66_prescribed_interval}
+\leanok
+\uses{lem:large-slope-prepared}
+Fix the same $\sigma,\eps,\eta$, now with
+$2000\eta\leq\eps\sigma^2$. Let the C2 configuration of loss $\eta/8$
+have frame-normal compatibility and normalized global slope representative
+$f$, and let $J=[a,b]\subset[-1,1]$,
+$\sqrt\delta\leq r=|J|\leq\delta^\eps$. Suppose
+\[
+ \sum_T |Y(T)\cap(\R^2\times J)|
+       \geq (\pi/4)\delta^{\eta/16+2}\#\T\,r,
+\]
+the slab union is covered by at most
+$\delta^{-\eta/16}r^{-2+\sigma}$ balls of radius $r$, and every point
+in it has multiplicity at most $\delta^{2-\sigma-\eta/8192}\#\T$.
+Then $|f'(z)|\geq r$ for every $z\in J$.
+\end{lemma}
+\begin{proof}
+\leanok
+Retain all occupied $\delta$-cells that meet $J$. This preserves every
+original slab incidence and at least its indexed mass. Each point in
+the retained hull has the same tube incidences as a point in the original
+slab at distance at most $2\delta$. The original cover therefore works
+at radius $R=r+2\delta$, and the multiplicity cap transfers to the hull.
+Place the hull in an interval of width $R$ inside $[-1,1]$ containing $J$.
+Since $R\leq3r$, uniform small-scale cutoffs absorb factors $3$ in mass
+and $9$ in the covering count. The single cap implies both prepared caps.
+Apply Lemma~\ref{lem:large-slope-prepared} with $\eps/2$.
+\end{proof}
+
+\begin{lemma}[An arbitrary configuration with normalized slab mass]
+\label{lem:large-slope-normalized-interval}
+\lean{Kakeya.Assouad.pure_wz2_lemma66_normalized_interval,Kakeya.Assouad.pureWZ2_prescribed_slab_frame_preparation,Kakeya.Assouad.pureWZ2_dense_short_global_grain_normal,Kakeya.Assouad.pureWZ2_dense_cell_label_refinement,Kakeya.Assouad.pureWZ2_short_grain_label_count,Kakeya.Assouad.pureWZ2_short_grain_packet_geometry}
+\leanok
+\uses{prop:c2-grains,lem:large-slope-prepared,lem:large-slope-prescribed}
+Fix $0<\sigma<1$, $0<\eps\leq1/2$, and $\eta>0$ with
+$2000\eta\leq\eps\sigma^2$. There is a uniform cutoff such that
+every supplied C2 configuration of loss $\eta/8$ and every prescribed
+$J=[a,b]\subset[-1,1]$, with $\sqrt\delta\leq r=|J|\leq\delta^\eps$,
+have the following property. Assume
+\[
+ \sum_T |Y(T)\cap(\R^2\times J)|
+     \geq(\pi/4)\delta^{\eta/16+2}\#\T\,r,
+\]
+the slab union has a cover by at most
+$\delta^{-\eta/16}r^{-2+\sigma}$ balls of radius $r$, and its point
+multiplicity is at most $\delta^{2-\sigma-\eta/8192}\#\T$.
+Then the normalized global slope representative satisfies
+$|f'(z)|\geq r$ for all $z\in J$.
+There is no additional frame compatibility hypothesis.
+\end{lemma}
+\begin{proof}
+\leanok
+First take the mass-preserving whole-cell hull of $J$. Partition its
+global grains into short packets using bins of width $\sqrt\delta$
+along their rotated long axes. The global AD count and a one-dimensional
+bin count bound the number of packets. The multiplicity cap then shows
+that packets with spatial volume at least
+$144\delta^{\eta/2}\delta^2\sqrt\delta$ retain half the incidence mass.
+Every such packet lies in a $6\delta$-thick tube segment of length
+$4\sqrt\delta$ and in a ball of that radius about each of its points.
+Local AD at scale $16\delta$ and the tube-segment direction estimate
+force the local normal to be almost perpendicular to the packet's long
+axis. Its projection in every required nearby frame has norm at least
+$1/2$. This proves the slab frame certificate directly on the given
+configuration. The cutoff absorbs the factor two mass loss, and the
+slab-frame form of Lemma~\ref{lem:large-slope-prepared} finishes the proof.
+\end{proof}
+
+\begin{proposition}[One C2 source for every later prescribed interval]
+\label{prop:c2-prescribed-intervals}
+\lean{Kakeya.Assouad.PureWZ2C2PrescribedIntervalsStatement,Kakeya.Assouad.pureWZ2_c2_source_with_fine_cap,Kakeya.Assouad.pureWZ2_interval_ready_c2_source,Kakeya.Assouad.pure_wz2_left_line_c2_prescribed_intervals}
+\leanok
+\uses{prop:c2-grains,prop:sticky-structure,lem:large-slope-normalized-interval}
+Assume a positive critical package. Given $0<\eps\leq1/2$, $\eta>0$
+with $2000\eta\leq\eps\sigma^2$ and any scale ceiling, one can first
+choose a C2 configuration of loss $\eta/8$ below that ceiling, together
+with its normalized global slope $f$. For every later interval $J$
+satisfying the length, normalized mass and cover hypotheses of
+Lemma~\ref{lem:large-slope-prescribed}, its derivative conclusion holds.
+There are no frame, whole-cell or multiplicity premises for the caller.
+\end{proposition}
+\begin{proof}
+\leanok
+The actual reentrant C2 producer and certified Proposition 6.2
+preconditioning supply the global cap
+$\mu(p)\leq\delta^{2-\sigma-\eta/8192}\#\T$.
+Globalize the slope on that same configuration. For each later $J$,
+Lemma~\ref{lem:large-slope-normalized-interval} prepares the slab frame
+internally and proves the derivative conclusion. A separate strengthened
+source with a global frame certificate remains available; this endpoint
+no longer needs its square-root frame preparation.
+\end{proof}
+\begin{remark}[The remaining absolute-mass distinction]
+\label{rem:lemma66-mass-normalization}
+The printed hypothesis $\sum_T|Y(T)\cap(\R^2\times J)|\geq\delta^\eta|J|$
+has no factor $\delta^2\#\T$. No cardinality ceiling converting it to
+the normalized hypothesis above has been proved; CWA supplies a
+cardinality floor. Lemma~\ref{lem:large-slope-normalized-interval} now
+accepts every supplied configuration and constructs its slab frame,
+but its normalized mass and fine multiplicity cap still need proof
+from the printed assumptions. The earlier strengthened-source theorem
+supplies the cap on its constructed configuration; it does not preserve
+the absolute mass of an arbitrary supplied slab. These are the remaining
+requirements for the full printed Lemma 6.6.
+\end{remark}
 
 \begin{proposition}[Nonsingular smooth grains; WZ2, Proposition 6.5]
 \label{prop:large-slope}
@@ -47,10 +200,11 @@ Proposition~\ref{prop:c2-grains}, with this same $f$ and the same
 shading.
 \end{proposition}
 \begin{proof}
-\uses{prop:c2-grains,lem:large-slope,lem:mild-rescaling}
+\uses{prop:c2-grains,lem:large-slope-prepared,lem:mild-rescaling}
 \leanok
 Choose a populated interval of heights whose spatial covering number
-has the required extremal bound. The preceding lemma gives a lower
+has the required extremal bound. The constructed preparation and
+Lemma~\ref{lem:large-slope-prepared} give a lower
 bound for the derivative there. Localize further so that the derivative
 has comparable magnitude, then rescale the height and transverse
 coordinates. A sufficiently short interval makes the second derivative
@@ -85,9 +239,8 @@ $\delta^a$, and a nonsingular slope as above, such that
 \[
                         |\pi_f(E_Y)|\leq\delta^{\sigma-a}.
 \]
-The final preparation can also supply, on the same selected
-configuration, the parameter-space hypotheses of
-Theorem~\ref{thm:twisted-parameter}.
+The normalized terminal used in the contradiction is obtained by the
+controlled affine transport of this actual paper output described below.
 \end{lemma}
 \begin{proof}
 \uses{prop:large-slope}
@@ -96,10 +249,84 @@ At each height, the global AD bound covers the horizontal projection
 by at most $O(\delta^{-(1-\sigma)-a})$ intervals of length $\delta$.
 The cubical, slabwise form of this statement bounds planar area by
 $O(\delta^{\sigma-a})$. Allocate a smaller source loss to absorb
-the fixed constants. The further analytic preparation retains this
-upper bound while producing separated representatives and the
-required indexed parameter counts.
+the fixed constants.
 \end{proof}
+
+\begin{lemma}[A compatible normalized small projection]
+\label{lem:normalized-small-twisted-projection}
+\lean{Kakeya.Assouad.PureWZ2NormalizedProjectionData,Kakeya.Assouad.PureWZ2NormalizedProjectionRefinement,Kakeya.Assouad.PureWZ2PaperTerminalProjectionRefinement,Kakeya.Assouad.PureWZ2PaperTerminalProjectionRefinement.projection_volume_le,Kakeya.Assouad.pure_wz2_paper_terminal_normalization_cutoff,Kakeya.Assouad.pure_wz2_left_line_normalized_projection,Kakeya.Assouad.deltaMax_to_normalized_convexWolff}
+\leanok
+\uses{prop:large-slope,def:twisted-projection,def:cwa}
+For a positive critical package, every $0<a<\sigma$ and every
+positive scale ceiling admit a single ordinary family and shading at
+$0<\delta<1$ below that ceiling with
+\[
+  |\pi_f(E_Y)|\leq\delta^{\sigma-a}.
+\]
+On this same configuration the volume-normalized CWA constant is
+$\delta^{-a}$, the aggregate density is $\delta^a$, the base norms
+are at most $4$, analytic essential distinctness holds, and the
+vertical direction components have absolute value at least $1/2$.
+The shading is supported in $-1\leq z\leq1$; $f(0)=0$ and
+$1\leq|f'|\leq2$, $|f''|\leq1/100$ there.
+\end{lemma}
+\begin{proof}
+\leanok
+Request Proposition~\ref{prop:large-slope} with loss $a_0=a/10000$.
+Its retained source gives a uniform cutoff for
+$1+|f(0)|\leq d^{-a_0}$, where $d$ is the actual paper terminal radius.
+Put $k=1/(4(1+|f(0)|))$ and apply
+\[
+ A(x,y,z)=(k(x+f(0)y),ky,z).
+\]
+This is a contraction with determinant $k^2$, and
+$\pi_{f-f(0)}(A(x,y,z))=(k\pi_f(x,y,z)_1,z)$.
+Select a height slab of width $1/4$, retaining at least $1/12$ of
+indexed shaded mass, and retube its exact image by unit segments of
+radius $12d$. The original indices and supporting-line images are
+preserved. A uniform cutoff satisfying
+$3981312d^{a/100}\leq d^{3a_0}$ pays for the CWA and density losses.
+The upper projection bound transports by the factor $k\leq1$.
+The analytic cleanup retains injective source indices and subshading
+containment. Its absolute convex density bound and cardinality floor
+give CWA on this same output, including zero-volume and infinite-volume
+convex tests.
+\end{proof}
+
+\begin{lemma}[The terminal retains common-height unit segments]
+\label{lem:common-height-terminal}
+\lean{Kakeya.Assouad.PureWZ2CommonHeightProjectionData,Kakeya.Assouad.PureWZ2CommonHeightProjectionStatement,Kakeya.Assouad.PureWZ2PaperTerminalProjectionRefinement.common_height,Kakeya.Assouad.pure_wz2_node7b_common_height_from_retained_large_slope,Kakeya.Assouad.pure_wz2_left_line_common_height_projection}
+\leanok
+\uses{prop:large-slope,def:cwa,def:twisted-projection}
+The normalized small-projection construction can additionally ensure that
+all its actual unit axis segments are centered at the same height
+$m\in[-1,1]$, with positive vertical orientation. All preceding upper-bound,
+CWA, density and slope conditions hold on this same configuration.
+\end{lemma}
+\begin{proof}
+\leanok
+In the slope-offset retubing, a line $p=(a,b,c,d)$ is represented by the
+unit segment centered at $(a+cm,b+dm,m)$ with direction
+$(c,d,1)/\|(c,d,1)\|$. Cleanup selects literal tubes from this family.
+The refinement now retains their exact equality to these model segments,
+in addition to equality of supporting lines. Hence the common height
+survives cleanup without any additional loss or selection.
+\end{proof}
+
+\begin{remark}[Transport from the actual paper terminal]
+\label{rem:terminal-compatibility}
+The independent normalized CWA lower bound applies directly to the
+preceding terminal. The record
+\texttt{PureWZ2PaperTerminalProjectionRefinement} retains its injective
+map into the actual Proposition 6.5 family, exact supporting-line
+images, equality to the common-height unit representatives, and containment of each final shading in the image of the
+corresponding original slab shading. Its slope is exactly $f-f(0)$,
+and the projected-area comparison with the original terminal is proved.
+Node 7b uses the retained common source only for the numerical bound
+on this actual $f(0)$. All source and target cutoffs precede the single
+Node 6 invocation. The general preparation in Lemma 6.6 remains the
+separate open left-line requirement.
+\end{remark}
 
 \begin{remark}[The sign in WZ2 Lemma 6.7]
 \label{rem:projection-sign}
@@ -129,19 +356,31 @@ satisfies
 for $0<\delta\leq\delta_0$ and every slope with
 $1\leq|f'|\leq2$, $|f''|\leq1/100$ on the height window.
 \end{proposition}
-\begin{proof}
+\begin{remark}[Scope of the proposed specialization]
+\label{rem:twisted-cwa-scope}
 \uses{prop:twisted-tube-wolff}
 A radius-$r$ tube has volume $O(r^2)$. Applying CWA to that convex
 body gives the dimension-$2$ Tube Wolff count, with a fixed change
-of constant. Apply the paper's Tube Wolff projection estimate with
-a smaller source loss to absorb this constant.
-\end{proof}
+of constant. The proposed next step is the paper's Tube Wolff estimate.
+Its uniform unrestricted-offset formulation is refuted below. The literal
+ordinary-capsule version with arbitrary longitudinal positions is also
+refuted even for $f(z)=z$. Thus this paragraph is not a proof of the
+unrestricted CWA statement. The normalized CWA theorems later in this
+chapter are proved independently. Neither counterexample supplies the
+CWA hypothesis.
+\end{remark}
 
 \begin{proposition}[Tube Wolff version; WZ2, Proposition 7.1]
 \label{prop:twisted-tube-wolff}
 \uses{def:tube-frostman,def:shading,def:twisted-projection}
-The paper gives the same conclusion assuming the dimension-$2$
-Tube Wolff condition in place of CWA. In a bounded line chart the
+The printed statement gives the same conclusion assuming the dimension-$2$
+Tube Wolff condition in place of CWA, with a cutoff uniform over all
+$f(0)\in\R$. That uniform arbitrary-offset claim needs correction:
+Theorem~\ref{thm:twisted-offset-obstruction} gives a finite counterexample.
+For literal ordinary unit-segment coarse tests there is also a separate
+longitudinal-position obstruction, even for $f(z)=z$;
+see Theorem~\ref{thm:twisted-longitudinal-obstruction}.
+In a bounded line chart the
 intended hypothesis controls the number of line parameters in every
 ball of radius $r\geq\delta$ by
 $\delta^{-\eta}r^2\#\T$.
@@ -149,17 +388,147 @@ $\delta^{-\eta}r^2\#\T$.
 
 \begin{remark}[The lower bound used by the formal proof]
 \label{rem:parameter-frostman}
+The roadmap uses the normalized $f(0)=0$ projection theorem as an explicit
+scope correction. ``Nonsingular'' controls $f'$ and $f''$ and does not by
+itself impose this condition. The actual left terminal is transported to
+this normalization by the proved affine, slab and cleanup construction,
+with CWA, density, scale and projected-area losses all controlled on the
+same configuration. Consequently the arbitrary-offset caveat is not a
+remaining obstruction to the adopted final contradiction. It does not
+discharge the separate Lemma 6.6 preparation or tube-model reductions.
+
 WZ2 Remark 7.4 identifies the Tube Wolff condition with Frostman
 nonconcentration in the space of line parameters. For the repository's
 ordinary unit-segment carriers these are distinct predicates:
 containment of a complete segment in a coarse tube does not, by itself,
 count every segment with nearby supporting-line parameters. Segments
 on the same line can have different longitudinal positions.
-The proof therefore supplies the indexed four-parameter Frostman
-bound explicitly. It also supplies a bounded chart and a cardinality
-upper bound. The next theorem is the actual proved specialization;
-the two preceding paper formulations are not marked as independently
-proved in their greater generality.
+The legacy proof supplies the indexed four-parameter Frostman bound
+explicitly. The polynomial-budget iteration below removes the extremal
+cardinality restriction, and packing removes its polynomial budget for
+essentially distinct families. A physical full-line Tube Wolff theorem
+is now also proved: its coarse tests are neighborhoods of entire supporting
+lines clipped to $B(0,6)$, while its fine bodies are ordinary capsules.
+The geometric count-to-parameter implication for those tests is proved,
+and CWA supplies them directly. Those earlier CWA endpoints remain available.
+For the actual terminal, the common-height witness now gives a direct
+ordinary-capsule reduction: a radius-$r$ parameter cluster lies in one
+ordinary radius-$8r$ capsule. The final contradiction therefore uses the
+ordinary Tube Wolff theorem below. Its segment model and vertical chart
+are proved by the terminal construction. For arbitrary longitudinal
+positions the literal ordinary-capsule implication is false even with
+$f(0)=0$, by Theorem~\ref{thm:twisted-longitudinal-obstruction}.
+Theorem~\ref{thm:twisted-dilated} supplies a concrete finite-capsule
+correction: coarse tests have length $32$, and fine segments keep their
+arbitrary longitudinal positions. CWA supplies those tests directly.
+Identifying this correction with the paper's intended convention and
+extending the chart transport remain separate scope requirements;
+the failed unit-length implication is not used.
+A cutoff uniform over
+arbitrary offsets under Tube Wolff alone is impossible, by the next theorem.
+The normalization above resolves the actual left terminal using its proved
+small-power offset bound; it does not cover an arbitrary supplied slope.
+\end{remark}
+
+\begin{theorem}[Obstruction to a uniform arbitrary slope offset]
+\label{thm:twisted-offset-obstruction}
+\lean{Kakeya.Assouad.tubeParameterFrostman_to_centered_tubeWolff,Kakeya.Assouad.planarTubeGrid_parameter_frostman,Kakeya.Assouad.planarTubeGrid_in_unitBall,Kakeya.Assouad.planarTubeGrid_ordinary_distinct,Kakeya.Assouad.offsetObstruction_projection_volume_le,Kakeya.Assouad.exists_ordinary_tubeWolff_slope_offset_counterexample,Kakeya.Assouad.not_pureWZ2UnrestrictedTubeWolffProjectionStatement}
+\leanok
+\uses{def:tube-frostman,def:shading,def:twisted-projection}
+For every $\eta>0$ and $\delta_0>0$, there are
+$0<\delta\leq\delta_0$, a nonempty family of ordinary essentially distinct
+unit-segment $\delta$-tubes in $B(0,1)$, full shading $Y$, and a slope
+$f(z)=s+z$ such that
+\[
+  \#\{T\subset T_r\}\leq\delta^{-\eta}r^2\#\T
+       \quad(\delta\leq r\leq1),
+  \qquad |\pi_f(E_Y)|<\delta^{1/4}.
+\]
+The family also lies in the bounded vertical line chart, and
+$f'=1$, $f''=0$ on the whole real line. Thus the uniform unrestricted
+Tube Wolff projection statement is false even under these extra
+geometric restrictions.
+\end{theorem}
+\begin{proof}
+\leanok
+Choose $n\geq1$, put $\delta=(4096n)^{-1}$ and
+$s=\delta^{-1/2}$, and let $a,c$ range over
+$\{i/(64n):0\leq i<n\}$. Center unit segments at height zero on the lines
+\[
+  x=a+cz,\qquad y=-(a+cz)/s.
+\]
+Their capsules lie in the unit ball. Grid spacing $64\delta$ proves
+the paper's centered-dilation essential distinctness. The two grid
+coordinates give parameter Frostman constant $150994944$. A proved
+centered-segment containment lemma gives ordinary capsule Tube Wolff
+constant $25600\cdot150994944=3865470566400$.
+All axes lie in $x+sy=0$, so the actual shaded projection has area at most
+$12s\delta+20/s=32\sqrt\delta$. Select $n$ large enough to absorb the
+fixed Tube Wolff constant into $\delta^{-\eta}$ and to have
+$32\sqrt\delta\leq\delta^{3/8}<\delta^{1/4}$.
+The proof uses no final Kakeya theorem or CWA lower bound.
+\end{proof}
+
+\begin{theorem}[Longitudinal obstruction with a fixed normalized slope]
+\label{thm:twisted-longitudinal-obstruction}
+\lean{Kakeya.Assouad.ordinary_capsule_midpoint_dist_of_subset,Kakeya.Assouad.ordinary_capsule_pair_parameter_bounds,Kakeya.Assouad.longitudinalTubeGrid_in_unitBall,Kakeya.Assouad.longitudinalTubeGrid_ordinary_distinct,Kakeya.Assouad.longitudinalTubeGrid_tubeWolff,Kakeya.Assouad.longitudinalTubeGrid_projection_volume,Kakeya.Assouad.exists_normalized_ordinary_tubeWolff_longitudinal_counterexample,Kakeya.Assouad.not_pureWZ2NormalizedOrdinaryTubeWolffProjectionStatement}
+\leanok
+\uses{def:tube-frostman,def:shading,def:twisted-projection,lem:ordinary-tube-wolff-volume}
+For every $\eta>0$ and $\delta_0>0$ there are
+$0<\delta\leq\delta_0$ and a nonempty, essentially distinct family of
+ordinary unit-segment $\delta$-tubes in $B(0,1)$, with full shading $Y$,
+such that for every ordinary radius-$r$ unit-segment tube $T_r$, $r>0$,
+\[
+ \#\{T\subset T_r\}\leq\delta^{-\eta}|T_r|\#\T,
+ \qquad |\pi_f(E_Y)|<\delta^{1/4},\qquad f(z)=z.
+\]
+The family lies in the bounded vertical line chart. Thus the literal
+ordinary-capsule Tube Wolff projection statement for arbitrary
+longitudinal centers is false even with a fixed normalized slope.
+\end{theorem}
+\begin{proof}
+\leanok
+For $n\geq1$, put $\delta=(4096n^2)^{-1}$,
+$\mu=(64n^2)^{-1}=64\delta$, and $w=(64n)^{-1}=\sqrt\delta$.
+Use indices $0\leq i,k,l<n$, $0\leq j<n^2$, and the lines
+\[
+ x=\mu i+\mu jz,\qquad y=\mu k-\mu j+\mu lz,
+\]
+with their unit segments centered at height $wi$. There are $n^5$ tubes.
+Their full capsules lie in the unit ball, and the mesh proves the paper's
+centered-dilation essential distinctness.
+
+If two such fine capsules fit in one ordinary coarse radius-$r$ capsule,
+their center heights differ by at most $4r$ and each line parameter
+differs by at most $160r$ for $r\leq1/8$. Hence the center-index count is
+at most $1+512rn$, and each of the other three grid counts is at most
+$65536rn^2$; the $k,l$ counts are also at most $n$.
+Splitting at $rn=1$ bounds the product by $2^{60}r^2n^5$.
+For larger $r$, total cardinality suffices. The ordinary volume conversion
+gives the all-positive-radius tests in the statement.
+
+For $f(z)=z$, each axis projects to
+$\mu i+\mu kz+\mu lz^2$. The full shaded projection has area at most
+$24w=24\sqrt\delta$. Choose $n$ large enough to absorb $2^{60}$ into
+$\delta^{-\eta}$ and to have
+$24\sqrt\delta\leq\delta^{3/8}<\delta^{1/4}$.
+\end{proof}
+
+\begin{remark}[Scope of the longitudinal example]
+\label{rem:longitudinal-tube-model}
+The example satisfies no asserted CWA condition. It does not refute
+Proposition 6.8 under its stronger CWA hypothesis, or the common-height
+ordinary Tube Wolff specialization used by the final proof. The latter
+model is proved by the actual terminal construction. The example records
+an independent issue with forgetting the longitudinal position when
+coarse tests are literal capsules of the same unit length as the fine
+segments. Stronger full-line tests and common-height segments have their
+own proved lower bounds below. A finite-capsule version with coarse
+length $32$ is also proved for arbitrary longitudinal positions, with
+its stronger tests supplied by CWA. Its identification with the intended
+paper scope and transport beyond the bounded vertical chart remain
+unestablished. This model correction is not silently included in the
+accepted slope-offset normalization Remark.
 \end{remark}
 
 \begin{theorem}[The parameter-Frostman specialization of WZ2, Proposition 7.1]
@@ -212,6 +581,267 @@ Lemmas~\ref{lem:uniform-parameter-coarsening} and
 \ref{lem:projection-iteration} isolate the counting and arithmetic
 steps in this passage; they do not assert that an arbitrary coarse
 shading has the required density or projection compatibility.
+\end{proof}
+
+
+\begin{theorem}[The polynomial-budget parameter lower bound]
+\label{thm:twisted-parameter-polynomial}
+\lean{Kakeya.Assouad.TwistedProjectionParameterFrostmanPolynomialEstimateStatement,Kakeya.Assouad.pure_wz2_proposition7_1_parameter_frostman}
+\leanok
+\uses{lem:projection-one-step-normalized,lem:projection-iteration}
+Fix $D>0$. For every $\eps>0$, there exist
+$0<\eta\leq\min(\eps,1)$ and $0<\delta_0<1$ such that the following
+holds for $0<\delta\leq\delta_0$. Let $\T$ be a nonempty indexed family
+in the vertical chart, with
+$|a_T|,|b_T|\leq12$ and $|c_T|,|d_T|\leq2$.
+Assume the indexed parameter Frostman bound with constant $\delta^{-\eta}$
+and $\#\T\leq\delta^{-D}$. For a $\delta^\eta$-dense shading supported
+in $-1\leq z\leq1$, and a nonsingular slope with $f(0)=0$,
+\[
+                         |\pi_f(E_Y)|\geq\delta^\eps.
+\]
+No Tube Wolff or essential-distinctness premise is used here.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{lem:projection-one-step-normalized,lem:uniform-parameter-coarsening,lem:projection-iteration}
+The terminal-grid preparation bounds its fibre logarithm by
+$(D/\log2+1)(1+\log\delta^{-1})$. Fixing $D$ before the threshold
+allows this and the branching loss to be absorbed in $\delta^{-\eta}$.
+Execute the finite GridOS schedule using the complete one-step theorem.
+The scale and projected-volume comparisons telescope as below.
+\end{proof}
+
+\begin{theorem}[Physical full-line Tube Wolff specialization]
+\label{thm:twisted-full-line}
+\lean{Kakeya.Assouad.FullLineTubeWolffBound,Kakeya.Assouad.tubeParameterFrostmanBound_of_fullLineTubeWolffBound,Kakeya.Assouad.pure_wz2_proposition7_1_full_line_tube_wolff,Kakeya.Assouad.pure_wz2_full_line_tube_wolff_lower_bound_in_vertical_chart}
+\leanok
+\uses{thm:twisted-parameter-polynomial,def:shading,def:twisted-projection}
+Fix $D>0$. For every $\eps>0$, suitable $\eta,\delta_0>0$ give
+$|\pi_f(E_Y)|\geq\delta^\eps$ for nonempty ordinary tube families
+with base norms at most $4$, vertical components at least $1/2$ in
+absolute value, and $\#\T\leq\delta^{-D}$, assuming
+\[
+ \#\{T\in\T:T\subset Q_r\}
+       \leq\delta^{-\eta}|Q_r|\#\T,
+ \qquad Q_r=N_r(\ell)\cap B(0,6),\quad \delta\leq r\leq1,
+\]
+for every supporting line $\ell$. The shading has density $\delta^\eta$
+and lies in the height window; the nonsingular slope satisfies $f(0)=0$.
+Analytic essential distinctness allows the cardinality premise to be
+removed by the packing estimate with $D=7$.
+\end{theorem}
+\begin{proof}
+\leanok
+A parameter cluster of radius $r$ lies in the full-line test of radius
+$20r$. In the vertical chart that test has volume at most
+$432(20r)^2=172800r^2$. For $20r>1$, the total cardinality bound
+gives the same conclusion. Thus the physical Tube Wolff assumption
+gives indexed parameter Frostman with constant $172800\delta^{-\eta}$.
+Absorb the fixed factor in half of the parameter theorem's source loss
+and run its actual one-step, finite GridOS and telescoping proof.
+No CWA premise is used in this theorem.
+\end{proof}
+
+\begin{lemma}[Finite coarse capsules with longitudinal margin]
+\label{lem:dilated-tube-cluster}
+\lean{Kakeya.Assouad.DilatedTubeWolffVolumeBound,Kakeya.Assouad.dilatedTubeWolffVolumeBound_one_iff,Kakeya.Assouad.fullLineTubeInBall_subset_dilated32,Kakeya.Assouad.dilated32_volume_le,Kakeya.Assouad.tubeParameterFrostmanBound_of_dilatedTubeWolffBound}
+\leanok
+\uses{def:tube-frostman,lem:ordinary-tube-wolff-volume}
+For a nonempty ordinary fine-tube family with base norms at most $4$
+in the vertical chart, suppose every finite coarse capsule $Q$ of axis
+length $32$ and positive radius satisfies
+\[
+             \#\{T\subset Q\}\leq C|Q|\#\T,\qquad C\geq1.
+\]
+Then the indexed parameter Frostman constant is at most $128000C$.
+The actual fine segments may have arbitrary longitudinal positions.
+The predicate with coarse length $1$ is exactly the ordinary-volume
+predicate; no implication from that length-$1$ predicate to length $32$
+is asserted.
+\end{lemma}
+\begin{proof}
+\leanok
+A radius-$r$ parameter cluster has full fine capsules contained in the
+radius-$20r$ neighborhood of the reference line, inside $B(0,6)$.
+For $20r\leq1$, that neighborhood in the ball lies in the length-$32$
+capsule about the reference segment's midpoint, at the same radius:
+the line parameter of a nearest point has absolute value at most $11$.
+The coarse capsule volume is at most $320(20r)^2=128000r^2$.
+For $r>1/20$, total cardinality gives the same bound. Every containment
+keeps the original fine tube, rather than changing its representative.
+\end{proof}
+
+\begin{theorem}[Projection bound using finite length-$32$ coarse tests]
+\label{thm:twisted-dilated}
+\lean{Kakeya.Assouad.pure_wz2_proposition7_1_dilated_tube_wolff,Kakeya.Assouad.pure_wz2_dilated_tube_wolff_lower_bound_in_vertical_chart,Kakeya.Assouad.pure_wz2_dilated_tube_wolff_lower_bound_in_unit_ball}
+\leanok
+\uses{lem:dilated-tube-cluster,thm:twisted-parameter-polynomial}
+Fix $D>0$. For every $\eps>0$ there are $\eta,\delta_0>0$ such that
+$|\pi_f(E_Y)|\geq\delta^\eps$ for $0<\delta\leq\delta_0$, for
+nonempty ordinary fine-tube families with base norms at most $4$ in
+the vertical chart, assuming $\#\T\leq\delta^{-D}$ and the preceding
+length-$32$ coarse tests with $C=\delta^{-\eta}$. The shading is
+$\delta^\eta$-dense and supported in the slope window; $f$ is
+nonsingular and $f(0)=0$. No common-height hypothesis is required.
+The cardinality premise can be replaced by analytic essential distinctness,
+or ordinary paper distinctness for a family in the unit ball.
+\end{theorem}
+\begin{proof}
+\leanok
+Absorb the factor $128000$ into half the parameter theorem's source loss,
+before the family and its segment positions are given. Apply its complete
+one-step, GridOS and telescoping argument. The corresponding packing
+estimate supplies $D=7$ when distinctness is assumed.
+\end{proof}
+
+\begin{corollary}[CWA through finite coarse capsules at arbitrary positions]
+\label{cor:twisted-cwa-dilated}
+\lean{Kakeya.Assouad.dilatedTubeWolffVolumeBound_of_bodyConvexWolffBound,Kakeya.Assouad.dilatedTubeWolffVolumeBound_of_convexWolffBound,Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_via_dilated_tubes,Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_in_unit_ball_via_dilated_tubes}
+\leanok
+\uses{thm:twisted-dilated,def:cwa}
+The preceding lower bound follows from normalized CWA for any nonempty,
+analytically essentially distinct family in the bounded vertical chart,
+with dense height-window shading and normalized nonsingular slope.
+For a family in the unit ball, ordinary paper distinctness and the
+unnormalized body CWA count suffice. There is no separate coarse-test,
+cardinality or common-height hypothesis.
+\end{corollary}
+\begin{proof}
+\leanok
+Each length-$32$ coarse capsule is a convex affine image of an ordinary
+capsule, so CWA supplies its actual-volume count directly. Apply the
+preceding theorem on the given fine family and shading. This supplies
+the explicit route $\mathrm{CWA}\Rightarrow$ finite coarse Tube Wolff
+tests $\Rightarrow$ the corrected projection theorem, without using
+the full-line projection theorem or the direct CWA-to-parameter shortcut.
+\end{proof}
+
+\begin{lemma}[Ordinary capsule containment for common-height segments]
+\label{lem:common-height-tube-cluster}
+\lean{Kakeya.Assouad.HasCommonHeightTubeModel,Kakeya.Assouad.commonHeight_modelTube_carrier_subset,Kakeya.Assouad.tubeParameterFrostmanBound_of_commonHeightTubeWolffBound,Kakeya.Assouad.tubeParameterFrostmanBound_of_commonHeightOrdinaryTubeWolff}
+\leanok
+\uses{def:tube-frostman,lem:ordinary-tube-wolff-volume}
+Let all actual unit segments use the common-height representatives just
+described, with $|m|\leq1$. The ordinary radius-squared Tube Wolff
+condition with constant $C\geq1$ implies indexed parameter Frostman
+with constant $64C$. The ordinary actual-volume condition implies it
+with constant $640C$.
+\end{lemma}
+\begin{proof}
+\leanok
+For a parameter cluster of radius $r$, the segment centers are at distance
+at most $4r$, and their unit directions are at distance at most $2r$.
+Corresponding segment points are therefore within $5r$.
+Since $\delta\leq r$, the complete fine capsules lie in one ordinary
+coarse capsule of radius $8r$. Apply Tube Wolff there if $8r\leq1$;
+otherwise total cardinality gives the bound. The volume-to-radius-squared
+comparison adds only its factor $10$.
+\end{proof}
+
+\begin{theorem}[Ordinary Tube Wolff projection bound in the common-height chart]
+\label{thm:twisted-ordinary-common-height}
+\lean{Kakeya.Assouad.pure_wz2_proposition7_1_ordinary_tube_wolff,Kakeya.Assouad.pure_wz2_ordinary_tube_wolff_lower_bound_in_common_height_chart,Kakeya.Assouad.pure_wz2_ordinary_tube_wolff_lower_bound_in_unit_ball}
+\leanok
+\uses{lem:common-height-tube-cluster,thm:twisted-parameter-polynomial}
+Fix $D>0$. For every $\eps>0$, suitable $\eta,\delta_0>0$ give
+$|\pi_f(E_Y)|\geq\delta^\eps$ for nonempty ordinary tube families
+with base norms at most $4$, a vertical chart and common-height unit
+representatives, provided that $\#\T\leq\delta^{-D}$ and
+\[
+ \#\{T\in\T:T\subset T_r\}\leq\delta^{-\eta}|T_r|\#\T
+       \qquad\text{for every ordinary }T_r,\quad r>0.
+\]
+The shading has density $\delta^\eta$ and lies in the height window;
+the slope is nonsingular and satisfies $f(0)=0$.
+The cardinality premise can be removed using analytic essential
+distinctness, or ordinary paper distinctness for a family in the unit ball.
+\end{theorem}
+\begin{proof}
+\leanok
+The preceding lemma supplies parameter Frostman with constant
+$640\delta^{-\eta}$. Reserve half of the parameter theorem's source
+loss to absorb $640$ before the runtime family, height and slope are
+given. Apply its full one-step, GridOS and telescoping argument.
+The respective packing bounds supply $D=7$ at a uniform small scale.
+\end{proof}
+
+\begin{corollary}[CWA specialization for the actual terminal]
+\label{cor:twisted-cwa-common-height}
+\lean{Kakeya.Assouad.ordinaryTubeWolffVolumeBound_of_convexWolffBound,Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_in_common_height_chart}
+\leanok
+\uses{thm:twisted-ordinary-common-height,def:cwa}
+The same lower bound holds for nonempty, analytically essentially distinct
+families in the bounded common-height vertical chart with CWA error
+$\delta^{-\eta}$, shading density $\delta^\eta$, height-window support,
+and a nonsingular slope with $f(0)=0$. No separate Tube Wolff,
+parameter Frostman or cardinality premise is required.
+\end{corollary}
+\begin{proof}
+\leanok
+Apply CWA to every convex ordinary capsule. Since $|T_1|\geq1$,
+the normalized CWA inequality implies the actual-volume Tube Wolff count
+with the same constant. Apply the preceding ordinary-tube theorem.
+This is the lower-bound route used in the final contradiction, on the
+common-height terminal constructed in Lemma~\ref{lem:common-height-terminal}.
+\end{proof}
+
+\begin{theorem}[Normalized CWA lower bound without a cardinality premise]
+\label{thm:twisted-cwa-normalized}
+\lean{Kakeya.Assouad.pure_wz2_parameter_frostman_lower_bound_of_essentially_distinct,Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_in_vertical_chart,Kakeya.Assouad.fullLineTubeWolffBound_of_convexWolffBound}
+\leanok
+\uses{thm:twisted-full-line,def:cwa}
+For every $\eps>0$, there are $0<\eta\leq\eps$ and
+$0<\delta_0<1$ such that the lower bound
+$|\pi_f(E_Y)|\geq\delta^\eps$ holds for $0<\delta\leq\delta_0$
+under the following hypotheses: $\T$ is nonempty, analytically
+essentially distinct, has base norms at most $4$, and lies in the vertical
+chart; its ordinary-carrier CWA constant is $\delta^{-\eta}$;
+$Y$ is $\delta^\eta$-dense and supported in $-1\leq z\leq1$;
+and $f$ is nonsingular with $f(0)=0$.
+There is no parameter Frostman or cardinality upper-bound hypothesis.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:twisted-parameter-polynomial}
+Bounded bases put the complete ordinary carriers in $B(0,6)$.
+Essential distinctness gives
+$\#\T\leq222^6\delta^{-6}\leq\delta^{-7}$ at sufficiently small
+scales. Each full-line test $Q_r$ is convex, and $|T_1|\geq1$ converts
+the normalized CWA count to the required indexed full-line count.
+Apply the preceding Tube Wolff theorem with $D=7$.
+This earlier API does not assume common-height unit representatives.
+The final contradiction now uses Corollary~\ref{cor:twisted-cwa-common-height}
+on its actual constructed representatives.
+\end{proof}
+
+
+\begin{corollary}[Unit-ball CWA with ordinary paper distinctness]
+\label{cor:twisted-cwa-paper-normalized}
+\lean{Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_in_unit_ball,Kakeya.Assouad.fullLineTubeWolffBound_of_bodyConvexWolffBound}
+\leanok
+\uses{thm:twisted-full-line,def:cwa}
+For every $\eps>0$ there are $0<\eta\leq\eps$ and
+$0<\delta_0<1$ such that $|\pi_f(E_Y)|\geq\delta^\eps$
+for $0<\delta\leq\delta_0$, provided that the nonempty ordinary
+capsule family is contained in the unit ball, is essentially distinct in
+the paper's centered two-fold-dilation sense, lies in the vertical chart,
+and satisfies the unnormalized indexed CWA count with error
+$\delta^{-\eta}$. The shading is $\delta^\eta$-dense, and the slope
+is nonsingular with $f(0)=0$.
+No analytic half-overlap hypothesis or parameter-count assumption is needed.
+\end{corollary}
+\begin{proof}
+\leanok
+\uses{thm:twisted-parameter-polynomial}
+Ordinary paper distinctness gives the existing packing estimate
+$\#\T\leq195^3 67^3\delta^{-6}\leq\delta^{-7}$ after shrinking
+the threshold. Unit-ball containment supplies the base and height-window
+bounds. Unnormalized CWA supplies the convex full-line tests directly,
+then the physical full-line theorem with $D=7$ gives the conclusion.
+The unrestricted chart and slope-offset CWA reductions are still not
+asserted. The preceding counterexamples rule out the unrestricted
+Tube Wolff-only route; it does not refute this stronger CWA hypothesis.
 \end{proof}
 
 \section{Discrete sets and scale selection}
@@ -496,6 +1126,47 @@ lower area bound for the block. Its curves lie in an $O(q)$
 neighbourhood of one representative curve. The target uniformity
 transfers this local comparison to the whole retained image.
 All these steps use one compatible chain of subshadings.
+\end{proof}
+
+
+\begin{lemma}[The complete normalized parameter one-step estimate]
+\label{lem:projection-one-step-normalized}
+\lean{Kakeya.Assouad.GridOSBoundedOneScaleSharpInput,Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman_sharp_density,Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman}
+\leanok
+\uses{lem:block-replication,lem:wz1-cinematic-family,thm:cinematic-l32,lem:cinematic-area}
+Fix $0<\eps<1/100$ and $1/100\leq\rho_{\max}\leq1$.
+There is $0<\eta_{\max}\leq\eps$ such that, for every
+$0<\eta\leq\eta_{\max}$, a threshold $0<\delta_0<1$ works
+simultaneously for all the following data at $0<\delta\leq\delta_0$.
+Let $\T$ be nonempty and vertical, with
+$|a_T|,|b_T|\leq12$, $|c_T|,|d_T|\leq2$; let
+$1\leq C<\infty$, $C\leq\delta^{-\eta}$, and assume its indexed
+parameter Frostman bound with constant $C$. For a
+$\delta^\eta$-dense shading in the slope window and a nonsingular
+$f$ with $f(0)=0$, there exist a radius $\rho$ and a same-family
+subshading $Z\subset Y$ such that
+\[
+ \delta^{1-\eps^2}<\rho\leq\rho_{\max},\qquad
+ Z\text{ is }\delta^{4\eta}\text{-dense},\qquad
+ |\pi_f(E_Z)|\geq(\delta/\rho)^\eps|N_\rho(\pi_f(E_Z))|.
+\]
+The density exponents now agree with the paper. The chart,
+parameter-Frostman and slope-zero hypotheses still restrict the scope.
+The old $\eta/2\to4\eta$ interface used by the finite iteration is
+obtained by weakening the input density.
+\end{lemma}
+\begin{proof}
+\leanok
+\uses{lem:spacing,lem:block-replication,lem:wz1-cinematic-family,thm:cinematic-l32,lem:cinematic-area}
+Assemble local-block selection, replication, the representative cinematic
+pullback and the full projected-fibre OS uniformization. The positive-window
+assembly retains density $\delta^{3\eta}$: choosing the planar grid
+with budget $\eta/2$ makes the combined band and grid loss at most
+$\delta^{-2\eta}$. Apply that positive-window result at
+$\eta_+=4\eta/3$. The gap $\eta_+-\eta=\eta/3$ pays for selecting
+a half-window, and $3\eta_+=4\eta$ gives the stated output density.
+Use exact vertical reflection in the negative case.
+Thus projection uniformization is only one predecessor of this result.
 \end{proof}
 
 \begin{remark}[The three scales in the one-step argument]

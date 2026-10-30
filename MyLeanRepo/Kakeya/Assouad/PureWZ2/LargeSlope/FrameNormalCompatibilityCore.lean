@@ -19,6 +19,27 @@ def PureWZ2FrameNormalCompatibility
         ‖pureWZ2FrameProjectedNormal frameSlope
           (cfg.localGrains.planeMap source)‖
 
+/-- The derivative argument only needs the normal certificate on the
+actual retained slab. -/
+def PureWZ2FrameNormalCompatibilityOn
+    {sigma loss delta : ℝ}
+    (cfg : PureWZ2C2GrainConfiguration sigma loss delta)
+    (region : Set Point3) : Prop :=
+  ∀ (frameSlope : ℝ)
+      (source : {point : Point3 // point ∈ cfg.shading.union}),
+    source.1 ∈ region →
+    |cfg.globalGrains.slope (source.1 2) - frameSlope| ≤ 1 / 50 →
+      (1 / 16 : ℝ) ≤
+        ‖pureWZ2FrameProjectedNormal frameSlope
+          (cfg.localGrains.planeMap source)‖
+
+theorem PureWZ2FrameNormalCompatibility.on
+    {sigma loss delta : ℝ}
+    {cfg : PureWZ2C2GrainConfiguration sigma loss delta}
+    (h : PureWZ2FrameNormalCompatibility cfg) (region : Set Point3) :
+    PureWZ2FrameNormalCompatibilityOn cfg region :=
+  fun frame source _ hclose => h frame source hclose
+
 /-- The construction-level local/global certificate implies the exact
 pointwise certificate used in Lemma 31. -/
 theorem PureWZ2LocalGlobalCompatibility.frameNormalCompatibility

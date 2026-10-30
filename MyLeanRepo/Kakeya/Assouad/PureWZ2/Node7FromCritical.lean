@@ -17,14 +17,10 @@ open MeasureTheory Set Metric
 
 namespace Kakeya.Assouad
 
-/-- First conjunct of Node 7, preserving the exact Node-6 configuration. -/
-theorem pure_wz2_node7_from_critical
-    (h_subunit : PureWZ2SubunitPackageStatement)
-    (h_critical : PureWZ2CriticalExtractionStatement)
-    (h_propsticky : PureWZ2PropStickyStatement)
-    (h_grains : PureWZ2GrainsStatement)
-    (h_c2grains : PureWZ2C2GrainsStatement)
-    (h_largeslope : PureWZ2LargeSlopeStatement) :
+/-- Lemma 6.7 uses the actual Proposition 6.5 configuration and its retained
+projection certificate, without requiring any earlier node as a parameter. -/
+theorem pure_wz2_node7_from_large_slope
+    (largeSlope : PureWZ2LargeSlopeFromCriticalStatement) :
     PureWZ2SmallTwistedProjectionFromCriticalStatement := by
   intro sigma critical outputLoss scaleCeiling
     houtputLoss hscaleCeiling
@@ -32,8 +28,7 @@ theorem pure_wz2_node7_from_critical
   have hdeltaCeiling : 0 < deltaCeiling := by
     dsimp only [deltaCeiling]
     positivity
-  rcases h_largeslope h_subunit h_critical h_propsticky h_grains h_c2grains
-      sigma critical outputLoss deltaCeiling houtputLoss hdeltaCeiling with
+  rcases largeSlope sigma critical outputLoss deltaCeiling houtputLoss hdeltaCeiling with
     ⟨delta, hdelta, hdeltaCeiling', ⟨cfg⟩⟩
   have hdeltaScale : delta ≤ scaleCeiling :=
     hdeltaCeiling'.trans (min_le_left _ _)
@@ -53,6 +48,18 @@ theorem pure_wz2_node7_from_critical
       slope_nonsingular := cfg.slope_nonsingular
       projection_upper := cfg.projection_upper }
   exact ⟨delta, hdelta, hdeltaScale, hdeltaOne, ⟨data⟩⟩
+
+/-- Compatibility with the historical serial node signature. -/
+theorem pure_wz2_node7_from_critical
+    (h_subunit : PureWZ2SubunitPackageStatement)
+    (h_critical : PureWZ2CriticalExtractionStatement)
+    (h_propsticky : PureWZ2PropStickyStatement)
+    (h_grains : PureWZ2GrainsStatement)
+    (h_c2grains : PureWZ2C2GrainsStatement)
+    (h_largeslope : PureWZ2LargeSlopeStatement) :
+    PureWZ2SmallTwistedProjectionFromCriticalStatement :=
+  pure_wz2_node7_from_large_slope
+    (h_largeslope h_subunit h_critical h_propsticky h_grains h_c2grains)
 
 end Kakeya.Assouad
 

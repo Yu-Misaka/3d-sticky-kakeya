@@ -120,6 +120,44 @@ def TubeParameterGridOSInitialStateInput : Prop :=
                                           sourceConstant,
                                     initial.base = base
 
+/-- Initial-state preparation with a fixed polynomial cardinality budget. -/
+def TubeParameterGridOSInitialStatePolynomialInput (cardExponent : ℝ) : Prop :=
+  ∀ eta : ℝ,
+                  0 < eta →
+                    ∃ base : ℕ,
+                      3 ≤ base ∧
+                      ∃ delta₀ : ℝ,
+                        0 < delta₀ ∧
+                        delta₀ < 1 ∧
+                        ∀ delta : ℝ,
+                          0 < delta →
+                          delta ≤ delta₀ →
+                          ∀ family : Kakeya.Streamlined.TubeFamily delta,
+                            family.Nonempty →
+                            IsInVerticalChart family →
+                            (∀ index : Fin family.card,
+                              |(tubeParams index).a| ≤ 12 ∧
+                                |(tubeParams index).b| ≤ 12 ∧
+                                |(tubeParams index).c| ≤ 2 ∧
+                                |(tubeParams index).d| ≤ 2) →
+                            family.enncard ≤
+                              Kakeya.realRpowENN delta (-cardExponent) →
+                            ∀ sourceConstant : ENNReal,
+                              1 ≤ sourceConstant →
+                              sourceConstant ≠ ⊤ →
+                              TubeParameterFrostmanBound
+                                family sourceConstant →
+                              ∀ shading :
+                                  Kakeya.Streamlined.TubeShading family,
+                                shading.IsLambdaDense
+                                  (Kakeya.realRpowENN delta eta) →
+                                IsInSlopeWindow shading →
+                                  ∃ initial :
+                                      TubeParameterGridOSInitialStateData
+                                        (eta := eta) family shading
+                                          sourceConstant,
+                                    initial.base = base
+
 /-- Assemble the direct initial-state producer from its closed leaves. -/
 def TubeParameterGridOSInitialStateStatement : Prop :=
   TubeParameterGridParameterSelectionStatement →

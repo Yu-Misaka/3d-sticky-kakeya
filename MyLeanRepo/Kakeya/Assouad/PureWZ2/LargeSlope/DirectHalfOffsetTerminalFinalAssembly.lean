@@ -1,3 +1,4 @@
+import MyLeanRepo.Kakeya.Assouad.PureWZ2.LargeSlope.RetainedConstruction
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.LargeSlope.DirectCommonYSourceAssembly
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.LargeSlope.DirectHalfOffsetTerminalCWAScalarClosure
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.LargeSlope.DirectHalfOffsetTerminalFinalDensityScalar
@@ -26,16 +27,16 @@ open PureWZ2DirectCommonYSourceAssembly.TerminalPlaneData
 open PureWZ2DirectCommonYSourceAssembly.TerminalGeometry.PureWZ2ExternalWeightRegularizationData
 open PureWZ2DirectCommonYSourceAssembly.TerminalGeometry.PureWZ2ExternalWeightRegularizationData.DirectHalfOffsetTerminalCWAScheduleData
 
-/-- The actual fixed-lambda terminal route proves the frozen large-slope
-statement from the certified fixed-scale Proposition 6.2 construction. -/
-theorem pureWZ2_direct_halfOffset_large_slope :
-    PureWZ2LargeSlopeStatement := by
-  intro hsubunit hcritical hsticky hgrains hc2grains
-  have hC2 : PureWZ2C2GrainsFromCriticalStatement :=
-    hc2grains hsubunit hcritical hsticky hgrains
+/-- Construct Proposition 6.5 while retaining the common-y source and every
+terminal selection.  The caller's extra source ceiling is included before
+querying the C2 configuration producer. -/
+theorem pureWZ2_direct_halfOffset_large_slope_retained
+    (hC2 : PureWZ2C2GrainsFromCriticalStatement) :
+    PureWZ2LargeSlopeRetainedStatement := by
   rcases Prop62PaperAudit.V4.Prop62V4DirectNode6FixedScaleCertified.fixedScaleStatement with
     ⟨logExponent, certifiedProvider⟩
-  intro sigma critical outputLoss outputDeltaBound houtputLoss houtputDeltaBound
+  intro sigma critical outputLoss outputDeltaBound sourceDeltaBound
+    houtputLoss houtputDeltaBound hsourceDeltaBound
   rcases exists_pureWZ2FinalQuotientLossSchedule
       critical.sigma_pos critical.sigma_lt_one houtputLoss with
     ⟨schedule⟩
@@ -81,18 +82,18 @@ theorem pureWZ2_direct_halfOffset_large_slope :
     positivity
   let targetCap := min 1 outputDeltaBound
   have htargetCap : 0 < targetCap := lt_min (by norm_num) houtputDeltaBound
-  let sourceBound := min analyticScale (targetCap ^ 2)
+  let sourceBound := min (min analyticScale (targetCap ^ 2)) sourceDeltaBound
   have hsourceBound : 0 < sourceBound := by
     dsimp only [sourceBound]
-    exact lt_min hanalyticScale (sq_pos_of_pos htargetCap)
+    exact lt_min (lt_min hanalyticScale (sq_pos_of_pos htargetCap)) hsourceDeltaBound
   rcases pureWZ2_direct_commonY_source_assembly hC2 certifiedProvider
       sigma critical schedule.epsilon sourceBound
       schedule.epsilon_pos schedule.epsilon_le_sixty_fourth hsourceBound with
     ⟨delta, hdelta, hdeltaBound, ⟨commonSource⟩⟩
   have hdeltaAnalytic : delta ≤ analyticScale :=
-    hdeltaBound.trans (min_le_left _ _)
+    hdeltaBound.trans ((min_le_left _ _).trans (min_le_left _ _))
   have hdeltaTargetSquare : delta ≤ targetCap ^ 2 :=
-    hdeltaBound.trans (min_le_right _ _)
+    hdeltaBound.trans ((min_le_left _ _).trans (min_le_right _ _))
   rcases le_min_iff.mp hdeltaAnalytic with ⟨hdeltaCleanup, hrest₁⟩
   rcases le_min_iff.mp hrest₁ with ⟨hdeltaCWA, hrest₂⟩
   rcases le_min_iff.mp hrest₂ with ⟨hdeltaDensity, hrest₃⟩
@@ -231,9 +232,34 @@ theorem pureWZ2_direct_halfOffset_large_slope :
       _ = Real.sqrt delta := (Real.sqrt_eq_rpow delta).symm
       _ ≤ targetCap := hsqrtDelta
       _ ≤ outputDeltaBound := min_le_right _ _
-  exact ⟨terminal.targetDelta,
-    commonSource.halfOffsetLineClassTargetDelta_pos,
-    htargetOutput, ⟨terminalData.toLargeSlopeConfiguration⟩⟩
+  let retained : PureWZ2LargeSlopeConstruction logExponent sigma
+      schedule.epsilon outputLoss delta :=
+    { commonSource := commonSource
+      terminal := terminal
+      degreeBound := _
+      cleanup := cleanup
+      sourceConstant := _
+      scheduleConstant := _
+      normalizationWeight := _
+      levelCount := _
+      regularization := regularization
+      nearbyLoss := schedule.nearbyLoss
+      nearbyLoss_eq := schedule.nearbyLoss_eq
+      requested := requested
+      terminalData := terminalData }
+  have result : ∃ data : PureWZ2LargeSlopeConstruction logExponent sigma
+      schedule.epsilon outputLoss delta,
+      data.terminal.targetDelta ≤ outputDeltaBound := ⟨retained, htargetOutput⟩
+  rw [schedule.epsilon_eq] at result
+  exact ⟨logExponent, delta, hdelta,
+    hdeltaBound.trans (min_le_right _ _), result⟩
+
+/-- Compatibility projection to the original paper-facing statement. -/
+theorem pureWZ2_direct_halfOffset_large_slope :
+    PureWZ2LargeSlopeStatement := by
+  intro hsubunit hcritical hsticky hgrains hc2grains
+  exact (pureWZ2_direct_halfOffset_large_slope_retained
+    (hc2grains hsubunit hcritical hsticky hgrains)).toLargeSlopeFromCritical
 
 end Kakeya.Assouad
 

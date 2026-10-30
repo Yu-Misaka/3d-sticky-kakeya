@@ -10,8 +10,9 @@ the four-dimensional local OS branching loss costs the other half.
 
 namespace Kakeya.Assouad
 
-theorem tube_parameter_grid_parameter_selection :
-    TubeParameterGridParameterSelectionStatement := by
+theorem tube_parameter_grid_parameter_selection_polynomial
+    (cardExponent : ℝ) (hcardExponent : 0 < cardExponent) :
+    TubeParameterGridParameterSelectionPolynomialStatement cardExponent := by
   intro eta heta
 
   -- Step 1: large base with C_nat ≤ base^(eta/2)
@@ -28,7 +29,7 @@ theorem tube_parameter_grid_parameter_selection :
     simpa [C_real, C_nat] using hC_le
 
   -- Step 2: log absorption constant
-  let K_log : ℝ := 3 / Real.log 2 + 1
+  let K_log : ℝ := cardExponent / Real.log 2 + 1
   let K' : ℝ := 2 * K_log
   have hK'_pos : 0 < K' := by positivity
   have heta2_pos : 0 < eta / 2 := by linarith
@@ -113,7 +114,7 @@ theorem tube_parameter_grid_parameter_selection :
   have h_log_bound :
       (Nat.log 2 activeCard + 1 : ℝ) ≤
         K_log * (1 + Real.log δ⁻¹) :=
-    active_card_log_bound activeCard δ hδ hδ_lt1.le h_activeCard
+    active_card_log_bound_polynomial cardExponent hcardExponent activeCard δ hδ hδ_lt1.le h_activeCard
 
   -- Step 6: combine in ℝ
   have h_absorb_δ :
@@ -195,5 +196,10 @@ theorem tube_parameter_grid_parameter_selection :
   exact ⟨levels, hmesh1, hmesh2, by
     rw [h_cast_loss]
     exact ENNReal.ofReal_mono h_product_real⟩
+
+/-- Compatibility with the historical cubic cardinality budget. -/
+theorem tube_parameter_grid_parameter_selection :
+    TubeParameterGridParameterSelectionStatement :=
+  tube_parameter_grid_parameter_selection_polynomial 3 (by norm_num)
 
 end Kakeya.Assouad

@@ -68,9 +68,9 @@ See \ref{lem:critical-exponent}, \ref{rem:wz1-extremality}.
 
 \begin{remark}[Expert node W2P6\_2]
 \label{rem:atlas-W2P6_2}
-\lean{Kakeya.Assouad.PureWZ2PropStickyStatement,Kakeya.Assouad.pure_wz2_node03_prop_sticky}
+\lean{Kakeya.Assouad.PureWZ2PropStickyStatement,Kakeya.Assouad.pure_wz2_node03_prop_sticky,Kakeya.Assouad.PureWZ2RichProp62KernelStatement,Kakeya.Assouad.pure_wz2_node03_rich_prop62_kernel,Kakeya.Assouad.PureWZ2RichProp62KernelStatement.toReentryKernel}
 WZ2 Proposition 6.2: Balanced extremal coarse and fine families.
-The closed version is in the localized cubical model and retains both cardinality factors. Spatial balance is equality of fine-union volumes in retained coarse cubes, not merely uniform child counts.
+The retained rich kernel supplies the actual M9 terminal schedules and coarse re-entry. Both cardinality factors and spatial balance remain. The historical public kernel is projected from those same terminal calls; it alone does not recover the richer schedule.
 See \ref{prop:sticky-structure}, \ref{rem:balanced-cover}, \ref{rem:refinement-loss}.
 \end{remark}
 
@@ -99,9 +99,9 @@ See \ref{lem:mild-rescaling}, \ref{rem:common-grains}.
 
 \begin{remark}[Expert node W2Zero]
 \label{rem:atlas-W2Zero}
-\lean{Kakeya.Assouad.PureWZ2Theorem5_2Statement,Kakeya.Assouad.PureWZ2Theorem5_2Unconditional,Kakeya.Assouad.pure_wz2_node08_theorem5_2}
+\lean{Kakeya.Assouad.PureWZ2Theorem5_2Statement,Kakeya.Assouad.PureWZ2Theorem5_2Unconditional,Kakeya.Assouad.pure_wz2_node08_theorem5_2,Kakeya.Assouad.pure_wz2_no_critical_package_of_normalized_projection,Kakeya.Assouad.pure_wz2_theorem5_2_of_normalized_projection,Kakeya.Assouad.pure_wz2_no_critical_package_of_common_height_projection,Kakeya.Assouad.pure_wz2_theorem5_2_of_common_height_projection}
 WZ2 Section 6.5: contradiction: The multi-scale convex Wolff deficit is zero.
-The code closes a contradiction from a positive critical package and returns Theorem 5.2. It does not export the expert equality sigma\_CW = 0 as a separate scalar theorem.
+The argument-free final theorem retains exactly its original statement. It now compares both bounds on the actual common-height normalized terminal: the lower bound follows CWA to ordinary capsule volume tests to the ordinary Tube Wolff Proposition 7.1 specialization, then parameter iteration. The upper family, shading and slope are the same literal data. The old normalized contradiction interface remains available; no final theorem is used to establish either intermediate side.
 See \ref{thm:sticky}, \ref{rem:endpoint}.
 \end{remark}
 
@@ -109,7 +109,7 @@ See \ref{thm:sticky}, \ref{rem:endpoint}.
 \label{rem:atlas-W2T5_2}
 \lean{Kakeya.Assouad.PureWZ2Theorem5_2Statement,Kakeya.Assouad.PureWZ2Theorem5_2Unconditional}
 WZ2 Theorem 5.2: Discrete union estimate for multi-scale convex Wolff tubes.
-The public theorem has no external proof arguments. Nonemptiness is explicit, density is aggregate, and a support ball is not an additional hypothesis.
+The unchanged public theorem has no external proof arguments. Critical extraction and the retained left construction feed a single normalized CWA terminal to the independent CWA lower bound. The proof uses neither the old final theorem nor an independently selected upper/lower configuration. General paper-model intermediate versions remain distinguished from this closed normalized route.
 See \ref{thm:sticky}, \ref{rem:endpoint}, \ref{rem:aggregate-density}.
 \end{remark}
 
@@ -219,9 +219,9 @@ See \ref{lem:local-grains-all-scales}, \ref{rem:common-grains}.
 
 \begin{remark}[Expert node W2P6\_3]
 \label{rem:atlas-W2P6_3}
-\lean{Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement,Kakeya.Assouad.pure_wz2_node04_grains}
+\lean{Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement,Kakeya.Assouad.pure_wz2_node04_grains,Kakeya.Assouad.PureWZ2ReentrantGrainsStatement,Kakeya.Assouad.pure_wz2_node04_reentrant_grains_from_prop62,Kakeya.Assouad.pure_wz2_node04_reentrant_grains}
 WZ2 Proposition 6.3: Global and local grains with Lipschitz data.
-Both grain conclusions belong to the same selected family and shading. The closed PureWZ2 theorem replaces the older WZ1 interfaces; dependency paths determine which internal constructions it actually uses.
+The strengthened grain producer consumes the rich Proposition 6.2 kernel through both M9 sticky calls. One dependent reentrant source carries both grains, the volume floor, chart data and ordinary/cropped re-entry. The old paper conclusion is a loss-weakening projection of that source.
 See \ref{prop:lipschitz-grains}, \ref{rem:common-grains}, \ref{rem:plane-domain}.
 \end{remark}
 
@@ -298,10 +298,10 @@ See \ref{prop:trapezoid-smoothing}, \ref{rem:smoothing}.
 
 \begin{remark}[Expert node W2P6\_4]
 \label{rem:atlas-W2P6_4}
-\lean{Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement,Kakeya.Assouad.pure_wz2_node05_c2_grains}
+\lean{Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement,Kakeya.Assouad.pure_wz2_node05_c2_grains,Kakeya.Assouad.pureWZ2_c2_grains_from_reentrant,Kakeya.Assouad.pure_wz2_left_line_c2_grains,Kakeya.Assouad.pureWZ2_c2_source_with_fine_cap,Kakeya.Assouad.pureWZ2_interval_ready_c2_source,Kakeya.Assouad.pure_wz2_left_line_c2_prescribed_intervals}
 WZ2 Proposition 6.4: Global grains with a C2 slope.
-The root uses the direct-rich C2 assembly. The output family, shading, density, volume bound and both grain estimates share one combined-selection witness.
-See \ref{prop:c2-grains}, \ref{rem:common-grains}.
+The closed C2 entry calls the retained grain producer after fixing all hierarchy losses and scale cutoffs. Its actual source is passed to the original P0-P7 construction. The output family, shading, CWA, density, volume and both grains share one combined-selection witness. A strengthened source is now constructed with global fine multiplicity control and frame compatibility before any interval is supplied. The closed prescribed-interval endpoint now calls the arbitrary-configuration normalized Lemma 6.6. It constructs only the fine cap before J and derives the frame on each later slab satisfying the same normalized mass and cover hypotheses. The global-cap producer is also consumed by the actual Node-6 assembly.
+See \ref{prop:c2-grains}, \ref{prop:c2-prescribed-intervals}, \ref{rem:common-grains}.
 \end{remark}
 
 \begin{remark}[Expert node L6\_2]
@@ -329,10 +329,10 @@ See \ref{lem:large-slope}.
 
 \begin{remark}[Expert node W2L6\_6]
 \label{rem:atlas-W2L6_6}
-\lean{Kakeya.Assouad.LargeSlopeTechnicalStatement}
+\lean{Kakeya.Assouad.LargeSlopeTechnicalStatement,Kakeya.Assouad.PureWZ2Lemma66PreparedInterval,Kakeya.Assouad.pure_wz2_lemma66_prepared_interval,Kakeya.Assouad.pure_wz2_lemma66_prepared,Kakeya.Assouad.pureWZ2PrescribedSlabHull_mass,Kakeya.Assouad.pureWZ2PrescribedSlabHull_cover,Kakeya.Assouad.pureWZ2PrescribedSlabHull_multiplicity,Kakeya.Assouad.pure_wz2_lemma66_prescribed_interval,Kakeya.Assouad.PureWZ2C2PrescribedIntervalsStatement,Kakeya.Assouad.pure_wz2_left_line_c2_prescribed_intervals,Kakeya.Assouad.PureWZ2Lemma66PreparedIntervalOn,Kakeya.Assouad.pure_wz2_lemma66_prepared_interval_on,Kakeya.Assouad.pure_wz2_lemma66_normalized_interval,Kakeya.Assouad.pureWZ2_prescribed_slab_frame_preparation,Kakeya.Assouad.pureWZ2_dense_short_global_grain_normal,Kakeya.Assouad.pureWZ2_dense_cell_label_refinement,Kakeya.Assouad.pureWZ2_short_grain_label_count,Kakeya.Assouad.pureWZ2_short_grain_packet_geometry}
 WZ2 Lemma 6.6: The slope cannot be flat on a popular slab.
-LargeSlopeTechnicalStatement is a proposition-valued interface, distinct from the closed WZ2 large-slope package. A declaration link to the former does not certify the generic technical lemma.
-See \ref{lem:large-slope}.
+The prepared interval theorem remains the actual Proposition 6.5 dependency, and its original interface is preserved. Its core now needs frame control only on the retained slab. The new normalized-interval theorem accepts every supplied C2 configuration and prescribed interval, with loss eta/8, mass (pi/4) delta\textasciicircum{}(eta/16+2) \#T |J|, cover delta\textasciicircum{}(-eta/16) |J|\textasciicircum{}(-2+sigma), and slab multiplicity cap delta\textasciicircum{}(2-sigma-eta/8192) \#T. It has no frame premise and does not choose another C2 configuration. The occupied-cell hull preserves the original slab mass; dense short-grain selection retains half its mass on the same family, and local AD plus the tube-segment direction estimate proves frame nondegeneracy. All cutoffs precede the configuration and interval. This independently audited API still needs normalized mass and a fine cap, neither derived from the printed absolute delta\textasciicircum{}eta |J| hypothesis and cover alone. The closed every-interval C2 source now supplies only the global cap before J and calls this new lemma; the older global-frame source and prescribed-frame theorem remain separately audited compatibility APIs. LargeSlopeTechnicalStatement remains an older unproved interface; the full printed Lemma 6.6 is not claimed.
+See \ref{lem:large-slope}, \ref{lem:large-slope-prepared}, \ref{lem:large-slope-prescribed}, \ref{lem:large-slope-normalized-interval}, \ref{prop:c2-prescribed-intervals}, \ref{rem:lemma66-mass-normalization}.
 \end{remark}
 
 \begin{remark}[Expert node L6\_4]
@@ -344,18 +344,18 @@ See \ref{lem:wz1-comparable-derivative}.
 
 \begin{remark}[Expert node W2P6\_5]
 \label{rem:atlas-W2P6_5}
-\lean{Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement,Kakeya.Assouad.pure_wz2_node06_large_slope}
+\lean{Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement,Kakeya.Assouad.pure_wz2_node06_large_slope,Kakeya.Assouad.PureWZ2LargeSlopeRetainedStatement,Kakeya.Assouad.PureWZ2LargeSlopeConstruction,Kakeya.Assouad.pure_wz2_node06_large_slope_retained,Kakeya.Assouad.pure_wz2_left_line_large_slope_retained}
 WZ2 Proposition 6.5, part 1 double-prime: Nonsingular C2 global grains.
-The closed output includes the normalized derivative bounds together with local and global grains on the same shading. Transporting only the slope would not establish this package.
+The retained construction contains the actual common-y source, half-offset geometry, cleanup, source regularization and requested CWA terminal, with caller-controlled source and target cutoffs. The normalized consumer now transports its literal final family, shading, public slope, CWA and projection upper bound. The common source supplies only the quantitative bound on this actual slope offset; it no longer selects a different normalized terminal.
 See \ref{prop:large-slope}, \ref{rem:common-grains}.
 \end{remark}
 
 \begin{remark}[Expert node W2L6\_7]
 \label{rem:atlas-W2L6_7}
-\lean{Kakeya.Assouad.PureWZ2SmallTwistedProjectionData,Kakeya.Assouad.pure_wz2_node07_small_twisted_projection}
+\lean{Kakeya.Assouad.PureWZ2SmallTwistedProjectionData,Kakeya.Assouad.pure_wz2_node07_small_twisted_projection,Kakeya.Assouad.PureWZ2NormalizedProjectionData,Kakeya.Assouad.PureWZ2NormalizedProjectionRefinement,Kakeya.Assouad.pure_wz2_left_line_normalized_projection,Kakeya.Assouad.pure_wz2_left_line_lemma67,Kakeya.Assouad.pure_wz2_node7b_normalized_from_retained_large_slope,Kakeya.Assouad.deltaMax_to_normalized_convexWolff,Kakeya.Assouad.PureWZ2PaperTerminalProjectionRefinement,Kakeya.Assouad.pure_wz2_paper_terminal_normalization_cutoff,Kakeya.Assouad.PureWZ2PaperTerminalProjectionRefinement.projection_volume_le,Kakeya.Assouad.exists_actual_terminal_slope_offset_cutoff_for_output_loss,Kakeya.Assouad.slopeOffsetSlabShading_dense,Kakeya.Assouad.slopeOffsetRetubedFamily_cwa,Kakeya.Assouad.PureWZ2CommonHeightProjectionData,Kakeya.Assouad.PureWZ2CommonHeightProjectionStatement,Kakeya.Assouad.PureWZ2PaperTerminalProjectionRefinement.common_height,Kakeya.Assouad.pure_wz2_node7b_common_height_from_retained_large_slope,Kakeya.Assouad.pure_wz2_left_line_common_height_projection}
 WZ2 Lemma 6.7: small-image interface: Extremality produces a small twisted image.
-The proved small-image exponent is sigma minus the loss. The printed plus sign is stronger and unnecessary. Parameter-Frostman preparation is supplied on the same retained configuration before the lower bound is applied.
-See \ref{lem:small-twisted-projection}, \ref{rem:projection-sign}, \ref{rem:parameter-frostman}.
+The normalized root now uses the actual half-offset Proposition 6.5 terminal. With k=1/(4(1+|f(0)|)), its affine image (k(x+f(0)y),ky,z) has slope f-f(0) and projected area multiplier k. A width-1/4 slab retains at least 1/12 of indexed mass and is retubed at radius 12 delta. The pre-runtime source cutoff proves 1+|f(0)| <= delta\textasciicircum{}(-loss/10000); one scalar cutoff pays the Jacobian, radius and density costs. Analytic cleanup then returns one configuration with CWA and the upper bound, retaining injective source indices, exact axis images and shading containment in the image of the original slab. The older paper-facing endpoint remains available. The refinement now also proves equality of the actual selected unit segments to the common-height model, centered at the retained slab midpoint. Cleanup preserves those exact representatives. The final upper-bound interface retains this common-height witness; the old normalized interfaces follow by forgetting it on the same configuration.
+See \ref{lem:small-twisted-projection}, \ref{lem:normalized-small-twisted-projection}, \ref{lem:common-height-terminal}, \ref{rem:projection-sign}, \ref{rem:parameter-frostman}, \ref{rem:terminal-compatibility}.
 \end{remark}
 
 \begin{remark}[Expert node Dtwist]
@@ -368,10 +368,10 @@ See \ref{def:twisted-projection}.
 
 \begin{remark}[Expert node W2TW]
 \label{rem:atlas-W2TW}
-\lean{Kakeya.Assouad.TubeWolffBound}
+\lean{Kakeya.Assouad.TubeWolffBound,Kakeya.Assouad.tubeWolffBound_of_convexWolffBound,Kakeya.Assouad.OrdinaryTubeWolffVolumeBound,Kakeya.Assouad.ordinaryTube_volume_eq,Kakeya.Assouad.ordinaryTube_not_subset_of_radius_lt,Kakeya.Assouad.TubeWolffBound.to_ordinaryVolume,Kakeya.Assouad.OrdinaryTubeWolffVolumeBound.to_radiusSquared,Kakeya.Assouad.HasCommonHeightTubeModel,Kakeya.Assouad.commonHeight_modelTube_carrier_subset,Kakeya.Assouad.tubeParameterFrostmanBound_of_commonHeightTubeWolffBound,Kakeya.Assouad.tubeParameterFrostmanBound_of_commonHeightOrdinaryTubeWolff,Kakeya.Assouad.ordinaryTubeWolffVolumeBound_of_convexWolffBound,Kakeya.Assouad.DilatedTubeWolffVolumeBound,Kakeya.Assouad.dilatedTubeWolffVolumeBound_one_iff,Kakeya.Assouad.fullLineTubeInBall_subset_dilated32,Kakeya.Assouad.dilated32_volume_le,Kakeya.Assouad.tubeParameterFrostmanBound_of_dilatedTubeWolffBound}
 WZ2 Section 7: Tube Wolff: The weaker radius-squared tube count.
-Ordinary Tube Wolff containment does not by itself count all carriers with nearby supporting-line parameters, because longitudinal positions may differ. The actual analytic theorem assumes indexed parameter nonconcentration separately.
-See \ref{def:tube-frostman}, \ref{rem:parameter-frostman}.
+Actual-volume tests for every positive ordinary capsule radius are related to radius-squared tests by constants C and 10 C. For common-height unit segments, parameter clusters fit in ordinary radius-8r capsules, giving constants 64 C and 640 C. For arbitrary longitudinal positions in the bounded vertical chart, finite coarse axes of length 32 give radius-20r containment and Frostman constant 128000 C. CWA directly supplies the length-32 tests. At factor one the new predicate is exactly the ordinary-volume predicate, but no implication from length-1 to length-32 tests is asserted. The literal length-1 projection claim is refuted even for f(z)=z. Identification of the correction with the paper convention and broader chart transport remain unresolved.
+See \ref{def:tube-frostman}, \ref{lem:ordinary-tube-wolff-volume}, \ref{lem:common-height-tube-cluster}, \ref{lem:dilated-tube-cluster}, \ref{rem:parameter-frostman}, \ref{rem:longitudinal-tube-model}.
 \end{remark}
 
 \begin{remark}[Expert node W2DKT]
@@ -456,9 +456,9 @@ See \ref{lem:block-replication}, \ref{rem:replication}, \ref{rem:replication-def
 
 \begin{remark}[Expert node W2ImageUniform]
 \label{rem:atlas-W2ImageUniform}
-\lean{Kakeya.Assouad.projected_fiber_os_preparation}
+\lean{Kakeya.Assouad.projected_fiber_os_preparation,Kakeya.Assouad.projected_fiber_os_preparation_with_density}
 WZ2 Lemma 7.12: preparation: Uniformize the projected incidence set.
-The implemented projected-fibre preparation retains incidence mass as well as area uniformity. A large target subset alone does not ensure a dense pulled-back shading.
+The same-family projected-fibre preparation retains incidence mass, area uniformity and the exact support identity. The planar grid is chosen at eta/2 before delta; band loss delta\textasciicircum{}(-eta) and grid loss delta\textasciicircum{}(-eta) yield retained density delta\textasciicircum{}(3 eta). The old delta\textasciicircum{}(4 eta) preparation interface is a projection of this stronger construction.
 See \ref{lem:projection-one-step}.
 \end{remark}
 
@@ -488,10 +488,10 @@ See \ref{lem:cinematic-area}, \ref{rem:projection-scales}.
 
 \begin{remark}[Expert node W2L7\_12]
 \label{rem:atlas-W2L7_12}
-\lean{Kakeya.Assouad.parameter_block_projection_uniformization_from_os}
+\lean{Kakeya.Assouad.GridOSBoundedOneScaleInput,Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman,Kakeya.Assouad.parameter_block_projection_uniformization_from_os,Kakeya.Assouad.GridOSBoundedOneScaleSharpInput,Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman_sharp_density,Kakeya.Assouad.grid_os_bounded_one_scale_sharp_from_positive}
 WZ2 Lemma 7.12: One-step fine-to-coarse projected-area comparison.
-The expert one-step inequality is a mathematical guide. The linked implementation is a parameter-block projection uniformization assembled from explicit arithmetic, mass-pruning, OS preparation and globalization inputs. These are not identical statements.
-See \ref{lem:projection-one-step}, \ref{rem:projection-scales}.
+The complete normalized parameter one-step theorem has source density delta\textasciicircum{}eta and output density delta\textasciicircum{}(4 eta). Choosing the planar OS grid at eta/2 reduces the band-plus-grid loss to delta\textasciicircum{}(-2 eta), giving positive-window density delta\textasciicircum{}(3 eta). The signed step uses positiveEta=4 eta/3 and spends eta/3 on the half-window choice. All thresholds precede runtime data. The old eta/2-to-4 eta API follows by weakening. Parameter Frostman, vertical chart and f(0)=0 remain explicit; the Tube-Wolff-only paper scope is not proved.
+See \ref{lem:projection-one-step}, \ref{lem:projection-one-step-normalized}, \ref{rem:projection-scales}.
 \end{remark}
 
 \begin{remark}[Expert node IcoarseTW]
@@ -503,26 +503,26 @@ See \ref{lem:uniform-parameter-coarsening}, \ref{rem:parameter-frostman}.
 
 \begin{remark}[Expert node W2Iterate]
 \label{rem:atlas-W2Iterate}
-\lean{Kakeya.Assouad.parameter_block_positive_window_assembly}
+\lean{Kakeya.Assouad.parameter_block_positive_window_assembly,Kakeya.Assouad.grid_os_finite_run,Kakeya.Assouad.grid_os_telescoping}
 WZ2 Proposition 7.1: iteration: Telescope the ratios up to a coarse scale.
-The expert finite telescoping argument is retained as mathematics. The root closes Section 7 through the parameter-block positive-window assembly; an absent reference to a separately named telescoping lemma must not be replaced by an invented solid edge.
+The ordinary-tube, full-line and parameter endpoints use the actual finite GridOS run and its telescoping theorem. Their retained states carry the selected families, shadings, scale transitions and terminal projected-area estimate. The abstract scale-growth paragraph describes the arithmetic principle; it is not asserted to be definitionally identical to the GridOS state interface.
 See \ref{lem:projection-iteration}, \ref{rem:projection-iteration}.
 \end{remark}
 
 \begin{remark}[Expert node W2P7\_1]
 \label{rem:atlas-W2P7_1}
-\lean{Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement,Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound}
+\lean{Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement,Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound,Kakeya.Assouad.TwistedProjectionParameterFrostmanPolynomialEstimateStatement,Kakeya.Assouad.pure_wz2_proposition7_1_parameter_frostman,Kakeya.Assouad.pure_wz2_parameter_frostman_lower_bound_of_essentially_distinct,Kakeya.Assouad.FullLineTubeWolffBound,Kakeya.Assouad.pure_wz2_proposition7_1_full_line_tube_wolff,Kakeya.Assouad.tubeParameterFrostmanBound_of_fullLineTubeWolffBound,Kakeya.Assouad.pure_wz2_full_line_tube_wolff_lower_bound_in_vertical_chart,Kakeya.Assouad.tubeParameterFrostman_to_centered_tubeWolff,Kakeya.Assouad.planarTubeGrid_parameter_frostman,Kakeya.Assouad.planarTubeGrid_in_unitBall,Kakeya.Assouad.planarTubeGrid_ordinary_distinct,Kakeya.Assouad.offsetObstruction_projection_volume_le,Kakeya.Assouad.exists_ordinary_tubeWolff_slope_offset_counterexample,Kakeya.Assouad.not_pureWZ2UnrestrictedTubeWolffProjectionStatement,Kakeya.Assouad.pure_wz2_proposition7_1_ordinary_tube_wolff,Kakeya.Assouad.pure_wz2_ordinary_tube_wolff_lower_bound_in_common_height_chart,Kakeya.Assouad.pure_wz2_ordinary_tube_wolff_lower_bound_in_unit_ball,Kakeya.Assouad.tubeParameterFrostmanBound_of_commonHeightOrdinaryTubeWolff,Kakeya.Assouad.ordinary_capsule_midpoint_dist_of_subset,Kakeya.Assouad.ordinary_capsule_pair_parameter_bounds,Kakeya.Assouad.longitudinalTubeGrid_in_unitBall,Kakeya.Assouad.longitudinalTubeGrid_ordinary_distinct,Kakeya.Assouad.longitudinalTubeGrid_tubeWolff,Kakeya.Assouad.longitudinalTubeGrid_projection_volume,Kakeya.Assouad.exists_normalized_ordinary_tubeWolff_longitudinal_counterexample,Kakeya.Assouad.not_pureWZ2NormalizedOrdinaryTubeWolffProjectionStatement,Kakeya.Assouad.pure_wz2_proposition7_1_dilated_tube_wolff,Kakeya.Assouad.pure_wz2_dilated_tube_wolff_lower_bound_in_vertical_chart,Kakeya.Assouad.pure_wz2_dilated_tube_wolff_lower_bound_in_unit_ball,Kakeya.Assouad.tubeParameterFrostmanBound_of_dilatedTubeWolffBound}
 WZ2 Proposition 7.1: Twisted-image lower bound under Tube Wolff.
-The proved specialization assumes a bounded vertical chart, analytic distinctness, an indexed four-parameter Frostman bound, an upper cardinality bound and f(0)=0. The broader Tube Wolff-only paper statement is not independently marked proved.
-See \ref{thm:twisted-parameter}, \ref{prop:twisted-tube-wolff}, \ref{rem:parameter-frostman}.
+The primary ordinary-capsule theorem is the actual common-height specialization used by the final root, with parameter constant 640. A separate finite length-32 coarse-test theorem now handles arbitrary longitudinal positions in a bounded vertical chart, with parameter constant 128000. Both constants are absorbed before the runtime family and slope, then the complete one-step/GridOS/telescoping engine proves the bounds; packing removes the cardinality premise. The earlier full-line API remains verified. The actual terminal satisfies the primary model by construction and satisfies f(0)=0 by the accepted normalization transport. The finite counterexamples refute unrestricted offsets and, independently, the literal unit-length claim at arbitrary longitudinal positions even for f(z)=z. They assert no CWA and occur in neither positive proof. The length-32 correction is explicit and proved, but is not identified with the refuted unit-length hypothesis or silently adopted as the paper scope.
+See \ref{thm:twisted-parameter}, \ref{prop:twisted-tube-wolff}, \ref{thm:twisted-parameter-polynomial}, \ref{thm:twisted-full-line}, \ref{thm:twisted-offset-obstruction}, \ref{thm:twisted-ordinary-common-height}, \ref{lem:common-height-tube-cluster}, \ref{thm:twisted-longitudinal-obstruction}, \ref{thm:twisted-dilated}, \ref{lem:dilated-tube-cluster}, \ref{rem:parameter-frostman}, \ref{rem:longitudinal-tube-model}.
 \end{remark}
 
 \begin{remark}[Expert node W2P6\_8]
 \label{rem:atlas-W2P6_8}
-\lean{Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement,Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound}
+\lean{Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_in_vertical_chart,Kakeya.Assouad.tubeWolffBound_of_convexWolffBound,Kakeya.Assouad.tubeParameterFrostmanBound_of_convexWolffBound,Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_in_unit_ball,Kakeya.Assouad.tubeParameterFrostmanBound_of_bodyConvexWolffBound,Kakeya.Assouad.fullLineTubeWolffBound_of_convexWolffBound,Kakeya.Assouad.fullLineTubeWolffBound_of_bodyConvexWolffBound,Kakeya.Assouad.pure_wz2_proposition7_1_full_line_tube_wolff,Kakeya.Assouad.ordinaryTubeWolffVolumeBound_of_convexWolffBound,Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_in_common_height_chart,Kakeya.Assouad.pure_wz2_proposition7_1_ordinary_tube_wolff,Kakeya.Assouad.dilatedTubeWolffVolumeBound_of_bodyConvexWolffBound,Kakeya.Assouad.dilatedTubeWolffVolumeBound_of_convexWolffBound,Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_via_dilated_tubes,Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_in_unit_ball_via_dilated_tubes}
 WZ2 Proposition 6.8: Twisted-image lower bound under convex Wolff.
-CWA yields a geometric radius-squared tube count, but does not by itself establish all the parameter hypotheses of the proved lower bound for arbitrary unit-segment carriers. The generic expert CWA corollary is therefore a comparison node, not a second closed theorem.
-See \ref{prop:twisted-cwa}, \ref{thm:twisted-parameter}, \ref{rem:parameter-frostman}.
+The final endpoint follows CWA -> ordinary unit-capsule volume tests -> common-height Proposition 7.1 -> parameter iteration on the actual left-terminal configuration. Its model, chart, shading window and normalized nonsingular slope are proved upstream; packing supplies D=7. A separate endpoint now handles arbitrary longitudinal positions via CWA -> finite length-32 coarse tests -> the corrected Proposition 7.1 -> parameter iteration. Neither route uses the full-line projection theorem or direct CWA-to-parameter shortcut. The historical full-line CWA APIs retain their statements. Broader chart transport and the identification of corrected coarse tests with paper scope remain unresolved; general Lemma 6.6 is also still missing. The accepted slope-offset Remark applies to the proved actual-terminal transport.
+See \ref{prop:twisted-cwa}, \ref{thm:twisted-cwa-normalized}, \ref{cor:twisted-cwa-paper-normalized}, \ref{cor:twisted-cwa-common-height}, \ref{cor:twisted-cwa-dilated}, \ref{rem:parameter-frostman}, \ref{rem:twisted-cwa-scope}, \ref{rem:longitudinal-tube-model}.
 \end{remark}
 
 \begin{remark}[Expert node DFrost]

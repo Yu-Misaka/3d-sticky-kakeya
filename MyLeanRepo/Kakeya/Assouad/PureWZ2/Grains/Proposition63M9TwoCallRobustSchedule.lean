@@ -1,3 +1,4 @@
+import MyLeanRepo.Kakeya.Assouad.PureWZ2.Prop62RetainedKernel
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains.Proposition63RichStickyKernel
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains.Proposition63M9RobustLemma43Scales
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains.Proposition63M9RobustDegreeCutoff
@@ -314,7 +315,8 @@ end Proposition63M9TwoCallRobustScheduleData
 /-- Freeze the first robust call and all intermediate cutoffs around one
 already selected second rich schedule.  The returned equality prevents an
 outer M9 assembly from mixing independently chosen second-kernel witnesses. -/
-theorem proposition63_m9_two_call_robust_schedule_of_second
+theorem proposition63_m9_two_call_robust_schedule_of_second_with_kernel
+    (kernel : PureWZ2RichProp62KernelStatement)
     (sigma : ℝ) (critical : PureWZ2CriticalPackage sigma)
     {outputLoss : ℝ}
     (second : Proposition63RichStickyKernelScheduleData sigma outputLoss)
@@ -336,7 +338,7 @@ theorem proposition63_m9_two_call_robust_schedule_of_second
   have firstOutputLossLeOne : firstOutputLoss ≤ 1 := by
     dsimp only [firstOutputLoss]
     linarith [secondSourceLtOutput, houtputLoss_le, critical.sigma_lt_one]
-  rcases proposition63_rich_sticky_kernel sigma critical firstOutputLoss
+  rcases kernel sigma critical firstOutputLoss
       firstOutputLossPos firstOutputLossLeOne with ⟨first⟩
   let schedule : Proposition63RichTwoCallScheduleData sigma outputLoss := {
     second := second
@@ -463,6 +465,18 @@ theorem proposition63_m9_two_call_robust_schedule_of_second
   }
   exact ⟨data, rfl⟩
 
+
+/-- Compatibility entry using the closed rich Proposition-6.2 kernel. -/
+theorem proposition63_m9_two_call_robust_schedule_of_second
+    (sigma : ℝ) (critical : PureWZ2CriticalPackage sigma)
+    {outputLoss : ℝ}
+    (second : Proposition63RichStickyKernelScheduleData sigma outputLoss)
+    (houtputLoss_le : outputLoss ≤ sigma / 2)
+    (hsigmaHalf : sigma / 2 ≤ 1 - outputLoss) :
+    ∃ data : Proposition63M9TwoCallRobustScheduleData sigma outputLoss,
+      data.schedule.second = second :=
+  proposition63_m9_two_call_robust_schedule_of_second_with_kernel pure_wz2_node03_rich_prop62_kernel
+    sigma critical second houtputLoss_le hsigmaHalf
 /-- Freeze both rich calls and every robust M9 cutoff before the runtime scale
 and family are chosen. -/
 theorem proposition63_m9_two_call_robust_schedule

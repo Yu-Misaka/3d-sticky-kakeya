@@ -132,7 +132,8 @@ private theorem wz2PaperPureRefinementFraction_le_one_of_final_schedule
 /-- The production M9 path supplies the exact dependent initial state needed
 by the re-entrant hierarchy.  No root restoration or independently selected
 grain witness occurs in the construction. -/
-theorem pureWZ2_hierarchy_initial_reentrant_source_production
+theorem pureWZ2_hierarchy_initial_reentrant_source_production_with_kernel
+    (kernel : PureWZ2RichProp62KernelStatement)
     (capability : PureWZ2PropStickyCapability)
     {sigma : ℝ}
     (critical : PureWZ2CriticalPackage sigma) :
@@ -150,8 +151,8 @@ theorem pureWZ2_hierarchy_initial_reentrant_source_production
       dsimp only [outputLoss]
       exact min_le_left _ _
     linarith
-  rcases exists_proposition63_m9_final_reentry_loss_schedule
-      critical outputLossPos outputLossLeOne with ⟨schedule⟩
+  rcases exists_proposition63_m9_final_reentry_loss_schedule_with_kernel
+      kernel critical outputLossPos outputLossLeOne with ⟨schedule⟩
   let p : ℝ := schedule.nested.outer.preGrainLoss
   have pPos : 0 < p := schedule.nested.outer.preGrain_pos
   have pLtOne : p < 1 := by
@@ -706,6 +707,15 @@ theorem pureWZ2_hierarchy_initial_reentrant_source_production
     ⟨outputLoss, scale * source.delta, outputLossPos, outputLossLtCaller,
       targetDeltaPos, finalDeltaLeCaller,
       ⟨reentrantTail.toReentrantGrainSource⟩⟩
+
+/-- Compatibility entry using the closed rich Proposition-6.2 kernel. -/
+theorem pureWZ2_hierarchy_initial_reentrant_source_production
+    (capability : PureWZ2PropStickyCapability)
+    {sigma : ℝ}
+    (critical : PureWZ2CriticalPackage sigma) :
+    PureWZ2HierarchyInitialReentrantSourceAt capability sigma :=
+  pureWZ2_hierarchy_initial_reentrant_source_production_with_kernel pure_wz2_node03_rich_prop62_kernel
+    capability critical
 
 end Kakeya.Assouad
 

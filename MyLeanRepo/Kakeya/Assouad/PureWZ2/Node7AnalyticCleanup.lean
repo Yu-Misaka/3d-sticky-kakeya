@@ -2,6 +2,7 @@ import MyLeanRepo.Kakeya.Assouad.PureWZ2.Node7bQuantitative
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.PaperCWAToDeltaMax
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.DeltaMaxToNormalizedNonconcentration
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.TwistedProjection
+import MyLeanRepo.Kakeya.Assouad.PureWZ2.NormalizedTerminal
 import MyLeanRepo.Kakeya.Assouad.PropStickyPaperTubeCarrierGeometry
 import MyLeanRepo.Kakeya.Assouad.PropStickyPaperConvexWolffCardinalityCore
 import MyLeanRepo.Kakeya.Assouad.PropStickyPaperConvexWolffCardinality
@@ -142,7 +143,7 @@ structure PureWZ2Node7AnalyticCleanupScaleBudget
 
 /-- Run one analytic cleanup directly on an arbitrary runtime-scale ordinary
 shading and package all of the data needed by the parameter-Frostman step. -/
-theorem pure_wz2_node7_analytic_cleanup
+theorem pure_wz2_node7_analytic_cleanup_with_cwa
     {sigma analyticLoss r : ℝ}
     (family : Kakeya.Streamlined.TubeFamily r)
     (shading : Kakeya.Streamlined.TubeShading family)
@@ -164,8 +165,8 @@ theorem pure_wz2_node7_analytic_cleanup
       Kakeya.realRpowENN r (sigma - analyticLoss))
     (budget : PureWZ2Node7AnalyticCleanupScaleBudget
       sigma analyticLoss r family shading) :
-    Nonempty (PureWZ2ParameterFrostmanPreparationData
-      sigma analyticLoss r) := by
+    Nonempty (PureWZ2NormalizedProjectionRefinement
+      family shading slope sigma analyticLoss) := by
   let coreLoss : ℝ := analyticLoss / 100
   let thinEta : ℝ := analyticLoss / 20
   let target : ENNReal := Kakeya.realRpowENN r (-thinEta)
@@ -370,7 +371,16 @@ theorem pure_wz2_node7_analytic_cleanup
       (node7_cleanup_hasBoundedBase cleanup hbase)
       (node7_cleanup_vertical cleanup hvertical) densityBound cardinalityFloor
       normalizedConstant cleanup.deltaMax_le hcleanupFloor hparamAbsorb
-  refine ⟨{
+  have hunitUpper : Kakeya.deltaTubeVolume 1 ≤ (4800 : ENNReal) := by
+    exact (canonical_volume_upper_tight (by norm_num : (0 : ℝ) < 1) le_rfl).trans
+      (by norm_num)
+  have hcleanupCWA : ConvexWolffBound cleanup.family normalizedConstant :=
+    deltaMax_to_normalized_convexWolff hr hr_one cleanup.family hcleanupNonempty
+      densityBound cardinalityFloor normalizedConstant
+      (ENNReal.ofReal_pos.mpr (Real.rpow_pos_of_pos hr _)).ne'
+      cleanup.deltaMax_le hcleanupFloor
+      ((mul_le_mul_left (mul_le_mul_left hunitUpper _) _).trans hparamAbsorb)
+  let configuration : PureWZ2NormalizedProjectionData sigma analyticLoss r := {
     family := cleanup.family
     family_nonempty := hcleanupNonempty
     shading := cleanup.shading
@@ -386,9 +396,47 @@ theorem pure_wz2_node7_analytic_cleanup
     analysisSlope_zero := by simp [SlopeFunction.centered]
     analysisSlope_nonsingular :=
       SlopeFunction.centered_isNonsingular hslope_nonsingular
+    convex_wolff := hcleanupCWA
     projection_upper :=
       (node7_cleanup_projection_upper cleanup slope hslope_zero).trans
-      (by simpa only [twistedUnion] using hprojection) }⟩
+      (by simpa only [twistedUnion] using hprojection) }
+  exact ⟨{
+    configuration := configuration
+    sourceIndex := cleanup.sourceIndex
+    sourceIndex_injective := cleanup.sourceIndex_injective
+    tube_eq_source := cleanup.tube_eq_source
+    shading_subset_source := cleanup.shading_subset_source
+    slope_eq := rfl }⟩
+
+/-- Historical cleanup API, projected from the same CWA terminal. -/
+theorem pure_wz2_node7_analytic_cleanup
+    {sigma analyticLoss r : ℝ}
+    (family : Kakeya.Streamlined.TubeFamily r)
+    (shading : Kakeya.Streamlined.TubeShading family)
+    (hloss : 0 < analyticLoss)
+    (hr : 0 < r) (hr_small : r ≤ 1 / 10000)
+    (hfamily : family.Nonempty)
+    (hbase : HasBoundedBase family 4)
+    (hvertical : IsInVerticalChart family)
+    (hwindow : IsInSlopeWindow shading)
+    (hline : WZ1PaperIsLineClass family)
+    (hcwa : WZ2PaperConvexWolffBound family
+      (Kakeya.realRpowENN r (-(analyticLoss / 100))))
+    (hdense : shading.IsLambdaDense
+      (Kakeya.realRpowENN r (analyticLoss / 100)))
+    (slope : SlopeFunction)
+    (hslope_zero : slope 0 = 0)
+    (hslope_nonsingular : slope.IsNonsingular)
+    (hprojection : volume (twistedUnion shading slope) ≤
+      Kakeya.realRpowENN r (sigma - analyticLoss))
+    (budget : PureWZ2Node7AnalyticCleanupScaleBudget
+      sigma analyticLoss r family shading) :
+    Nonempty (PureWZ2ParameterFrostmanPreparationData
+      sigma analyticLoss r) := by
+  obtain ⟨result⟩ := pure_wz2_node7_analytic_cleanup_with_cwa family shading
+    hloss hr hr_small hfamily hbase hvertical hwindow hline hcwa hdense
+    slope hslope_zero hslope_nonsingular hprojection budget
+  exact ⟨result.configuration.toPureWZ2ParameterFrostmanPreparationData⟩
 
 /-- A family-independent cutoff below which the scale-generic cleanup budget
 is available for every later runtime family and shading satisfying the stated
@@ -707,6 +755,34 @@ theorem pure_wz2_node7_analytic_cleanup_cutoff
 
 /-- The automatic scale-generic wrapper: specialize the pre-runtime cutoff,
 construct its numerical budget, and run the analytic cleanup. -/
+theorem PureWZ2Node7AnalyticCleanupCutoffData.runWithCWA
+    {sigma analyticLoss r : ℝ}
+    (cutoff : PureWZ2Node7AnalyticCleanupCutoffData sigma analyticLoss)
+    (family : Kakeya.Streamlined.TubeFamily r)
+    (shading : Kakeya.Streamlined.TubeShading family)
+    (hloss : 0 < analyticLoss)
+    (hr : 0 < r) (hr_cutoff : r ≤ cutoff.r₀)
+    (hfamily : family.Nonempty) (hbase : HasBoundedBase family 4)
+    (hvertical : IsInVerticalChart family)
+    (hwindow : IsInSlopeWindow shading)
+    (hline : WZ1PaperIsLineClass family)
+    (hcwa : WZ2PaperConvexWolffBound family
+      (Kakeya.realRpowENN r (-(analyticLoss / 100))))
+    (hdense : shading.IsLambdaDense
+      (Kakeya.realRpowENN r (analyticLoss / 100)))
+    (slope : SlopeFunction) (hslope_zero : slope 0 = 0)
+    (hslope_nonsingular : slope.IsNonsingular)
+    (hprojection : volume (twistedUnion shading slope) ≤
+      Kakeya.realRpowENN r (sigma - analyticLoss)) :
+    Nonempty (PureWZ2NormalizedProjectionRefinement
+      family shading slope sigma analyticLoss) := by
+  rcases cutoff.budget hr hr_cutoff family shading hfamily hbase hvertical
+      hline hcwa hdense with ⟨budget⟩
+  exact pure_wz2_node7_analytic_cleanup_with_cwa family shading hloss hr
+    (hr_cutoff.trans cutoff.r₀_le_small) hfamily hbase hvertical hwindow
+    hline hcwa hdense slope hslope_zero hslope_nonsingular hprojection budget
+
+/-- Compatibility projection of the strengthened cutoff consumer. -/
 theorem PureWZ2Node7AnalyticCleanupCutoffData.run
     {sigma analyticLoss r : ℝ}
     (cutoff : PureWZ2Node7AnalyticCleanupCutoffData sigma analyticLoss)
@@ -728,11 +804,10 @@ theorem PureWZ2Node7AnalyticCleanupCutoffData.run
       Kakeya.realRpowENN r (sigma - analyticLoss)) :
     Nonempty (PureWZ2ParameterFrostmanPreparationData
       sigma analyticLoss r) := by
-  rcases cutoff.budget hr hr_cutoff family shading hfamily hbase hvertical
-      hline hcwa hdense with ⟨budget⟩
-  exact pure_wz2_node7_analytic_cleanup family shading hloss hr
-    (hr_cutoff.trans cutoff.r₀_le_small) hfamily hbase hvertical hwindow
-    hline hcwa hdense slope hslope_zero hslope_nonsingular hprojection budget
+  obtain ⟨result⟩ := cutoff.runWithCWA family shading hloss hr hr_cutoff
+    hfamily hbase hvertical hwindow hline hcwa hdense slope hslope_zero
+    hslope_nonsingular hprojection
+  exact ⟨result.configuration.toPureWZ2ParameterFrostmanPreparationData⟩
 
 end Kakeya.Assouad
 

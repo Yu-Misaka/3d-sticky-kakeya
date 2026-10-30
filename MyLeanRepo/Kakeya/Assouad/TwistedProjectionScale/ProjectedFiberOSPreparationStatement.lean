@@ -110,4 +110,34 @@ def ProjectedFiberOSPreparationStatement : Prop :=
                       (eta := eta) Y f,
                   prepared.base = base
 
+/-- Retain an additional density estimate on the same OS shading. -/
+def ProjectedFiberOSPreparationWithDensityStatement (densityPower : ℝ) : Prop :=
+  ∀ eta : ℝ, 0 < eta →
+    ∃ base : ℕ,
+      3 ≤ base ∧
+      ∃ delta₀ : ℝ,
+        0 < delta₀ ∧ delta₀ < 1 ∧
+        ∀ delta : ℝ, 0 < delta → delta ≤ delta₀ →
+          ∀ F : Kakeya.Streamlined.TubeFamily delta,
+            F.Nonempty →
+            IsInVerticalChart F →
+            (∀ i : Fin F.card,
+              |(tubeParams i).a| ≤ 12 ∧
+                |(tubeParams i).b| ≤ 12 ∧
+                |(tubeParams i).c| ≤ 2 ∧
+                |(tubeParams i).d| ≤ 2) →
+            ∀ Y : Kakeya.Streamlined.TubeShading F,
+              Y.IsLambdaDense
+                (Kakeya.realRpowENN delta eta) →
+              Y.union ⊆ horizontalSlab 0 1 →
+              ∀ f : SlopeFunction,
+                f.IsNonsingular →
+                f 0 = 0 →
+                ∃ prepared :
+                    ProjectedFiberOSPreparationData
+                      (eta := eta) Y f,
+                  prepared.base = base ∧
+                    prepared.density.globalShading.IsLambdaDense
+                      (Kakeya.realRpowENN delta (densityPower * eta))
+
 end Kakeya.Assouad

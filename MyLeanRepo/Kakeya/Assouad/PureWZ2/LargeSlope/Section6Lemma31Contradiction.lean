@@ -14,9 +14,9 @@ open MeasureTheory Set
 
 attribute [local instance] Classical.propDecidable
 
-theorem PureWZ2Lemma31ScaleAssembly.derivative_lower
+theorem PureWZ2Lemma31SlabAssembly.derivative_lower
     {sigma epsilon delta : ℝ}
-    (data : PureWZ2Lemma31ScaleAssembly sigma epsilon delta)
+    (data : PureWZ2Lemma31SlabAssembly sigma epsilon delta)
     (hepsilon : 0 < epsilon) (hepsilonHalf : epsilon ≤ 1 / 2)
     (hsigma : 0 < sigma) (hsigmaOne : sigma < 1)
     (hdeltaLtOne : delta < 1)
@@ -157,7 +157,7 @@ theorem PureWZ2Lemma31ScaleAssembly.derivative_lower
           ⟨point, hpointGood, hpointEq⟩
         have hpointRegion : point ∈
             pureWZ2WeightedCroppedLabelRegion popular label := hpointGood.1
-        have hpointCfg : point ∈ cfg.shading.union := by
+        have hpointSlab : point ∈ data.scaleData.slabShading.union := by
           rw [pureWZ2WeightedCroppedLabelRegion_eq] at hpointRegion
           rcases Set.mem_iUnion₂.mp hpointRegion with
             ⟨sourceCell, hsourceCell, hpointCell⟩
@@ -173,7 +173,9 @@ theorem PureWZ2Lemma31ScaleAssembly.derivative_lower
               cfg.extremal.delta_pos]
             exact Set.mem_iUnion₂.mpr
               ⟨sourceCell, hslabActive, hpointCell⟩
-          rcases hslabUnion with ⟨index, hcarrier⟩
+          exact hslabUnion
+        have hpointCfg : point ∈ cfg.shading.union := by
+          rcases hpointSlab with ⟨index, hcarrier⟩
           exact ⟨index, data.scaleData.slab_subshading index hcarrier⟩
         let source : {point : Point3 // point ∈ cfg.shading.union} :=
           ⟨point, hpointCfg⟩
@@ -195,7 +197,7 @@ theorem PureWZ2Lemma31ScaleAssembly.derivative_lower
           rw [hsourceY, sub_self, abs_zero]
           exact hscalePos.le, by
           simpa [cfg] using
-            data.frameNormalCompatibility frameSlope source hsourceClose⟩)
+            data.frameNormalCompatibility frameSlope source hpointSlab hsourceClose⟩)
       hrhoPos hsqrtRho hgeometrySmall hscaleSmall
       with ⟨raw⟩
   rcases pureWZ2_faithful_step4_producer_of_frame_lower cfg scale
@@ -221,6 +223,42 @@ theorem PureWZ2Lemma31ScaleAssembly.derivative_lower
       cfg.family.enncard ≤ Kakeya.realRpowENN delta (-data.eta) * volume W *
         cfg.family.enncard := by gcongr
   exact (not_lt_of_ge (hcwa.trans hupper)) hover
+
+theorem PureWZ2Lemma31ScaleAssembly.derivative_lower
+    {sigma epsilon delta : ℝ}
+    (data : PureWZ2Lemma31ScaleAssembly sigma epsilon delta)
+    (hepsilon : 0 < epsilon) (hepsilonHalf : epsilon ≤ 1 / 2)
+    (hsigma : 0 < sigma) (hsigmaOne : sigma < 1)
+    (hdeltaLtOne : delta < 1)
+    (hdeltaSmall : delta ≤ 1 / 100)
+    (hgeometrySmall : 256 * delta ≤ data.rho.1)
+    (hscaleSmall : data.rho.1 ≤ 1 / 32)
+    (hrhoQuarter : 64 * data.rho.1 ^ 2 ≤ 1 / 4)
+    (hframeSmall : 2 * data.rho.1 ^ 2 ≤ 1 / 100)
+    (hcommonSmall : Kakeya.realRpowENN delta
+        (4 * (data.eta / 2) - data.targetLoss - data.targetLoss -
+          (1 + epsilon) * data.stickyLoss) ≤
+      ENNReal.ofReal (1 / 400000 : ℝ))
+    (hprismSmall : Real.rpow delta
+        (12 * data.eta - 4 * (data.eta / 2) - data.targetLoss) ≤
+      1 / 100000)
+    (hlocalADConstant : (36 : ENNReal) *
+        (20 * Kakeya.realRpowENN delta (-data.targetLoss)) ≤
+      Kakeya.realRpowENN delta (-(12 * data.eta)))
+    (hoverloadAt : ∀ a b : ℝ, b - a ≤ Real.rpow delta epsilon →
+      ∀ step4 : LargeSlopeFaithfulStep4Witness
+          data.cfg.family sigma data.eta a b,
+        ∃ W : Set Point3, Convex ℝ W ∧
+          Kakeya.realRpowENN delta (-data.eta) * volume W *
+              data.cfg.family.enncard <
+            (wz1PaperBodyFamily
+              data.cfg.family).containedCount W) :
+    ∀ z ∈ Set.Icc data.scaleData.slabLeft data.scaleData.slabRight,
+      data.scaleData.slabRight - data.scaleData.slabLeft ≤
+        |deriv data.globalSlope z| := by
+  exact data.toSlabAssembly.derivative_lower hepsilon hepsilonHalf hsigma hsigmaOne
+    hdeltaLtOne hdeltaSmall hgeometrySmall hscaleSmall hrhoQuarter hframeSmall
+    hcommonSmall hprismSmall hlocalADConstant hoverloadAt
 
 end Kakeya.Assouad
 end

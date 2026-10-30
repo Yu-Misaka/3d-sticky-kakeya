@@ -1,4 +1,5 @@
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.C2.Proposition64P7ScaleConstantAbsorption
+import MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains.ReentrantEntry
 
 /-!
 # Final direct-rich assembly for WZ2 Proposition 6.4
@@ -30,11 +31,11 @@ open
 
 /-- WZ2 Proposition 6.4, assembled on the literal direct-rich production
 chain without crossing a witness-erasing intermediate producer boundary. -/
-theorem pureWZ2_c2_grains_directRich : PureWZ2C2GrainsStatement := by
-  intro subunit criticalExtraction propSticky grains
-  rcases propSticky subunit criticalExtraction with ⟨capability⟩
-  have grainsOutput := grains subunit criticalExtraction propSticky
-  let hbridge : PureWZ2PaperADBridgeStatement := grainsOutput.1
+theorem pureWZ2_c2_grains_from_reentrant
+    (capability : PureWZ2PropStickyCapability)
+    (hbridge : PureWZ2PaperADBridgeStatement)
+    (grains : PureWZ2ReentrantGrainsStatement capability) :
+    PureWZ2C2GrainsFromCriticalStatement := by
   intro sigma critical outputLoss targetDelta₀ houtputLoss htargetDelta₀
   rcases exists_pureWZ2C2RichEndpointClosureSchedule capability critical
       houtputLoss htargetDelta₀ (show (0 : ℝ) < 1 by norm_num)
@@ -53,8 +54,7 @@ theorem pureWZ2_c2_grains_directRich : PureWZ2C2GrainsStatement := by
   let requestedCutoff := min schedule.commonDelta₀ scaleCutoff.delta₀
   have hrequestedCutoff : 0 < requestedCutoff :=
     lt_min schedule.commonDelta₀_pos scaleCutoff.delta₀_pos
-  rcases pureWZ2_hierarchy_initial_reentrant_source_production
-      capability critical initialCeiling requestedCutoff
+  rcases grains sigma critical initialCeiling requestedCutoff
       hinitialCeiling hrequestedCutoff with
     ⟨initialLoss, sourceDelta, hinitialLoss, hinitialCeiling',
       hsourceDelta, hsourceRequested, ⟨initial⟩⟩
@@ -93,6 +93,15 @@ theorem pureWZ2_c2_grains_directRich : PureWZ2C2GrainsStatement := by
       p6.geometry.scales.finalDelta_pos,
       p6.geometry.scales.finalDelta_le_target,
       ⟨vertical.toC2GrainConfiguration⟩⟩
+
+/-- Compatibility entry.  The strengthened Node-4 result supplies the actual
+initial grain/re-entry witness; the legacy input still supplies the AD bridge. -/
+theorem pureWZ2_c2_grains_directRich : PureWZ2C2GrainsStatement := by
+  intro subunit criticalExtraction propSticky grains
+  rcases propSticky subunit criticalExtraction with ⟨capability⟩
+  exact pureWZ2_c2_grains_from_reentrant capability
+    (grains subunit criticalExtraction propSticky).1
+    (pure_wz2_node04_reentrant_grains capability)
 
 /-- Canonical paper-facing Node-5 theorem. -/
 theorem pure_wz2_node05_c2_grains : PureWZ2C2GrainsStatement :=

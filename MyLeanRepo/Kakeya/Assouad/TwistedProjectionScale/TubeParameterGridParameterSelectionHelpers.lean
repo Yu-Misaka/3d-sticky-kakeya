@@ -170,13 +170,14 @@ lemma exists_large_base4 (eta : ℝ) (heta : 0 < eta) :
     rw [h20]
   exact ⟨base, hbase3, h12.trans (h13.trans_eq h21)⟩
 
-/-- Bound the logarithm of the active cardinality under the extremal
-cardinality assumption `activeCard ≤ delta^{-3}`. -/
-lemma active_card_log_bound
+/-- A fixed polynomial cardinality budget gives a logarithmic bound with
+explicit coefficient `cardExponent / log 2 + 1`. -/
+lemma active_card_log_bound_polynomial
+    (cardExponent : ℝ) (hcardExponent : 0 < cardExponent)
     (activeCard : ℕ) (delta : ℝ) (hdelta : 0 < delta) (hdelta_le1 : delta ≤ 1)
-    (h : (activeCard : ENNReal) ≤ Kakeya.realRpowENN delta (-3)) :
+    (h : (activeCard : ENNReal) ≤ Kakeya.realRpowENN delta (-cardExponent)) :
     (Nat.log 2 activeCard + 1 : ℝ) ≤
-      (3 / Real.log 2 + 1) * (1 + Real.log delta⁻¹) := by
+      (cardExponent / Real.log 2 + 1) * (1 + Real.log delta⁻¹) := by
   have hlog2_pos : 0 < Real.log 2 := Real.log_pos (by norm_num)
   have hlogδ_nonneg : 0 ≤ Real.log delta⁻¹ := by
     have h6 : delta⁻¹ ≥ 1 := by
@@ -185,8 +186,8 @@ lemma active_card_log_bound
       have h9 : (1 : ℝ)⁻¹ = 1 := by norm_num
       linarith
     exact Real.log_nonneg h6
-  have hK_pos : 0 < (3 / Real.log 2 + 1 : ℝ) := by
-    have h : 0 < 3 / Real.log 2 := by positivity
+  have hK_pos : 0 < (cardExponent / Real.log 2 + 1 : ℝ) := by
+    have h : 0 < cardExponent / Real.log 2 := by positivity
     linarith
   by_cases h_ac : activeCard = 0
   · -- activeCard = 0
@@ -194,29 +195,29 @@ lemma active_card_log_bound
     have h : (Nat.log 2 0 + 1 : ℝ) = 1 := by simp
     rw [h]
     have h2 : 0 ≤ 1 + Real.log delta⁻¹ := by linarith
-    have h3 : 0 < 3 / Real.log 2 := by positivity
-    have h4 : 1 ≤ (3 / Real.log 2 + 1 : ℝ) := by linarith
-    have h5 : 1 ≤ (3 / Real.log 2 + 1 : ℝ) * (1 + Real.log delta⁻¹) := by
+    have h3 : 0 < cardExponent / Real.log 2 := by positivity
+    have h4 : 1 ≤ (cardExponent / Real.log 2 + 1 : ℝ) := by linarith
+    have h5 : 1 ≤ (cardExponent / Real.log 2 + 1 : ℝ) * (1 + Real.log delta⁻¹) := by
       calc
         1 ≤ 1 + Real.log delta⁻¹ := by linarith
-        _ ≤ (3 / Real.log 2 + 1 : ℝ) * (1 + Real.log delta⁻¹) := by
+        _ ≤ (cardExponent / Real.log 2 + 1 : ℝ) * (1 + Real.log delta⁻¹) := by
           exact le_mul_of_one_le_left h2 h4
     exact h5
   · -- activeCard > 0
     have h_ac_pos : 0 < activeCard := Nat.pos_of_ne_zero h_ac
     have h_ac_nonneg : 0 ≤ (activeCard : ℝ) := by positivity
-    have h_rpow_nonneg : 0 ≤ Real.rpow delta (-3) := Real.rpow_nonneg hdelta.le (-3)
-    have h_real : (activeCard : ℝ) ≤ Real.rpow delta (-3) := by
+    have h_rpow_nonneg : 0 ≤ Real.rpow delta (-cardExponent) := Real.rpow_nonneg hdelta.le (-cardExponent)
+    have h_real : (activeCard : ℝ) ≤ Real.rpow delta (-cardExponent) := by
       have h1 : (activeCard : ENNReal) = ENNReal.ofReal (activeCard : ℝ) := by simp
       rw [h1] at h
       exact (ENNReal.ofReal_le_ofReal_iff h_rpow_nonneg).mp h
     have h_log_ac :
-        Real.log (activeCard : ℝ) ≤ Real.log (Real.rpow delta (-3)) :=
+        Real.log (activeCard : ℝ) ≤ Real.log (Real.rpow delta (-cardExponent)) :=
       Real.log_le_log (by exact_mod_cast h_ac_pos) h_real
     have h_log_rpow :
-        Real.log (Real.rpow delta (-3)) = 3 * Real.log delta⁻¹ := by
-      have h1 : Real.log (Real.rpow delta (-3)) = (-3) * Real.log delta :=
-        Real.log_rpow hdelta (-3)
+        Real.log (Real.rpow delta (-cardExponent)) = cardExponent * Real.log delta⁻¹ := by
+      have h1 : Real.log (Real.rpow delta (-cardExponent)) = (-cardExponent) * Real.log delta :=
+        Real.log_rpow hdelta (-cardExponent)
       rw [h1]
       have h2 : Real.log delta⁻¹ = -Real.log delta := by
         rw [Real.log_inv] <;> ring
@@ -227,26 +228,35 @@ lemma active_card_log_bound
       nat_log_le_real_log activeCard h_ac_pos
     have h_main :
         (Nat.log 2 activeCard : ℝ) ≤
-          3 * Real.log delta⁻¹ / Real.log 2 := by
+          cardExponent * Real.log delta⁻¹ / Real.log 2 := by
       calc
         (Nat.log 2 activeCard : ℝ)
             ≤ Real.log (activeCard : ℝ) / Real.log 2 := h_natlog
-        _ ≤ Real.log (Real.rpow delta (-3)) / Real.log 2 := by gcongr
-        _ = 3 * Real.log delta⁻¹ / Real.log 2 := by
+        _ ≤ Real.log (Real.rpow delta (-cardExponent)) / Real.log 2 := by gcongr
+        _ = cardExponent * Real.log delta⁻¹ / Real.log 2 := by
             rw [h_log_rpow] <;> ring
     have h4 :
         (Nat.log 2 activeCard + 1 : ℝ) ≤
-          3 * Real.log delta⁻¹ / Real.log 2 + 1 := by linarith
+          cardExponent * Real.log delta⁻¹ / Real.log 2 + 1 := by linarith
     have h5 :
-        3 * Real.log delta⁻¹ / Real.log 2 + 1 ≤
-          (3 / Real.log 2 + 1) * (1 + Real.log delta⁻¹) := by
+        cardExponent * Real.log delta⁻¹ / Real.log 2 + 1 ≤
+          (cardExponent / Real.log 2 + 1) * (1 + Real.log delta⁻¹) := by
       have h6 : 0 ≤ Real.log delta⁻¹ := hlogδ_nonneg
-      have h7 : (3 / Real.log 2 + 1) * (1 + Real.log delta⁻¹) -
-          (3 * Real.log delta⁻¹ / Real.log 2 + 1) =
-        3 / Real.log 2 + Real.log delta⁻¹ := by
+      have h7 : (cardExponent / Real.log 2 + 1) * (1 + Real.log delta⁻¹) -
+          (cardExponent * Real.log delta⁻¹ / Real.log 2 + 1) =
+        cardExponent / Real.log 2 + Real.log delta⁻¹ := by
         field_simp [hlog2_pos.ne'] <;> ring
-      have h8 : 0 ≤ 3 / Real.log 2 + Real.log delta⁻¹ := by positivity
+      have h8 : 0 ≤ cardExponent / Real.log 2 + Real.log delta⁻¹ := by positivity
       linarith
     exact h4.trans h5
+
+/-- Compatibility with the historical cubic cardinality budget. -/
+lemma active_card_log_bound
+    (activeCard : ℕ) (delta : ℝ) (hdelta : 0 < delta) (hdelta_le1 : delta ≤ 1)
+    (h : (activeCard : ENNReal) ≤ Kakeya.realRpowENN delta (-3)) :
+    (Nat.log 2 activeCard + 1 : ℝ) ≤
+      (3 / Real.log 2 + 1) * (1 + Real.log delta⁻¹) := by
+  exact active_card_log_bound_polynomial 3 (by norm_num)
+    activeCard delta hdelta hdelta_le1 h
 
 end Kakeya.Assouad

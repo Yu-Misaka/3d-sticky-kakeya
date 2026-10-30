@@ -173,4 +173,39 @@ def ParameterBlockProjectionUniformizationStatement : Prop :=
                           (epsilon := epsilon) (eta := eta)
                           (rhoMax := rhoMax) C Y f)
 
+/-- Additional density of the very same projection-uniform shading. -/
+def ParameterBlockProjectionUniformizationWithDensityStatement (densityPower : ℝ) : Prop :=
+  ∀ epsilon rhoMax eta : ℝ,
+    0 < epsilon → epsilon < 1 / 100 →
+    0 < rhoMax → rhoMax ≤ 1 →
+    1 / 100 ≤ rhoMax →
+    0 < eta → 1000 * eta < epsilon ^ 3 →
+      ∃ delta₀ : ℝ,
+        0 < delta₀ ∧ delta₀ < 1 ∧
+          ∀ delta : ℝ, 0 < delta → delta ≤ delta₀ →
+            ∀ F : Kakeya.Streamlined.TubeFamily delta,
+              F.Nonempty →
+              IsInVerticalChart F →
+              (∀ i : Fin F.card,
+                |(tubeParams i).a| ≤ 12 ∧
+                  |(tubeParams i).b| ≤ 12 ∧
+                  |(tubeParams i).c| ≤ 2 ∧
+                  |(tubeParams i).d| ≤ 2) →
+              ∀ C : ENNReal,
+                1 ≤ C →
+                C ≠ ⊤ →
+                C ≤ Kakeya.realRpowENN delta (-eta) →
+                TubeParameterFrostmanBound F C →
+                ∀ Y : Kakeya.Streamlined.TubeShading F,
+                  Y.IsLambdaDense
+                      (Kakeya.realRpowENN delta eta) →
+                  Y.union ⊆ horizontalSlab 0 1 →
+                  ∀ f : SlopeFunction,
+                    f.IsNonsingular → f 0 = 0 →
+                      ∃ data : ParameterBlockProjectionUniformData
+                          (epsilon := epsilon) (eta := eta)
+                          (rhoMax := rhoMax) C Y f,
+                        data.globalShading.IsLambdaDense
+                          (Kakeya.realRpowENN delta (densityPower * eta))
+
 end Kakeya.Assouad

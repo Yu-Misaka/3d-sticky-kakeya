@@ -271,6 +271,31 @@ Section 7. Its parameter-space implementation is discussed in
 Remark~\ref{rem:parameter-frostman}.
 \end{definition}
 
+\begin{lemma}[Radius-squared and volume tests for ordinary tubes]
+\label{lem:ordinary-tube-wolff-volume}
+\lean{Kakeya.Assouad.OrdinaryTubeWolffVolumeBound,Kakeya.Assouad.ordinaryTube_volume_eq,Kakeya.Assouad.ordinaryTube_not_subset_of_radius_lt,Kakeya.Assouad.TubeWolffBound.to_ordinaryVolume,Kakeya.Assouad.OrdinaryTubeWolffVolumeBound.to_radiusSquared}
+\leanok
+\uses{def:tube,def:tube-frostman}
+For $\delta>0$ and $C\geq1$, the radius-squared Tube Wolff count on
+$\delta\leq r\leq1$ implies
+\[
+ \#\{T\in\T:T\subset T_r\}\leq C|T_r|\#\T
+       \qquad(r>0)
+\]
+for all ordinary unit-segment tubes $T_r$.
+Conversely the latter count with constant $C$ implies the former with
+constant $10C$.
+\end{lemma}
+\begin{proof}
+\leanok
+The exact capsule volume is $|T_r|=\pi r^2+(4\pi/3)r^3$.
+It lies between $r^2$ and $10r^2$ for $0<r\leq1$.
+If $r<\delta$, strict volume monotonicity rules out containment of a
+fine tube. If $r>1$, the total family cardinality bounds the count.
+This comparison concerns only ordinary capsules and does not identify
+them with full-line coarse tests.
+\end{proof}
+
 \begin{definition}[Self-similar CWA; WZ2, Definition 2.15]
 \label{def:self-similar-cwa}
 \uses{def:all-scale-cwa}

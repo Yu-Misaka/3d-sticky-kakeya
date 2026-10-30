@@ -51,6 +51,66 @@ structure PureWZ2Lemma31ScaleAssembly
         Kakeya.realRpowENN rho.1 (-stickyLoss)) *
           cfg.family.enncard
 
+/-- The same derivative input with frame control only where the actual
+slab shading is supported. -/
+structure PureWZ2Lemma31SlabAssembly
+    (sigma epsilon delta : ℝ) where
+  eta : ℝ
+  eta_pos : 0 < eta
+  eta_budget : 1000 * eta ≤ epsilon * sigma ^ 2
+  targetLoss : ℝ
+  targetLoss_eq : targetLoss = eta / 8
+  stickyLoss : ℝ
+  stickyLoss_eq : stickyLoss = eta / 4096
+  sourceLoss : ℝ
+  sourceLoss_pos : 0 < sourceLoss
+  sourceLoss_le_stickyLoss : sourceLoss ≤ stickyLoss
+  cfg : PureWZ2C2GrainConfiguration sigma targetLoss delta
+  cfg_bounded_base : HasBoundedBase cfg.family 4
+  rho : WZ2PaperRequestedScale delta
+  rho_eq_power : rho.1 = Real.rpow delta epsilon
+  globalSlope : SlopeFunction
+  globalSlope_eq_on : ∀ z ∈ Set.Icc (-1 : ℝ) 1,
+    globalSlope z = cfg.globalGrains.slope z
+  globalSlope_normalized : globalSlope.IsNormalized
+  scaleData : PureWZ2Section6ScaleData cfg.shading sigma targetLoss rho
+  frameNormalCompatibility : PureWZ2FrameNormalCompatibilityOn cfg scaleData.slabShading.union
+  faithful_overload : ∀ a b : ℝ, b - a ≤ Real.rpow delta epsilon →
+    ∀ step4 : LargeSlopeFaithfulStep4Witness cfg.family sigma eta a b,
+      ∃ W : Set Point3, Convex ℝ W ∧
+        Kakeya.realRpowENN delta (-eta) * volume W *
+            cfg.family.enncard < (wz1PaperBodyFamily cfg.family).containedCount W
+  pointMultiplicity_upper : ∀ point,
+    (scaleData.slabShading.pointMultiplicity point : ENNReal) ≤
+      (Kakeya.realRpowENN delta (2 - sigma - stickyLoss) *
+        Kakeya.realRpowENN rho.1 (-stickyLoss)) * cfg.family.enncard
+
+def PureWZ2Lemma31ScaleAssembly.toSlabAssembly
+    {sigma epsilon delta : ℝ}
+    (data : PureWZ2Lemma31ScaleAssembly sigma epsilon delta) :
+    PureWZ2Lemma31SlabAssembly sigma epsilon delta where
+  eta := data.eta
+  eta_pos := data.eta_pos
+  eta_budget := data.eta_budget
+  targetLoss := data.targetLoss
+  targetLoss_eq := data.targetLoss_eq
+  stickyLoss := data.stickyLoss
+  stickyLoss_eq := data.stickyLoss_eq
+  sourceLoss := data.sourceLoss
+  sourceLoss_pos := data.sourceLoss_pos
+  sourceLoss_le_stickyLoss := data.sourceLoss_le_stickyLoss
+  cfg := data.cfg
+  cfg_bounded_base := data.cfg_bounded_base
+  rho := data.rho
+  rho_eq_power := data.rho_eq_power
+  globalSlope := data.globalSlope
+  globalSlope_eq_on := data.globalSlope_eq_on
+  globalSlope_normalized := data.globalSlope_normalized
+  scaleData := data.scaleData
+  frameNormalCompatibility := data.frameNormalCompatibility.on _
+  faithful_overload := data.faithful_overload
+  pointMultiplicity_upper := data.pointMultiplicity_upper
+
 end Kakeya.Assouad
 
 end

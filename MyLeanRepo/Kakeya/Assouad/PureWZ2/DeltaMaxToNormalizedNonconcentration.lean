@@ -39,6 +39,59 @@ private lemma containedCount_mul_volume_le_deltaMax
   rw [BodyFamily.density, hmass] at hdensity
   exact (ENNReal.div_le_iff hvolume_pos.ne' hvolume_top).mp hdensity
 
+/-- Normalize the full convex count, not just its tube and parameter tests.
+Zero-volume and infinite-volume convex sets are included in the conclusion. -/
+lemma deltaMax_to_normalized_convexWolff
+    {delta : ℝ} (hdelta : 0 < delta) (hdelta_one : delta ≤ 1)
+    (F : Kakeya.Streamlined.TubeFamily delta) (hF : F.Nonempty)
+    (densityBound cardinalityFloor normalizedConstant : ENNReal)
+    (hconstant : normalizedConstant ≠ 0)
+    (hdeltaMax : F.toBodyFamily.deltaMax ≤ densityBound)
+    (hcard : cardinalityFloor ≤ F.enncard)
+    (habsorb : Kakeya.deltaTubeVolume 1 * densityBound *
+        (Kakeya.deltaTubeVolume delta)⁻¹ ≤ normalizedConstant * cardinalityFloor) :
+    ConvexWolffBound F normalizedConstant := by
+  classical
+  have hV := tube_volume_scaling.2.1 delta hdelta hdelta_one
+  have hcardZero : F.enncard ≠ 0 := by
+    change (F.card : ENNReal) ≠ 0
+    exact_mod_cast (Nat.ne_of_gt hF)
+  intro K hconvex
+  by_cases hzero : volume K = 0
+  · have hempty : F.toBodyFamily.containedIndices K = ∅ := by
+      apply Finset.eq_empty_of_forall_notMem
+      intro i hi
+      have hsub := BodyFamily.mem_containedIndices_iff.mp hi
+      have hpos : 0 < volume (F.tube i).carrier := by
+        change 0 < (F.tube i).volume
+        rw [tube_volume_scaling.1 delta (F.tube i)]
+        exact hV.1
+      have hposK := hpos.trans_le (measure_mono hsub)
+      rw [hzero] at hposK
+      exact (lt_irrefl _ hposK)
+    simp [BodyFamily.containedCount, hempty]
+  by_cases htop : volume K = ⊤
+  · rw [htop, ENNReal.mul_top hconstant, ENNReal.top_mul hcardZero]
+    exact le_top
+  have hcount := containedCount_mul_volume_le_deltaMax F K hconvex
+    (pos_iff_ne_zero.mpr hzero) htop
+  calc
+    F.toBodyFamily.containedCount K * Kakeya.deltaTubeVolume 1 =
+        ((F.toBodyFamily.containedCount K * Kakeya.deltaTubeVolume delta) *
+          (Kakeya.deltaTubeVolume delta)⁻¹) * Kakeya.deltaTubeVolume 1 := by
+      rw [mul_assoc _ (Kakeya.deltaTubeVolume delta),
+        ENNReal.mul_inv_cancel hV.1.ne' hV.2, mul_one]
+    _ ≤ ((densityBound * volume K) * (Kakeya.deltaTubeVolume delta)⁻¹) *
+          Kakeya.deltaTubeVolume 1 := by
+      exact mul_le_mul_left
+        (mul_le_mul_left (hcount.trans (mul_le_mul_left hdeltaMax _)) _) _
+    _ = (Kakeya.deltaTubeVolume 1 * densityBound *
+          (Kakeya.deltaTubeVolume delta)⁻¹) * volume K := by ring
+    _ ≤ (normalizedConstant * cardinalityFloor) * volume K :=
+      mul_le_mul_left habsorb _
+    _ ≤ (normalizedConstant * F.enncard) * volume K := by gcongr
+    _ = normalizedConstant * volume K * F.enncard := by ring
+
 lemma deltaMax_to_normalized_tubeWolff
     {delta : ℝ} (hdelta : 0 < delta) (hdelta_one : delta ≤ 1)
     (F : Kakeya.Streamlined.TubeFamily delta)

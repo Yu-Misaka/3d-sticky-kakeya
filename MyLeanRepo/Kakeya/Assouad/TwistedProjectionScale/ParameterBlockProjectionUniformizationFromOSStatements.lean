@@ -43,4 +43,14 @@ def ParameterBlockProjectionUniformizationFromOSStatement : Prop :=
             ProjectedFiberOSCinematicGlobalizationStatement →
               ParameterBlockProjectionUniformizationStatement
 
+/-- Pass the additional density through the same construction. -/
+def ParameterBlockProjectionUniformizationFromOSWithDensityStatement (densityPower : ℝ) : Prop :=
+  ParameterBlockProjectionArithmeticStatement →
+    PerTubeMassPruningStatement →
+      ProjectedFiberOSPreparationWithDensityStatement densityPower →
+        ProjectedFiberOSLevelCellSystemStatement →
+          ParameterLocalBlockProjectionCorridorStatement →
+            ProjectedFiberOSCinematicGlobalizationStatement →
+              ParameterBlockProjectionUniformizationWithDensityStatement densityPower
+
 end Kakeya.Assouad

@@ -7,8 +7,8 @@ by executing the corrected finite terminal-cell grid OS iteration.
 
 namespace Kakeya.Assouad
 
-theorem grid_os_parameter_frostman_estimate :
-    GridOSParameterFrostmanEstimateStatement := by
+theorem grid_os_parameter_frostman_polynomial_estimate (cardExponent : ℝ) :
+    GridOSParameterFrostmanPolynomialEstimateStatement cardExponent := by
   intro hBoundedOneScale hInitialState hLossSchedule hInitialReadyState
         hStateDichotomy hTransitionReadyState hFiniteStepSchedule
         hFiniteRun hTermination hTerminalClosure hFinalAbsorption
@@ -68,8 +68,14 @@ theorem grid_os_parameter_frostman_estimate :
       exact le_trans (min_le_left _ _) (min_le_left _ _)
     have h2 : schedule.delta₀ < 1 := schedule.delta₀_lt_one
     linarith
-  refine ⟨eta, delta₀, h_eta_pos, h_eta_le_eps, h_delta₀_pos, h_delta₀_lt_one, ?_⟩
-  intro delta hdelta_pos hdelta_le F hF_nonempty hF_bounded hF_distinct hF_vertical hF_tubeWolff hF_paramFrost hF_extremal Y hY_dense hY_slope f hf_nonsing hf_zero
+  have h_eta_le_one : eta ≤ 1 := by
+    have h := min_le_right (epsilon / 4) (1 / 200 : ℝ)
+    change innerEpsilon ≤ 1 / 200 at h
+    linarith
+  refine ⟨eta, delta₀, h_eta_pos, h_eta_le_eps, h_eta_le_one,
+    h_delta₀_pos, h_delta₀_lt_one, ?_⟩
+  intro delta hdelta_pos hdelta_le F hF_nonempty hF_vertical hF_bounds
+    h_card hF_paramFrost Y hY_dense hY_slope f hf_nonsing hf_zero
   have h_delta_le_schedule : delta ≤ schedule.delta₀ := by
     have h : delta₀ ≤ schedule.delta₀ := by
       exact le_trans (min_le_left _ _) (min_le_left _ _)
@@ -89,19 +95,6 @@ theorem grid_os_parameter_frostman_estimate :
   have h_delta_lt_one : delta < 1 := by
     have h : delta ≤ delta₀ := hdelta_le
     linarith [h_delta₀_lt_one]
-  have h_card : F.enncard ≤ Kakeya.realRpowENN delta (-3) := by
-    have h1 : F.enncard ≤ Kakeya.realRpowENN delta (-2 - eta / 10) := hF_extremal
-    have h2 : Kakeya.realRpowENN delta (-2 - eta / 10) ≤ Kakeya.realRpowENN delta (-3) := by
-      simp only [Kakeya.realRpowENN]
-      apply ENNReal.ofReal_le_ofReal
-      have h3 : -2 - eta / 10 ≥ -3 := by
-        have h4 : eta / 10 ≤ 1 := by linarith [h_eta_le_eps]
-        linarith
-      have h5 : Real.rpow delta (-2 - eta / 10) ≤ Real.rpow delta (-3) := by
-        apply Real.rpow_le_rpow_of_exponent_le_or_ge
-        exact Or.inr ⟨hdelta_pos, by linarith, by linarith⟩
-      exact h5
-    exact le_trans h1 h2
   let sourceConstant : ENNReal := Kakeya.realRpowENN delta (-eta)
   have h_sc_pos : 1 ≤ sourceConstant := by
     have h : Real.rpow delta 0 ≤ Real.rpow delta (-eta) :=
@@ -114,7 +107,7 @@ theorem grid_os_parameter_frostman_estimate :
   have h_sc_le : sourceConstant ≤ Kakeya.realRpowENN delta (-eta) := by rfl
   have h_initial : ∃ (initial : TubeParameterGridOSInitialStateData (eta := eta) F Y sourceConstant), initial.base = base :=
     h_initial_producer delta hdelta_pos h_delta_le_initial F hF_nonempty hF_vertical
-      (fun i => tubeParams_bounds hF_bounded hF_vertical i) h_card sourceConstant h_sc_pos h_sc_ne_top hF_paramFrost
+      hF_bounds h_card sourceConstant h_sc_pos h_sc_ne_top hF_paramFrost
       Y hY_dense hY_slope
   rcases h_initial with ⟨initial, h_initial_base⟩
   subst h_initial_base
@@ -190,5 +183,35 @@ theorem grid_os_parameter_frostman_estimate :
     rw [h_vol0]
     exact MeasureTheory.measure_mono h_contain
   exact le_trans h_absorbed h_vol_le
+
+/-- Recover the historical parameter-Frostman contract without changing any
+of its binders.  Its Tube-Wolff and distinctness hypotheses are redundant. -/
+theorem twisted_projection_parameter_frostman_of_polynomial
+    (h : TwistedProjectionParameterFrostmanPolynomialEstimateStatement 3) :
+    TwistedProjectionParameterFrostmanEstimateStatement := by
+  intro epsilon hepsilon
+  obtain ⟨eta, delta₀, heta, hetaEpsilon, hetaOne, hdelta₀, hdelta₀One, hmain⟩ :=
+    h epsilon hepsilon
+  refine ⟨eta, delta₀, heta, hetaEpsilon, hdelta₀, hdelta₀One, ?_⟩
+  intro delta hdelta hdeltaLe F hnonempty hbase _hdistinct hvertical
+    _htubeWolff hfrostman hcard Y hdense hwindow f hnonsingular hzero
+  have hcard' : F.enncard ≤ Kakeya.realRpowENN delta (-3) := by
+    apply hcard.trans
+    apply ENNReal.ofReal_le_ofReal
+    apply Real.rpow_le_rpow_of_exponent_le_or_ge
+    exact Or.inr ⟨hdelta, (hdeltaLe.trans_lt hdelta₀One).le, by linarith⟩
+  exact hmain delta hdelta hdeltaLe F hnonempty hvertical
+    (tubeParams_bounds hbase hvertical) hcard' hfrostman Y hdense hwindow
+    f hnonsingular hzero
+
+/-- Compatibility with the historical cubic finite-iteration interface. -/
+theorem grid_os_parameter_frostman_estimate :
+    GridOSParameterFrostmanEstimateStatement := by
+  intro hBounded hInitial hLoss hReady hDichotomy hTransition hSchedule
+    hRun hTermination hTerminal hAbsorb
+  exact twisted_projection_parameter_frostman_of_polynomial
+    (grid_os_parameter_frostman_polynomial_estimate 3 hBounded hInitial
+      hLoss hReady hDichotomy hTransition hSchedule hRun hTermination
+      hTerminal hAbsorb)
 
 end Kakeya.Assouad

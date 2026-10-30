@@ -188,7 +188,8 @@ end Proposition63M9FinalReentryLossSchedule
 /-- Construct the complete family-free final re-entry schedule.  The only
 assumptions are the critical package and a small public output-loss budget;
 all choices are made before any runtime family or cardinality is known. -/
-theorem exists_proposition63_m9_final_reentry_loss_schedule
+theorem exists_proposition63_m9_final_reentry_loss_schedule_with_kernel
+    (kernel : PureWZ2RichProp62KernelStatement)
     {sigma outputLoss : ℝ}
     (critical : PureWZ2CriticalPackage sigma)
     (houtputLoss : 0 < outputLoss)
@@ -236,7 +237,7 @@ theorem exists_proposition63_m9_final_reentry_loss_schedule
       dsimp only [grainLoss]
       exact min_le_left _ _
     linarith
-  rcases proposition63_m9_nested_schedule critical grainLoss_pos with
+  rcases proposition63_m9_nested_schedule_with_kernel kernel critical grainLoss_pos with
     ⟨nested⟩
   let p : ℝ := nested.outer.preGrainLoss
   have p_pos : 0 < p := by
@@ -401,6 +402,17 @@ theorem exists_proposition63_m9_final_reentry_loss_schedule
     delta₀_pos := delta₀_pos
     delta₀_le_one := delta₀_le_one
   }⟩
+
+/-- Compatibility entry using the closed rich Proposition-6.2 kernel. -/
+theorem exists_proposition63_m9_final_reentry_loss_schedule
+    {sigma outputLoss : ℝ}
+    (critical : PureWZ2CriticalPackage sigma)
+    (houtputLoss : 0 < outputLoss)
+    (houtputLoss_le_one : outputLoss ≤ 1) :
+    Nonempty (Proposition63M9FinalReentryLossSchedule
+      sigma outputLoss critical) :=
+  exists_proposition63_m9_final_reentry_loss_schedule_with_kernel pure_wz2_node03_rich_prop62_kernel
+    critical houtputLoss houtputLoss_le_one
 
 end Kakeya.Assouad.PureWZ2
 

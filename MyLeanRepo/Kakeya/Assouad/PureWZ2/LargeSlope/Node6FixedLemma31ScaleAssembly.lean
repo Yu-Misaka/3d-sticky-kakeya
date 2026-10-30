@@ -302,6 +302,42 @@ private theorem node6_fixed_lemma31_source_provider
     exact ⟨delta, hdelta, hdeltaLocal, cfg,
       fun h => (hsourcePower h).elim⟩
 
+/-- Install one global fine multiplicity cap before any later interval or
+power scale is chosen. The output is obtained from the actual C2 producer
+by the existing certified Proposition 6.2 preconditioning and loss weakening. -/
+theorem pureWZ2_c2_source_with_fine_cap
+    {logExponent : ℕ}
+    (hc2grains : PureWZ2C2GrainsFromCriticalStatement)
+    (certifiedProvider : PureWZ2Node6FixedScaleCriticalAt logExponent)
+    (sigma : ℝ) (critical : PureWZ2CriticalPackage sigma)
+    (loss capLoss deltaBound : ℝ)
+    (hloss : 0 < loss) (hcapLoss : 0 < capLoss) (hdeltaBound : 0 < deltaBound) :
+    ∃ delta : ℝ, 0 < delta ∧ delta ≤ deltaBound ∧
+      ∃ cfg : PureWZ2C2GrainConfiguration sigma loss delta,
+        ∀ p, (cfg.shading.pointMultiplicity p : ENNReal) ≤
+          Kakeya.realRpowENN delta (2 - sigma - capLoss) * cfg.family.enncard := by
+  let fineLoss := min loss (min (capLoss / 8) (1 / 4))
+  have hfine : 0 < fineLoss := by dsimp [fineLoss]; positivity
+  have hfineLoss : fineLoss ≤ loss := min_le_left _ _
+  have hfineCap : fineLoss ≤ capLoss / 8 := (min_le_right _ _).trans (min_le_left _ _)
+  have hfineQuarter : fineLoss ≤ 1 / 4 := (min_le_right _ _).trans (min_le_right _ _)
+  obtain ⟨delta, hdelta, hcut, cfg, hsource⟩ :=
+    node6_fixed_lemma31_source_provider hc2grains certifiedProvider sigma critical
+      (1 / 2) (capLoss / 2) fineLoss (by norm_num) le_rfl
+      (by linarith) (by linarith) fineLoss deltaBound hfine hdeltaBound
+  let output := cfg.mono_loss hdelta cfg.extremal.delta_le_one hfine.le hfineLoss
+  refine ⟨delta, hdelta, hcut, output, ?_⟩
+  intro p
+  have h := hsource le_rfl p
+  rw [← node6_fixed_preconditioning_cap_factor hdelta] at h
+  have hpower : Kakeya.realRpowENN delta (2 - sigma - (1 + 1 / 2) * (capLoss / 2)) ≤
+      Kakeya.realRpowENN delta (2 - sigma - capLoss) :=
+    ENNReal.ofReal_mono (Real.rpow_le_rpow_of_exponent_ge
+      hdelta cfg.extremal.delta_le_one (by linarith))
+  change (cfg.shading.pointMultiplicity p : ENNReal) ≤
+    Kakeya.realRpowENN delta (2 - sigma - capLoss) * cfg.family.enncard
+  exact h.trans (by gcongr)
+
 theorem pureWZ2_node6_fixed_lemma31_scale_assembly_with_eta
     {logExponent : ℕ}
     (hc2grains : PureWZ2C2GrainsFromCriticalStatement)
@@ -407,11 +443,29 @@ theorem pureWZ2_node6_fixed_lemma31_scale_assembly_with_eta
       0 < sourceLoss → 0 < localBound →
         ∃ delta : ℝ, 0 < delta ∧ delta ≤ localBound ∧
           ∃ cfg : PureWZ2C2GrainConfiguration sigma sourceLoss delta,
-            SourceCap cfg :=
-    node6_fixed_lemma31_source_provider
-      hc2grains certifiedProvider sigma critical
-      epsilon stickyLoss powerInputLoss hepsilon hepsilonHalf
-      hpowerInputHalf hpowerInputStickyHalf
+            SourceCap cfg := by
+    intro sourceLoss localBound hsourceLoss hlocalBound
+    obtain ⟨delta, hdelta, hcut, cfg, hcap⟩ :=
+      pureWZ2_c2_source_with_fine_cap hc2grains certifiedProvider sigma critical
+        sourceLoss stickyLoss localBound hsourceLoss hsticky hlocalBound
+    refine ⟨delta, hdelta, hcut, cfg, ?_⟩
+    intro _ p
+    have hrho : 0 < Real.rpow delta epsilon := Real.rpow_pos_of_pos hdelta _
+    have hrhoOne : Real.rpow delta epsilon ≤ 1 :=
+      Real.rpow_le_one hdelta.le cfg.extremal.delta_le_one hepsilon.le
+    have hone : (1 : ENNReal) ≤ Kakeya.realRpowENN (Real.rpow delta epsilon) (-stickyLoss) := by
+      have h : Real.rpow (Real.rpow delta epsilon) 0 ≤
+          Real.rpow (Real.rpow delta epsilon) (-stickyLoss) :=
+        Real.rpow_le_rpow_of_exponent_ge hrho hrhoOne (by linarith)
+      have hz : Real.rpow (Real.rpow delta epsilon) 0 = 1 := Real.rpow_zero _
+      rw [hz] at h
+      have h' := ENNReal.ofReal_mono h
+      rw [ENNReal.ofReal_one] at h'
+      exact h'
+    exact (hcap p).trans (by
+      calc
+        _ = (Kakeya.realRpowENN delta (2 - sigma - stickyLoss) * 1) * cfg.family.enncard := by simp
+        _ ≤ _ := by gcongr)
   let sqrtBound := min deltaBound
     (min powerScale
       (min densityScale (min scalarScale

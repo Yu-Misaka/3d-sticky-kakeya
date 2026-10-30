@@ -16,11 +16,11 @@ density absorption, and same-level planar cell uniformity.
 
 namespace Kakeya.Assouad
 
-theorem projected_fiber_os_preparation :
-    ProjectedFiberOSPreparationStatement := by
+theorem projected_fiber_os_preparation_with_density :
+    ProjectedFiberOSPreparationWithDensityStatement 3 := by
   intro eta heta
   -- Step 1: Choose grid base and band threshold scales
-  rcases projected_fiber_grid_parameter_selection eta heta with
+  rcases projected_fiber_grid_parameter_selection (eta / 2) (by positivity) with
     ⟨base, hbase3, δ₀g, hδ₀g_pos, hδ₀g_lt1, hg⟩
   refine ⟨base, hbase3, ?_⟩
   rcases projected_fiber_band_parameter_selection eta heta with
@@ -95,18 +95,18 @@ theorem projected_fiber_os_preparation :
   have h3 : projectedFiberBandLoss levelCount *
       (projectedFiberAtomizationLoss base levels indexBound *
        projectedFiberOSLoss base levels) ≤
-      Kakeya.realRpowENN delta (-eta) * Kakeya.realRpowENN delta (-2 * eta) := by
+      Kakeya.realRpowENN delta (-eta) * Kakeya.realRpowENN delta (-2 * (eta / 2)) := by
     gcongr
 
-  have h4 : Kakeya.realRpowENN delta (-eta) * Kakeya.realRpowENN delta (-2 * eta) =
-      Kakeya.realRpowENN delta (-3 * eta) := by
-    rw [← Kakeya.Assouad.realRpowENN_add hdelta (-eta) (-2 * eta)]
+  have h4 : Kakeya.realRpowENN delta (-eta) * Kakeya.realRpowENN delta (-2 * (eta / 2)) =
+      Kakeya.realRpowENN delta (-2 * eta) := by
+    rw [← Kakeya.Assouad.realRpowENN_add hdelta (-eta) (-2 * (eta / 2))]
     ; ring_nf
 
   have h5 : projectedFiberBandLoss levelCount *
       (projectedFiberAtomizationLoss base levels indexBound *
        projectedFiberOSLoss base levels) ≤
-      Kakeya.realRpowENN delta (-3 * eta) := by
+      Kakeya.realRpowENN delta (-2 * eta) := by
     rw [h4] at h3
     exact h3
   have h_assoc : projectedFiberTotalLoss levelCount base levels indexBound =
@@ -115,15 +115,42 @@ theorem projected_fiber_os_preparation :
          projectedFiberOSLoss base levels) := by
     simp [projectedFiberTotalLoss, mul_assoc]
   have htotal : projectedFiberTotalLoss levelCount base levels indexBound ≤
-      Kakeya.realRpowENN delta (-3 * eta) := by
+      Kakeya.realRpowENN delta (-2 * eta) := by
     rw [h_assoc]
     exact h5
+
+  have htotalOld : projectedFiberTotalLoss levelCount base levels indexBound ≤
+      Kakeya.realRpowENN delta (-3 * eta) :=
+    htotal.trans (ENNReal.ofReal_le_ofReal
+      (Real.rpow_le_rpow_of_exponent_ge hdelta hdelta_le_one (by linarith)))
+  have hretained : Y.mass ≤
+      Kakeya.realRpowENN delta (-2 * eta) * uniform.shading.mass := by
+    calc
+      Y.mass ≤ projectedFiberBandLoss levelCount * bandData.shading.mass :=
+        bandData.mass_retention
+      _ ≤ projectedFiberBandLoss levelCount *
+          (projectedFiberAtomizationLoss base levels indexBound *
+            projectedFiberOSLoss base levels * uniform.shading.mass) :=
+        mul_le_mul_right uniform.total_mass_retention _
+      _ = projectedFiberTotalLoss levelCount base levels indexBound *
+          uniform.shading.mass := by simp [projectedFiberTotalLoss, mul_assoc]
+      _ ≤ _ := mul_le_mul_left htotal _
+  have hdensityStrong : uniform.shading.IsLambdaDense
+      (Kakeya.realRpowENN delta (3 * eta)) := by
+    have h := mul_le_mul_right (hYdense.trans hretained)
+      (Kakeya.realRpowENN delta (2 * eta))
+    rw [← mul_assoc, ← mul_assoc, ← realRpowENN_add hdelta,
+      ← realRpowENN_add hdelta] at h
+    have hsum : 2 * eta + -2 * eta = 0 := by ring
+    rw [hsum] at h
+    simpa [Kakeya.Streamlined.Shading.IsLambdaDense, Kakeya.realRpowENN,
+      show 2 * eta + eta = 3 * eta by ring] using h
 
   -- Step 10: Density absorption
   rcases projected_fiber_os_density_absorption
       hdelta hdelta_le_one heta F Y hYdense hY_slab f
       bandData base levels indexBound
-      atomized uniform htotal with
+      atomized uniform htotalOld with
     ⟨density⟩
 
   -- Step 11: Cell mass uniformity
@@ -182,6 +209,16 @@ theorem projected_fiber_os_preparation :
     cellMass := cellMass
     cellArea := cellArea
     global_twisted_eq := global_twisted_eq
-  }, rfl⟩
+  }, rfl, by simpa only [density.globalShading_eq] using hdensityStrong⟩
+
+/-- The original density interface, obtained from the stronger OS choice. -/
+theorem projected_fiber_os_preparation : ProjectedFiberOSPreparationStatement := by
+  intro eta heta
+  obtain ⟨base, hb, delta₀, hd, hd1, h⟩ :=
+    projected_fiber_os_preparation_with_density eta heta
+  refine ⟨base, hb, delta₀, hd, hd1, ?_⟩
+  intro delta hdelta hsmall F hn hv hp Y hy hw f hf h0
+  obtain ⟨prepared, hbase, _⟩ := h delta hdelta hsmall F hn hv hp Y hy hw f hf h0
+  exact ⟨prepared, hbase⟩
 
 end Kakeya.Assouad

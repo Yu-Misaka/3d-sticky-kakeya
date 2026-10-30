@@ -327,18 +327,21 @@ of $\delta^{O(\eta)}$, which fit inside $\eps$.
 
 \begin{proof}[Proof of Theorem~\ref{thm:sticky}]
 \proves{thm:sticky}
-\uses{lem:critical-exponent,lem:small-twisted-projection,thm:twisted-parameter}
+\uses{lem:critical-exponent,lem:common-height-terminal,cor:twisted-cwa-common-height}
 \leanok
 Assume the conclusion fails, and choose $0<\sigma<1$ as in
 Lemma~\ref{lem:critical-exponent}. The grain and large-slope arguments
 give configurations at arbitrarily small scales whose twisted
 projection has area at most $\delta^{\sigma-a}$, where $a>0$ may be
-chosen as small as needed. The same selected configuration satisfies
-the parameter nonconcentration required by
-Theorem~\ref{thm:twisted-parameter}. First choose its output loss
+chosen as small as needed. The same normalized terminal carries CWA
+and every geometric hypothesis required by
+Corollary~\ref{cor:twisted-cwa-common-height}. In particular, its actual
+unit segments have the proved common center height. First choose the output loss
 $b=\sigma/4$ and obtain its admissible input loss and scale threshold.
-Then choose the structural loss $a>0$ below both that input loss
-and $\sigma/4$, and take the fine scale below the threshold.
+Then request the terminal at that input loss $a\leq\sigma/4$
+and take its fine scale below the threshold. The lower bound derives
+its ordinary capsule Tube Wolff count, parameter count and packing budget
+internally from this same CWA family.
 The two bounds give
 \[
  \delta^{\sigma/4}\leq |\pi_f(E_Y)|

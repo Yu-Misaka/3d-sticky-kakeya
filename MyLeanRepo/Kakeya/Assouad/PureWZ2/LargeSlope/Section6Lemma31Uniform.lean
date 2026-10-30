@@ -1,4 +1,4 @@
-import MyLeanRepo.Kakeya.Assouad.PureWZ2.LargeSlope.Section6Lemma31Contradiction
+import MyLeanRepo.Kakeya.Assouad.PureWZ2.LargeSlope.Lemma66Prepared
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.LargeSlope.FaithfulStep4Numerics
 import MyLeanRepo.Kakeya.Assouad.WZ1.Corollary26DeltaBudget
 
@@ -80,40 +80,9 @@ theorem pureWZ2_lemma31_derivative_assembly_with_eta_of_scale_producer
     hepsilonEighth.trans (by norm_num)
   let targetLoss : ℝ := eta / 8
   let stickyLoss : ℝ := eta / 4096
-  have hsigmaSqOne : sigma ^ 2 < 1 := by
-    nlinarith [mul_pos critical.sigma_pos
-      (sub_pos.mpr critical.sigma_lt_one)]
-  have hetaEpsilon : eta ≤ epsilon := by
-    have hscaled : epsilon * sigma ^ 2 ≤ 1000 * epsilon := by
-      nlinarith [hepsilon, hsigmaSqOne]
-    nlinarith
-  have htargetEta : targetLoss ≤ eta := by
-    dsimp only [targetLoss]
-    linarith
-  have hstickyPos : 0 < stickyLoss := by
-    dsimp only [stickyLoss]
-    positivity
-  have hstickyTarget : stickyLoss < targetLoss := by
-    dsimp only [stickyLoss, targetLoss]
-    linarith
-  have hcommonExponent : 0 < 4 * (eta / 2) - targetLoss - targetLoss -
-      (1 + epsilon) * stickyLoss := by
-    dsimp only [targetLoss, stickyLoss]
-    nlinarith [mul_pos heta (sub_pos.mpr (by linarith : epsilon < 7))]
-  have hprismExponent :
-      0 < 12 * eta - 4 * (eta / 2) - targetLoss := by
-    dsimp only [targetLoss]
-    linarith
-  have htarget : 0 < targetLoss := by
-    dsimp only [targetLoss]
-    positivity
-  have htargetEta' : targetLoss ≤ eta := htargetEta
-  have hwholeGap' : 5 * targetLoss < 12 * eta := by
-    dsimp only [targetLoss]
-    linarith [heta]
-  rcases pureWZ2_faithfulStep4_delta_exists
-      (eta := eta) (loss := targetLoss) hwholeGap' with
-    ⟨deltaWhole, hdeltaWhole, _hdeltaWholeOne, hwhole⟩
+  rcases pure_wz2_lemma66_prepared sigma epsilon eta
+      critical.sigma_pos critical.sigma_lt_one hepsilon hepsilonHalf
+      heta hetaBudget with ⟨deltaLemma66, hdeltaLemma66, _, lemma66⟩
   have hcommonExponent' :
       0 < 4 * (eta / 2) - targetLoss - targetLoss -
         (1 + epsilon) * stickyLoss := by
@@ -125,16 +94,6 @@ theorem pureWZ2_lemma31_derivative_assembly_with_eta_of_scale_producer
       (1 / 400000) hcommonExponent'
       (by norm_num) (by norm_num) with
     ⟨deltaCommon, hdeltaCommon, _hdeltaCommonOne, hcommon⟩
-  rcases exists_delta_rpow_le_single
-      (12 * eta - 4 * (eta / 2) - targetLoss)
-      (1 / 100000) (by
-        simpa only [targetLoss] using hprismExponent)
-      (by norm_num) (by norm_num) with
-    ⟨deltaPrism, hdeltaPrism, _hdeltaPrismOne, hprism⟩
-  have hgeometryExponent : 0 < 1 - epsilon := by linarith
-  rcases exists_delta_rpow_le_single (1 - epsilon) (1 / 256)
-      hgeometryExponent (by norm_num) (by norm_num) with
-    ⟨deltaGeometry, hdeltaGeometry, _hdeltaGeometryOne, hgeometry⟩
   rcases exists_delta_rpow_le_single epsilon
       (1 / 240000000000000000) hepsilon
       (by norm_num) (by norm_num) with
@@ -160,8 +119,7 @@ theorem pureWZ2_lemma31_derivative_assembly_with_eta_of_scale_producer
         unfold pureWZ2CoupledConflictConstant
         nlinarith) with
     ⟨deltaCoupled, hdeltaCoupled, _hdeltaCoupledOne, hcoupledSmall⟩
-  let smallScale := deltaWhole ⊓ deltaCommon ⊓ deltaPrism ⊓
-    deltaGeometry ⊓ deltaRho ⊓ deltaCoupled
+  let smallScale := deltaLemma66 ⊓ deltaCommon ⊓ deltaRho ⊓ deltaCoupled
   let requestedBound := min deltaBound (min smallScale (1 / 100))
   have hrequestedBound : 0 < requestedBound := by
     dsimp only [requestedBound, smallScale]
@@ -172,21 +130,14 @@ theorem pureWZ2_lemma31_derivative_assembly_with_eta_of_scale_producer
     hdeltaRequested.trans (by simp [requestedBound])
   have hdeltaSmall : delta ≤ 1 / 100 :=
     hdeltaRequested.trans (by simp [requestedBound])
-  have hdeltaLtOne : delta < 1 := by linarith
-  have hdeltaWholeLe : delta ≤ deltaWhole :=
+  have hdeltaLemma66Le : delta ≤ deltaLemma66 :=
     hdeltaRequested.trans (by simp [requestedBound, smallScale])
   have hdeltaCommonLe : delta ≤ deltaCommon :=
-    hdeltaRequested.trans (by simp [requestedBound, smallScale])
-  have hdeltaPrismLe : delta ≤ deltaPrism :=
-    hdeltaRequested.trans (by simp [requestedBound, smallScale])
-  have hdeltaGeometryLe : delta ≤ deltaGeometry :=
     hdeltaRequested.trans (by simp [requestedBound, smallScale])
   have hdeltaRhoLe : delta ≤ deltaRho :=
     hdeltaRequested.trans (by simp [requestedBound, smallScale])
   have hdeltaCoupledLe : delta ≤ deltaCoupled :=
     hdeltaRequested.trans (by simp [requestedBound, smallScale])
-  have hrhoPos : 0 < data.rho.1 :=
-    data.cfg.extremal.delta_pos.trans_le data.rho.2.1
   have hdataTarget : data.targetLoss = targetLoss := by
     rw [data.targetLoss_eq, hdataEta]
   have hdataSticky : data.stickyLoss = stickyLoss := by
@@ -199,38 +150,6 @@ theorem pureWZ2_lemma31_derivative_assembly_with_eta_of_scale_producer
         pureWZ2CoupledScaleRequirement) := by
     rw [data.rho_eq_power]
     exact hcoupledSmall delta hdelta hdeltaCoupledLe
-  have hgeometryPower : Real.rpow delta (1 - epsilon) ≤ 1 / 256 :=
-    hgeometry delta hdelta hdeltaGeometryLe
-  have hdeltaSplit : delta =
-      Real.rpow delta epsilon * Real.rpow delta (1 - epsilon) := by
-    calc
-      delta = Real.rpow delta 1 := (Real.rpow_one delta).symm
-      _ = Real.rpow delta (epsilon + (1 - epsilon)) := by ring_nf
-      _ = Real.rpow delta epsilon * Real.rpow delta (1 - epsilon) :=
-        Real.rpow_add hdelta epsilon (1 - epsilon)
-  have hgeometrySmall : 256 * delta ≤ data.rho.1 := by
-    calc
-      256 * delta = 256 * (Real.rpow delta epsilon *
-          Real.rpow delta (1 - epsilon)) :=
-        congrArg (fun value : ℝ => 256 * value) hdeltaSplit
-      _ ≤ 256 * (Real.rpow delta epsilon * (1 / 256)) := by
-        exact mul_le_mul_of_nonneg_left
-          (mul_le_mul_of_nonneg_left hgeometryPower
-            (Real.rpow_nonneg hdelta.le epsilon)) (by norm_num)
-      _ = Real.rpow delta epsilon := by ring
-      _ = data.rho.1 := data.rho_eq_power.symm
-  have hscaleSmall : data.rho.1 ≤ 1 / 32 :=
-    hrhoTiny.trans (by norm_num)
-  have hrhoQuarter : 64 * data.rho.1 ^ 2 ≤ 1 / 4 := by
-    calc
-      64 * data.rho.1 ^ 2 ≤
-          64 * (1 / 240000000000000000 : ℝ) ^ 2 := by gcongr
-      _ ≤ 1 / 4 := by norm_num
-  have hframeSmall : 2 * data.rho.1 ^ 2 ≤ 1 / 100 := by
-    calc
-      2 * data.rho.1 ^ 2 ≤
-          2 * (1 / 240000000000000000 : ℝ) ^ 2 := by gcongr
-      _ ≤ 1 / 100 := by norm_num
   have hcommonSmall : Kakeya.realRpowENN delta
         (4 * (data.eta / 2) - data.targetLoss - data.targetLoss -
           (1 + epsilon) * data.stickyLoss) ≤
@@ -238,29 +157,14 @@ theorem pureWZ2_lemma31_derivative_assembly_with_eta_of_scale_producer
     rw [hdataEta, hdataTarget, hdataSticky]
     simpa [Kakeya.realRpowENN] using
       ENNReal.ofReal_mono (hcommon delta hdelta hdeltaCommonLe)
-  have hprismSmall : Real.rpow delta
-        (12 * data.eta - 4 * (data.eta / 2) - data.targetLoss) ≤
-      1 / 100000 := by
-    rw [hdataEta, hdataTarget]
-    exact hprism delta hdelta hdeltaPrismLe
-  have hwholeSmall : Real.rpow delta (12 * eta - 5 * targetLoss) ≤
-      1 / 100000 := hwhole delta hdelta hdeltaWholeLe
-  have hlocalStrong : (4356 : ENNReal) *
-        (20 * Kakeya.realRpowENN delta (-targetLoss)) ≤
-      Kakeya.realRpowENN delta (-(12 * eta)) :=
-    pureWZ2_faithful_whole_ad_constant hdelta
-      data.cfg.extremal.delta_le_one htarget.le hwholeSmall
-  have hlocalADConstant : (36 : ENNReal) *
-        (20 * Kakeya.realRpowENN delta (-data.targetLoss)) ≤
-      Kakeya.realRpowENN delta (-(12 * data.eta)) := by
-    rw [hdataTarget, hdataEta]
-    exact
-      (mul_le_mul_right' (by norm_num : (36 : ENNReal) ≤ 4356)
-        (20 * Kakeya.realRpowENN delta (-targetLoss))).trans hlocalStrong
-  have hderivative := data.derivative_lower hepsilon hepsilonHalf
-    critical.sigma_pos critical.sigma_lt_one hdeltaLtOne hdeltaSmall
-    hgeometrySmall hscaleSmall hrhoQuarter hframeSmall hcommonSmall
-    hprismSmall hlocalADConstant data.faithful_overload
+  have hderivative :
+      ∀ z ∈ Set.Icc data.scaleData.slabLeft data.scaleData.slabRight,
+        data.scaleData.slabRight - data.scaleData.slabLeft ≤
+          |deriv data.globalSlope z| := by
+    have rule := lemma66 delta hdelta hdeltaLemma66Le
+    rw [← hdataEta] at rule
+    rcases data.toLemma66PreparedSlab_coordinates with ⟨left, right, slope⟩
+    simpa only [left, right, slope] using rule data.toLemma66PreparedSlab
   have hdeltaRhoSq : delta ≤ data.rho.1 ^ 2 := by
     rw [data.rho_eq_power]
     have hpower : Real.rpow delta 1 ≤

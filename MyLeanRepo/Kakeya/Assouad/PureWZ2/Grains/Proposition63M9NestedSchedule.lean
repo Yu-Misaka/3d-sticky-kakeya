@@ -32,7 +32,8 @@ structure Proposition63M9NestedScheduleData
 /-- Freeze the outer chart/tail hierarchy first and the direct robust
 preliminary hierarchy second.  No runtime radius or family appears in the
 result. -/
-theorem proposition63_m9_nested_schedule
+theorem proposition63_m9_nested_schedule_with_kernel
+    (kernel : PureWZ2RichProp62KernelStatement)
     {sigma outputLoss : ℝ}
     (critical : PureWZ2CriticalPackage sigma)
     (houtputLoss : 0 < outputLoss) :
@@ -40,12 +41,12 @@ theorem proposition63_m9_nested_schedule
       sigma outputLoss critical) := by
   rcases proposition63_m9_pre_runtime_hierarchy critical critical.sigma_pos
       critical.sigma_lt_one houtputLoss with ⟨outer⟩
-  rcases proposition63_m9_pre_node3_cutoff critical outer with
+  rcases proposition63_m9_pre_node3_cutoff_with_kernel kernel critical outer with
     ⟨outerCutoff⟩
   rcases proposition63_m9_pre_runtime_hierarchy critical critical.sigma_pos
       critical.sigma_lt_one outerCutoff.preliminaryStickyLoss_pos with
     ⟨inner⟩
-  rcases proposition63_m9_pre_node3_cutoff critical inner with
+  rcases proposition63_m9_pre_node3_cutoff_with_kernel kernel critical inner with
     ⟨innerCutoff⟩
   have hExponentPos : 0 < 2 / (2 + sigma) := by
     exact div_pos (by norm_num) (by linarith [critical.sigma_pos])
@@ -209,6 +210,16 @@ theorem inner_second_coarse_normalization_le_outer_root_normalization
   exact normalizationLe.trans stickyBound.le
 
 end Proposition63M9NestedScheduleData
+
+/-- Compatibility entry using the closed rich Proposition-6.2 kernel. -/
+theorem proposition63_m9_nested_schedule
+    {sigma outputLoss : ℝ}
+    (critical : PureWZ2CriticalPackage sigma)
+    (houtputLoss : 0 < outputLoss) :
+    Nonempty (Proposition63M9NestedScheduleData
+      sigma outputLoss critical) :=
+  proposition63_m9_nested_schedule_with_kernel pure_wz2_node03_rich_prop62_kernel
+    critical houtputLoss
 
 end Kakeya.Assouad.PureWZ2
 

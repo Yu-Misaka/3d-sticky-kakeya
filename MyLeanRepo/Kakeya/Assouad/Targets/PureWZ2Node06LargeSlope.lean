@@ -10,6 +10,12 @@ construction.
 
 namespace Kakeya.Assouad
 
+/-- Strong entry retaining the witnesses consumed by Lemma 6.7. -/
+theorem pure_wz2_node06_large_slope_retained
+    (c2Grains : PureWZ2C2GrainsFromCriticalStatement) :
+    PureWZ2LargeSlopeRetainedStatement :=
+  pureWZ2_direct_halfOffset_large_slope_retained c2Grains
+
 theorem pure_wz2_node06_large_slope :
     PureWZ2LargeSlopeStatement :=
   pureWZ2_direct_halfOffset_large_slope

@@ -53,7 +53,7 @@ def pureWZ2PaperMassInSlab
 /-- Finite exact-width pigeonhole on indexed paper-shading mass.  The
 constant `3` is the harmless endpoint cost from covering `[-1,1]` by at most
 `2/L + 1` intervals of length exactly `L`. -/
-private theorem pureWZ2_exists_exact_mass_slab
+theorem pureWZ2_exists_exact_mass_slab
     {delta : ℝ} {family : Kakeya.Streamlined.TubeFamily delta}
     (shading : WZ1PaperTubeShading family)
     {L : ℝ} (hLpos : 0 < L) (hLone : L ≤ 1)

@@ -1678,7 +1678,8 @@ noncomputable def Proposition63M9PreNode3CutoffData.scaleCeiling
     (Real.rpow cutoff.outerScaleCeiling
       (1 / cutoff.preliminaryStickyLoss))
 
-theorem proposition63_m9_pre_node3_cutoff
+theorem proposition63_m9_pre_node3_cutoff_with_kernel
+    (kernel : PureWZ2RichProp62KernelStatement)
     {sigma outputLoss : ℝ}
     (critical : PureWZ2CriticalPackage sigma)
     (data : Proposition63M9PreRuntimeHierarchy sigma outputLoss) :
@@ -1686,10 +1687,10 @@ theorem proposition63_m9_pre_node3_cutoff
   have sticky_le_one : data.stickyLoss ≤ 1 :=
     data.sticky_le_sigma_half.trans (by
       linarith [critical.sigma_lt_one])
-  rcases proposition63_rich_sticky_kernel sigma critical data.stickyLoss
+  rcases kernel sigma critical data.stickyLoss
       data.sticky_pos sticky_le_one with ⟨richSchedule⟩
-  rcases proposition63_m9_two_call_robust_schedule_of_second
-      sigma critical richSchedule data.sticky_le_sigma_half
+  rcases proposition63_m9_two_call_robust_schedule_of_second_with_kernel
+      kernel sigma critical richSchedule data.sticky_le_sigma_half
       data.sigma_half_le_one_sub_sticky with ⟨twoCall, twoCallSecond⟩
   rcases proposition63_m9_power_cutoff_family data with ⟨power⟩
   let queryCutoff : ∀ outerIndex
@@ -1860,7 +1861,7 @@ theorem proposition63_m9_pre_node3_cutoff
         linarith [critical.sigma_pos]
       rw [div_le_one denominator_pos]
       linarith
-  rcases proposition63_rich_sticky_kernel sigma critical initial.stickyLoss
+  rcases kernel sigma critical initial.stickyLoss
       initial.sticky_pos initial_sticky_le_one with ⟨firstRichSchedule⟩
   let preliminaryProducerLoss : ℝ := firstRichSchedule.sourceLoss / 8
   have preliminaryProducerPos : 0 < preliminaryProducerLoss := by
@@ -3727,5 +3728,14 @@ theorem Proposition63M9PreNode3CutoffData.runSecondCallThroughLemma412
   exact ⟨second, by
     intro parent
     exact rich.coarse_midpoint_local parent⟩
+
+/-- Compatibility entry using the closed rich Proposition-6.2 kernel. -/
+theorem proposition63_m9_pre_node3_cutoff
+    {sigma outputLoss : ℝ}
+    (critical : PureWZ2CriticalPackage sigma)
+    (data : Proposition63M9PreRuntimeHierarchy sigma outputLoss) :
+    Nonempty (Proposition63M9PreNode3CutoffData data) :=
+  proposition63_m9_pre_node3_cutoff_with_kernel pure_wz2_node03_rich_prop62_kernel
+    critical data
 
 end Kakeya.Assouad.PureWZ2

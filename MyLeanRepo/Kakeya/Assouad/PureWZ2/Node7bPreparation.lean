@@ -1,15 +1,16 @@
 import MyLeanRepo.Kakeya.Assouad.PureWZ2.Node7AffineScalarSchedule
-import MyLeanRepo.Kakeya.Assouad.PureWZ2.Prop62V4DirectNode6FixedScaleCertified
+import MyLeanRepo.Kakeya.Assouad.Targets.PureWZ2Node06LargeSlope
+import MyLeanRepo.Kakeya.Assouad.PureWZ2.PaperTerminalNormalization
+import MyLeanRepo.Kakeya.Assouad.PureWZ2.LargeSlope.ActualTerminalSlopeBound
 
 /-!
-# Node 7b: direct affine parameter-Frostman preparation
+# Node 7b: preparation from the retained Proposition 6.5 construction
 
-The public Node-6 output intentionally erases the common-y source provenance
-needed by paper Lemma 8.  This proof therefore reruns the existing proof-local
-source construction from the Node-5 C2 grains, then applies the synchronized
-Mobius rotation, affine-diagonal map, cubical saturation, and one analytic
-cleanup.  Every runtime estimate below belongs to that same dependent affine
-package.
+All normalization and source-slope cutoffs are fixed first.  Node 6 is then
+called once.  Its literal final family, shading, public slope, CWA and
+projection upper bound are transported by the proved slope-offset map and
+slab restriction, followed by analytic cleanup.  The retained common source
+is used only to bound the magnitude of that actual public slope.
 -/
 
 noncomputable section
@@ -18,9 +19,64 @@ open MeasureTheory Set
 
 namespace Kakeya.Assouad
 
-/-- The independent Section-7 preparation output, constructed directly from
-the C2-grain source rather than reconstructed from the provenance-erased
-paper-facing Node-6 configuration. -/
+/-- Normalize the actual returned large-slope terminal.  This theorem takes the
+strong Node-6 result as its only upstream proof input. -/
+theorem pure_wz2_node7b_common_height_from_retained_large_slope
+    (largeSlope : PureWZ2LargeSlopeRetainedStatement) :
+    PureWZ2CommonHeightProjectionStatement := by
+  intro sigma critical analyticLoss scaleCeiling
+    hanalyticPos hanalyticSigma hscaleCeiling
+  obtain ⟨normalization⟩ := pure_wz2_paper_terminal_normalization_cutoff
+      sigma analyticLoss critical.sigma_pos critical.sigma_lt_one
+      hanalyticPos hanalyticSigma
+  let largeLoss : ℝ := analyticLoss / 10000
+  have hlargeLoss : 0 < largeLoss := by dsimp only [largeLoss]; positivity
+  have hlargeLossOne : largeLoss ≤ 1 := by
+    dsimp only [largeLoss]
+    linarith [hanalyticSigma, critical.sigma_lt_one]
+  obtain ⟨sourceCutoff, hsourceCutoff, _hsourceCutoffOne, hslopeBound⟩ :=
+    exists_actual_terminal_slope_offset_cutoff_for_output_loss
+      largeLoss hlargeLoss hlargeLossOne
+  let targetCeiling : ℝ := min (scaleCeiling / 12) normalization.delta₀
+  have htargetCeiling : 0 < targetCeiling :=
+    lt_min (by positivity) normalization.delta₀_pos
+  rcases largeSlope sigma critical largeLoss targetCeiling sourceCutoff
+      hlargeLoss htargetCeiling hsourceCutoff with
+    ⟨logExponent, sourceDelta, hsourceDelta, hsourceDeltaBound,
+      node6, terminalBound⟩
+  have hnormalization : node6.terminal.targetDelta ≤ normalization.delta₀ :=
+    terminalBound.trans (min_le_right _ _)
+  obtain ⟨refined⟩ := normalization.run node6.toLargeSlopeConfiguration
+    hnormalization
+    (hslopeBound node6.commonSource node6.terminal hsourceDelta hsourceDeltaBound)
+  have hfinalScale : 12 * node6.terminal.targetDelta ≤ scaleCeiling := by
+    have h := terminalBound.trans (min_le_left _ _)
+    linarith
+  have hfinalLtOne : 12 * node6.terminal.targetDelta < 1 := by
+    linarith [normalization.radius_small]
+  let output : PureWZ2CommonHeightProjectionData sigma analyticLoss
+      (12 * node6.terminal.targetDelta) :=
+    { toPureWZ2NormalizedProjectionData := refined.configuration
+      common_height := refined.common_height }
+  exact ⟨12 * node6.terminal.targetDelta, by positivity [node6.terminalData.delta_pos],
+    hfinalScale, hfinalLtOne, ⟨output⟩⟩
+
+/-- Preserve the historical normalized output by forgetting the extra
+common-height witness on the same returned configuration. -/
+theorem pure_wz2_node7b_normalized_from_retained_large_slope
+    (largeSlope : PureWZ2LargeSlopeRetainedStatement) :
+    PureWZ2NormalizedProjectionStatement :=
+  (pure_wz2_node7b_common_height_from_retained_large_slope largeSlope).toNormalized
+
+/-- Preserve the old preparation statement using the same terminal. -/
+theorem pure_wz2_node7b_from_retained_large_slope
+    (largeSlope : PureWZ2LargeSlopeRetainedStatement) :
+    PureWZ2ParameterFrostmanPreparationStatement :=
+  (pure_wz2_node7b_normalized_from_retained_large_slope largeSlope).toPreparation
+
+/-- Compatibility with the historical Node-7 signature.  Its old erased
+large-slope input cannot recover a common-y source; the stronger proved Node-6
+entry supplies that source, and is consumed by the theorem above. -/
 theorem pure_wz2_node7b_preparation
     (h_subunit : PureWZ2SubunitPackageStatement)
     (h_critical : PureWZ2CriticalExtractionStatement)
@@ -28,75 +84,10 @@ theorem pure_wz2_node7b_preparation
     (h_grains : PureWZ2GrainsStatement)
     (h_c2grains : PureWZ2C2GrainsStatement)
     (_h_largeslope : PureWZ2LargeSlopeStatement) :
-    PureWZ2ParameterFrostmanPreparationStatement := by
-  intro sigma critical analyticLoss scaleCeiling
-    hanalyticPos hanalyticSigma hscaleCeiling
-  let epsilon : ℝ := analyticLoss / 100000
-  have hepsilon : 0 < epsilon := by positivity
-  have hepsilonSixtyFourth : epsilon ≤ 1 / 64 := by
-    dsimp only [epsilon]
-    nlinarith [hanalyticSigma, critical.sigma_lt_one]
-  have hC2 : PureWZ2C2GrainsFromCriticalStatement :=
-    h_c2grains h_subunit h_critical h_propsticky h_grains
-  rcases
-      Prop62PaperAudit.V4.Prop62V4DirectNode6FixedScaleCertified.fixedScaleStatement
-    with ⟨logExponent, certifiedProvider⟩
-  rcases pure_wz2_node7_analytic_cleanup_cutoff
-      sigma analyticLoss critical.sigma_pos critical.sigma_lt_one
-      hanalyticPos hanalyticSigma with
-    ⟨cleanupCutoff⟩
-  let finalCeiling : ℝ := min scaleCeiling cleanupCutoff.r₀
-  have hfinalCeiling : 0 < finalCeiling := by
-    dsimp only [finalCeiling]
-    exact lt_min hscaleCeiling cleanupCutoff.r₀_pos
-  rcases
-      PureWZ2Node7AffineDiagonalPreparationData.pure_wz2_node7_affine_scalar_schedule
-        sigma analyticLoss finalCeiling critical.sigma_pos
-        critical.sigma_lt_one hanalyticPos hanalyticSigma hfinalCeiling
-    with ⟨schedule⟩
-  rcases pureWZ2_direct_commonY_source_assembly hC2 certifiedProvider
-      sigma critical epsilon schedule.sourceDelta₀ hepsilon
-      hepsilonSixtyFourth schedule.sourceDelta₀_pos with
-    ⟨sourceDelta, hsourceDelta, hsourceDeltaBound, ⟨commonSource⟩⟩
-  have hsourceTwo : 2 < commonSource.commonBand.band.sourceConstant :=
-    schedule.sourceConstant_gt_two commonSource hsourceDelta hsourceDeltaBound
-  rcases pureWZ2_node7_affine_diagonal_preparation commonSource hsourceTwo with
-    ⟨data⟩
-  have hfinalCeilingBound : data.finalRadius ≤ finalCeiling :=
-    schedule.finalRadius_le data hsourceDelta hsourceDeltaBound
-  have hfinalScale : data.finalRadius ≤ scaleCeiling :=
-    hfinalCeilingBound.trans (min_le_left _ _)
-  have hfinalCleanup : data.finalRadius ≤ cleanupCutoff.r₀ :=
-    hfinalCeilingBound.trans (min_le_right _ _)
-  have hfinalLtOne : data.finalRadius < 1 :=
-    hfinalCleanup.trans_lt <| cleanupCutoff.r₀_le_small.trans_lt (by norm_num)
-  have hcwa : WZ2PaperConvexWolffBound data.ordinaryFamily
-      (Kakeya.realRpowENN data.finalRadius (-(analyticLoss / 100))) :=
-    schedule.ordinary_cwa data hsourceDelta hsourceDeltaBound
-  have hdense : data.ordinaryShading.IsLambdaDense
-      (Kakeya.realRpowENN data.finalRadius (analyticLoss / 100)) :=
-    schedule.ordinary_dense data hsourceDelta hsourceDeltaBound
-  have hglobalAD := data.localizedShading_global_ad
-    critical.sigma_pos critical.sigma_lt_one
-  have hconstantTop : data.Node7CubicalGlobalADConstant ≠ ⊤ := by
-    unfold PureWZ2Node7AffineDiagonalPreparationData.Node7CubicalGlobalADConstant
-      PureWZ2Node7AffineDiagonalPreparationData.Node7CubicalGlobalADProjectionFactor
-      PureWZ2Lemma32DerivativeBandAssembly.sourceConstant
-    exact ENNReal.mul_ne_top
-      (ENNReal.pow_ne_top (ENNReal.mul_ne_top (by norm_num) (by norm_num)))
-      (ENNReal.mul_ne_top (by norm_num) ENNReal.ofReal_ne_top)
-  have hprojection : volume
-        (twistedUnion data.ordinaryShading data.analysisSlope) ≤
-      Kakeya.realRpowENN data.finalRadius (sigma - analyticLoss) :=
-    data.ordinaryShading_final_projection_upper_of_budget
-      data.Node7CubicalGlobalADConstant (analyticLoss / 200) analyticLoss
-      critical.sigma_pos critical.sigma_lt_one hconstantTop
-      hglobalAD
-      (schedule.final_projection_budget data hsourceDelta hsourceDeltaBound)
-  rcases data.toParameterFrostmanPreparation cleanupCutoff hanalyticPos
-      hfinalCleanup hcwa hdense hprojection with ⟨preparation⟩
-  exact ⟨data.finalRadius, data.finalRadius_pos, hfinalScale,
-    hfinalLtOne, ⟨preparation⟩⟩
+    PureWZ2ParameterFrostmanPreparationStatement :=
+  pure_wz2_node7b_from_retained_large_slope
+    (pure_wz2_node06_large_slope_retained
+      (h_c2grains h_subunit h_critical h_propsticky h_grains))
 
 end Kakeya.Assouad
 

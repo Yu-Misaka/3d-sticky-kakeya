@@ -51,4 +51,27 @@ def TubeParameterGridParameterSelectionStatement : Prop :=
                         activeCard base levels ≤
                       Kakeya.realRpowENN delta (-eta)
 
+/-- The same grid preparation for any fixed polynomial cardinality budget.
+The budget is fixed before the loss and scale threshold. -/
+def TubeParameterGridParameterSelectionPolynomialStatement (cardExponent : ℝ) : Prop :=
+  ∀ eta : ℝ,
+    0 < eta →
+      ∃ base : ℕ,
+        3 ≤ base ∧
+          ∃ delta₀ : ℝ,
+            0 < delta₀ ∧ delta₀ < 1 ∧
+              ∀ delta : ℝ,
+                0 < delta →
+                delta ≤ delta₀ →
+                ∀ activeCard : ℕ,
+                  (activeCard : ENNReal) ≤
+                    Kakeya.realRpowENN delta (-cardExponent) →
+                  ∃ levels : ℕ,
+                    delta ≤ ((base ^ levels : ℝ)⁻¹) ∧
+                    ((base ^ levels : ℝ)⁻¹) <
+                      (base : ℝ) * delta ∧
+                    tubeParameterGridInitialLoss
+                        activeCard base levels ≤
+                      Kakeya.realRpowENN delta (-eta)
+
 end Kakeya.Assouad

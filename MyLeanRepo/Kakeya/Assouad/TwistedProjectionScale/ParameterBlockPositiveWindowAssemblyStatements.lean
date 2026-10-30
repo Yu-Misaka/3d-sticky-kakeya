@@ -52,4 +52,19 @@ def ParameterBlockPositiveWindowAssemblyStatement : Prop :=
                       ParameterBlockProjectionUniformizationStatement →
                         PositiveWindowParameterFrostmanScaleAdjustableEtaFromParametersBoundedNoDistinctStatement
 
+/-- Pass the additional density through the same construction. -/
+def ParameterBlockPositiveWindowAssemblyWithDensityStatement (densityPower : ℝ) : Prop :=
+  ScaleProfileCrossingStatement →
+    TubeParameterClusterFrostmanStatement →
+      ParameterWindowClusterCardinalityStatement →
+        ParameterLocalFullBlockSelectionStatement →
+          ParameterBlockAmplificationStatement →
+            HalfParameterCinematicPYZGeneralStatement →
+              CompactSubshadingSelectionStatement →
+                CompactTubeTwistedProjectionAreaStatement →
+                  AssignedCurveProjectionContainmentFromVerticalChartStatement →
+                    ParameterBlockRepresentativeCinematicPullbackStatement →
+                      ParameterBlockProjectionUniformizationWithDensityStatement densityPower →
+                        PositiveWindowParameterFrostmanScaleWithDensityStatement densityPower
+
 end Kakeya.Assouad

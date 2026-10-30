@@ -43,21 +43,16 @@ inferred from the carrier-model Tube-Wolff predicate.
 
 namespace Kakeya.Assouad
 
-theorem twisted_projection_parameter_frostman_estimate :
-    TwistedProjectionParameterFrostmanEstimateFromBlockStatement := by
-  intro hScaleProfile hParameterCluster hWindowCluster hLocalBlock
-    hAmplification hHalfParameterPYZ hCompactSelection hCompactArea
-    hAssignedContainment hBlockPullback hBlockProjectionUniformity
-    hBlockAssembly
-  have hBounded : GridOSBoundedOneScaleInput :=
-    grid_os_bounded_one_scale_from_block
-      hScaleProfile hParameterCluster hWindowCluster hLocalBlock
-      hAmplification hHalfParameterPYZ hCompactSelection hCompactArea
-      hAssignedContainment hBlockPullback hBlockProjectionUniformity
-      hBlockAssembly
-  have hInitial : TubeParameterGridOSInitialStateInput :=
-    tube_parameter_grid_os_initial_state
-      tube_parameter_grid_parameter_selection
+/-- Proposition 7.1's finite iteration, taking the complete Lemma 7.12
+one-step estimate as its only analytic input.  All coarsening, scheduling,
+termination and telescoping predecessors are proved internally. -/
+theorem twisted_projection_parameter_frostman_polynomial_of_one_step
+    (cardExponent : ℝ) (hcardExponent : 0 < cardExponent)
+    (hBounded : GridOSBoundedOneScaleInput) :
+    TwistedProjectionParameterFrostmanPolynomialEstimateStatement cardExponent := by
+  have hInitial : TubeParameterGridOSInitialStatePolynomialInput cardExponent :=
+    tube_parameter_grid_os_initial_state_polynomial cardExponent
+      (tube_parameter_grid_parameter_selection_polynomial cardExponent hcardExponent)
       per_tube_mass_pruning
       tube_parameter_terminal_cell_fiber_regularization
       tube_parameter_terminal_cell_representatives
@@ -96,7 +91,7 @@ theorem twisted_projection_parameter_frostman_estimate :
       grid_os_telescoping
       selected_scale_terminal_projection
   exact
-    grid_os_parameter_frostman_estimate
+    grid_os_parameter_frostman_polynomial_estimate cardExponent
       hBounded
       hInitial
       grid_os_effective_loss_schedule
@@ -108,5 +103,22 @@ theorem twisted_projection_parameter_frostman_estimate :
       grid_os_termination
       hTerminal
       grid_os_final_constant_absorption
+
+/-- Historical block-input API. -/
+theorem twisted_projection_parameter_frostman_estimate :
+    TwistedProjectionParameterFrostmanEstimateFromBlockStatement := by
+  intro hScaleProfile hParameterCluster hWindowCluster hLocalBlock
+    hAmplification hHalfParameterPYZ hCompactSelection hCompactArea
+    hAssignedContainment hBlockPullback hBlockProjectionUniformity
+    hBlockAssembly
+  have hBounded : GridOSBoundedOneScaleInput :=
+    grid_os_bounded_one_scale_from_block
+      hScaleProfile hParameterCluster hWindowCluster hLocalBlock
+      hAmplification hHalfParameterPYZ hCompactSelection hCompactArea
+      hAssignedContainment hBlockPullback hBlockProjectionUniformity
+      hBlockAssembly
+  exact twisted_projection_parameter_frostman_of_polynomial
+    (twisted_projection_parameter_frostman_polynomial_of_one_step
+      3 (by norm_num) hBounded)
 
 end Kakeya.Assouad

@@ -9,9 +9,16 @@ four-parameter OS tree.
 
 namespace Kakeya.Assouad
 
-theorem tube_parameter_grid_os_initial_state :
-    TubeParameterGridOSInitialStateStatement := by
-  intro hParamSel hPrune hFiberReg hReps hOSLift hSelTransfer hNonconc
+theorem tube_parameter_grid_os_initial_state_polynomial
+    (cardExponent : ℝ)
+    (hParamSel : TubeParameterGridParameterSelectionPolynomialStatement cardExponent)
+    (hPrune : PerTubeMassPruningStatement)
+    (hFiberReg : TubeParameterTerminalCellFiberRegularizationStatement)
+    (hReps : TubeParameterTerminalCellRepresentativesStatement)
+    (hOSLift : TubeParameterTerminalCellOSLiftInput)
+    (hSelTransfer : TubeParameterTerminalCellOSSelectionTransferInput)
+    (hNonconc : SelectedTubeNonconcentrationTransferStatement) :
+    TubeParameterGridOSInitialStatePolynomialInput cardExponent := by
   intro eta heta
   rcases hParamSel eta heta with ⟨base, hbase3, delta₀, hdelta₀_pos, hdelta₀_lt1, hSelLevels⟩
   refine ⟨base, hbase3, delta₀, hdelta₀_pos, hdelta₀_lt1, ?_⟩
@@ -75,14 +82,14 @@ theorem tube_parameter_grid_os_initial_state :
     rw [huniv_card] at h
     exact h
 
-  have hcard' : (active.card : ENNReal) ≤ Kakeya.realRpowENN delta (-3) := by
+  have hcard' : (active.card : ENNReal) ≤ Kakeya.realRpowENN delta (-cardExponent) := by
     calc
       (active.card : ENNReal) ≤ (family.card : ENNReal) := by
         exact_mod_cast hactive_card_le
       _ = family.enncard := by
         simp [Kakeya.Streamlined.TubeFamily.enncard]
         <;> rfl
-      _ ≤ Kakeya.realRpowENN delta (-3) := hcard
+      _ ≤ Kakeya.realRpowENN delta (-cardExponent) := hcard
 
   rcases hSelLevels delta hdelta hdelta₀ active.card hcard' with
     ⟨levels, hmesh_lower, hmesh_upper, hloss_bound⟩
@@ -273,5 +280,12 @@ theorem tube_parameter_grid_os_initial_state :
     state_density_eq := by rfl
     state_parameter_eq := by rfl
   }, rfl⟩
+
+/-- Compatibility with the historical cubic initial-state interface. -/
+theorem tube_parameter_grid_os_initial_state :
+    TubeParameterGridOSInitialStateStatement := by
+  intro hParamSel hPrune hFiberReg hReps hOSLift hSelTransfer hNonconc
+  exact tube_parameter_grid_os_initial_state_polynomial 3
+    hParamSel hPrune hFiberReg hReps hOSLift hSelTransfer hNonconc
 
 end Kakeya.Assouad
