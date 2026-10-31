@@ -1,6 +1,7 @@
 """Regression checks for documentation cache invalidation and declaration links."""
 
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -11,6 +12,7 @@ from urllib.parse import urljoin
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import docs
+import check
 
 
 class DocumentationCacheTests(unittest.TestCase):
@@ -27,7 +29,7 @@ class DocumentationCacheTests(unittest.TestCase):
             with patch.object(docs, "DOC_BUILD", build), patch.object(docs, "STAMP", stamp), \
                  patch.object(docs, "input_digest", return_value="new"), \
                  patch.object(docs, "check_docbuild_config"):
-                docs.prepare_docs()
+                self.assertTrue(docs.prepare_docs())
             self.assertFalse((build / "doc").exists())
             self.assertFalse((build / "doc-data").exists())
             self.assertFalse((build / "api-docs.db").exists())
@@ -49,9 +51,13 @@ class DocumentationCacheTests(unittest.TestCase):
             database.write_text("cached data")
             with patch.object(docs, "DOC_BUILD", build), patch.object(docs, "STAMP", stamp), \
                  patch.object(docs, "input_digest", return_value="same"), \
-                 patch.object(docs, "check_docbuild_config"):
-                docs.prepare_docs()
+                 patch.object(docs, "check_docbuild_config"), \
+                 patch.object(docs, "run_logged") as run, \
+                 patch.object(docs, "finish_docs") as finish:
+                docs.build_docs()
                 docs.check_fresh_docs()
+                run.assert_not_called()
+                finish.assert_called_once_with()
             self.assertEqual(database.read_text(), "cached data")
 
     def test_missing_database_invalidates_otherwise_matching_cache(self):
@@ -64,7 +70,7 @@ class DocumentationCacheTests(unittest.TestCase):
             with patch.object(docs, "DOC_BUILD", build), patch.object(docs, "STAMP", stamp), \
                  patch.object(docs, "input_digest", return_value="same"), \
                  patch.object(docs, "check_docbuild_config"):
-                docs.prepare_docs()
+                self.assertTrue(docs.prepare_docs())
             self.assertFalse(stamp.exists())
             self.assertFalse((build / "doc-data").exists())
 
@@ -76,6 +82,134 @@ class DocumentationCacheTests(unittest.TestCase):
                  patch.object(docs, "input_digest", return_value="new"):
                 with self.assertRaisesRegex(ValueError, "stale"):
                     docs.check_fresh_docs()
+
+    def test_cache_misses_build_before_validation(self):
+        for cached in (None, '{"inputs": "old"}', '{"inputs": "same"}', '{', '[]'):
+            with self.subTest(stamp=cached), tempfile.TemporaryDirectory() as tmp:
+                build = Path(tmp)
+                stamp = build / "blueprint-docs.json"
+                if cached is not None:
+                    stamp.write_text(cached)
+                for relative in ("api-docs.db", "doc-manifest.json", "doc/Documentation.html",
+                                 "doc/declarations/declaration-data.bmp"):
+                    path = build / relative
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text("cached output")
+                if cached == '{"inputs": "same"}':
+                    # Even a matching stamp cannot reuse an incomplete cache.
+                    (build / "api-docs.db").unlink()
+                events = []
+                with patch.object(docs, "DOC_BUILD", build), patch.object(docs, "STAMP", stamp), \
+                     patch.object(docs, "BUILD", build / "logs"), \
+                     patch.object(docs, "input_digest", return_value="same"), \
+                     patch.object(docs, "check_docbuild_config"), \
+                     patch.object(docs, "run_logged", side_effect=lambda *_: events.append("build")) as run, \
+                     patch.object(docs, "finish_docs", side_effect=lambda: events.append("validate")):
+                    docs.build_docs()
+                run.assert_called_once_with(
+                    ["lake", "--no-cache", "-d", "docbuild", "build", "Documentation:docs"],
+                    build / "logs/docgen.log",
+                )
+                self.assertEqual(events, ["build", "validate"])
+                self.assertFalse(stamp.exists())
+
+    def test_failed_build_cannot_leave_a_valid_stamp(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            build = Path(tmp)
+            stamp = build / "blueprint-docs.json"
+            stamp.write_text(json.dumps({"inputs": "old"}))
+            with patch.object(docs, "DOC_BUILD", build), patch.object(docs, "STAMP", stamp), \
+                 patch.object(docs, "BUILD", build / "logs"), \
+                 patch.object(docs, "input_digest", return_value="new"), \
+                 patch.object(docs, "check_docbuild_config"), \
+                 patch.object(docs, "run_logged", side_effect=ValueError("build failed")), \
+                 patch.object(docs, "finish_docs") as finish:
+                with self.assertRaisesRegex(ValueError, "build failed"):
+                    docs.build_docs()
+                finish.assert_not_called()
+            self.assertFalse(stamp.exists())
+
+    def test_reused_documentation_is_validated_and_source_links_are_refreshed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            build = Path(tmp)
+            page = build / "doc/Example.html"
+            page.parent.mkdir()
+            old_revision, revision = "a" * 40, "b" * 40
+            source = f'{docs.REPOSITORY}/blob/{old_revision}/Example.lean'
+            page.write_text(f'<div id="Example.result"><a href="{source}">source</a></div>')
+            for relative in ("index.html", "Documentation.html", "find/index.html", "find/find.js",
+                             "search.html", "search.js", "declaration-data.js", "style.css"):
+                path = page.parent / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("cached output")
+            index = page.parent / "declarations/declaration-data.bmp"
+            index.parent.mkdir()
+            index.write_text(json.dumps({
+                "modules": {"Example": {"url": "./Example.html"}},
+                "declarations": {"Example.result": {"docLink": "./Example.html#Example.result",
+                                                     "sourceLink": source}},
+            }))
+            stamp = build / "blueprint-docs.json"
+            stamp.write_text(json.dumps({"inputs": "same", "revision": old_revision}))
+            records = [{"name": "Example.result", "module": "Example"}]
+            validate_cached = docs.validate_documentation
+            with patch.object(docs, "STAMP", stamp), patch.object(docs, "DOCS", page.parent), \
+                 patch.object(docs, "input_digest", return_value="same"), \
+                 patch.object(docs, "check_docbuild_config"), \
+                 patch.object(docs, "cache_complete", return_value=True), \
+                 patch.object(docs, "inspect_content", return_value=("", [], [])), \
+                 patch.object(docs, "check_registry", return_value=records), \
+                 patch.object(docs, "lean_modules", return_value=["Example"]), \
+                 patch.object(docs, "validate_documentation", \
+                              side_effect=lambda rows: validate_cached(rows, page.parent)) as validate, \
+                 patch.object(docs.subprocess, "check_output", return_value=revision), \
+                 patch.object(docs, "run_logged") as run:
+                docs.build_docs()
+                run.assert_not_called()
+                validate.assert_called_once_with(records)
+            self.assertIn(f"/blob/{revision}/", page.read_text())
+            self.assertNotIn(old_revision, page.read_text())
+            self.assertIn(f"/blob/{revision}/", index.read_text())
+            self.assertEqual(json.loads(stamp.read_text()), {"inputs": "same", "revision": revision})
+
+
+class DocumentationFingerprintTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        self.inputs = (
+            "Main.lean", "lean-toolchain", "lakefile.toml", "lake-manifest.json",
+            "docbuild/lean-toolchain", "docbuild/lakefile.toml",
+            "docbuild/lake-manifest.json", "docbuild/Documentation.lean",
+        )
+        for name in (*self.inputs, "blueprint/src/content.tex", "blueprint/site-src/index.html"):
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("original input\n")
+        subprocess.run(["git", "init", "--quiet", str(self.root)], check=True)
+        subprocess.run(["git", "-C", str(self.root), "add", "."], check=True)
+        self.enterContext(patch.object(check, "ROOT", self.root))
+        self.enterContext(patch.object(docs, "DOCBUILD", self.root / "docbuild"))
+
+    def test_manuscript_and_web_changes_keep_the_cache_key(self):
+        original = docs.input_digest()
+        for name in ("blueprint/src/content.tex", "blueprint/site-src/index.html"):
+            (self.root / name).write_text("updated page\n")
+        (self.root / "blueprint/src/new.tex").write_text("new chapter\n")
+        self.assertEqual(docs.input_digest(), original)
+
+    def test_lean_and_documentation_inputs_change_the_cache_key(self):
+        original = docs.input_digest()
+        for name in self.inputs:
+            with self.subTest(input=name):
+                path = self.root / name
+                content = path.read_text()
+                path.write_text("changed input\n")
+                self.assertNotEqual(docs.input_digest(), original)
+                path.write_text(content)
+        (self.root / "New.lean").write_text("new Lean source\n")
+        self.assertNotEqual(docs.input_digest(), original)
 
 
 class DeclarationLinkTests(unittest.TestCase):

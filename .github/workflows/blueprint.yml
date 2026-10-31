@@ -45,14 +45,21 @@ jobs:
             texlive-xetex texlive-latex-extra texlive-fonts-recommended \
             latexmk ghostscript dvisvgm poppler-utils graphviz libgraphviz-dev pkg-config
           python -m pip install -r blueprint/requirements.txt
+      - name: Fingerprint documentation inputs
+        id: docs-inputs
+        run: |
+          docs_digest=$(python blueprint/scripts/docs.py fingerprint)
+          echo "digest=$docs_digest" >> "$GITHUB_OUTPUT"
       - name: Restore Lean and documentation cache
-        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        id: lean-docs-cache
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: |
             .lake
             docbuild/.lake
-          key: blueprint-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lake-manifest.json') }}-${{ github.sha }}
+          key: blueprint-v3-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lake-manifest.json') }}-${{ steps.docs-inputs.outputs.digest }}
           restore-keys: |
+            blueprint-v3-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lake-manifest.json') }}-
             blueprint-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lake-manifest.json') }}-
       - name: Install Lean and obtain the Mathlib cache
         uses: leanprover/lean-action@f061402b660e0c34644504b324e830f2991d4865 # v1
@@ -60,10 +67,24 @@ jobs:
           auto-config: false
           use-github-cache: false
           use-mathlib-cache: true
-      - name: Build and check blueprint and Lean documentation
-        run: |
-          python -m unittest discover -s blueprint/tests
-          python blueprint/scripts/build.py
+      - name: Test blueprint tooling
+        run: python -m unittest discover -s blueprint/tests
+      - name: Compile Lean and audit declarations
+        run: python blueprint/scripts/check.py --lean
+      - name: Build or reuse and validate Lean documentation
+        run: python blueprint/scripts/docs.py build
+      # Save before PDF/HTML checks: a later layout failure must not discard
+      # hours of successful documentation work. Exact hits need no new upload.
+      - name: Save validated Lean and documentation cache
+        if: steps.lean-docs-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: |
+            .lake
+            docbuild/.lake
+          key: ${{ steps.lean-docs-cache.outputs.cache-primary-key }}
+      - name: Build and check PDF and website
+        run: python blueprint/scripts/build.py --reuse-docs
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:

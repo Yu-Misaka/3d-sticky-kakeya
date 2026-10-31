@@ -102,10 +102,19 @@ def cache_complete() -> bool:
     ))
 
 
-def prepare_docs() -> None:
+def cached_inputs() -> str | None:
+    try:
+        stamp = json.loads(STAMP.read_text())
+    except (FileNotFoundError, json.JSONDecodeError):
+        return None
+    inputs = stamp.get("inputs") if isinstance(stamp, dict) else None
+    return inputs if isinstance(inputs, str) else None
+
+
+def prepare_docs() -> bool:
+    """Prepare the cache and return whether doc-gen4 needs to run."""
     check_docbuild_config()
-    previous = json.loads(STAMP.read_text()) if STAMP.is_file() else {}
-    if previous.get("inputs") != input_digest() or not cache_complete():
+    if cached_inputs() != input_digest() or not cache_complete():
         # doc-gen4's database and markers form one cache. Discard them together
         # when inputs change, so deleted declarations or empty marker files
         # cannot leave stale documentation in a restored cache.
@@ -117,8 +126,9 @@ def prepare_docs() -> None:
             for path in DOC_BUILD.glob(pattern):
                 path.unlink()
         print("Documentation inputs changed or cache is incomplete; rebuilding doc-gen4 data.", flush=True)
-    else:
-        print("Reusing doc-gen4 data for unchanged Lean sources.", flush=True)
+        return True
+    print("Reusing validated documentation for unchanged inputs; skipping doc-gen4/Lake.", flush=True)
+    return False
 
 
 class Anchors(HTMLParser):
@@ -202,24 +212,28 @@ def finish_docs() -> None:
 
 
 def check_fresh_docs() -> None:
-    if not STAMP.is_file() or json.loads(STAMP.read_text()).get("inputs") != input_digest() \
-            or not cache_complete():
+    if cached_inputs() != input_digest() or not cache_complete():
         raise ValueError("Documentation is missing or stale; build with python blueprint/scripts/build.py")
 
 
 def build_docs() -> None:
-    prepare_docs()
-    BUILD.mkdir(exist_ok=True)
-    run_logged(["lake", "--no-cache", "-d", "docbuild", "build", "Documentation:docs"],
-               BUILD / "docgen.log")
+    # UnicodeBasic's unsorted C inputs can invalidate Lake's traces on another
+    # runner. A complete cache with matching source inputs needs no Lake call.
+    if prepare_docs():
+        BUILD.mkdir(exist_ok=True)
+        run_logged(["lake", "--no-cache", "-d", "docbuild", "build", "Documentation:docs"],
+                   BUILD / "docgen.log")
     finish_docs()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("prepare", "check", "build"))
+    parser.add_argument("command", choices=("prepare", "check", "build", "fingerprint"))
     args = parser.parse_args()
     try:
-        {"prepare": prepare_docs, "check": finish_docs, "build": build_docs}[args.command]()
+        if args.command == "fingerprint":
+            print(input_digest())
+        else:
+            {"prepare": prepare_docs, "check": finish_docs, "build": build_docs}[args.command]()
     except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as error:
         parser.exit(1, f"Documentation check failed: {error}\n")

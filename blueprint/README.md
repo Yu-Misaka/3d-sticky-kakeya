@@ -59,7 +59,7 @@ theorem, checked against `PureWZ2/Core.lean`. Doc-gen4 omits long automatically
 generated equations; the source buttons provide the full bodies of other
 proposition-valued definitions when their Equations section is abbreviated.
 
-The full build compiles and audits the Lean imports, generates doc-gen4
+The full build compiles and audits the Lean imports, builds or reuses doc-gen4
 documentation, then runs `leanblueprint pdf` before `leanblueprint web` so that
 both editions use the same bibliography. It checks labels, citations, graph
 dependencies, PDF margins, doc-gen4's module index, and the exact documentation
@@ -67,7 +67,10 @@ anchors for every blueprint declaration. Build logs are kept under
 `blueprint/build/`; generated output is ignored by Git.
 
 The first documentation build also processes the imported Mathlib and Lean
-libraries. Subsequent builds reuse compiled artifacts and documentation data.
+libraries. When its input fingerprint matches a complete cache, subsequent
+builds skip the doc-gen4 Lake invocation, validate the cached documentation,
+and refresh source links to the current commit. This avoids the UnicodeBasic
+input-order bug described in [the CI investigation](notes/ci-docgen-rebuild.md).
 After a successful full build, a text-only edit can be previewed with:
 
 ```sh
@@ -92,24 +95,26 @@ dependencies**, together with Lean's core libraries. This scope follows the
 sticky blueprint. It does not claim to compile the later general Kakeya
 development or the repository's unrelated comparison targets.
 
-Actions uses the same full build command as local development:
+For local development, run all stages with:
 
 ```sh
 python blueprint/scripts/build.py
 ```
 
-For debugging, its individual build steps are:
+Actions runs the same stages separately, saving the validated Lean and
+documentation cache before PDF and website generation. To run those stages
+individually:
 
 ```sh
 python blueprint/scripts/check.py --lean
-python blueprint/scripts/docs.py prepare
-lake --no-cache -d docbuild build Documentation:docs
-python blueprint/scripts/docs.py check
+python blueprint/scripts/docs.py build
 python blueprint/scripts/build.py --reuse-docs
 ```
 
-`--no-cache` here disables Lake's optional Reservoir download; the local Lake
-artifacts, Mathlib cache, and Actions cache are still used. The raw doc-gen4 site
+When documentation must be rebuilt, `docs.py build` invokes
+`lake --no-cache -d docbuild build Documentation:docs`. `--no-cache` disables
+Lake's optional Reservoir download; the local Lake artifacts, Mathlib cache,
+and Actions cache are still used. The raw doc-gen4 site
 is `docbuild/.lake/build/doc/`. Publication copies it to `blueprint/site/lean/`,
 shortening equivalent relative URLs and omitting optional HTML attribute quotes
 to fit GitHub Pages' 1 GB limit. All module pages, declaration text, and search
@@ -117,7 +122,10 @@ data are retained. The build checks the final size before uploading.
 The preparation step invalidates doc-gen4's database and generated pages when
 their inputs change, preventing stale declarations from surviving a cache
 restore. For unchanged Lean inputs, source buttons are refreshed to the current
-commit while documentation data is reused.
+commit while documentation data is reused. A missing cache or changes to Lean
+sources, toolchains, dependency manifests, or `Documentation.lean` still require
+a documentation rebuild. `python blueprint/scripts/docs.py fingerprint` prints
+the exact input digest used by the cache stamp and the Actions cache key.
 
 When updating Lean, update both `lean-toolchain` files and the doc-gen4 revision
 in `docbuild/lakefile.toml`. Then refresh the nested manifest deliberately:
@@ -340,16 +348,22 @@ colours never promote those completion marks.
 The [Blueprint workflow](../.github/workflows/blueprint.yml) builds the same
 artifact on pull requests and relevant pushes to `main`, including changes to
 Lean sources, toolchains, and Lake manifests. Every run compiles the blueprint
-imports, audits the declarations, and builds doc-gen4 before publishing the
-combined artifact. The workflow installs the tools, runs the tests and the
-single full build command above, then uploads the site. Only `main` deploys.
+imports, audits the declarations, and validates fresh or cached doc-gen4 output
+before publishing the combined artifact. The workflow installs the tools,
+runs the tests and the separate build stages above, then uploads the site.
+Only `main` deploys.
 New pushes cancel an older run on the same branch. Lean and doc-gen4 use their
 default concurrency; the workflow does not override their thread counts.
 
 The cache covers `.lake` and `docbuild/.lake`, keyed by platform, toolchain,
-dependency manifests, and commit, with reuse from compatible earlier commits.
-A cache hit never skips the Lean build or declaration audit. Documentation
-content is additionally checked against a digest of its inputs.
+dependency manifests, and the documentation input fingerprint. Changes to
+TeX, HTML, CSS, or JavaScript reuse the same key. Compatible earlier caches,
+including the former commit-based keys, remain available as fallbacks.
+A cache hit never skips the Lean build or declaration audit. The documentation
+stage checks its own input stamp and validates the pages even on a cache hit.
+After that stage succeeds, Actions saves a new cache before running PDF/HTML
+checks, so a later layout failure does not lose the completed documentation.
+An exact cache hit needs no new cache upload.
 
 To enable publication, choose **Settings → Pages → Build and deployment → Source: GitHub Actions** in the repository. Push the commit to `main` or run the **Blueprint** workflow manually. Its deployment target is <https://yu-misaka.github.io/3d-sticky-kakeya/>. The Pages setting and a successful deployment are required before that address is available.
 
