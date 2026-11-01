@@ -172,7 +172,8 @@ def source_digest() -> str:
         cwd=ROOT, check=True, capture_output=True,
     )
     paths = sorted({name.decode() for name in result.stdout.split(b"\0")
-                    if name and not name.startswith((b"blueprint/", b"docbuild/"))})
+                    if name and not name.startswith((b"blueprint/", b"docbuild/"))
+                    and (ROOT / name.decode()).is_file()})
     digest = hashlib.sha256()
     for name in paths:
         digest.update(name.encode() + b"\0")

@@ -119,13 +119,23 @@ is `docbuild/.lake/build/doc/`. Publication copies it to `blueprint/site/lean/`,
 shortening equivalent relative URLs and omitting optional HTML attribute quotes
 to fit GitHub Pages' 1 GB limit. All module pages, declaration text, and search
 data are retained. The build checks the final size before uploading.
-The preparation step invalidates doc-gen4's database and generated pages when
-their inputs change, preventing stale declarations from surviving a cache
-restore. For unchanged Lean inputs, source buttons are refreshed to the current
-commit while documentation data is reused. A missing cache or changes to Lean
-sources, toolchains, dependency manifests, or `Documentation.lean` still require
-a documentation rebuild. `python blueprint/scripts/docs.py fingerprint` prints
-the exact input digest used by the cache stamp and the Actions cache key.
+For Lean source or `Documentation.lean` edits, preparation preserves a compatible
+doc-gen4 database and its module traces. Lake updates the affected modules and
+their dependents, retaining unchanged Mathlib and core data. The generator
+replaces each updated module's declarations in a transaction; preparation
+also removes deleted project modules from the database. HTML and search data
+are regenerated together so obsolete module pages and index entries disappear.
+UnicodeBasic's C object order is fixed to the cached archive's recorded order
+(lexical order on a cold build), preventing directory enumeration on another
+runner from invalidating doc-gen4 and every module trace.
+
+For unchanged Lean inputs, doc-gen4/Lake is skipped and source buttons are
+refreshed to the current commit. A missing or incomplete cache, unavailable
+compatibility information, or changes to toolchains, Lake configuration, or
+dependency manifests require a full documentation rebuild. Legacy stamps are
+migrated by comparing the build configuration at their recorded git revision;
+CI fetches git history for this check. `python blueprint/scripts/docs.py fingerprint`
+prints the exact input digest used by the cache stamp and the Actions cache key.
 
 When updating Lean, update both `lean-toolchain` files and the doc-gen4 revision
 in `docbuild/lakefile.toml`. Then refresh the nested manifest deliberately:

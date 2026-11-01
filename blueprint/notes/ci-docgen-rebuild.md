@@ -1,6 +1,7 @@
 # CI 在没有改 Lean 时仍重建 doc-gen4
 
-状态：2026-10-22 查明原因；2026-10-31 已在本仓库加入缓存复用修复。
+状态：2026-10-22 查明原因；2026-10-31 加入未改 Lean 时的缓存复用；
+2026-11-01 加入兼容 Lean 修改的增量文档构建和 UnicodeBasic 顺序修复。
 下文的上游调查仍截至 2026-10-22。
 
 ## 现象
@@ -32,7 +33,7 @@ Blueprint workflow 有时只改了网页也要跑约 2.5 小时，正常约 10 �
 - 全新 clone 加上恢复的 `.lake`，项目模块和 doc-gen4 都报 "All targets up-to-date"。
 - 只把 UnicodeCLib 的对象顺序改为排序后的顺序，C 源码不变，Lake 就报 `UnicodeBasic/UnicodeCLib` 过期，需要重建。
 
-另一项独立的成本：只要 Lean 输入（源码、toolchain、manifest、`Documentation.lean`）有任何变化，`prepare_docs()` 就会清空全部文档数据。所以改 Lean 的提交总要付一次约 2.5 小时，这是现有设计（`c0a0ca0` 慢就是这个原因）。
+截至 2026-10-31 的另一项独立成本：只要 Lean 输入（源码、toolchain、manifest、`Documentation.lean`）有任何变化，`prepare_docs()` 就会清空全部文档数据。所以改 Lean 的提交总要付一次约 2.5 小时（`c0a0ca0` 慢就是这个原因）。2026-11-01 的增量修复调整了这个策略。
 
 ## 上游状态（2026-10-22）
 
@@ -60,6 +61,38 @@ Blueprint workflow 有时只改了网页也要跑约 2.5 小时，正常约 10 �
 首次构建、缓存被清理或 Lean 输入变化仍可能耗时较长；全量文档失效策略
 保持不变。此修复消除的是输入未变化时的无效重建，以及 PDF/HTML 失败导致的
 重复重建。
+
+## 本仓库增量修复（2026-11-01）
+
+用户通过缓存元数据、提交 diff、工作流和指纹复算确认：`4fef0d3` 到
+`f3e0dec` 修改了 `Theorem5_2Unconditional.lean`，文档指纹从
+`d3444a5b…` 变为 `da9d1390…`。CI 恢复了兼容依赖的旧缓存，但原来的
+`prepare_docs()` 随后清掉了整个文档数据库。该调查当时没有取得仍在运行的
+job 的完整日志。
+
+1. stamp 现在单独记录构建环境指纹，覆盖父项目和 docbuild 的 toolchain、
+   Lake 配置及依赖 manifest。源码或文档入口变化时，兼容且完整的缓存保留
+   `api-docs.db` 和 `docInfo` 的 marker/trace，由 Lake 增量更新修改模块及
+   依赖它们的模块。环境变化或无法验证的缓存仍一起清除数据库和 marker。
+2. 锁定的 doc-gen4 `updateModuleDb` 在事务中先删除模块，再写入当前声明，
+   外键级联删除旧声明。准备阶段另外清理源码已经删除的项目模块及其 marker。
+   每次增量构建都清除旧 HTML、HTML marker、manifest，以及 `doc-data/` 的
+   `declaration-data-*.bmp` 和 `backrefs-*.json`，再生成全部页面和搜索索引，
+   避免旧文件被 doc-gen4 的磁盘索引合并逻辑重新收录。实际 doc-gen4 小型
+   集成测试也覆盖了声明替换、依赖数据保留和删除模块后的搜索索引清理。
+3. 在调用 Lake 前修补缓存中的 UnicodeBasic `lakefile.lean`，使用静态库
+   `.trace` 里记录的 C 对象顺序排列输入。这样已有旧缓存不会因为首次改成
+   字母排序而重建静态库；冷启动才使用字母顺序。修补只作用于忽略的依赖检出，
+   不修改锁定版本或 C 源码。
+4. 保持 `blueprint-v3` 的 key 和恢复后备。旧 stamp 没有环境指纹时，通过其
+   `revision` 的 Git 文件内容核对配置；workflow 用 `fetch-depth: 0` 保证
+   历史可读。历史缺失则保守重建，不直接假定旧数据库兼容。
+5. 回归测试覆盖增量时保留依赖数据、环境变化时完整失效、旧 stamp 迁移、
+   删除源码的指纹变化和数据库级联清理，以及顺序修补的幂等性。实际最小
+   Lake 构建中反转目录枚举后，静态库字节和完整 trace 都保持一致。
+
+兼容源码修改仍需重新生成 HTML 和搜索数据；省去的是无关 Mathlib/core 的
+逐模块文档提取。首次构建、依赖升级或缓存不完整仍需完整提取。
 
 ## 上游修复建议
 

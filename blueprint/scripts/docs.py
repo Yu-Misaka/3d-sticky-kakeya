@@ -10,6 +10,7 @@ import json
 import posixpath
 import re
 import shutil
+import sqlite3
 import subprocess
 from html.parser import HTMLParser
 from pathlib import Path
@@ -23,6 +24,16 @@ DOC_BUILD = DOCBUILD / ".lake/build"
 DOCS = DOC_BUILD / "doc"
 STAMP = DOC_BUILD / "blueprint-docs.json"
 REPOSITORY = "https://github.com/Yu-Misaka/3d-sticky-kakeya"
+CONFIG_INPUTS = (
+    "lean-toolchain", "lakefile.toml", "lakefile.lean", "lake-manifest.json",
+    "docbuild/lean-toolchain", "docbuild/lakefile.toml", "docbuild/lake-manifest.json",
+)
+UNICODE_PACKAGE = ROOT / ".lake/packages/UnicodeBasic"
+UNICODE_LOOP = '  for file in (← (pkg.dir / "UnicodeCLib").readDir) do'
+UNICODE_ORDER = re.compile(
+    r"  -- blueprint: stable UnicodeCLib input order\n.*?"
+    r"  -- blueprint: end stable UnicodeCLib input order", re.S,
+)
 HTML_PART = re.compile(
     r"(?P<raw><!--.*?-->|<(?P<rawtag>script|style|textarea|title)\b[^>]*>"
     r".*?</(?P=rawtag)\s*>)"
@@ -95,6 +106,34 @@ def input_digest() -> str:
     return digest.hexdigest()
 
 
+def compatibility_digest(revision: str | None = None) -> str | None:
+    """Separate source edits from changes to the generator's build environment.
+
+    Legacy stamps only record the git revision. Read that revision's config to
+    migrate compatible v3 caches without trusting an unrelated database. CI
+    fetches history for this comparison; unavailable history means a rebuild.
+    """
+    if revision is not None:
+        if not re.fullmatch(r"[0-9a-f]{40,64}", revision):
+            return None
+        commit = subprocess.run(["git", "cat-file", "-e", f"{revision}^{{commit}}"],
+                                cwd=ROOT, capture_output=True)
+        if commit.returncode:
+            return None
+    digest = hashlib.sha256()
+    for name in CONFIG_INPUTS:
+        if revision is None:
+            path = ROOT / name
+            content = path.read_bytes() if path.is_file() else None
+        else:
+            result = subprocess.run(["git", "show", f"{revision}:{name}"],
+                                    cwd=ROOT, capture_output=True)
+            content = result.stdout if result.returncode == 0 else None
+        digest.update(name.encode() + b"\0")
+        digest.update(b"missing\0" if content is None else hashlib.sha256(content).digest())
+    return digest.hexdigest()
+
+
 def cache_complete() -> bool:
     return all((DOC_BUILD / name).is_file() for name in (
         "api-docs.db", "doc-manifest.json", "doc/Documentation.html",
@@ -102,22 +141,120 @@ def cache_complete() -> bool:
     ))
 
 
-def cached_inputs() -> str | None:
+def cache_stamp() -> dict:
     try:
         stamp = json.loads(STAMP.read_text())
     except (FileNotFoundError, json.JSONDecodeError):
-        return None
-    inputs = stamp.get("inputs") if isinstance(stamp, dict) else None
+        return {}
+    return stamp if isinstance(stamp, dict) else {}
+
+
+def cached_inputs() -> str | None:
+    inputs = cache_stamp().get("inputs")
     return inputs if isinstance(inputs, str) else None
+
+
+def stabilize_unicode_order() -> None:
+    """Keep UnicodeBasic's object order stable across restored filesystems.
+
+    Preserve the archive's recorded order, including for pre-fix caches. A
+    cold build starts in lexical order. Only the ignored package checkout is
+    patched; the pinned source files and dependency manifests stay intact.
+    """
+    config = UNICODE_PACKAGE / "lakefile.lean"
+    source = config.read_text()
+    if UNICODE_LOOP not in source and not UNICODE_ORDER.search(source):
+        # A newer upstream version may already sort its inputs.
+        if '.readDir).qsort (·.fileName < ·.fileName)' in source:
+            return
+        raise ValueError("Cannot stabilize UnicodeBasic's UnicodeCLib input order")
+    names = sorted(path.name for path in (UNICODE_PACKAGE / "UnicodeCLib").glob("*.c"))
+    order = names
+    trace = UNICODE_PACKAGE / ".lake/build/lib/libunicodeclib.a.trace"
+    try:
+        inputs = json.loads(trace.read_text())["inputs"]
+        objects = next(value for key, value in inputs if key == "objs")
+        recorded = [Path(path).with_suffix(".c").name for path, _ in objects]
+        if len(recorded) == len(names) and set(recorded) == set(names):
+            order = recorded
+    except (FileNotFoundError, json.JSONDecodeError, KeyError, TypeError, ValueError, StopIteration):
+        pass
+    literal = ", ".join(json.dumps(name) for name in order)
+    loop = (
+        "  -- blueprint: stable UnicodeCLib input order\n"
+        f"  let sourceOrder : Array String := #[{literal}]\n"
+        '  let sources ← (pkg.dir / "UnicodeCLib").readDir\n'
+        "  let ordered := sources.qsort fun a b =>\n"
+        "    let i := sourceOrder.idxOf a.fileName\n"
+        "    let j := sourceOrder.idxOf b.fileName\n"
+        "    i < j || (i == j && a.fileName < b.fileName)\n"
+        "  -- blueprint: end stable UnicodeCLib input order\n"
+        "  for file in ordered do"
+    )
+    if UNICODE_LOOP in source:
+        updated = source.replace(UNICODE_LOOP, loop, 1)
+    else:
+        updated = UNICODE_ORDER.sub(lambda _: loop.rsplit("\n", 1)[0], source, count=1)
+    if updated != source:
+        config.write_text(updated)
+        print(f"Stabilized UnicodeCLib inputs: {', '.join(order)}.", flush=True)
+
+
+def prune_removed_modules() -> None:
+    """Delete removed project modules before doc-gen4 replaces changed ones."""
+    prefix = REPOSITORY + "/blob/"
+    with sqlite3.connect(DOC_BUILD / "api-docs.db") as database:
+        database.execute("PRAGMA foreign_keys = ON")
+        modules = database.execute("SELECT name, source_url FROM modules").fetchall()
+        for module, url in modules:
+            if not isinstance(url, str) or not url.startswith(prefix):
+                continue
+            revision, separator, relative = url[len(prefix):].partition("/")
+            if not separator or not re.fullmatch(r"[0-9a-f]{40,64}", revision):
+                continue
+            source = ROOT / unquote(relative)
+            if source.suffix == ".lean" and not source.is_file():
+                database.execute("DELETE FROM modules WHERE name = ?", (module,))
+                # A later reintroduction must not reuse this module's marker.
+                for path in (DOC_BUILD / "doc-data").glob(f"{module}.doc*"):
+                    path.unlink()
+                print(f"Removed obsolete documentation module: {module}.", flush=True)
+
+
+def clear_rendered_docs() -> None:
+    """Discard render outputs, including disk data merged into the search index."""
+    path = DOC_BUILD / "doc"
+    if path.exists():
+        shutil.rmtree(path)
+    (DOC_BUILD / "doc-manifest.json").unlink(missing_ok=True)
+    for pattern in ("*.docs_built*", "*.docsHeader_built*",
+                    "declaration-data-*.bmp", "backrefs-*.json"):
+        for path in (DOC_BUILD / "doc-data").glob(pattern):
+            path.unlink()
 
 
 def prepare_docs() -> bool:
     """Prepare the cache and return whether doc-gen4 needs to run."""
     check_docbuild_config()
-    if cached_inputs() != input_digest() or not cache_complete():
-        # doc-gen4's database and markers form one cache. Discard them together
-        # when inputs change, so deleted declarations or empty marker files
-        # cannot leave stale documentation in a restored cache.
+    stamp = cache_stamp()
+    complete = cache_complete()
+    if stamp.get("inputs") == input_digest() and complete:
+        print("Reusing validated documentation for unchanged inputs; skipping doc-gen4/Lake.", flush=True)
+        return False
+    compatible = stamp.get("compatibility")
+    if compatible is None and isinstance(stamp.get("revision"), str):
+        compatible = compatibility_digest(stamp["revision"])
+    if complete and isinstance(stamp.get("inputs"), str) and compatible == compatibility_digest():
+        # The upstream single-module writer deletes that module's old rows in
+        # a transaction, including removed declarations. Preserve its database
+        # and docInfo markers so Lake only reprocesses affected imports.
+        STAMP.unlink(missing_ok=True)
+        prune_removed_modules()
+        clear_rendered_docs()
+        print("Documentation sources changed; updating module data incrementally and regenerating HTML/indexes.", flush=True)
+    else:
+        # An unknown/incompatible environment or incomplete database cannot
+        # safely retain docInfo's empty marker files.
         for name in ("doc", "doc-data"):
             path = DOC_BUILD / name
             if path.exists():
@@ -125,10 +262,8 @@ def prepare_docs() -> bool:
         for pattern in ("api-docs.db*", "doc-manifest.json", "blueprint-docs.json"):
             for path in DOC_BUILD.glob(pattern):
                 path.unlink()
-        print("Documentation inputs changed or cache is incomplete; rebuilding doc-gen4 data.", flush=True)
-        return True
-    print("Reusing validated documentation for unchanged inputs; skipping doc-gen4/Lake.", flush=True)
-    return False
+        print("Documentation environment changed or cache is incomplete; rebuilding doc-gen4 data.", flush=True)
+    return True
 
 
 class Anchors(HTMLParser):
@@ -208,7 +343,8 @@ def finish_docs() -> None:
     # For a text-only commit the compiled declarations are unchanged, but the
     # source buttons should still point to this site's actual checkout.
     revision = refresh_source_links()
-    STAMP.write_text(json.dumps({"inputs": input_digest(), "revision": revision}, indent=2) + "\n")
+    STAMP.write_text(json.dumps({"inputs": input_digest(), "revision": revision,
+                                "compatibility": compatibility_digest()}, indent=2) + "\n")
 
 
 def check_fresh_docs() -> None:
@@ -220,6 +356,7 @@ def build_docs() -> None:
     # UnicodeBasic's unsorted C inputs can invalidate Lake's traces on another
     # runner. A complete cache with matching source inputs needs no Lake call.
     if prepare_docs():
+        stabilize_unicode_order()
         BUILD.mkdir(exist_ok=True)
         run_logged(["lake", "--no-cache", "-d", "docbuild", "build", "Documentation:docs"],
                    BUILD / "docgen.log")
@@ -235,5 +372,5 @@ if __name__ == "__main__":
             print(input_digest())
         else:
             {"prepare": prepare_docs, "check": finish_docs, "build": build_docs}[args.command]()
-    except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as error:
+    except (OSError, ValueError, KeyError, sqlite3.Error, subprocess.CalledProcessError) as error:
         parser.exit(1, f"Documentation check failed: {error}\n")
