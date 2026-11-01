@@ -1,7 +1,7 @@
 {
   "format": 2,
   "toolchain": "leanprover/lean4:v4.32.0-rc1",
-  "source_sha256": "f2779fcdd1b18461e2a0b0004c93f9d821e9bf5eaf66acefda8bb9ff249a4d69",
+  "source_sha256": "fea42cc7443faf078b18721ea676a4dd4f3c4de1003f455928370a66c799d3d2",
   "declarations": [
     {
       "axioms": [
@@ -898,7 +898,7 @@
       "is_proof": true,
       "is_proposition": false,
       "kind": "theorem",
-      "line": 37,
+      "line": 46,
       "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Theorem5_2Unconditional",
       "name": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
       "type": "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
@@ -2977,6 +2977,23 @@
       "name": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman_sharp_density",
       "type": "Kakeya.Assouad.GridOSBoundedOneScaleSharpInput",
       "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/ProjectionOneStep.lean"
+    },
+    {
+      "axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "definition": null,
+      "expanded_type": "∀ {sigma : ℝ}, Kakeya.Assouad.PureWZ2CriticalPackage sigma → False",
+      "is_proof": true,
+      "is_proposition": false,
+      "kind": "theorem",
+      "line": 40,
+      "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Theorem5_2Unconditional",
+      "name": "Kakeya.Assouad.pure_wz2_no_critical_package",
+      "type": "∀ {sigma : ℝ}, Kakeya.Assouad.PureWZ2CriticalPackage sigma → False",
+      "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Theorem5_2Unconditional.lean"
     },
     {
       "axioms": [

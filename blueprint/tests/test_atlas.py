@@ -37,7 +37,7 @@ class AtlasEvidenceTests(unittest.TestCase):
                       "C": {"primary": "Signature"}, "Unused": {"primary": "UnusedProof"},
                       "Missing": {"primary": None}, "Alias": {"primary": "Root"}}
 
-    def test_transitive_use_is_solid_even_when_the_display_edge_was_reduced(self):
+    def test_transitive_use_is_witnessed_even_when_the_display_edge_was_reduced(self):
         result = atlas.classify_expert_edge(expert_edge("A", "B"), self.nodes, self.paths)
         self.assertEqual(result["classification"], "actual")
         self.assertEqual(result["path"], [edge("Root", "Middle")["path"][0],
@@ -45,7 +45,7 @@ class AtlasEvidenceTests(unittest.TestCase):
 
     def test_expert_edges_cannot_be_used_as_reachability_evidence(self):
         # The expert can connect Leaf -> Signature -> Root, but the stored
-        # Signature has no reference to Leaf. That first edge must stay dashed.
+        # Signature has no reference to Leaf. That edge has no Lean witness.
         proposed = [expert_edge("A", "C"), expert_edge("C", "B")]
         results = [atlas.classify_expert_edge(e, self.nodes, self.paths) for e in proposed]
         self.assertEqual([r["classification"] for r in results], ["different-route", "actual"])
@@ -90,6 +90,58 @@ class AtlasEvidenceTests(unittest.TestCase):
         self.assertEqual(atlas.declaration_status(proof_def), "used-proof")
         self.assertEqual(atlas.declaration_role(constructor), "constructor")
         self.assertEqual(atlas.declaration_status(unused), "unused-proof")
+
+
+class ConnectionLayerTests(unittest.TestCase):
+    def setUp(self):
+        self.nodes = {
+            "A": {"primary": "A", "expert": True, "status": "used-proof"},
+            "B": {"primary": "B", "expert": True, "status": "used-proof"},
+            "Data": {"primary": "Data", "expert": True, "status": "used-interface"},
+            "Missing": {"primary": None, "expert": True, "status": "unmatched"},
+        }
+        paths = atlas.AuditedPaths({"graph_nodes": ["A", "B", "Helper", "Data"],
+            "edges": [edge("B", "Helper"), edge("Helper", "A"), edge("B", "Data", "type")]})
+        proposed = [{**expert_edge("A", "B"), "kind": "compressed"}, expert_edge("Missing", "B")]
+        self.actual = atlas.projected_edges(list(self.nodes), self.nodes, paths)
+        self.comparisons = [atlas.classify_expert_edge(e, self.nodes, paths) for e in proposed]
+        self.reach = atlas.expert_reach(proposed)
+
+    def test_each_layer_retains_its_own_connections(self):
+        layers = atlas.connection_layers(self.actual, self.comparisons, self.nodes, self.reach)
+        pairs = lambda edges: {(e["from"], e["to"]) for e in edges}
+        self.assertEqual(pairs(layers["roadmap"]), {("A", "B"), ("Missing", "B")})
+        self.assertEqual(pairs(layers["lean"]), {("A", "B"), ("Data", "B")})
+        self.assertTrue(all(e["kind"] == "actual" and e["path"] for e in layers["lean"]))
+        self.assertTrue(all(e["kind"] == "expert" for e in layers["roadmap"]))
+        matching = next(e for e in layers["roadmap"] if e["from"] == "A")
+        self.assertEqual(matching["diff"], "agree")
+
+    def test_roles_distinguish_compression_assembly_and_type_dependencies(self):
+        layers = atlas.connection_layers(self.actual, self.comparisons, self.nodes, self.reach)
+        lean = {e["from"]: e for e in layers["lean"]}
+        self.assertEqual(lean["A"]["role"], "compressed")
+        self.assertEqual(lean["Data"]["role"], "api")
+        self.assertEqual(lean["Data"]["role_origin"], "declaration")
+        assembly = [{**self.comparisons[0], "expert_kind": "assembly"}]
+        layers = atlas.connection_layers(self.actual, assembly, self.nodes, self.reach)
+        self.assertEqual(next(e for e in layers["lean"] if e["from"] == "A")["role"], "assembly")
+        unmatched = atlas.connection_layers(self.actual, [], self.nodes, self.reach)
+        self.assertEqual(next(e for e in unmatched["lean"] if e["from"] == "A")["role_origin"], "kernel-path")
+
+    def test_core_compressed_path_and_unmatched_node_keep_their_meaning(self):
+        import check
+        expert, mapping = atlas.load_sources()
+        combined = atlas.make_atlas(json.loads(atlas.REPORT.read_text()), expert, mapping,
+                                    check.inspect_content()[2])
+        view = next(v for v in combined["views"] if v["id"] == "overview")
+        for layer in ("roadmap", "lean"):
+            target = next(e for e in view["edge_layers"][layer]
+                          if (e["from"], e["to"]) == ("W2L7_12", "W2P7_1"))
+            self.assertEqual(target["role"], "compressed")
+        self.assertTrue(any(e["from"] == "W2L2_13" for e in view["edge_layers"]["roadmap"]))
+        self.assertFalse(any(e["from"] == "W2L2_13" for e in view["edge_layers"]["lean"]))
+        self.assertEqual(len(view["nodes"]), 18)
 
 
 class AtlasCorrespondenceTests(unittest.TestCase):
@@ -272,6 +324,10 @@ class AtlasPageTests(unittest.TestCase):
         self.assertIn('data-view="overview"', page)
         self.assertIn('data-view="all"', page)
         self.assertIn('../assets/atlas.js', page)
+        self.assertIn('data-layer="roadmap"', page)
+        self.assertIn('data-layer="lean"', page)
+        self.assertIn('Arrow legend', page)
+        self.assertNotIn('Lean vs roadmap', page)
         cards = self.render("atlas_cards.html", cards=[card])
         self.assertEqual(cards.count('id="node-N1"'), 1)
         self.assertIn('Scope.', cards)
@@ -324,6 +380,36 @@ class AtlasLayoutTests(unittest.TestCase):
         self.assertEqual(set(placed["nodes"]), {"A", "group-input"})
         self.assertGreater(placed["nodes"]["group-input"][2], placed["nodes"]["A"][2])
         self.assertEqual([c["id"] for c in placed["clusters"]], ["external"], "a folded frame draws no inner cluster")
+
+    def test_layers_share_one_layout_and_shared_splines(self):
+        nodes = {key: self.node(key) for key in ("A", "B", "C")}
+        actual = {"from": "B", "to": "A", "kind": "actual", "diff": "agree", "role": "core"}
+        roadmap = {**actual, "kind": "expert", "role": "compressed"}
+        extra = {"from": "C", "to": "A", "kind": "expert", "diff": "expert-route", "role": "assembly"}
+        view = {"id": "layers", "nodes": list(nodes),
+                "edge_layers": {"lean": [actual], "roadmap": [roadmap, extra]}}
+        placed = atlas_render.layer_layout(view, nodes, [])
+        self.assertEqual(set(placed["nodes"]), set(nodes))
+        self.assertEqual(len(placed["splines"]), 2, "a shared connection is routed once")
+        self.assertEqual(placed["layer_edges"]["lean"][0]["d"],
+                         placed["layer_edges"]["roadmap"][0]["d"])
+        self.assertEqual(placed["layer_edges"]["lean"][0]["role"], "core")
+        self.assertEqual(placed["layer_edges"]["roadmap"][0]["role"], "compressed")
+
+    def test_folding_preserves_each_layers_members_and_roles(self):
+        nodes = {"A": self.node("A"), "B": self.node("B", "input"), "C": self.node("C", "input")}
+        edges = [{"from": key, "to": "A", "kind": "actual", "diff": "detail", "role": "core"}
+                 for key in ("B", "C")]
+        roadmap = [{**e, "kind": "expert", "role": "assembly"} for e in edges]
+        view = {"id": "layers", "title": "Layers", "description": "Test", "nodes": list(nodes),
+                "edges": edges, "edge_layers": {"lean": edges, "roadmap": roadmap}}
+        folded = atlas.collapse_view(view, nodes, ["input"], "folded", "Folded")
+        self.assertEqual(folded["nodes"], ["A", "group-input"])
+        for layer, role in (("lean", "core"), ("roadmap", "assembly")):
+            self.assertEqual(len(folded["edge_layers"][layer]), 1)
+            group = folded["edge_layers"][layer][0]
+            self.assertEqual(group["role"], role)
+            self.assertEqual(len(group["members"]), 2)
 
 
 class ManuscriptTests(unittest.TestCase):

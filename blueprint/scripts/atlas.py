@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Reconcile the expert roadmap with the compiled declaration graph.
 
-Only kernel witness paths can produce solid edges. Expert edges never enter
-the graph used for reachability. A missing correspondence, an unused proof and
-a proposition interface remain distinct, including in the generated cards.
+Only kernel witness paths can produce Lean connections. The expert and Lean
+layers share a layout and the expert's edge-role legend. Expert edges never
+enter the graph used for Lean reachability.
 """
 
 from __future__ import annotations
@@ -100,7 +100,7 @@ class AuditedPaths:
 
     The declaration report contracts unlinked helpers and, on a DAG, removes
     transitive edges. Neither operation changes reachability. Checking only
-    its displayed edge pairs would incorrectly label transitive uses dashed.
+    its displayed edge pairs would incorrectly label transitive uses unsupported.
     """
 
     def __init__(self, report: dict):
@@ -201,7 +201,7 @@ def projected_edges(selected: list[str], nodes: dict[str, dict], paths: AuditedP
     return edges
 
 
-# How a drawn edge compares with the expert roadmap. Every edge has one class.
+# Comparison evidence is independent of each layer's arrow roles.
 DIFF_CLASSES = {
     "agree": "Lean path; the roadmap also connects these nodes",
     "lean-only": "Lean path; the roadmap has no path between these nodes",
@@ -209,6 +209,46 @@ DIFF_CLASSES = {
     "expert-route": "Roadmap connection; both versions are used, but Lean takes another route",
     "expert-unknown": "Roadmap connection that cannot be compared with Lean",
 }
+
+EDGE_ROLES = ("core", "api", "assembly", "compressed")
+
+
+def connection_layers(actual: list[dict], comparisons: list[dict],
+                      nodes: dict[str, dict], reach: dict[str, set[str]]) -> dict:
+    """Keep the complete roadmap separate from the witnessed Lean connections.
+
+    Edge roles describe the mathematical operation, not agreement. Matched
+    proof edges retain the reviewed roadmap role. Type/data dependencies are
+    APIs; unmatched value paths through hidden declarations are compressed.
+    The comparison audit retains every original record, including duplicates.
+    """
+    roadmap = {}
+    priority = {"assembly": 0, "compressed": 1, "core": 2, "api": 3}
+    for edge in comparisons:
+        role = edge["expert_kind"]
+        if role not in EDGE_ROLES:
+            raise ValueError(f"Unknown expert edge role: {role}")
+        pair = (edge["from"], edge["to"])
+        previous = roadmap.get(pair)
+        if previous is None or priority[role] < priority[previous["role"]]:
+            drawn = {**edge, "kind": "expert", "role": role,
+                     "role_origin": "roadmap"}
+            drawn["diff"] = "agree" if edge["classification"] == "actual" else edge_diff(drawn, nodes, reach)
+            roadmap[pair] = drawn
+    lean = []
+    for edge in actual:
+        matched = roadmap.get((edge["from"], edge["to"]))
+        if nodes[edge["from"]]["status"] != "used-proof" or any(
+                step["kind"] != "value" for step in edge["path"]):
+            role, origin = "api", "declaration"
+        elif matched:
+            role, origin = matched["role"], "roadmap"
+        else:
+            role = "compressed" if len(edge["path"]) > 1 else "core"
+            origin = "kernel-path"
+        lean.append({**edge, "diff": edge_diff(edge, nodes, reach),
+                     "role": role, "role_origin": origin})
+    return {"roadmap": list(roadmap.values()), "lean": lean}
 
 
 def expert_reach(proposed: list[dict]) -> dict[str, set[str]]:
@@ -260,21 +300,28 @@ def collapse_view(view: dict, nodes: dict[str, dict], collapsed: list[str], key:
         return group_key(group) if group in collapsed else name
 
     selected = list(dict.fromkeys(owner(name) for name in view["nodes"]))
-    merged: dict[tuple, dict] = {}
-    for edge in view["edges"]:
-        source, target = owner(edge["from"]), owner(edge["to"])
-        if source == target:
-            continue
-        drawn = merged.setdefault((source, target, edge["kind"], edge["diff"]), {
-            **edge, "from": source, "to": target, "members": []})
-        drawn["members"].append(edge)
-    edges = list(merged.values())
-    for edge in edges:
-        if len(edge["members"]) == 1 and edge["members"][0]["from"] == edge["from"] \
-                and edge["members"][0]["to"] == edge["to"]:
-            del edge["members"]
-    return {"id": key, "title": title, "description": view["description"],
-            "nodes": selected, "edges": edges, "collapsed": collapsed}
+    def folded_edges(edges):
+        merged: dict[tuple, dict] = {}
+        for edge in edges:
+            source, target = owner(edge["from"]), owner(edge["to"])
+            if source == target:
+                continue
+            drawn = merged.setdefault((source, target, edge["kind"], edge["diff"], edge.get("role")), {
+                **edge, "from": source, "to": target, "members": []})
+            drawn["members"].append(edge)
+        result = list(merged.values())
+        for edge in result:
+            if len(edge["members"]) == 1 and edge["members"][0]["from"] == edge["from"] \
+                    and edge["members"][0]["to"] == edge["to"]:
+                del edge["members"]
+        return result
+
+    result = {"id": key, "title": title, "description": view["description"],
+              "nodes": selected, "edges": folded_edges(view["edges"]), "collapsed": collapsed}
+    if "edge_layers" in view:
+        result["edge_layers"] = {layer: folded_edges(edges)
+                                 for layer, edges in view["edge_layers"].items()}
+    return result
 
 
 def make_atlas(report: dict, expert: dict, mapping: dict, paper_nodes: list[dict]) -> dict:
@@ -336,8 +383,8 @@ def make_atlas(report: dict, expert: dict, mapping: dict, paper_nodes: list[dict
         selected = list(dict.fromkeys(selected))
         actual = reduce_edges(projected_edges(selected, nodes, paths))
         comparisons = [classify_expert_edge(edge, nodes, paths) for edge in proposed]
-        # Supported expert edges are already represented by a solid path. Only
-        # unsupported conceptual links are overlaid, always with dashed strokes.
+        # Preserve the combined comparison projection for the audit. The
+        # interactive graph draws the independent connection layers below.
         dashed = [{**edge, "kind": "expert"} for edge in comparisons
                   if edge["classification"] != "actual"]
         # The expert sometimes records two categories for the same connection.
@@ -348,7 +395,8 @@ def make_atlas(report: dict, expert: dict, mapping: dict, paper_nodes: list[dict
         for edge in displayed.values():
             edge["diff"] = edge_diff(edge, nodes, reach)
         return {"id": key, "title": title, "description": description,
-                "nodes": selected, "edges": list(displayed.values()), "comparisons": comparisons}
+                "nodes": selected, "edges": list(displayed.values()), "comparisons": comparisons,
+                "edge_layers": connection_layers(actual, comparisons, nodes, reach)}
 
     views = [view_data(view["id"], view["title"], view["description"], view["nodes"],
                       [{**edge, "expert_view": view["id"], "expert_view_title": view["title"]}
@@ -404,9 +452,10 @@ def correspondence_tex(expert: dict, mapping: dict) -> str:
             "The expert atlas contributes a mathematical reading order and 102 named nodes.",
             "Its Lean blocks are uncompiled sketches. The following remarks record the",
             "reviewed correspondence, including interfaces and related specializations.",
-            "They do not add proof-completion marks. The interactive atlas computes usage",
-            "and solid edges from the compiled theorem; dashed edges are expert connections",
-            "without a supporting path between the selected versions in that root's closure.",
+            "They do not add proof-completion marks. The interactive atlas switches between",
+            "expert and Lean connections on one fixed node layout. Both layers use the",
+            "expert's proof-input, API, assembly and compressed-path legend. Only compiled",
+            "kernel paths supply Lean connections; comparison evidence is shown in the details.",
             "The external inputs and their actual project dependencies are framed together.", ""]
     sources = {node["id"]: node for node in expert["nodes"]}
     for node in mapping["nodes"]:

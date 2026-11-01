@@ -138,12 +138,15 @@ described at that node.
 
 The interactive \emph{proof atlas} follows the expert's branch views and
 node catalogue while checking connections against the compiled sticky
-theorem. A solid arrow has a nonempty kernel-reference path between its
-selected Lean versions. A dashed arrow preserves an expert connection
-without such a path in this root's closure. The audit distinguishes a
-different code route, an unused version, a missing primary match and
+theorem. A switch selects expert connections or Lean connections on the
+same node layout. Both layers use the expert's line conventions: solid
+proof dependencies, dashed definition/API connections, dash-dot assembly
+connections and long-dashed compressed paths. Every Lean connection has
+a nonempty kernel-reference path. The details retain the comparison:
+a different code route, an unused version, a missing primary match or
 two mathematical nodes sharing one declaration. Paths through other
-displayed nodes still count as actual dependencies.
+displayed nodes still count as actual dependencies. Node marks always
+show Lean status, in either layer.
 
 Each card distinguishes a proved theorem, a proposition interface, and
 its actual usage. A constructor requiring fields is not a construction

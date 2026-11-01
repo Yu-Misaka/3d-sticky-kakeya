@@ -253,7 +253,8 @@ def connection_records(atlas: dict) -> dict[str, dict]:
         notes.setdefault((edge["from"], edge["to"]), []).append(edge["expert_note"])
     records = {}
     for view in atlas["views"]:
-        for edge in view["edges"]:
+        for edge in [*view["edges"], *view.get("edge_layers", {}).get("roadmap", []),
+                     *view.get("edge_layers", {}).get("lean", [])]:
             key = f"{edge['from']}>{edge['to']}>{edge['kind']}"
             pair = (edge["from"], edge["to"])
             if key in records:
@@ -264,6 +265,25 @@ def connection_records(atlas: dict) -> dict[str, dict]:
                             "reason": edge.get("reason"), "notes": notes.get(pair, []),
                             "audit": "atlas-audit.html#" + anchor if anchor else None}
     return records
+
+
+def layer_layout(view: dict, nodes: dict[str, dict], groups: list[dict]) -> dict:
+    """Route both layers once; a switch never recomputes node positions.
+
+    A shared pair uses the same spline in both layers, even when its role or
+    evidence differs. Layer membership never changes the node catalogue.
+    """
+    layers = view["edge_layers"]
+    union = {}
+    for layer in ("lean", "roadmap"):
+        for edge in layers[layer]:
+            union.setdefault((edge["from"], edge["to"]), edge)
+    common = {**view, "edges": list(union.values())}
+    placed = layout_view(common, nodes, groups)
+    routes = dict(zip(union, placed["splines"]))
+    return {**placed, "layer_edges": {
+        layer: [{**edge, "d": routes[(edge["from"], edge["to"])]} for edge in edges]
+        for layer, edges in layers.items()}}
 
 
 def layout_key(variant: str) -> str:
@@ -294,8 +314,10 @@ def page_data(atlas: dict, nodes: dict[str, dict], cards: list[dict], evidence: 
             table.append(steps)
         return paths[key]
 
-    def drawn(edge, spline=None):
-        record = {"from": edge["from"], "to": edge["to"], "kind": edge["kind"], "diff": edge["diff"]}
+    def drawn(edge, layer):
+        record = {"from": edge["from"], "to": edge["to"], "kind": edge["kind"], "diff": edge["diff"],
+                  "layer": layer, "role": edge["role"], "role_origin": edge["role_origin"]}
+        spline = edge.get("d")
         if spline:
             record["d"] = spline
         if edge.get("path"):
@@ -310,9 +332,10 @@ def page_data(atlas: dict, nodes: dict[str, dict], cards: list[dict], evidence: 
     sources += [(layout_key(variant["id"]), variant) for variant in atlas["unified_variants"]]
     layouts = {}
     for key, view in sources:
-        placed = layout_view(view, nodes, groups)
+        placed = layer_layout(view, nodes, groups)
         layouts[key] = {"w": placed["w"], "h": placed["h"], "nodes": placed["nodes"], "clusters": placed["clusters"],
-                        "edges": [drawn(edge, spline) for edge, spline in zip(view["edges"], placed["splines"])]}
+                        "edges": [drawn(edge, layer) for layer, edges in placed["layer_edges"].items()
+                                  for edge in edges]}
     records = []
     for card in cards:
         heads, lines = label_lines(card)
@@ -338,7 +361,7 @@ def page_data(atlas: dict, nodes: dict[str, dict], cards: list[dict], evidence: 
         metadata = evidence[name]
         located[name] = [modules.setdefault(metadata["module"], len(modules)), metadata.get("line")]
     packages = json.loads((ROOT / "lake-manifest.json").read_text())["packages"]
-    return {"format": 1, "root": atlas["root"], "root_node": atlas["root_node"], "counts": atlas["counts"],
+    return {"format": 2, "root": atlas["root"], "root_node": atlas["root_node"], "counts": atlas["counts"],
             "repository": "https://github.com/Yu-Misaka/3d-sticky-kakeya", "revision": revision,
             "mathlib_revision": next(p["rev"] for p in packages if p["name"].strip("«»") == "mathlib"),
             "views": [{"id": view["id"], "title": view["title"], "description": view["description"],
@@ -412,8 +435,8 @@ def write_atlas(site: Path, report: dict, paper_nodes: list[dict], paper_html: s
     branch_views = [view for view in atlas["views"] if view["id"] != "all"]
     (destination / "lean_dependencies.html").write_text(environment.get_template("atlas.html").render(
         atlas=atlas, views=branch_views, counts=atlas["counts"]))
-    # The leanblueprint menu's historical graph route forwards to the reviewed
-    # atlas. The generated paper DOT must not keep unaudited solid arrows.
+    # The historical graph route forwards to the atlas with its connection
+    # source explicit, instead of showing an unrelated generated paper graph.
     (destination / "dep_graph_document.html").write_text(
         redirect_page("lean_dependencies.html", "the proof atlas"))
     (destination / "atlas-cards.html").write_text(

@@ -144,7 +144,7 @@ def main():
     known = set(graph) | {row["name"] for row in axioms} | {
         json.loads(line.removeprefix("CORE_CONSTANT "))
         for line in log.splitlines() if line.startswith("CORE_CONSTANT ")}
-    assert len(axioms) == 105 and len(binders) == 53, "Incomplete Lean audit"
+    assert len(axioms) == 106 and len(binders) == 54, "Incomplete Lean audit"
     assert all(set(row["axioms"]) <= ALLOWED for row in axioms)
     assert all(row["applications"] > 0 for row in binders)
     normalized_interval_type = next(row["type"] for row in axioms
@@ -182,7 +182,9 @@ def main():
         ("pure_wz2_lemma66_prepared_interval_on", "PureWZ2Lemma31SlabAssembly.derivative_lower"),
         ("pure_wz2_lemma66_prepared_interval", "pure_wz2_lemma66_prepared_interval_on"),
         ("PureWZ2Lemma31SlabAssembly.derivative_lower", "pureWZ2_faithful_step4_producer_of_frame_lower"),
-        ("PureWZ2Theorem5_2Unconditional", "pure_wz2_theorem5_2_of_normalized_projection"),
+        ("PureWZ2Theorem5_2Unconditional", "pure_wz2_no_critical_package"),
+        ("pure_wz2_no_critical_package", "pure_wz2_no_critical_package_of_normalized_projection"),
+        ("pure_wz2_no_critical_package", "pure_wz2_left_line_normalized_projection"),
         ("PureWZ2Theorem5_2Unconditional", "pure_wz2_left_line_normalized_projection"),
         ("PureWZ2Theorem5_2Unconditional", "pure_wz2_convex_wolff_lower_bound_via_dilated_tubes"),
         ("PureWZ2Theorem5_2Unconditional", "dilatedTubeWolffVolumeBound_of_convexWolffBound"),
@@ -466,7 +468,7 @@ def main():
                              uncomment((ROOT / path).read_text())), path
     result = {"status": "passed_for_implemented_scope",
               "adopted_final_route": {
-                  "contradiction": NS + "pure_wz2_no_critical_package_of_normalized_projection",
+                  "contradiction": NS + "pure_wz2_no_critical_package",
                   "upper": NS + "pure_wz2_left_line_normalized_projection",
                   "lower": NS + "pure_wz2_convex_wolff_lower_bound_via_dilated_tubes",
                   "tube_wolff": NS + "pure_wz2_proposition7_1_dilated_tube_wolff",

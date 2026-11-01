@@ -200,10 +200,14 @@ window: the branch views of the expert atlas supplied in `artifacts/` and the
 whole proof are listed on the left, the graph pans and zooms in the middle,
 and the details of the selection are on the right (a bottom sheet on narrow
 screens). Drag the panel's left edge to resize it; double-click the edge to
-restore the default width. Selecting a node lists what it depends on and what uses it, by
-comparison class, then its reviewed statement, correspondence Remark and
-Lean versions. Selecting an arrow shows its kernel witness or the reason
-Lean has none. Search (`/` or `⌘K`) finds nodes by paper number, ID, title
+restore the default width. The **Roadmap / Lean** switch changes only the
+connections: node positions, marks, borders, selection and the camera stay
+fixed. The first visit opens the roadmap; the choice is remembered and can
+be shared with `?connections=roadmap` or `?connections=lean`.
+Selecting a node lists its connections in the active layer, grouped by
+arrow role, then its reviewed statement, correspondence Remark and Lean
+versions. Arrow details retain the comparison and kernel evidence.
+Search (`/` or `⌘K`) finds nodes by paper number, ID, title
 or Lean name, and `#node-ID` links open a node directly.
 
 Graphviz still lays out every view at build time, but as JSON: the atlas
@@ -212,8 +216,7 @@ opens a folded frame are all CSS and JavaScript. Everything the atlas draws is
 in `blueprint/atlas-view.json`. The same cards are printed on
 `blueprint/atlas-cards.html`, for printing and reading without JavaScript.
 The historical `blueprint/dep_graph_document.html` and `lean_declarations.html`
-routes forward to the atlas, so the published paper-graph route does not
-retain unaudited solid arrows.
+routes forward to the atlas, with the selected connection source explicit.
 
 The two sources remain separate:
 
@@ -261,22 +264,36 @@ change that adds no new Lean links can use the lightweight check instead.
 
 ### Line styles and evidence
 
-**Solid arrows** have nonempty witness paths in the compiled declaration
-graph. Types, proof or definition bodies, private helpers, structure
-projections and inductive/recursor data are distinguished at every step.
-Unlinked intermediate helpers can be folded. Reachability is checked through
-other displayed nodes too: a transitive use is not labelled unsupported merely
-because a direct edge was removed from a diagram.
+Both layers use the expert's legend. Line style describes the role of a
+connection, independently of whether the roadmap and Lean agree:
 
-**Dashed arrows** preserve expert connections without such a path between the
-selected versions in the sticky root's closure. The comparison distinguishes
-an unassigned endpoint, a version outside the root, two cards sharing one Lean
-declaration, and two reached declarations connected differently in the code.
-For unused proofs it makes no assertion of global nondependence. The expert
-edges never enter the graph used to calculate actual reachability.
+- **Solid blue-grey:** proof dependency.
+- **Dashed grey:** definition, API or standard operation.
+- **Purple dash-dot:** assembly of an output into a later hypothesis.
+- **Purple long-dashed:** a path with intermediate steps folded away.
 
-Every drawn arrow also has one of five **comparison classes**, each with its
-own stroke and filter:
+The **Roadmap** layer retains the expert view's connections, including its
+compressed overview paths and connections without a Lean match. All original
+records remain in the audit; duplicate categories for one pair use the most
+specific role in the drawing. The **Lean** layer contains only connections
+with compiled kernel witnesses. Type/structural references and data/interface
+prerequisites use the API role. Other matched connections retain the reviewed
+expert role; unmatched proof paths use the proof role for a direct reference
+and the compressed role when intermediate declarations are hidden. The role's
+source and full evidence are available in the arrow details.
+
+Graphviz lays out the union of both layers once per view or folded-frame
+state. Shared endpoint pairs use the same spline. Switching layers changes
+visibility and the inspector, without replacing nodes or moving the camera.
+Legend filters apply to the four roles in the selected layer. The node marks
+and borders always report Lean status.
+
+Every Lean connection has a nonempty witness path. Types, proof or definition
+bodies, private helpers, structure projections and inductive/recursor data
+are distinguished at every step. Reachability includes paths through other
+displayed nodes. Expert edges never enter that computation.
+
+The details and evidence page retain five **comparison classes**:
 
 - *agree*: a Lean path, and the roadmap connects the two nodes, directly or
   through other roadmap nodes;
@@ -285,17 +302,16 @@ own stroke and filter:
   view;
 - *Lean detail*: a Lean path with an end that the roadmap does not show;
 - *roadmap only, different route*: both Lean versions are used, but the proof
-  connects them differently (dashed);
+  connects them differently;
 - *roadmap only, not comparable*: an unmatched node, a version outside the
-  root, or two cards sharing one declaration (dotted).
+  root, or two cards sharing one declaration.
 
 The roadmap's own reachability decides *agree* versus *Lean only*; it never
 enters the Lean reachability computation.
 
-The former expert categories (proof input, API, assembly and provenance) are
-retained as source metadata, not as competing stroke styles. Supported expert
-connections may appear as a sequence of solid edges rather than a redundant
-shortcut. Every recorded connection is retained in the audit table.
+Comparison classes do not control line style. A supported roadmap connection
+may appear as a sequence of edges in the Lean layer rather than a redundant
+shortcut. For unused proofs the audit makes no global nondependence claim.
 
 The classifier uses Lean's type information to distinguish a definition of a
 proposition from a proof-valued declaration. Constructors are labelled as
@@ -313,19 +329,19 @@ inputs are retained as terminal nodes with witnessed incoming references.
 Frame buttons bring each framed input into view at a readable scale.
 
 The **whole proof** opens with every External frame of several nodes folded
-into one node and the not-comparable class hidden. Clicking a folded frame
+into one node, using the selected connection layer. Clicking a folded frame
 opens it in place: the layouts of each state are computed in advance, and the
 members move out of the frame's node. "All open" shows the complete graph,
 which contains every reached blueprint-linked declaration and so replaces the
 former declaration-level graph. An arrow to a folded frame stands for its
-members' connections, which share its class. When zoomed out, nodes show only
+members' connections within one layer and arrow role. When zoomed out, nodes show only
 their paper reference, then only their branch colour.
 
 `blueprint/atlas-audit.html` presents the evidence from the roadmap's side:
 every Lean-only arrow, and every roadmap connection with its classification,
 reason, kernel witness and the expert's note, including the agreeing
 connections whose Lean path runs through other displayed nodes and so have no
-arrow of their own. An arrow in the atlas links to its row there.
+separate Lean arrow. An arrow in the atlas links to its row there.
 `blueprint/atlas-dependencies.json` contains the generated atlas, paths and
 source fingerprints. The version table is
 `blueprint/lean_dependency_audit.html`.

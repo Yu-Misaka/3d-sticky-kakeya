@@ -6,6 +6,7 @@
   --accent: #2254a3; --accent-soft: #e5edf9; --on-accent: #ffffff;
   --used: #2a7650; --off: #8a94a2;
   --e-agree: #2b394c; --e-lean: #b0215c; --e-detail: #a5afbc; --e-route: #6943b2; --e-unknown: #98a2b0;
+  --e-core: #244766; --e-api: #58687c; --e-assembly: #7562a3; --e-compressed: #76509e;
   --remark: #835d1d; --remark-soft: #f6efe2;
   --frame: #eef1f5; --frame-outer: #f7f8fa; --frame-line: #cfd6df;
   --node-s: 56%; --node-l: 95.5%; --node-bs: 26%; --node-bl: 63%;
@@ -21,6 +22,7 @@
   --accent: #8db2f6; --accent-soft: #1b2940; --on-accent: #0b1421;
   --used: #5fc28e; --off: #6f7a89;
   --e-agree: #c3cedb; --e-lean: #f06a9d; --e-detail: #4f5a68; --e-route: #ab8df2; --e-unknown: #5e6977;
+  --e-core: #bdcddd; --e-api: #8e9bae; --e-assembly: #b6a2e2; --e-compressed: #b394e1;
   --remark: #d7ad6a; --remark-soft: #231d13;
   --frame: #131920; --frame-outer: #11161c; --frame-line: #2c3540;
   --node-s: 20%; --node-l: 16.5%; --node-bs: 24%; --node-bl: 38%;
@@ -31,6 +33,7 @@
   --accent: #8db2f6; --accent-soft: #1b2940; --on-accent: #0b1421;
   --used: #5fc28e; --off: #6f7a89;
   --e-agree: #c3cedb; --e-lean: #f06a9d; --e-detail: #4f5a68; --e-route: #ab8df2; --e-unknown: #5e6977;
+  --e-core: #bdcddd; --e-api: #8e9bae; --e-assembly: #b6a2e2; --e-compressed: #b394e1;
   --remark: #d7ad6a; --remark-soft: #231d13;
   --frame: #131920; --frame-outer: #11161c; --frame-line: #2c3540;
   --node-s: 20%; --node-l: 16.5%; --node-bs: 24%; --node-bl: 38%;
@@ -77,6 +80,13 @@ h1, h2, h3 { text-wrap: balance; }
 .mk.off { fill: var(--surface); stroke: var(--off); }
 .mk-none { fill: none; stroke: var(--off); stroke-width: 1.2; stroke-dasharray: 2 1.6; }
 .sw .ln { fill: none; stroke: var(--ec); stroke-width: calc(var(--ew) * 1px); }
+.r-core { --ec: var(--e-core); --ew: 1.5; }
+.r-api { --ec: var(--e-api); --ew: 1.35; }
+.r-assembly { --ec: var(--e-assembly); --ew: 1.6; }
+.r-compressed { --ec: var(--e-compressed); --ew: 1.6; }
+.sw .ln.r-api { stroke-dasharray: 5 3; }
+.sw .ln.r-assembly { stroke-dasharray: 7 3 1.5 3; }
+.sw .ln.r-compressed { stroke-dasharray: 10 4; }
 .d-agree { --ec: var(--e-agree); --ew: 1.45; }
 .d-lean-only { --ec: var(--e-lean); --ew: 2.7; }
 .d-detail { --ec: var(--e-detail); --ew: 1; }

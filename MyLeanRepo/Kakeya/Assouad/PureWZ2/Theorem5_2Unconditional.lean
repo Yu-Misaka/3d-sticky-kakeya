@@ -17,6 +17,8 @@ Critical extraction supplies the positive critical package.  The retained
 left-line construction supplies one normalized terminal with both CWA and
 the small projection upper bound.  The independent normalized CWA lower
 bound is evaluated on that same terminal by `NormalizedContradiction`.
+The closed `pure_wz2_no_critical_package` fixes the proved Lemma 6.7 as its
+upper input, and the final theorem calls this contradiction directly.
 CWA supplies finite coarse capsules of axis length 32, and the corrected
 Proposition 7.1 supplies the lower bound on the original fine unit segments.
 The bounded chart and centered slope are proved by the actual terminal
@@ -33,13 +35,20 @@ noncomputable section
 
 namespace Kakeya.Assouad
 
+/-- WZ2 Section 6.5: the proved normalized Lemma 6.7 contradicts a positive
+critical package. The upper-bound proof is fixed internally. -/
+theorem pure_wz2_no_critical_package
+    {sigma : ℝ} (critical : PureWZ2CriticalPackage sigma) : False :=
+  pure_wz2_no_critical_package_of_normalized_projection
+    pure_wz2_left_line_normalized_projection critical
+
 /-- The normalized pure WZ2 Theorem 5.2 with no external proof inputs. -/
 theorem PureWZ2Theorem5_2Unconditional :
-    PureWZ2Theorem5_2Statement :=
-  pure_wz2_theorem5_2_of_normalized_projection
-    pure_wz2_node01_subunit_package
-    pure_wz2_node02_critical_extraction
-    pure_wz2_left_line_normalized_projection
+    PureWZ2Theorem5_2Statement := by
+  by_contra h
+  obtain ⟨sigma, ⟨critical⟩⟩ :=
+    pure_wz2_node02_critical_extraction pure_wz2_node01_subunit_package h
+  exact pure_wz2_no_critical_package critical
 
 /-- Snake-case compatibility name for the unconditional endpoint. -/
 theorem pure_wz2_theorem5_2_unconditional :

@@ -25,7 +25,7 @@
       </ol>
       <p class="rail-label">Complete graph</p>
       <button class="vbtn whole" data-view="all"><span class="num"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/><path d="M7 4.5h4.5V9M9 11.5H4.5V7"/></svg></span><span>Whole proof</span><span class="cnt">{{ atlas.nodes|length }}</span></button>
-      <p class="rail-note">Arrows point from a prerequisite up to the result that uses it. Branch colours group the roadmap; they do not indicate completion. <a href="atlas-audit.html">How the arrows are checked</a></p>
+      <p class="rail-note">Switch between the expert roadmap and the Lean proof without moving the nodes. Arrows point from prerequisites to results. Node marks always show Lean status. <a href="atlas-audit.html">Compare the evidence</a></p>
     </nav>
     <div class="canvas" id="canvas-wrap">
       <svg id="canvas" aria-label="Dependency graph" role="application">
@@ -43,6 +43,12 @@
           <h1 id="view-title" class="desk-title">Proof atlas</h1>
           <p id="view-desc"></p>
         </div>
+        <div class="connection-control panel" role="group" aria-label="Connection source">
+          <span>Connections</span>
+          <button class="seg" data-layer="roadmap" aria-pressed="true">Roadmap</button>
+          <button class="seg" data-layer="lean" aria-pressed="false">Lean</button>
+          <span id="layer-status" class="visually-hidden" role="status" aria-live="polite"></span>
+        </div>
         <div class="frames panel" id="frames" hidden></div>
       </div>
       <div class="ov ov-zoom panel" role="group" aria-label="Zoom">
@@ -54,7 +60,7 @@
         <button class="zbtn txt insp-open" data-insp="show">Details</button>
       </div>
       <div class="ov ov-legend panel" id="legend">
-        <div class="lg-head"><b>Lean vs roadmap</b><button id="lg-min" aria-expanded="true">Hide</button></div>
+        <div class="lg-head"><b>Arrow legend</b><button id="lg-min" aria-expanded="true">Hide</button></div>
         <ul class="lg-list" id="lg-list"></ul>
         <div class="lg-nodes" id="lg-nodes"></div>
       </div>

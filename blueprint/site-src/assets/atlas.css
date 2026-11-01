@@ -59,20 +59,21 @@ body.app::before { content: ""; position: fixed; inset: 0 0 auto; height: env(sa
 .cluster.outer text { font-size: 17px; }
 .lod-low .cluster text { font-size: 22px; }
 
-/* edges: one class per comparison; colour is never the only cue */
+/* Both connection layers use the expert's role legend. */
 .edge .hit { fill: none; stroke: transparent; stroke-width: calc(12px * var(--zs, 1)); pointer-events: stroke; cursor: pointer; }
 .edge .line { fill: none; stroke: var(--ec); stroke-width: calc(var(--ew) * var(--zs, 1) * 1px); pointer-events: none; transition: opacity .15s; }
-.d-expert-route .line, .d-expert-unknown .line { stroke-dasharray: calc(var(--da) * var(--zs, 1) * 1px) calc(var(--db) * var(--zs, 1) * 1px); }
-.d-expert-unknown .line { stroke-linecap: round; }
+.r-api .line { stroke-dasharray: calc(5px * var(--zs, 1)) calc(3px * var(--zs, 1)); }
+.r-assembly .line { stroke-dasharray: calc(7px * var(--zs, 1)) calc(3px * var(--zs, 1)) calc(1.5px * var(--zs, 1)) calc(3px * var(--zs, 1)); }
+.r-compressed .line { stroke-dasharray: calc(10px * var(--zs, 1)) calc(4px * var(--zs, 1)); }
 .edge:hover .line, .edge.hl .line { stroke-width: calc((var(--ew) + 1) * var(--zs, 1) * 1px); }
 .edge.peek .line { stroke-width: calc((var(--ew) + 1.8) * var(--zs, 1) * 1px); }
 .focusing .edge:not(.hl):not(.peek) { opacity: .09; }
 .focusing .node:not(.hl):not(.sel):not(.focus):not(.peek) { opacity: .3; }
 .focusing .cluster { opacity: .6; }
-.hide-agree .edge.d-agree, .hide-lean-only .edge.d-lean-only, .hide-detail .edge.d-detail,
-.hide-expert-route .edge.d-expert-route, .hide-expert-unknown .edge.d-expert-unknown { display: none; }
-svg[data-spot="agree"] .edge:not(.d-agree), svg[data-spot="lean-only"] .edge:not(.d-lean-only), svg[data-spot="detail"] .edge:not(.d-detail),
-svg[data-spot="expert-route"] .edge:not(.d-expert-route), svg[data-spot="expert-unknown"] .edge:not(.d-expert-unknown) { opacity: .06; }
+svg[data-connections="roadmap"] .edge.layer-lean, svg[data-connections="lean"] .edge.layer-roadmap,
+.hide-core .edge.r-core, .hide-api .edge.r-api, .hide-assembly .edge.r-assembly, .hide-compressed .edge.r-compressed { display: none; }
+svg[data-spot="core"] .edge:not(.r-core), svg[data-spot="api"] .edge:not(.r-api),
+svg[data-spot="assembly"] .edge:not(.r-assembly), svg[data-spot="compressed"] .edge:not(.r-compressed) { opacity: .06; }
 marker path { stroke: none; }
 
 /* canvas overlays */
@@ -85,6 +86,9 @@ marker path { stroke: none; }
 .vt-block p { margin: 3px 0 0; font-size: 12.5px; color: var(--muted); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .frames { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding: 5px 6px; font-size: 12px; }
 .frames > span { color: var(--muted); padding: 0 6px 0 4px; font-weight: 500; }
+.connection-control { display: flex; align-items: center; gap: 4px; padding: 4px 5px; }
+.connection-control > span:not(.visually-hidden) { padding: 0 7px; font-size: 12px; color: var(--muted); }
+.connection-control .seg { min-width: 70px; }
 .seg { border: 1px solid transparent; background: none; border-radius: 6px; padding: 4px 9px; font-size: 12px; color: var(--ink-2); }
 .seg:hover { background: var(--raised); }
 .seg[aria-pressed="true"] { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 35%, transparent); color: var(--ink); font-weight: 600; }
@@ -94,7 +98,7 @@ marker path { stroke: none; }
 .zbtn.txt { font-size: 12.5px; font-weight: 500; }
 #zoom-level { min-width: 44px; text-align: center; font: 12px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
 .zsep { width: 1px; height: 18px; background: var(--line); margin: 0 3px; }
-.ov-legend { left: 16px; bottom: 16px; width: 212px; padding: 9px 8px 7px; font-size: 12px; }
+.ov-legend { left: 16px; bottom: 16px; width: 228px; padding: 9px 8px 7px; font-size: 12px; }
 .lg-head { display: flex; align-items: center; justify-content: space-between; padding: 0 4px 6px; }
 .lg-head b { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
 .lg-head button { border: 0; background: none; color: var(--muted); font-size: 12px; padding: 2px 4px; border-radius: 4px; }
@@ -122,7 +126,7 @@ marker path { stroke: none; }
 @container canvas (max-width: 500px) {
   .ov-mini { display: none !important; }
   .lg-nodes { display: none; }
-  .ov-legend { width: 180px; }
+  .ov-legend { width: 214px; }
 }
 .insp-open { display: none; }
 .insp-off .insp-open { display: inline-flex; }
@@ -210,7 +214,8 @@ details[open] > summary .chev { transform: rotate(90deg); }
 .full b { color: var(--ink); font-weight: 500; }
 pre.type { margin: 0 0 10px; padding: 11px 12px; background: var(--raised); border: 1px solid var(--line); border-radius: 8px; font-size: 11.5px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 300px; overflow: auto; color: var(--ink); }
 .links { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 6px; font-size: 12.5px; }
-.reach > summary, .expert > summary { font-size: 12.5px; color: var(--accent); padding: 4px 0; display: inline-flex; align-items: center; gap: 6px; }
+.reach > summary, .expert > summary, .comparison > summary { font-size: 12.5px; color: var(--accent); padding: 4px 0; display: inline-flex; align-items: center; gap: 6px; }
+.comparison { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); }
 .expert { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 10px; }
 .expert .prose { font-size: 15px; margin-top: 8px; }
 .expert .note { font-size: 12px; color: var(--muted); }

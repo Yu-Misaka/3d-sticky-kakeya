@@ -36,7 +36,7 @@
 
     <section class="doc-section" id="expert-connections">
       <h2>All {{ connections|length }} roadmap connections</h2>
-      <p>The expert's unified graph records {{ counts.expert_unified_edges }} connections and the branch views add {{ counts.expert_branch_only_edges }} more. A connection with a Lean path agrees with the atlas even when the path runs through other displayed nodes; where it does, no separate arrow is drawn.</p>
+      <p>The expert's unified graph records {{ counts.expert_unified_edges }} connections and the branch views add {{ counts.expert_branch_only_edges }} more. The roadmap layer retains these connections. In the Lean layer a matching path can run through other displayed nodes, so it may have no separate arrow.</p>
       <div class="counts" role="group" aria-label="Show connections by comparison">
         <button class="filter" data-filter="" aria-pressed="true">All <span class="n">{{ connections|length }}</span></button>
         {% for key, title in classifications.items() %}<button class="filter" data-filter="{{ key }}" aria-pressed="false">{{ title }} <span class="n">{{ counts.classifications.get(key, 0) }}</span></button>
@@ -48,7 +48,7 @@
         <thead><tr><th>Prerequisite → consumer</th><th>Comparison</th><th>Reason and witness</th><th>Roadmap note</th></tr></thead>
         <tbody id="connection-rows">
         {% for edge in connections %}<tr id="{{ edge.anchor }}" data-classification="{{ edge.classification }}"><td class="arrow">{{ arrow(edge) }}</td>
-          <td>{{ edge.title }}{% if edge.classification == 'actual' and not edge.drawn %}<br><span class="tag">no separate arrow</span>{% endif %}</td>
+          <td>{{ edge.title }}{% if edge.classification == 'actual' and not edge.drawn %}<br><span class="tag">no separate Lean arrow</span>{% endif %}</td>
           <td><p>{{ edge.reason }}</p>{{ edge.path_html }}</td>
           <td><p>{{ edge.note }}</p><p class="note-src">{{ edge.expert_view_title }} · {{ edge.expert_kind }}</p></td></tr>
         {% endfor %}
@@ -59,7 +59,7 @@
 
     <section class="doc-section" id="method">
       <h2>How the comparison is made</h2>
-      <p>Every solid arrow has a nonempty path of kernel references in the compiled sticky proof, and the expert's graph never takes part in that reachability computation. Reachability is checked in the full projected declaration graph, including paths through other displayed nodes, so a missing direct arrow is not enough to call a connection unsupported. When a selected declaration lies outside the root's closure, the comparison records that fact rather than asserting that its own proof has no such dependency.</p>
+      <p>Every connection in the Lean layer has a nonempty path of kernel references in the compiled sticky proof. The roadmap layer preserves the expert's connections independently. Both layers use the expert's arrow-role legend; agreement is recorded here and in the arrow details. The expert's graph never takes part in Lean reachability. Paths through other displayed nodes count, so a missing direct arrow is not enough to call a connection unsupported. For a version outside the root's closure, the audit makes no claim about its own proof's dependencies.</p>
       <p>References in types, proof or definition bodies, private helpers, projections, constructors and recursors are distinguished in the witnesses. A constructor or a proposition-valued definition is not classified as an independent proof, and references kept in a proof term count even if a later simplification could remove them.</p>
       <p>Two cards that share one Lean declaration do not create a self-dependency. Correspondence remarks, rather than graph reachability, delimit the mathematical scope of each match.</p>
       <p><a href="atlas-dependencies.json">Atlas data and witnesses</a> · <a href="lean-dependencies.json">Compiled declaration audit</a> · <a href="atlas-cards.html">All node cards</a></p>

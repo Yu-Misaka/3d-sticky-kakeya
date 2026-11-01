@@ -19,6 +19,8 @@ example : PureWZ2SmallTwistedProjectionStatement := pure_wz2_node07_small_twiste
 example : PureWZ2Theorem5_2AssemblyStatement := pure_wz2_node08_theorem5_2
 example : PureWZ2Theorem5_2Statement := PureWZ2Theorem5_2Unconditional
 example : PureWZ2Theorem5_2Statement := pure_wz2_theorem5_2_unconditional
+example : ∀ {sigma : ℝ}, PureWZ2CriticalPackage sigma → False :=
+  pure_wz2_no_critical_package
 example : TwistedProjectionParameterFrostmanEstimateStatement :=
   pure_wz2_twisted_projection_parameter_frostman_lower_bound
 example : GridOSBoundedOneScaleInput := pure_wz2_lemma7_12_parameter_frostman
@@ -189,6 +191,7 @@ run_cmd do
     `Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_via_dilated_tubes,
     `Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_in_unit_ball_via_dilated_tubes,
     `Kakeya.Assouad.pure_wz2_no_critical_package_of_normalized_projection,
+    `Kakeya.Assouad.pure_wz2_no_critical_package,
     `Kakeya.Assouad.PureWZ2Theorem5_2Unconditional]
   for name in names do
     let info ← getConstInfo name
@@ -265,7 +268,8 @@ run_cmd do
     (`Kakeya.Assouad.tubeParameterFrostmanBound_of_dilatedTubeWolffBound, "hbase"),
     (`Kakeya.Assouad.tubeParameterFrostmanBound_of_dilatedTubeWolffBound, "hvertical"),
     (`Kakeya.Assouad.tubeParameterFrostmanBound_of_dilatedTubeWolffBound, "hwolff"),
-    (`Kakeya.Assouad.pure_wz2_no_critical_package_of_normalized_projection, "upper")]
+    (`Kakeya.Assouad.pure_wz2_no_critical_package_of_normalized_projection, "upper"),
+    (`Kakeya.Assouad.pure_wz2_no_critical_package, "critical")]
   for (name, wanted) in inputs do
     let info ← getConstInfo name
     let some value := info.value? (allowOpaque := true)

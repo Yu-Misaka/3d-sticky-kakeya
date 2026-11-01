@@ -25,8 +25,8 @@
     <div class="facts-grid">
       <section><h2>Roadmap nodes in Lean</h2><p class="sub">How each of the {{ counts.expert_nodes }} expert nodes corresponds to the compiled proof of the root theorem. A used interface is referenced, not thereby proved.</p>
         <ul class="tally">{% for key, count in node_tally %}<li>{{ marks[key] }}<span>{{ status[key] }}</span><span class="num">{{ count }}</span></li>{% endfor %}</ul></section>
-      <section><h2>Arrows of the whole proof</h2><p class="sub">The {{ edge_total }} arrows of the whole-proof graph with every frame open, by comparison class. <a href="blueprint/atlas-audit.html">How they are checked</a></p>
-        <ul class="tally">{% for key, title in diff_titles.items() %}<li><svg class="sw" width="28" height="8" viewBox="0 0 28 8" aria-hidden="true"><line class="ln d-{{ key }}" x1="1" y1="4" x2="27" y2="4"/></svg><span>{{ title }}</span><span class="num">{{ counts.unified_diff[key] }}</span></li>{% endfor %}</ul></section>
+      <section><h2>Connection comparison</h2><p class="sub">Audit categories for {{ edge_total }} connections in the combined comparison. The atlas switches between roadmap and Lean connections using one shared arrow legend. <a href="blueprint/atlas-audit.html">Inspect the evidence</a></p>
+        <ul class="tally">{% for key, title in diff_titles.items() %}<li><span aria-hidden="true">{{ loop.index }}</span><span>{{ title }}</span><span class="num">{{ counts.unified_diff[key] }}</span></li>{% endfor %}</ul></section>
     </div>
     <div class="authors">
       <p>Mingfeng Chen · Shaoming Guo · Yixuan Pang · Minxing Shen · Zhihong Wang · Zheng Yuan · Huanyu Zheng · Thomas Zhu</p>

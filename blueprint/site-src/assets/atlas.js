@@ -1,6 +1,6 @@
 'use strict';
 // The proof atlas. atlas-view.json carries the cards, the Graphviz layouts of
-// every view, the comparison record of every drawn arrow and the witnesses.
+// every view, two connection layers, and their comparison evidence.
 (() => {
 const loading = document.getElementById('loading');
 fetch('atlas-view.json').then(response => {
@@ -27,7 +27,15 @@ const VIEW_SHORT_NAMES = { overview: 'Core proof DAG', scales: 'Wolff infrastruc
   slope: 'Nonsingular slope', projection: 'Twisted projection', cinematic: 'Cinematic', bootstrap: 'Radial bootstrap', reductions: 'Strip reduction', external: 'External', all: 'Whole proof' };
 const frameShort = id => FRAME_SHORT_NAMES[id] || (groups.get(id)?.title || id).split(' · ')[0];
 const viewShort = id => VIEW_SHORT_NAMES[id] || BRANCHES.find(v => v.id === id)?.title || id;
-const DIFFS = ['agree', 'lean-only', 'detail', 'expert-route', 'expert-unknown'];
+const EDGE_ROLES = ['core', 'api', 'assembly', 'compressed'];
+const EDGE_ROLE = {
+  core: { name: 'Proof dependency', text: 'A proof input to the result at the arrowhead.' },
+  api: { name: 'Definition / API', text: 'A definition, data interface, type dependency or standard operation.' },
+  assembly: { name: 'Assembly', text: 'An output is supplied as a hypothesis of a later result; this does not by itself prove the general implication.' },
+  compressed: { name: 'Compressed path', text: 'Intermediate steps are folded into one connection. Open the details to follow the path.' },
+};
+const LAYERS = { roadmap: 'Expert roadmap', lean: 'Lean proof' };
+const validLayer = layer => layer === 'roadmap' || layer === 'lean';
 const DIFF = {
   'agree': { name: 'Agree', title: 'Lean and roadmap agree', text: 'Lean has a path, and the roadmap connects the two nodes, directly or through other roadmap nodes.' },
   'lean-only': { name: 'Lean only', title: 'Lean only', text: 'Lean has a path between two roadmap nodes that the roadmap does not connect. These are the first arrows to review.' },
@@ -65,7 +73,7 @@ function markIcon(status) {
   const inner = status === 'unmatched' ? '<rect class="mk-none" x="1.5" y="1.5" width="11" height="11" rx="2.5"/>' : markShape(status, 7, 7, 4.1);
   return `<svg class="mark" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">${inner}</svg>`;
 }
-const swatch = diff => `<svg class="sw" width="28" height="8" viewBox="0 0 28 8" aria-hidden="true"><line class="ln d-${diff}" x1="1" y1="4" x2="27" y2="4"/></svg>`;
+const swatch = role => `<svg class="sw" width="28" height="8" viewBox="0 0 28 8" aria-hidden="true"><line class="ln r-${role}" x1="1" y1="4" x2="27" y2="4"/></svg>`;
 const statusLabel = s => D.status[s] || s;
 const verStatus = v => (v.reached ? 'used-' : 'unused-') + v.role;
 // Witness steps can be private helpers, which have no doc-gen4 page: they link to their source.
@@ -81,15 +89,21 @@ function subOf(key) { if (key.startsWith('group-')) return 'Folded External fram
 function membersOf(g) { return D.nodes.filter(n => n.external === g); }
 
 /* ---------- state ---------- */
-const state = { layoutId: null, L: null, wholeVariant: 'all', selected: null, hover: null, peek: null,
+let initialLayer = new URLSearchParams(location.search).get('connections');
+if (!validLayer(initialLayer)) try { initialLayer = localStorage.getItem('atlas-connection-layer'); } catch (_) { /* storage may be unavailable */ }
+const state = { layoutId: null, L: null, layer: validLayer(initialLayer) ? initialLayer : 'roadmap', wholeVariant: 'all', selected: null, hover: null, peek: null,
   hidden: new Set(), history: [], hpos: -1, nodeEls: new Map(), edgeEls: [] };
-const hiddenDefaults = id => id.startsWith('all') ? new Set(['expert-unknown']) : new Set();
+const hiddenDefaults = () => new Set();
+const activeEdge = e => e.layer === state.layer;
+const visibleEdge = e => activeEdge(e) && !state.hidden.has(e.role);
+const edgeSelection = e => ({ type: 'edge', from: e.from, to: e.to, kind: e.kind, diff: e.diff,
+  layer: e.layer, role: e.role, role_origin: e.role_origin, p: e.p, members: e.members });
 
 /* ---------- canvas ---------- */
 const wrap = $('#canvas-wrap'), svg = $('#canvas'), world = $('#world');
 const L_CL = $('#l-clusters'), L_ED = $('#l-edges'), L_ND = $('#l-nodes');
 let cam = { x: 0, y: 0, k: 1 }, camAnim = 0;
-$('#markers').innerHTML = DIFFS.map(d => `<marker id="ah-${d}" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="${d === 'lean-only' ? 3.4 : 4.6}" markerHeight="${d === 'lean-only' ? 3.4 : 4.6}" orient="auto"><path d="M0 1.2 10 5 0 8.8 2.2 5Z" style="fill: var(--e-${{ 'agree': 'agree', 'lean-only': 'lean', 'detail': 'detail', 'expert-route': 'route', 'expert-unknown': 'unknown' }[d]})"/></marker>`).join('');
+$('#markers').innerHTML = EDGE_ROLES.map(role => `<marker id="ah-${role}" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M0 1.2 10 5 0 8.8 2.2 5Z" style="fill: var(--e-${role})"/></marker>`).join('');
 
 function applyCam() {
   world.setAttribute('transform', `translate(${cam.x.toFixed(2)} ${cam.y.toFixed(2)}) scale(${cam.k.toFixed(5)})`);
@@ -174,8 +188,8 @@ function nodeSVG(key, [x, y, w, h]) {
 }
 function edgeSVG(e, i) {
   const many = e.members && e.members.length > 1;
-  const tip = `${D.diff_titles[e.diff]}: ${nameOf(e.from)} → ${nameOf(e.to)}${many ? ` (${e.members.length} folded connections)` : ''}`;
-  return `<g class="edge d-${e.diff}" data-i="${i}"><title>${esc(tip)}</title><path class="hit" d="${e.d}"/><path class="line" d="${e.d}" marker-end="url(#ah-${e.diff})"/></g>`;
+  const tip = `${LAYERS[e.layer]} · ${EDGE_ROLE[e.role].name}: ${nameOf(e.from)} → ${nameOf(e.to)}${many ? ` (${e.members.length} folded connections)` : ''}`;
+  return `<g class="edge layer-${e.layer} r-${e.role}" data-i="${i}" data-layer="${e.layer}" data-role="${e.role}"><title>${esc(tip)}</title><path class="hit" d="${e.d}"/><path class="line" d="${e.d}" marker-end="url(#ah-${e.role})"/></g>`;
 }
 function clusterSVG(c) {
   const outer = c.id === 'external';
@@ -197,10 +211,28 @@ function draw(id, transition = null) {
   state.nodeEls = new Map($$('.node', L_ND).map(el => [el.dataset.node, el]));
   state.edgeEls = $$('.edge', L_ED);
   if (transition && prevL && !reduceMotion) runTransition(prevL, L, transition, prevCam);
-  for (const d of DIFFS) svg.classList.toggle('hide-' + d, state.hidden.has(d));
+  svg.dataset.connections = state.layer;
+  for (const role of EDGE_ROLES) svg.classList.toggle('hide-' + role, state.hidden.has(role));
   updateChrome();
   setupMini();
   paint();
+}
+
+function setConnectionLayer(layer) {
+  if (!validLayer(layer) || layer === state.layer) return;
+  state.layer = layer; state.hover = null; state.peek = null;
+  svg.dataset.connections = layer;
+  delete svg.dataset.spot;
+  // Keep the selected node, its DOM element, the layout and camera untouched.
+  if (state.selected?.type === 'edge') {
+    const s = state.selected;
+    const counterpart = state.L.edges.find(e => activeEdge(e) && e.from === s.from && e.to === s.to);
+    state.selected = counterpart ? edgeSelection(counterpart) : null;
+  }
+  try { localStorage.setItem('atlas-connection-layer', layer); } catch (_) { /* storage may be unavailable */ }
+  const url = new URL(location.href); url.searchParams.set('connections', layer);
+  history.replaceState(null, '', url.pathname + url.search + url.hash);
+  updateChrome(); renderInspector(); paint();
 }
 
 function runTransition(prevL, L, { mode, group }, prevCam) {
@@ -238,7 +270,7 @@ function owner(id, L = state.L) {
   const ext = nodes.get(id)?.external;
   return ext && L.nodes['group-' + ext] ? 'group-' + ext : null;
 }
-const sameEdge = (e, s) => e.from === s.from && e.to === s.to && e.kind === s.kind;
+const sameEdge = (e, s) => e.from === s.from && e.to === s.to && e.kind === s.kind && e.layer === s.layer && e.role === s.role;
 function paint() {
   const L = state.L, sel = state.selected;
   const selNode = sel?.type === 'node' ? owner(sel.id) : sel?.type === 'group' ? owner('group-' + sel.id) : null;
@@ -248,8 +280,8 @@ function paint() {
   state.edgeEls.forEach((el, i) => {
     const e = L.edges[i];
     let on = false;
-    if (focus) on = !state.hidden.has(e.diff) && (e.from === focus || e.to === focus);
-    else if (selEdge) on = sameEdge(e, selEdge);
+    if (focus) on = visibleEdge(e) && (e.from === focus || e.to === focus);
+    else if (selEdge) on = visibleEdge(e) && sameEdge(e, selEdge);
     el.classList.toggle('hl', on);
     el.classList.toggle('peek', state.peek?.edge === i);
     if (on) { hl.add(e.from); hl.add(e.to); }
@@ -285,9 +317,11 @@ function updateChrome() {
     frames.innerHTML = '<span>Go to frame</span>' + state.L.clusters.filter(c => c.id !== 'external').map(c => `<button class="seg" data-frame="${c.id}">${esc(frameShort(c.id))}</button>`).join('');
     frames.hidden = false;
   } else frames.hidden = true;
-  const counts = Object.fromEntries(DIFFS.map(d => [d, 0]));
-  for (const e of state.L.edges) counts[e.diff]++;
-  $('#lg-list').innerHTML = DIFFS.map(d => `<li><button class="lg-item" role="switch" aria-checked="${!state.hidden.has(d)}" data-diff="${d}" title="${esc(D.diff_titles[d] + '. ' + DIFF[d].text)}">${swatch(d)}<span class="lbl">${DIFF[d].name}</span><span class="cnt">${counts[d]}</span></button></li>`).join('');
+  const counts = Object.fromEntries(EDGE_ROLES.map(role => [role, 0]));
+  for (const e of state.L.edges) if (activeEdge(e)) counts[e.role]++;
+  $$('.connection-control [data-layer]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.layer === state.layer)));
+  $('#layer-status').textContent = `${LAYERS[state.layer]} connections. Node positions stay fixed.`;
+  $('#lg-list').innerHTML = EDGE_ROLES.map(role => `<li><button class="lg-item" role="switch" aria-checked="${!state.hidden.has(role)}" data-edge-role="${role}" title="${esc(EDGE_ROLE[role].text)}">${swatch(role)}<span class="lbl">${EDGE_ROLE[role].name}</span><span class="cnt">${counts[role]}</span></button></li>`).join('');
   $('#lg-nodes').innerHTML = `<span>${markIcon('used-proof')}proof</span><span>${markIcon('used-interface')}interface</span><span>${markIcon('used-definition')}data</span><span>${markIcon('unused-proof')}not used</span><span>${markIcon('unmatched')}no Lean</span>`;
 }
 
@@ -380,7 +414,7 @@ svg.addEventListener('click', e => {
   const n = e.target.closest('.node');
   if (n) { activateNode(n.dataset.node); return; }
   const ed = e.target.closest('.edge');
-  if (ed) { const x = state.L.edges[+ed.dataset.i]; select({ type: 'edge', from: x.from, to: x.to, kind: x.kind, diff: x.diff, p: x.p, members: x.members }); return; }
+  if (ed) { const x = state.L.edges[+ed.dataset.i]; if (visibleEdge(x)) select(edgeSelection(x)); return; }
   const c = e.target.closest('.cluster text');
   if (c) { zoomToCluster(c.parentNode.dataset.cluster); return; }
   if (state.selected) select(null);
@@ -458,7 +492,7 @@ function goNode(id, { push = true } = {}) {
 
 /* ---------- selection, history, inspector ---------- */
 const insp = $('#inspector'), body = $('#insp-body');
-function keyOf(s) { return s ? (s.type === 'edge' ? `e:${s.from}>${s.to}>${s.kind}` : `${s.type}:${s.id}`) : ''; }
+function keyOf(s) { return s ? (s.type === 'edge' ? `e:${s.layer}:${s.from}>${s.to}>${s.kind}>${s.role}` : `${s.type}:${s.id}`) : ''; }
 function select(sel, { push = true, centre = false } = {}) {
   state.selected = sel; state.peek = null;
   if (sel && push && keyOf(state.history[state.hpos]) !== keyOf(sel)) { state.history = state.history.slice(0, state.hpos + 1); state.history.push(sel); state.hpos = state.history.length - 1; }
@@ -472,7 +506,7 @@ function stepHistory(d) {
   const i = state.hpos + d; if (i < 0 || i >= state.history.length) return;
   state.hpos = i; const s = state.history[i];
   if (s.type === 'node') goNode(s.id, { push: false });
-  else select(s, { push: false });
+  else { if (s.type === 'edge') setConnectionLayer(s.layer); select(s, { push: false }); }
 }
 function navBar() {
   const n = state.history.length;
@@ -491,15 +525,15 @@ function renderInspector() {
 function connections(key) {
   const L = state.L, o = owner(key), dep = [], use = [];
   if (!o) return null;
-  L.edges.forEach((e, i) => { if (e.to === o) dep.push([e, i, e.from]); if (e.from === o) use.push([e, i, e.to]); });
+  L.edges.forEach((e, i) => { if (!activeEdge(e)) return; if (e.to === o) dep.push([e, i, e.from]); if (e.from === o) use.push([e, i, e.to]); });
   return { dep, use };
 }
 function connList(items) {
   if (!items.length) return '<p class="empty">None in this view.</p>';
   let h = '';
-  for (const d of DIFFS) {
-    const m = items.filter(([e]) => e.diff === d); if (!m.length) continue;
-    h += `<div class="cg"><p class="cg-h">${swatch(d)}${DIFF[d].name}<span>· ${m.length}</span></p><ul>` + m.map(([e, i, other]) => {
+  for (const d of EDGE_ROLES) {
+    const m = items.filter(([e]) => e.role === d); if (!m.length) continue;
+    h += `<div class="cg"><p class="cg-h">${swatch(d)}${EDGE_ROLE[d].name}<span>· ${m.length}</span></p><ul>` + m.map(([e, i, other]) => {
       const many = e.members && e.members.length > 1;
       return `<li class="${state.hidden.has(d) ? 'filtered' : ''}"><button class="rel" data-sel-node="${esc(other)}" data-peek-node="${esc(other)}" data-peek-edge="${i}"><span class="rel-h">${esc(nameOf(other))}</span><span class="rel-t">${esc(subOf(other))}</span></button><button class="wit" data-sel-edge="${i}" data-peek-edge="${i}">${many ? e.members.length + ' links' : 'evidence'}</button></li>`;
     }).join('') + '</ul></div>';
@@ -509,7 +543,7 @@ function connList(items) {
 function connSection(key) {
   const c = connections(key);
   if (!c) return '';
-  const where = viewMeta(state.layoutId).title;
+  const where = LAYERS[state.layer];
   return `<section class="sec"><div class="conn-dir"><h3 class="sec-h">Depends on <span class="n">${c.dep.length}</span><span class="src">in ${esc(where)}</span></h3>${connList(c.dep)}</div>
     <div class="conn-dir"><h3 class="sec-h">Used by <span class="n">${c.use.length}</span></h3>${connList(c.use)}</div></section>`;
 }
@@ -535,7 +569,7 @@ function nodeCard(id) {
       <pre class="type"><code>${esc(nm)} : ${esc(v.type || '')}${v.definition ? '\n:= ' + esc(v.definition) : ''}</code></pre>
       <p class="links"><a href="${esc(v.doc)}" target="_blank" rel="noopener">Lean documentation ↗</a><a href="${esc(v.src)}" target="_blank" rel="noopener">Source ↗</a></p>
       ${v.p != null ? `<details class="reach"><summary>${ICON.chev}Reached from the root through ${D.paths[v.p].length} references</summary>${chain(pathOf(v.p))}</details>` : ''}</div></details>`;
-  }).join('') + '</section>' : `<section class="sec"><h3 class="sec-h">Lean versions</h3><p class="empty">No independently identified Lean declaration is assigned to this operation. Its roadmap connections remain dashed or dotted.</p></section>`;
+  }).join('') + '</section>' : `<section class="sec"><h3 class="sec-h">Lean versions</h3><p class="empty">No independently identified Lean declaration is assigned to this operation. Its connections are available in the roadmap layer.</p></section>`;
   return `${navBar()}<header>
     <p class="eyebrow"><span class="bdot g-${n.group}"></span>${esc(D.branches[n.group] || n.group)}${n.origin ? ' · ' + esc(n.origin) : ''}</p>
     <h2 class="ttl" id="insp-title" tabindex="-1">${esc(n.expert ? n.paper : n.full_heading)}</h2>
@@ -559,7 +593,7 @@ function groupCard(g) {
     <div class="facts">${folded && canOpen ? `<button class="chip on" data-variant="all-${g}">Open this frame</button>` : ''}${!folded && state.layoutId === 'all-' + g ? '<button class="chip" data-variant="all">Fold it again</button>' : ''}</div></header>
     ${folded ? connSection('group-' + g) : ''}
     <section class="sec"><h3 class="sec-h">Members <span class="n">${ms.length}</span></h3><ul class="vlist">${ms.map(n => `<li><button data-sel-node="${esc(n.id)}">${markIcon(n.status)}<span><b>${esc(n.full_heading)}</b> <span class="t">${esc(n.summary.join(' '))}</span></span></button></li>`).join('')}</ul></section>
-    <p class="tip">An arrow to a folded frame stands for its members’ connections, which share its class.</p>`;
+    <p class="tip">An arrow to a folded frame stands for its members’ connections in the selected layer, with the same arrow role.</p>`;
 }
 function edgeCard(s) {
   const many = s.members && (s.members.length > 1 || s.members[0][0] !== s.from || s.members[0][1] !== s.to);
@@ -573,18 +607,27 @@ function edgeCard(s) {
       return `<div class="member"><div class="member-h"><button class="rel" data-sel-node="${esc(f)}"><span class="rel-h">${esc(nameOf(f))}</span></button>→<button class="rel" data-sel-node="${esc(t)}"><span class="rel-h">${esc(nameOf(t))}</span></button></div>
         ${p != null ? `<details class="reach"><summary>${ICON.chev}Kernel witness · ${D.paths[p].length} references</summary>${chain(pathOf(p))}</details>` : m?.reason ? `<p class="reason">${esc(m.reason)}</p>` : ''}</div>`;
     }).join('') + '</section>';
-  } else if (s.kind === 'actual' && s.p != null) {
+  } else if (s.p != null) {
     evidence = `<section class="sec"><h3 class="sec-h">Kernel witness <span class="n">${D.paths[s.p].length}</span><span class="src">references</span></h3>${chain(pathOf(s.p))}
       <p class="tip">The chain reads from the consumer down to its prerequisite; the drawn arrow points the other way. Every step is a type, value or structural reference in a compiled declaration.</p></section>`;
   } else if (info?.reason) {
     evidence = `<section class="sec"><h3 class="sec-h">Why Lean has no such path</h3><p class="reason">${esc(info.reason)}</p></section>`;
   }
-  return `${navBar()}<header><p class="eyebrow">Arrow · ${esc(viewMeta(state.layoutId).title)}</p>
+  const roleSource = {
+    roadmap: 'The arrow role follows the expert’s reviewed connection. A Lean connection is shown only when its own compiled path exists.',
+    declaration: 'The Lean prerequisite is a definition or interface, or the path contains type or structural references.',
+    'kernel-path': s.role === 'compressed' ? 'The Lean path passes through declarations folded out of this view.' : 'The consumer directly references this proof.',
+  }[s.role_origin];
+  const comparison = `<details class="comparison"><summary>${ICON.chev}Lean / roadmap comparison</summary>
+    <p class="reason"><b>${esc(D.diff_titles[s.diff])}.</b> ${esc(DIFF[s.diff].text)}</p>
+    ${roleSource ? `<p class="tip">${esc(roleSource)}</p>` : ''}
+    ${s.layer === 'roadmap' ? evidence : notes(info?.notes)}
+    ${info?.audit ? `<p class="tip"><a href="${esc(info.audit)}">Open the evidence record →</a></p>` : ''}</details>`;
+  return `${navBar()}<header><p class="eyebrow">${esc(LAYERS[s.layer])} · ${esc(viewMeta(state.layoutId).title)}</p>
     <h2 class="ttl edge-ttl" id="insp-title" tabindex="-1">${end(s.from)}<span class="arr">→</span>${end(s.to)}</h2>
-    <div class="facts"><span class="pill">${swatch(s.diff)}${esc(D.diff_titles[s.diff])}</span></div>
-    <p class="explain">${esc(DIFF[s.diff].text)}</p></header>
-    ${evidence}${many ? '' : notes(info?.notes)}
-    ${info?.audit ? `<p class="tip"><a href="${esc(info.audit)}">Find this arrow on the evidence page →</a></p>` : ''}`;
+    <div class="facts"><span class="pill">${swatch(s.role)}${esc(EDGE_ROLE[s.role].name)}</span></div>
+    <p class="explain">${esc(EDGE_ROLE[s.role].text)}</p></header>
+    ${s.layer === 'lean' ? evidence : notes(info?.notes)}${comparison}`;
 }
 function viewSummary() {
   const L = state.L, meta = viewMeta(state.layoutId);
@@ -594,7 +637,7 @@ function viewSummary() {
     <section class="sec"><h3 class="sec-h">Nodes in this view <span class="n">${list.length}</span><span class="src">conclusions first</span></h3><ul class="vlist">${list.map(([k]) => {
       const n = nodes.get(k);
       return `<li><button data-sel-node="${esc(k)}">${n ? markIcon(n.status) : markIcon('group')}<span><b>${esc(nameOf(k))}</b> <span class="t">${esc(subOf(k))}</span></span></button></li>`;
-    }).join('')}</ul></section><p class="tip">Select a node or an arrow to see its statement and evidence. Press / to search every node.</p>`;
+    }).join('')}</ul></section><p class="tip">Showing ${esc(LAYERS[state.layer])} connections. Switch layers to compare the same nodes in place. Node marks always show Lean status.</p>`;
 }
 body.addEventListener('scroll', () => $('.insp-nav', body)?.classList.toggle('stuck', body.scrollTop > 4));
 body.addEventListener('pointerover', e => {
@@ -708,6 +751,8 @@ if (typeof window.MathJax?.typesetPromise === 'function') MathJax.startup.promis
 document.addEventListener('click', e => {
   const t = e.target;
   if (t.closest('[data-open-palette]')) { openPalette(); return; }
+  const layer = t.closest('.connection-control [data-layer]');
+  if (layer) { setConnectionLayer(layer.dataset.layer); return; }
   const v = t.closest('[data-view]');
   if (v) { showView(v.dataset.view); return; }
   const gv = t.closest('[data-goto-view]');
@@ -731,24 +776,26 @@ document.addEventListener('click', e => {
   const sn = t.closest('[data-sel-node]');
   if (sn) { const k = sn.dataset.selNode; if (k.startsWith('group-')) select({ type: 'group', id: k.slice(6) }); else if (state.L.nodes[k]) select({ type: 'node', id: k }, { centre: true }); else goNode(k); return; }
   const se = t.closest('[data-sel-edge]');
-  if (se) { const x = state.L.edges[+se.dataset.selEdge]; select({ type: 'edge', from: x.from, to: x.to, kind: x.kind, diff: x.diff, p: x.p, members: x.members }); return; }
+  if (se) { const x = state.L.edges[+se.dataset.selEdge]; if (activeEdge(x)) select(edgeSelection(x)); return; }
   const hs = t.closest('[data-hist]');
   if (hs) { stepHistory(+hs.dataset.hist); return; }
   const ih = t.closest('[data-insp]');
   if (ih) { $('#atlas').classList.toggle('insp-off', ih.dataset.insp === 'hide'); setupMini(); return; }
   const cp = t.closest('[data-copy], [data-copy-link]');
   if (cp) {
-    const text = cp.dataset.copy ?? location.origin + location.pathname + '#node-' + cp.dataset.copyLink;
+    const nodeUrl = new URL(location.href); nodeUrl.searchParams.set('connections', state.layer);
+    nodeUrl.hash = 'node-' + cp.dataset.copyLink;
+    const text = cp.dataset.copy ?? nodeUrl.href;
     const done = () => { const old = cp.innerHTML; cp.textContent = 'Copied'; setTimeout(() => { cp.innerHTML = old; }, 1100); };
     Promise.resolve(navigator.clipboard?.writeText(text)).then(done, () => { cp.title = text; });
     return;
   }
   const lg = t.closest('.lg-item');
-  if (lg) { const d = lg.dataset.diff; state.hidden.has(d) ? state.hidden.delete(d) : state.hidden.add(d); svg.classList.toggle('hide-' + d, state.hidden.has(d)); lg.setAttribute('aria-checked', String(!state.hidden.has(d))); paint(); if (state.selected?.type === 'node') renderInspector(); return; }
+  if (lg) { const d = lg.dataset.edgeRole; state.hidden.has(d) ? state.hidden.delete(d) : state.hidden.add(d); svg.classList.toggle('hide-' + d, state.hidden.has(d)); lg.setAttribute('aria-checked', String(!state.hidden.has(d))); paint(); if (state.selected?.type === 'node') renderInspector(); return; }
 });
 function bestLayoutWhole(id) { const ext = nodes.get(id)?.external; if (owner(id, LAYOUTS[state.wholeVariant])) return state.wholeVariant; return ext && LAYOUTS['all-' + ext] ? 'all-' + ext : 'all'; }
 $('#view-select').addEventListener('change', e => showView(e.target.value));
-$('#lg-list').addEventListener('pointerover', e => { const it = e.target.closest('.lg-item'); if (it && !state.hidden.has(it.dataset.diff)) svg.dataset.spot = it.dataset.diff; });
+$('#lg-list').addEventListener('pointerover', e => { const it = e.target.closest('.lg-item'); if (it && !state.hidden.has(it.dataset.edgeRole)) svg.dataset.spot = it.dataset.edgeRole; });
 $('#lg-list').addEventListener('pointerleave', () => { delete svg.dataset.spot; });
 $('#lg-min').addEventListener('click', e => { const l = $('#legend'); l.classList.toggle('min'); const min = l.classList.contains('min'); e.target.textContent = min ? 'Show' : 'Hide'; e.target.setAttribute('aria-expanded', String(!min)); });
 document.addEventListener('keydown', e => {

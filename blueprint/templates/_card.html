@@ -31,6 +31,6 @@
               </section>
               {% endfor %}
             </details>
-            {% else %}<p class="mini muted">No independently identified Lean declaration is assigned to this operation. Its expert connections remain dashed.</p>{% endif %}
+            {% else %}<p class="mini muted">No independently identified Lean declaration is assigned to this operation. Its connections remain visible in the roadmap layer.</p>{% endif %}
             <div class="jump card-links"><a href="lean_dependencies.html#node-{{ card.id }}">Open in the proof atlas</a><a href="atlas-audit.html#expert-connections">Compare recorded connections</a></div>
 {%- endmacro %}
