@@ -1,0 +1,55 @@
+{
+  "validated_date": "2026-11-03",
+  "pdf_pages": 32,
+  "pdf_warnings": [],
+  "node_sections": 18,
+  "roadmap_edge_sections": 17,
+  "additional_lean_edge_sections": 5,
+  "figures": {
+    "roadmap_nodes": 18,
+    "roadmap_edges": 17,
+    "lean_nodes": 18,
+    "lean_edges": 17
+  },
+  "core_contract_compile": "passed",
+  "core_axiom_records": 106,
+  "core_binder_records": 54,
+  "seed_evolving": {
+    "requested_model": "gpt-5.4",
+    "thread_id": "01a19cf9-c3d6-7312-990b-7b508055be6c",
+    "status": "completed",
+    "review_questions": 12,
+    "source_checks": 16,
+    "revised_manuscript_confirmed": true
+  },
+  "artifacts": {
+    "blueprint/notes/core-proof-dag-lean-roadmap.tex": {
+      "bytes": 76577,
+      "sha256": "8a0a9b1496c6c01da2464b1a03a8d541480e833685ea68f05f34fd38a5a2fe8c"
+    },
+    "blueprint/notes/core-proof-dag-figures.tex": {
+      "bytes": 14013,
+      "sha256": "a286e6950ac46befc3efe6671b2bebc96a2ff86515fac220afb7afb504cb8689"
+    },
+    "blueprint/notes/core-proof-dag-evidence.py": {
+      "bytes": 8993,
+      "sha256": "2340c4d24195bb5309160298e8d7b393ed458d0b5c9c3a9af97fa877c67ed6cc"
+    },
+    "blueprint/notes/core-proof-dag-evidence.json": {
+      "bytes": 125768,
+      "sha256": "4ac7bffacf916f2cf04059b907715d2ffb35a9ef53877687bea3e24d40f3c786"
+    },
+    "blueprint/notes/core-proof-dag-seed-evolving-task.md": {
+      "bytes": 5656,
+      "sha256": "2ee601a3363fc658b5196dd077a6ad9b9ff8ee7d0bb0aa78432b311e4b52e296"
+    },
+    "blueprint/notes/core-proof-dag-seed-evolving-review.md": {
+      "bytes": 28717,
+      "sha256": "03a64e82a083063c5035db040f37183fb08d472929989ec63ed1679a3be431ea"
+    },
+    "blueprint/print/core-dag/core-proof-dag-lean-roadmap.pdf": {
+      "bytes": 434296,
+      "sha256": "2a07af38f865278e9c4de0eb9a6fa36cbdd62c7115e5fba05ba7b4120d353ce3"
+    }
+  }
+}

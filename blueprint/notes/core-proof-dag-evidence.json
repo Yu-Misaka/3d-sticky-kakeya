@@ -1,0 +1,2508 @@
+{
+  "root": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
+  "source_sha256": "fea42cc7443faf078b18721ea676a4dd4f3c4de1003f455928370a66c799d3d2",
+  "extractor_sha256": "2241dbdfab64aaf9d50de1b6f5ddf048fce425a371b72ce0e34ba7d9d226b41f",
+  "input_fingerprints": {
+    "blueprint/expert-atlas.json": "52c9e024989084dff922a60d175f9b14d3b68064375a43b005cae20d35e1ed6a",
+    "blueprint/atlas-mapping.json": "61460d2f6ffacf9d57a29133dd61ffabf276c00cc7a6f896476dc9d3535e44ca",
+    "blueprint/lean-declarations.json": "a90309bec50e0647c5a22184ead60ccdfc6e01ff1341f01a5f4585e4f5300f58",
+    "blueprint/lean-dependencies.json": "844b27678109e1f07865029309eb3f5716d24fa6b46f4b7005078d41fd32d1ff",
+    "blueprint/scripts/atlas.py": "137e35efc32b6b86befc53056c7b047dd564015091556062c2283b7b2e795a61",
+    "blueprint/scripts/dependencies.py": "d3fa9cb840627845353171ca7ee835103cfc5ce7ca79bfda2928b0e3e83d97c5"
+  },
+  "counts": {
+    "nodes": 18,
+    "roadmap_edges": 17,
+    "lean_edges": 17,
+    "common_pairs": 12,
+    "roadmap_classifications": {
+      "unmapped": 2,
+      "different-route": 2,
+      "actual": 12,
+      "outside-root": 1
+    },
+    "lean_comparisons": {
+      "agree": 17
+    }
+  },
+  "nodes": [
+    {
+      "id": "W2MW",
+      "paper": "WZ2 Definition 2.12",
+      "roadmap_statement": "The tubes are essentially distinct. For every $\\rho_0\\in[\\delta,1]$, there are $\\rho\\in[\\rho_0,A\\rho_0)$ and $\\rho$-tubes $\\mathcal T_\\rho$ such that:\n(i) $\\mathcal T_\\rho$ is an $A$-uniform partitioning cover of $\\mathcal T$;\n(ii) for each parent, the unit-rescaled child family satisfies the convex Wolff axiom with error $A$.\nThis is the root hypothesis; neither a direction-separated cover nor self-similar child counts is stipulated.",
+      "primary": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+      "status": "used-interface",
+      "correspondence": "This is the public nearby-scale predicate, including essential distinctness and complete containment fibres. Only the requested scale is bounded by one; the selected scale may exceed one.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": "fun {delta} family C =>\n  0 < delta ∧\n    Kakeya.Assouad.WZ2PaperFiniteErrorConstant C ∧\n      Kakeya.Assouad.WZ2PaperOrdinaryIsEssentiallyDistinct family ∧\n        ∀ (rho₀ : Kakeya.Assouad.WZ2PaperRequestedScale delta),\n          Nonempty (Kakeya.Assouad.WZ2PaperPureNearbyScaleCoverData family rho₀ C)",
+        "expanded_type": "{delta : ℝ} → Kakeya.Streamlined.TubeFamily delta → ENNReal → Prop",
+        "is_proof": false,
+        "is_proposition": true,
+        "kind": "definition",
+        "line": 703,
+        "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12",
+        "name": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+        "type": "{delta : ℝ} → Kakeya.Streamlined.TubeFamily delta → ENNReal → Prop",
+        "file": "MyLeanRepo/Kakeya/Assouad/PropStickyDefinition2_12.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PropStickyDefinition2_12.lean",
+          "line": 703
+        }
+      ]
+    },
+    {
+      "id": "W2L2_13",
+      "paper": "WZ2 Lemma 2.13",
+      "roadmap_statement": "If $\\mathcal T$ satisfies the multi-scale convex Wolff axiom with error $A$, then for every $\\rho_0\\in[\\delta,1]$ one can choose $\\rho\\in[\\rho_0,A\\rho_0]$ and a $\\rho$-cover whose coarse family and every unit-rescaled child family satisfy the same multi-scale condition with error $O(A)$.\nPartitioning forces the child-incidence clusters at successive scales to form a nested tree.",
+      "primary": null,
+      "status": "unmatched",
+      "correspondence": "This is a mathematical inheritance interface. No standalone proof of the displayed general inheritance lemma is linked. The closed structural theorem reconstructs its particular covers and fibres; the expert inheritance arrows do not establish arbitrary refinement closure.",
+      "primary_declaration": null,
+      "versions": []
+    },
+    {
+      "id": "W2Sigma",
+      "paper": "WZ2 Section 6.2",
+      "roadmap_statement": "Let $\\mathsf{Bad}(s)$ mean: for every $\\eta,\\delta_0>0$, some $0<\\delta\\le\\delta_0$ has multi-scale convex Wolff error $\\delta^{-\\eta}$, shading density $\\delta^\\eta$, and $|E_C|\\le\\delta^s$.\nDefine $\\sigma=\\sigma_{\\rm CW}=\\sup(\\{0\\}\\cup\\{s>0:\\mathsf{Bad}(s)\\})$.\nFailure of Theorem 5.2 gives $\\sigma>0$. This is a new deficit for a different admissible class, not WZ1's $\\sigma_3$.",
+      "primary": "Kakeya.Assouad.PureWZ2Admissible",
+      "status": "used-interface",
+      "correspondence": "Lean defines admissibility globally and chooses its supremum locally inside critical extraction. There is no separately exported constant sigma_CW identified with the directional WZ1 exponent.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": "fun sigma =>\n  ∀ (eta : ℝ),\n    0 < eta →\n      ∀ (delta₀ : ℝ),\n        0 < delta₀ →\n          ∃ delta,\n            0 < delta ∧\n              delta ≤ delta₀ ∧\n                delta ≤ 1 ∧\n                  ∃ family shading,\n                    family.Nonempty ∧\n                      Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales family (Kakeya.realRpowENN delta (-eta)) ∧\n                        Kakeya.Streamlined.Shading.IsLambdaDense shading (Kakeya.realRpowENN delta eta) ∧\n                          MeasureTheory.volume (Kakeya.Streamlined.Shading.union shading) ≤\n                            Kakeya.realRpowENN delta sigma",
+        "expanded_type": "ℝ → Prop",
+        "is_proof": false,
+        "is_proposition": true,
+        "kind": "definition",
+        "line": 45,
+        "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Core",
+        "name": "Kakeya.Assouad.PureWZ2Admissible",
+        "type": "ℝ → Prop",
+        "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Core.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.PureWZ2Admissible",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Core.lean",
+          "line": 45
+        },
+        {
+          "name": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PropStickyDefinition2_12Extremal.lean",
+          "line": 41
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/Targets/PureWZ2Node02CriticalExtraction.lean",
+          "line": 19
+        }
+      ]
+    },
+    {
+      "id": "W2D6_1",
+      "paper": "WZ2 Definition 6.1",
+      "roadmap_statement": "Write $E_C=\\bigcup_TY(T)$ and $\\sigma=\\sigma_{\\rm CW}$. The pair $C=(\\mathcal T,Y)_\\delta$ is \\emph{$\\varepsilon$-CW-extremal} precisely when\n\\[\\begin{aligned}\n&\\mathcal T\\text{ satisfies multi-scale convex Wolff with error }\\delta^{-\\varepsilon},\\\\\n&\\sum_T|Y(T)|\\ge\\delta^\\varepsilon\\sum_T|T|,\\\\\n&|E_C|\\le\\delta^{\\sigma-\\varepsilon}.\n\\end{aligned}\\]\nThis is WZ2 Definition 6.1, where it is called $\\varepsilon$-extremal. The added CW label distinguishes it from WZ1's different extremal class.",
+      "primary": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+      "status": "used-interface",
+      "correspondence": "The Lean extremal configuration stores nonemptiness, nearby-scale CWA, aggregate shading density, and the volume upper bound. Its critical exponent is supplied explicitly.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": null,
+        "expanded_type": "{delta : ℝ} → ℝ → ℝ → (family : Kakeya.Streamlined.TubeFamily delta) → Kakeya.Streamlined.TubeShading family → Prop",
+        "is_proof": false,
+        "is_proposition": true,
+        "kind": "inductive",
+        "line": 41,
+        "module": "MyLeanRepo.Kakeya.Assouad.PropStickyDefinition2_12Extremal",
+        "name": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+        "type": "{delta : ℝ} → ℝ → ℝ → (family : Kakeya.Streamlined.TubeFamily delta) → Kakeya.Streamlined.TubeShading family → Prop",
+        "file": "MyLeanRepo/Kakeya/Assouad/PropStickyDefinition2_12Extremal.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.PureWZ2Admissible",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Core.lean",
+          "line": 45
+        },
+        {
+          "name": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PropStickyDefinition2_12Extremal.lean",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "id": "W2P6_2",
+      "paper": "WZ2 Proposition 6.2",
+      "roadmap_statement": "For every $\\varepsilon>0$ choose $\\eta,\\delta_0>0$.\nIf $C$ is $\\eta$-extremal and $\\delta^{1-\\varepsilon}\\le\\rho\\le\\delta^\\varepsilon$, there are a refinement $C'$ and a balanced $\\rho$-cover $D$ such that $D$ and each unit-rescaled child family are $\\varepsilon$-extremal.\nFor every point $p$,\n\\[\\begin{split}\\#\\mathcal T_D(p)&\\le\\rho^{2-\\sigma-\\varepsilon}\\#\\mathcal T_D,\\\\\n\\#\\mathcal T_{C'}[U](p)&\\le(\\delta/\\rho)^{2-\\sigma-\\varepsilon}\\#\\mathcal T_{C'}[U].\\end{split}\\]\nThe fine/coarse product comparison also supplies matching lower multiplicity estimates with a reserved small loss.",
+      "primary": "Kakeya.Assouad.pure_wz2_node03_rich_prop62_kernel",
+      "status": "used-proof",
+      "correspondence": "The retained rich kernel supplies the actual M9 terminal schedules and coarse re-entry. Both cardinality factors and spatial balance remain. The historical public kernel is projected from those same terminal calls; it alone does not recover the richer schedule.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": null,
+        "expanded_type": "∀ (sigma : ℝ),\n  Kakeya.Assouad.PureWZ2CriticalPackage sigma →\n    ∀ (outputLoss : ℝ),\n      0 < outputLoss →\n        outputLoss ≤ 1 → Nonempty (Kakeya.Assouad.PureWZ2.Proposition63RichStickyKernelScheduleData sigma outputLoss)",
+        "is_proof": true,
+        "is_proposition": false,
+        "kind": "theorem",
+        "line": 22,
+        "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Prop62RetainedKernel",
+        "name": "Kakeya.Assouad.pure_wz2_node03_rich_prop62_kernel",
+        "type": "Kakeya.Assouad.PureWZ2RichProp62KernelStatement",
+        "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Prop62RetainedKernel.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.PureWZ2PropStickyStatement",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/PropStickyReentry.lean",
+          "line": 652
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_node03_prop_sticky",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/Targets/PureWZ2Node03PropSticky.lean",
+          "line": 17
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2RichProp62KernelStatement",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Prop62RetainedKernel.lean",
+          "line": 16
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_node03_rich_prop62_kernel",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Prop62RetainedKernel.lean",
+          "line": 22
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2RichProp62KernelStatement.toReentryKernel",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Prop62RetainedKernel.lean",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "W2P6_3",
+      "paper": "WZ2 Proposition 6.3",
+      "roadmap_statement": "For every $\\varepsilon,\\delta_0>0$, some $\\varepsilon$-extremal pair at $0<\\delta\\le\\delta_0$ has:\n(1) a $1$-Lipschitz $f:[-1,1]\\to\\mathbb R$ with each fixed-$z$ image $\\{x+f(z)y:(x,y,z)\\in E_C\\}$ an $(\\delta,1-\\sigma,\\delta^{-\\varepsilon})_1$-ADset;\n(2) a $1$-Lipschitz plane map $V$ with $V(p)\\cdot(E_C\\cap B(p,\\sqrt\\rho))$ an $(\\rho,1-\\sigma,\\delta^{-\\varepsilon})_1$-ADset for all $p$ and $\\rho\\in[\\delta,1]$.",
+      "primary": "Kakeya.Assouad.pure_wz2_node04_reentrant_grains",
+      "status": "used-proof",
+      "correspondence": "The strengthened grain producer consumes the rich Proposition 6.2 kernel through both M9 sticky calls. One dependent reentrant source carries both grains, the volume floor, chart data and ordinary/cropped re-entry. The old paper conclusion is a loss-weakening projection of that source.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": null,
+        "expanded_type": "∀ (capability : Kakeya.Assouad.PureWZ2PropStickyCapability), Kakeya.Assouad.PureWZ2ReentrantGrainsStatement capability",
+        "is_proof": true,
+        "is_proposition": false,
+        "kind": "theorem",
+        "line": 36,
+        "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Grains.ReentrantEntry",
+        "name": "Kakeya.Assouad.pure_wz2_node04_reentrant_grains",
+        "type": "∀ (capability : Kakeya.Assouad.PureWZ2PropStickyCapability), Kakeya.Assouad.PureWZ2ReentrantGrainsStatement capability",
+        "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Grains/ReentrantEntry.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.PureWZ2GrainsFromCriticalStatement",
+          "status": "unused-interface",
+          "reached": false,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Grains.lean",
+          "line": 303
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_node04_grains",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/Targets/PureWZ2Node04Grains.lean",
+          "line": 19
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2ReentrantGrainsStatement",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Grains/ReentrantEntry.lean",
+          "line": 18
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_node04_reentrant_grains_from_prop62",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Grains/ReentrantEntry.lean",
+          "line": 26
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_node04_reentrant_grains",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Grains/ReentrantEntry.lean",
+          "line": 36
+        }
+      ]
+    },
+    {
+      "id": "W2P6_4",
+      "paper": "WZ2 Proposition 6.4",
+      "roadmap_statement": "For every $\\varepsilon,\\delta_0>0$, an $\\varepsilon$-extremal pair at some $0<\\delta\\le\\delta_0$ has global grains with $\\|f\\|_{C^2([-1,1])}\\le1$ and retains the same local grains with a $1$-Lipschitz plane map.\nThe WZ1 Section 5 construction uses its Section 8 dot-product projection theorem; that entire internal branch remains in this atlas.",
+      "primary": "Kakeya.Assouad.pure_wz2_left_line_c2_grains",
+      "status": "used-proof",
+      "correspondence": "The closed C2 entry calls the retained grain producer after fixing all hierarchy losses and scale cutoffs. Its actual source is passed to the original P0-P7 construction. The output family, shading, CWA, density, volume and both grains share one combined-selection witness. A strengthened source is now constructed with global fine multiplicity control and frame compatibility before any interval is supplied. The closed prescribed-interval endpoint now calls the arbitrary-configuration normalized Lemma 6.6. It constructs only the fine cap before J and derives the frame on each later slab satisfying the same normalized mass and cover hypotheses. The global-cap producer is also consumed by the actual Node-6 assembly.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": null,
+        "expanded_type": "∀ (sigma : ℝ),\n  Kakeya.Assouad.PureWZ2CriticalPackage sigma →\n    ∀ (outputLoss delta₀ : ℝ),\n      0 < outputLoss →\n        0 < delta₀ →\n          ∃ delta,\n            0 < delta ∧ delta ≤ delta₀ ∧ Nonempty (Kakeya.Assouad.PureWZ2C2GrainConfiguration sigma outputLoss delta)",
+        "is_proof": true,
+        "is_proposition": false,
+        "kind": "theorem",
+        "line": 35,
+        "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.LeftLine",
+        "name": "Kakeya.Assouad.pure_wz2_left_line_c2_grains",
+        "type": "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+        "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LeftLine.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.PureWZ2C2GrainsFromCriticalStatement",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Grains.lean",
+          "line": 558
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_node05_c2_grains",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/C2/Node05V4RichFinalAssembly.lean",
+          "line": 107
+        },
+        {
+          "name": "Kakeya.Assouad.pureWZ2_c2_grains_from_reentrant",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/C2/Node05V4RichFinalAssembly.lean",
+          "line": 34
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_left_line_c2_grains",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LeftLine.lean",
+          "line": 35
+        },
+        {
+          "name": "Kakeya.Assouad.pureWZ2_c2_source_with_fine_cap",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/Node6FixedLemma31ScaleAssembly.lean",
+          "line": 308
+        },
+        {
+          "name": "Kakeya.Assouad.pureWZ2_interval_ready_c2_source",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/IntervalReadyC2Source.lean",
+          "line": 24
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_left_line_c2_prescribed_intervals",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LeftLine.lean",
+          "line": 44
+        }
+      ]
+    },
+    {
+      "id": "T5_2",
+      "paper": "WZ1 Theorem 5.2",
+      "roadmap_statement": "For every $\\varepsilon>0$, choose $\\eta,\\delta_0>0$.\nFor $(\\delta,1,\\delta^{-\\eta})$-ADsets $F,G\\subset[0,1]^2$, either\n(A) an affine line $\\ell$ and the orthogonal line $\\ell^\\perp$ through the origin have\n$\\mathcal E_\\delta(F\\cap N_\\delta\\ell),\\mathcal E_\\delta(G\\cap N_\\delta\\ell^\\perp)\\ge\\delta^{\\varepsilon-1}$; or\n(B) for every $H\\subset F\\times G\\times G$ with $\\mathcal E_\\delta(H)\\ge\\delta^{\\eta-3}$, some $\\rho\\ge\\delta$ and interval $I$, $|I|\\ge\\delta^{-\\eta}\\rho$, satisfy\n$\\mathcal E_\\rho(I\\cap\\{a\\cdot(b_1-b_2):(a,b_1,b_2)\\in H\\})\\ge(|I|/\\rho)^{1-\\varepsilon}$.",
+      "primary": "Kakeya.Assouad.WZ1ProjectionDichotomyConclusion",
+      "status": "unused-interface",
+      "correspondence": "The coefficient set concentrates near the perpendicular line through the origin; the endpoint set lies near an affine line. The linked general dichotomy is a proposition interface. The proved separated result has a weaker one-endpoint alternative.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": "∀ (epsilon : ℝ),\n  0 < epsilon →\n    ∃ eta delta₀,\n      0 < eta ∧\n        0 < delta₀ ∧\n          delta₀ ≤ 1 ∧\n            ∀ (delta : ℝ),\n              0 < delta →\n                delta ≤ delta₀ →\n                  ∀ (F G₁ G₂ : Kakeya.Assouad.DiscreteSet 2),\n                    Finset.Nonempty F →\n                      Finset.Nonempty G₁ →\n                        Finset.Nonempty G₂ →\n                          F.IsInUnitBall →\n                            G₁.IsInUnitBall →\n                              G₂.IsInUnitBall →\n                                F.IsDeltaSeparated delta →\n                                  G₁.IsDeltaSeparated delta →\n                                    G₂.IsDeltaSeparated delta →\n                                      F.IsKatzTao delta 1 (Kakeya.realRpowENN delta (-eta)) →\n                                        G₁.IsKatzTao delta 1 (Kakeya.realRpowENN delta (-eta)) →\n                                          G₂.IsKatzTao delta 1 (Kakeya.realRpowENN delta (-eta)) →\n                                            (∃ base direction,\n                                                ‖direction‖ = 1 ∧\n                                                  Kakeya.realRpowENN delta (epsilon - 1) ≤\n                                                      Kakeya.Assouad.wz1DiscreteLineCount F 0\n                                                        (Kakeya.Assouad.wz1Perp2 direction) delta ∧\n                                                    Kakeya.realRpowENN delta (epsilon - 1) ≤\n                                                        Kakeya.Assouad.wz1DiscreteLineCount G₁ base direction delta ∧\n                                                      Kakeya.realRpowENN delta (epsilon - 1) ≤\n                                                        Kakeya.Assouad.wz1DiscreteLineCount G₂ base direction delta) ∨\n                                              ∀\n                                                (H :\n                                                  Finset\n                                                    (Kakeya.Assouad.Point2 ×\n                                                      Kakeya.Assouad.Point2 × Kakeya.Assouad.Point2)),\n                                                (∀ h ∈ H, h.1 ∈ F ∧ h.2.1 ∈ G₁ ∧ h.2.2 ∈ G₂) →\n                                                  Kakeya.realRpowENN delta (eta - 3) ≤ ↑H.card →\n                                                    ∃ rho center radius,\n                                                      delta ≤ rho ∧\n                                                        rho ≤ 1 ∧\n                                                          0 < radius ∧\n                                                            delta.rpow (-eta) * rho ≤ 2 * radius ∧\n                                                              Kakeya.realRpowENN (2 * radius / rho) (1 - epsilon) ≤\n                                                                ↑(Metric.externalCoveringNumber rho.toNNReal\n                                                                    (Kakeya.Assouad.wz1DotDifferenceSet H ∩\n                                                                      Metric.closedBall center radius))",
+        "expanded_type": "Prop",
+        "is_proof": false,
+        "is_proposition": true,
+        "kind": "definition",
+        "line": 1105,
+        "module": "MyLeanRepo.Kakeya.Assouad.WZ1.Statements",
+        "name": "Kakeya.Assouad.WZ1ProjectionDichotomyConclusion",
+        "type": "Prop",
+        "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.WZ1ProjectionDichotomyConclusion",
+          "status": "unused-interface",
+          "reached": false,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/WZ1/Statements.lean",
+          "line": 1105
+        }
+      ]
+    },
+    {
+      "id": "W2L6_6",
+      "paper": "WZ2 Lemma 6.6",
+      "roadmap_statement": "Let $C,f,V$ satisfy Proposition 6.4 with loss $\\eta$. Let $\\delta^{1/2}\\le|J|\\le\\delta^\\varepsilon$.\nAssume $\\sum_T|Y(T)\\cap(\\mathbb R^2\\times J)|\\ge\\delta^\\eta|J|$ and that the shaded union in this slab is covered by at most $\\delta^{-\\eta}|J|^{-2+\\sigma}$ cubes of side $|J|$.\nFor sufficiently small $\\eta,\\delta_0$ one has $|f'(z)|\\ge|J|$ for every $z\\in J$.",
+      "primary": "Kakeya.Assouad.pure_wz2_lemma66_prepared_interval",
+      "status": "used-proof",
+      "correspondence": "The prepared interval theorem remains the actual Proposition 6.5 dependency, and its original interface is preserved. Its core now needs frame control only on the retained slab. The new normalized-interval theorem accepts every supplied C2 configuration and prescribed interval, with loss eta/8, mass (pi/4) delta^(eta/16+2) #T |J|, cover delta^(-eta/16) |J|^(-2+sigma), and slab multiplicity cap delta^(2-sigma-eta/8192) #T. It has no frame premise and does not choose another C2 configuration. The occupied-cell hull preserves the original slab mass; dense short-grain selection retains half its mass on the same family, and local AD plus the tube-segment direction estimate proves frame nondegeneracy. All cutoffs precede the configuration and interval. This independently audited API still needs normalized mass and a fine cap, neither derived from the printed absolute delta^eta |J| hypothesis and cover alone. The closed every-interval C2 source now supplies only the global cap before J and calls this new lemma; the older global-frame source and prescribed-frame theorem remain separately audited compatibility APIs. LargeSlopeTechnicalStatement remains an older unproved interface; the full printed Lemma 6.6 is not claimed.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": null,
+        "expanded_type": "∀ (sigma epsilon eta : ℝ),\n  0 < sigma →\n    sigma < 1 →\n      0 < epsilon →\n        epsilon ≤ 1 / 2 →\n          0 < eta →\n            1000 * eta ≤ epsilon * sigma ^ 2 →\n              ∃ delta₀,\n                0 < delta₀ ∧\n                  delta₀ ≤ 1 ∧\n                    ∀ (delta : ℝ),\n                      0 < delta →\n                        delta ≤ delta₀ →\n                          ∀ (data : Kakeya.Assouad.PureWZ2Lemma66PreparedInterval sigma eta delta),\n                            delta.rpow (1 / 2) ≤ ↑data.rho →\n                              ↑data.rho ≤ delta.rpow epsilon →\n                                ∀ z ∈ Set.Icc data.scaleData.slabLeft data.scaleData.slabRight,\n                                  data.scaleData.slabRight - data.scaleData.slabLeft ≤ |deriv data.globalSlope.toFun z|",
+        "is_proof": true,
+        "is_proposition": false,
+        "kind": "theorem",
+        "line": 190,
+        "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.LargeSlope.Lemma66PreparedInterval",
+        "name": "Kakeya.Assouad.pure_wz2_lemma66_prepared_interval",
+        "type": "∀ (sigma epsilon eta : ℝ),\n  0 < sigma →\n    sigma < 1 →\n      0 < epsilon →\n        epsilon ≤ 1 / 2 →\n          0 < eta →\n            1000 * eta ≤ epsilon * sigma ^ 2 →\n              ∃ delta₀,\n                0 < delta₀ ∧\n                  delta₀ ≤ 1 ∧\n                    ∀ (delta : ℝ),\n                      0 < delta →\n                        delta ≤ delta₀ →\n                          ∀ (data : Kakeya.Assouad.PureWZ2Lemma66PreparedInterval sigma eta delta),\n                            delta.rpow (1 / 2) ≤ ↑data.rho →\n                              ↑data.rho ≤ delta.rpow epsilon →\n                                ∀ z ∈ Set.Icc data.scaleData.slabLeft data.scaleData.slabRight,\n                                  data.scaleData.slabRight - data.scaleData.slabLeft ≤ |deriv data.globalSlope.toFun z|",
+        "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/Lemma66PreparedInterval.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.LargeSlopeTechnicalStatement",
+          "status": "unused-interface",
+          "reached": false,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/Statements.lean",
+          "line": 592
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2Lemma66PreparedInterval",
+          "status": "used-definition",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/Lemma66PreparedInterval.lean",
+          "line": 18
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_lemma66_prepared_interval",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/Lemma66PreparedInterval.lean",
+          "line": 190
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_lemma66_prepared",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/Lemma66Prepared.lean",
+          "line": 71
+        },
+        {
+          "name": "Kakeya.Assouad.pureWZ2PrescribedSlabHull_mass",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/PrescribedSlabHull.lean",
+          "line": 60
+        },
+        {
+          "name": "Kakeya.Assouad.pureWZ2PrescribedSlabHull_cover",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/PrescribedSlabHull.lean",
+          "line": 102
+        },
+        {
+          "name": "Kakeya.Assouad.pureWZ2PrescribedSlabHull_multiplicity",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/PrescribedSlabHull.lean",
+          "line": 118
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_lemma66_prescribed_interval",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/Lemma66PrescribedInterval.lean",
+          "line": 53
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2C2PrescribedIntervalsStatement",
+          "status": "unused-interface",
+          "reached": false,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/IntervalReadyC2Source.lean",
+          "line": 81
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_left_line_c2_prescribed_intervals",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LeftLine.lean",
+          "line": 44
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2Lemma66PreparedIntervalOn",
+          "status": "used-definition",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/Lemma66PreparedInterval.lean",
+          "line": 34
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_lemma66_prepared_interval_on",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/Lemma66PreparedInterval.lean",
+          "line": 52
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_lemma66_normalized_interval",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/Lemma66NormalizedInterval.lean",
+          "line": 20
+        },
+        {
+          "name": "Kakeya.Assouad.pureWZ2_prescribed_slab_frame_preparation",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/SlabFramePreparation.lean",
+          "line": 50
+        },
+        {
+          "name": "Kakeya.Assouad.pureWZ2_dense_short_global_grain_normal",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/DenseGrainNormal.lean",
+          "line": 166
+        },
+        {
+          "name": "Kakeya.Assouad.pureWZ2_dense_cell_label_refinement",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/DenseCellRefinement.lean",
+          "line": 48
+        },
+        {
+          "name": "Kakeya.Assouad.pureWZ2_short_grain_label_count",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/ShortGrainCells.lean",
+          "line": 78
+        },
+        {
+          "name": "Kakeya.Assouad.pureWZ2_short_grain_packet_geometry",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/ShortGrainCells.lean",
+          "line": 145
+        }
+      ]
+    },
+    {
+      "id": "W2P6_5",
+      "paper": "WZ2 Proposition 6.5, part 1 double-prime",
+      "roadmap_statement": "For every $\\varepsilon,\\delta_0>0$, an $\\varepsilon$-extremal pair at some $0<\\delta\\le\\delta_0$ has global grains for a $C^2$ slope satisfying\n\\[1\\le|f'(z)|\\le2,\\qquad |f''(z)|\\le1/100\\quad(-1\\le z\\le1).\\]\nThe local grains and $1$-Lipschitz plane map are retained.\nUse the transferred comparable-slope slab lemma, WZ2 Lemma 6.6 and mild anisotropic normalization.",
+      "primary": "Kakeya.Assouad.pure_wz2_left_line_large_slope_retained",
+      "status": "used-proof",
+      "correspondence": "The retained construction contains the actual common-y source, half-offset geometry, cleanup, source regularization and requested CWA terminal, with caller-controlled source and target cutoffs. The normalized consumer now transports its literal final family, shading, public slope, CWA and projection upper bound. The common source supplies only the quantitative bound on this actual slope offset; it no longer selects a different normalized terminal.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": null,
+        "expanded_type": "∀ (sigma : ℝ),\n  Kakeya.Assouad.PureWZ2CriticalPackage sigma →\n    ∀ (outputLoss outputDeltaBound sourceDeltaBound : ℝ),\n      0 < outputLoss →\n        0 < outputDeltaBound →\n          0 < sourceDeltaBound →\n            ∃ logExponent sourceDelta,\n              0 < sourceDelta ∧\n                sourceDelta ≤ sourceDeltaBound ∧\n                  ∃ data,\n                    Kakeya.Assouad.PureWZ2DirectCommonYSourceAssembly.TerminalGeometry.targetDelta data.commonSource\n                        data.terminal ≤\n                      outputDeltaBound",
+        "is_proof": true,
+        "is_proposition": false,
+        "kind": "theorem",
+        "line": 52,
+        "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.LeftLine",
+        "name": "Kakeya.Assouad.pure_wz2_left_line_large_slope_retained",
+        "type": "Kakeya.Assouad.PureWZ2LargeSlopeRetainedStatement",
+        "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LeftLine.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.PureWZ2LargeSlopeFromCriticalStatement",
+          "status": "unused-interface",
+          "reached": false,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope.lean",
+          "line": 81
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_node06_large_slope",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/Targets/PureWZ2Node06LargeSlope.lean",
+          "line": 19
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2LargeSlopeRetainedStatement",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/RetainedConstruction.lean",
+          "line": 65
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2LargeSlopeConstruction",
+          "status": "used-definition",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/RetainedConstruction.lean",
+          "line": 27
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_node06_large_slope_retained",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/Targets/PureWZ2Node06LargeSlope.lean",
+          "line": 14
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_left_line_large_slope_retained",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LeftLine.lean",
+          "line": 52
+        }
+      ]
+    },
+    {
+      "id": "W2L6_7",
+      "paper": "WZ2 Lemma 6.7: small-image interface",
+      "roadmap_statement": "For every small loss $\\varepsilon>0$ and cutoff $\\delta_0>0$, obtain a convex-Wolff family with error $\\delta^{-\\varepsilon}$, shading density $\\delta^\\varepsilon$, and a nonsingular slope such that\n\\[|X_f(C)|\\lesssim\\delta^{\\sigma-\\varepsilon},\\qquad\nX_f(C)=\\bigcup_T\\pi_f(Y(T)).\\]\nIndeed, the global AD slice bound gives $\\mathcal E_\\delta(X_f(C)\\cap\\{z=t\\})\\le\\delta^{-\\varepsilon}\\delta^{-(1-\\sigma)}$; multiply by $O(\\delta)$ and integrate in $t$.",
+      "primary": "Kakeya.Assouad.pure_wz2_left_line_normalized_projection",
+      "status": "used-proof",
+      "correspondence": "The normalized root transports the actual half-offset Proposition 6.5 terminal. With k=1/(4(1+|f(0)|)), the affine image (k(x+f(0)y),ky,z) has slope f-f(0) and projected area multiplier k. A width-1/4 slab retains at least 1/12 of indexed mass and is retubed at radius 12 delta. The source cutoff, fixed before Node 6, proves the small-power offset bound and pays the Jacobian, radius and density costs. Cleanup returns one configuration with CWA, the upper bound, bounded bases, vertical chart, dense height-window shading and normalized nonsingular slope. Injective source indices, exact axis images and shading containment relate it to the original terminal. The extra common-height witness is retained in a stronger compatibility API; the corrected final lower bound does not require it.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": null,
+        "expanded_type": "∀ (sigma : ℝ),\n  Kakeya.Assouad.PureWZ2CriticalPackage sigma →\n    ∀ (loss scaleCeiling : ℝ),\n      0 < loss →\n        loss < sigma →\n          0 < scaleCeiling →\n            ∃ delta,\n              0 < delta ∧\n                delta ≤ scaleCeiling ∧\n                  delta < 1 ∧ Nonempty (Kakeya.Assouad.PureWZ2NormalizedProjectionData sigma loss delta)",
+        "is_proof": true,
+        "is_proposition": false,
+        "kind": "theorem",
+        "line": 72,
+        "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.LeftLine",
+        "name": "Kakeya.Assouad.pure_wz2_left_line_normalized_projection",
+        "type": "Kakeya.Assouad.PureWZ2NormalizedProjectionStatement",
+        "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LeftLine.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.PureWZ2SmallTwistedProjectionData",
+          "status": "unused-definition",
+          "reached": false,
+          "is_proof": false,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/TwistedProjection.lean",
+          "line": 30
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_node07_small_twisted_projection",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/Targets/PureWZ2Node07SmallTwistedProjection.lean",
+          "line": 13
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2NormalizedProjectionData",
+          "status": "used-definition",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/NormalizedTerminal.lean",
+          "line": 16
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2NormalizedProjectionRefinement",
+          "status": "used-definition",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/NormalizedTerminal.lean",
+          "line": 23
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_left_line_normalized_projection",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LeftLine.lean",
+          "line": 72
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_left_line_lemma67",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LeftLine.lean",
+          "line": 58
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_node7b_normalized_from_retained_large_slope",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Node7bPreparation.lean",
+          "line": 66
+        },
+        {
+          "name": "Kakeya.Assouad.deltaMax_to_normalized_convexWolff",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/DeltaMaxToNormalizedNonconcentration.lean",
+          "line": 44
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2PaperTerminalProjectionRefinement",
+          "status": "used-definition",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/PaperTerminalNormalization.lean",
+          "line": 19
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_paper_terminal_normalization_cutoff",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/PaperTerminalNormalization.lean",
+          "line": 81
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2PaperTerminalProjectionRefinement.projection_volume_le",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/PaperTerminalNormalization.lean",
+          "line": 54
+        },
+        {
+          "name": "Kakeya.Assouad.exists_actual_terminal_slope_offset_cutoff_for_output_loss",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LargeSlope/ActualTerminalSlopeBound.lean",
+          "line": 63
+        },
+        {
+          "name": "Kakeya.Assouad.slopeOffsetSlabShading_dense",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/SlopeOffsetNormalization.lean",
+          "line": 149
+        },
+        {
+          "name": "Kakeya.Assouad.slopeOffsetRetubedFamily_cwa",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/SlopeOffsetNormalization.lean",
+          "line": 96
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2CommonHeightProjectionData",
+          "status": "used-definition",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/CommonHeightNormalizedTerminal.lean",
+          "line": 10
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2CommonHeightProjectionStatement",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/CommonHeightNormalizedTerminal.lean",
+          "line": 14
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2PaperTerminalProjectionRefinement.common_height",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/PaperTerminalNormalization.lean",
+          "line": 40
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_node7b_common_height_from_retained_large_slope",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Node7bPreparation.lean",
+          "line": 24
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_left_line_common_height_projection",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LeftLine.lean",
+          "line": 65
+        }
+      ]
+    },
+    {
+      "id": "W2Zero",
+      "paper": "WZ2 Section 6.5: contradiction",
+      "roadmap_statement": "If $\\sigma>0$, apply the lower bound with exponent $\\sigma/4$.\nChoose the small-image construction with loss $\\kappa<\\sigma/4$ and $\\kappa$ smaller than the lower-bound admissibility threshold.\nAt arbitrarily small mesh the same pair obeys\n$\\delta^{\\sigma/4}\\le |X_f(C)|\\lesssim\\delta^{\\sigma-\\kappa}$,\nwhich is impossible. Therefore $\\sigma_{\\rm CW}=0$.",
+      "primary": "Kakeya.Assouad.pure_wz2_no_critical_package",
+      "status": "used-proof",
+      "correspondence": "The contradiction primary fixes the proved normalized Lemma 6.7 internally and takes only a positive critical package. The argument-free final theorem calls this contradiction and retains exactly its original statement. Both the Lemma 6.7-to-contradiction and contradiction-to-final connections are therefore actual proof-value dependencies. It compares both bounds on the actual normalized left terminal. The independent lower bound follows CWA to finite length-32 coarse-capsule tests to corrected Proposition 7.1, then the complete parameter iteration. The upper family, shading and slope are the same literal data, and the lower loss and cutoff precede the terminal choice. The generic upper-parameter and common-height contradiction interfaces remain independently proved; neither intermediate side invokes a final theorem.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": null,
+        "expanded_type": "∀ {sigma : ℝ}, Kakeya.Assouad.PureWZ2CriticalPackage sigma → False",
+        "is_proof": true,
+        "is_proposition": false,
+        "kind": "theorem",
+        "line": 40,
+        "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Theorem5_2Unconditional",
+        "name": "Kakeya.Assouad.pure_wz2_no_critical_package",
+        "type": "∀ {sigma : ℝ}, Kakeya.Assouad.PureWZ2CriticalPackage sigma → False",
+        "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Theorem5_2Unconditional.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Core.lean",
+          "line": 24
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Theorem5_2Unconditional.lean",
+          "line": 46
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_node08_theorem5_2",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/Targets/PureWZ2Node08Theorem5_2.lean",
+          "line": 14
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_no_critical_package",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Theorem5_2Unconditional.lean",
+          "line": 40
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_no_critical_package_of_normalized_projection",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/NormalizedContradiction.lean",
+          "line": 20
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_theorem5_2_of_normalized_projection",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/NormalizedContradiction.lean",
+          "line": 44
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_no_critical_package_of_common_height_projection",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/CommonHeightContradiction.lean",
+          "line": 10
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_theorem5_2_of_common_height_projection",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/CommonHeightContradiction.lean",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "id": "W2JetCount",
+      "paper": "WZ2 Lemma 7.12: cinematic assembly",
+      "roadmap_statement": "Zoom the uniform triple set to a $q$-cube, extract Katz-Tao triples at $h=\\delta/q$, and replicate them back at mesh $\\delta$.\nFor fixed $c$ the functions $g(t)=a+bf(t)+dtf(t)+ct$ are cinematic; their parameter metric and $C^2$ metric are comparable.\nA $(\\delta,1-\\tau,O(1))$-Katz-Tao parameter set therefore gives a $\\delta$-separated curve family obeying\n$\\#(G\\cap B_r)\\lesssim(r/\\delta)$.\nAll cardinality and shading deficits from extraction remain explicit small powers of $h$.",
+      "primary": "Kakeya.Assouad.parameter_block_representative_cinematic_pullback",
+      "status": "used-proof",
+      "correspondence": "The implementation transports representative parameters and their shadings into the cinematic family. Separation, metric distortion and the replication deficit are hypotheses or proved fields, not automatic properties of a bare parameter set.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": null,
+        "expanded_type": "Kakeya.Assouad.HalfParameterCinematicPYZGeneralStatement →\n  Kakeya.Assouad.CompactSubshadingSelectionStatement →\n    Kakeya.Assouad.CompactTubeTwistedProjectionAreaStatement →\n      Kakeya.Assouad.AssignedCurveProjectionContainmentFromVerticalChartStatement →\n        ∀ (epsilon pyzLoss : ℝ),\n          0 < epsilon →\n            epsilon < 1 / 10 →\n              0 < pyzLoss →\n                ∃ delta₀,\n                  0 < delta₀ ∧\n                    delta₀ < 1 ∧\n                      ∀ (delta : ℝ),\n                        0 < delta →\n                          delta ≤ delta₀ →\n                            ∀ (F : Kakeya.Streamlined.TubeFamily delta),\n                              Kakeya.Assouad.IsInVerticalChart F →\n                                ∀ (Y : Kakeya.Streamlined.TubeShading F) (C lambda : ENNReal)\n                                  (clustered : Kakeya.Assouad.TubeParameterClusterFrostmanData F Y C lambda delta),\n                                  Kakeya.Streamlined.Shading.union clustered.shading ⊆\n                                      Kakeya.Assouad.horizontalSlab 0 1 →\n                                    ∀ (localBlock : Kakeya.Assouad.ParameterLocalFullBlockData clustered epsilon)\n                                      (representatives :\n                                        Kakeya.Assouad.ParameterLocalRepresentativeBlockData localBlock)\n                                      (amplification :\n                                        Kakeya.Assouad.ParameterBlockAmplificationData delta localBlock.blockScale\n                                          (1 - 20 * epsilon ^ 2) localBlock.centeredPoints)\n                                      (perTubeThreshold : ENNReal),\n                                      perTubeThreshold ≠ 0 →\n                                        perTubeThreshold ≠ ⊤ →\n                                          Kakeya.Assouad.HasPerTubeMass clustered.shading perTubeThreshold →\n                                            ∀ (f : Kakeya.Assouad.SlopeFunction),\n                                              f.IsNonsingular →\n                                                f.toFun 0 = 0 →\n                                                  Nonempty\n                                                    (Kakeya.Assouad.ParameterBlockRepresentativeCinematicPullbackData\n                                                      localBlock representatives amplification f pyzLoss\n                                                      perTubeThreshold)",
+        "is_proof": true,
+        "is_proposition": false,
+        "kind": "theorem",
+        "line": 116,
+        "module": "MyLeanRepo.Kakeya.Assouad.TwistedProjectionScale.ParameterBlockRepresentativeCinematicPullback",
+        "name": "Kakeya.Assouad.parameter_block_representative_cinematic_pullback",
+        "type": "Kakeya.Assouad.ParameterBlockRepresentativeCinematicPullbackStatement",
+        "file": "MyLeanRepo/Kakeya/Assouad/TwistedProjectionScale/ParameterBlockRepresentativeCinematicPullback.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.parameter_block_representative_cinematic_pullback",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/TwistedProjectionScale/ParameterBlockRepresentativeCinematicPullback.lean",
+          "line": 116
+        }
+      ]
+    },
+    {
+      "id": "W2L7_12",
+      "paper": "WZ2 Lemma 7.12",
+      "roadmap_statement": "For every $\\varepsilon>0$ choose $\\eta,\\delta_0>0$.\nFor a Tube-Wolff family with error $\\delta^{-\\eta}$, $\\delta^\\eta$-dense shading and nonsingular slope, there are $r\\in(\\delta^{1-\\varepsilon^2},1)$ and a sub-shading $Y'$ that is $\\delta^{4\\eta}$-dense such that\n\\[\\left|\\bigcup_T\\pi_f(Y'(T))\\right|\\ge(\\delta/r)^\\varepsilon\n\\left|N_r\\!\\left(\\bigcup_T\\pi_f(Y'(T))\\right)\\right|.\\]\nThe exact mesh can be rounded to the sparse scale set with bounded losses.",
+      "primary": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman_sharp_density",
+      "status": "used-proof",
+      "correspondence": "The complete normalized parameter one-step theorem has source density delta^eta and output density delta^(4 eta). Choosing the planar OS grid at eta/2 reduces the band-plus-grid loss to delta^(-2 eta), giving positive-window density delta^(3 eta). The signed step uses positiveEta=4 eta/3 and spends eta/3 on the half-window choice. All thresholds precede runtime data. The old eta/2-to-4 eta API follows by weakening. Parameter Frostman, vertical chart and f(0)=0 remain explicit; the adopted corrected Tube Wolff theorem derives this parameter premise geometrically before the iteration. A separate literal unit-length Tube-Wolff-only one-step statement is not claimed.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": null,
+        "expanded_type": "∀ (epsilon rhoMax : ℝ),\n  0 < epsilon →\n    epsilon < 1 / 100 →\n      0 < rhoMax →\n        rhoMax ≤ 1 →\n          1 / 100 ≤ rhoMax →\n            ∃ etaMax,\n              0 < etaMax ∧\n                etaMax ≤ epsilon ∧\n                  ∀ (eta : ℝ),\n                    0 < eta →\n                      eta ≤ etaMax →\n                        ∃ delta₀,\n                          0 < delta₀ ∧\n                            delta₀ < 1 ∧\n                              ∀ (delta : ℝ),\n                                0 < delta →\n                                  delta ≤ delta₀ →\n                                    ∀ (F : Kakeya.Streamlined.TubeFamily delta),\n                                      F.Nonempty →\n                                        Kakeya.Assouad.IsInVerticalChart F →\n                                          (∀ (i : Fin F.card),\n                                              |(Kakeya.Assouad.tubeParams i).a| ≤ 12 ∧\n                                                |(Kakeya.Assouad.tubeParams i).b| ≤ 12 ∧\n                                                  |(Kakeya.Assouad.tubeParams i).c| ≤ 2 ∧\n                                                    |(Kakeya.Assouad.tubeParams i).d| ≤ 2) →\n                                            ∀ (C : ENNReal),\n                                              1 ≤ C →\n                                                C ≠ ⊤ →\n                                                  C ≤ Kakeya.realRpowENN delta (-eta) →\n                                                    Kakeya.Assouad.TubeParameterFrostmanBound F C →\n                                                      ∀ (Y : Kakeya.Streamlined.TubeShading F),\n                                                        Kakeya.Streamlined.Shading.IsLambdaDense Y\n                                                            (Kakeya.realRpowENN delta eta) →\n                                                          Kakeya.Assouad.IsInSlopeWindow Y →\n                                                            ∀ (f : Kakeya.Assouad.SlopeFunction),\n                                                              f.IsNonsingular →\n                                                                f.toFun 0 = 0 →\n                                                                  ∃ rho,\n                                                                    delta.rpow (1 - epsilon ^ 2) < rho ∧\n                                                                      rho ≤ rhoMax ∧\n                                                                        ∃ Z,\n                                                                          Kakeya.Assouad.IsSubshading Z Y ∧\n                                                                            Kakeya.Streamlined.Shading.IsLambdaDense Z\n                                                                                (Kakeya.realRpowENN delta (4 * eta)) ∧\n                                                                              MeasureTheory.volume\n                                                                                  (Kakeya.Assouad.twistedUnion Z f) ≥\n                                                                                Kakeya.realRpowENN (delta / rho)\n                                                                                    epsilon *\n                                                                                  MeasureTheory.volume\n                                                                                    (Metric.cthickening rho\n                                                                                      (Kakeya.Assouad.twistedUnion Z f))",
+        "is_proof": true,
+        "is_proposition": false,
+        "kind": "theorem",
+        "line": 44,
+        "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.ProjectionOneStep",
+        "name": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman_sharp_density",
+        "type": "Kakeya.Assouad.GridOSBoundedOneScaleSharpInput",
+        "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/ProjectionOneStep.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.GridOSBoundedOneScaleInput",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/TwistedProjectionScale/GridOSFiniteStepScheduleStatements.lean",
+          "line": 52
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/ProjectionOneStep.lean",
+          "line": 92
+        },
+        {
+          "name": "Kakeya.Assouad.parameter_block_projection_uniformization_from_os",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/Targets/ParameterBlockProjectionUniformizationFromOS.lean",
+          "line": 322
+        },
+        {
+          "name": "Kakeya.Assouad.GridOSBoundedOneScaleSharpInput",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/TwistedProjectionScale/SignedWindowSharpDensity.lean",
+          "line": 17
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman_sharp_density",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/ProjectionOneStep.lean",
+          "line": 44
+        },
+        {
+          "name": "Kakeya.Assouad.grid_os_bounded_one_scale_sharp_from_positive",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/TwistedProjectionScale/SignedWindowSharpDensity.lean",
+          "line": 72
+        }
+      ]
+    },
+    {
+      "id": "T7_2",
+      "paper": "WZ1 Thm. 7.2 = WZ2 Thm. 7.13",
+      "roadmap_statement": "For a cinematic family on a compact interval and every $\\varepsilon>0$, sufficiently small $\\delta$ has the following property.\nA $\\delta$-separated finite subfamily $F$ satisfying\n$\\#(F\\cap B)\\le\\delta^{-\\varepsilon}(r/\\delta)$ for every $C^2$-ball of diameter $r$\nobeys\n$\\|\\sum_{g\\in F}1_{N_\\delta(\\operatorname{graph}g)}\\|_{L^{3/2}}\\le\\delta^{-\\varepsilon}$.\nThe small-scale threshold depends on the cinematic and doubling constants. The ball condition here is absolute one-dimensional Katz-Tao control. Relative Frostman control would instead contain $r\\#G$ on the right.",
+      "primary": "Kakeya.Cinematic.wz2_uniformC2_input",
+      "status": "used-proof",
+      "correspondence": "The proved input fixes a Katz-Tao constant, a neighbourhood dilation and an absolute C2 bound before the scale threshold. The full alpha/zeta PYZ statement is a separate unproved interface in this correspondence.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": null,
+        "expanded_type": "∀ (K D C_KT lambda M : ℝ),\n  1 ≤ K →\n    1 ≤ D →\n      1 ≤ C_KT →\n        1 ≤ lambda →\n          0 ≤ M →\n            ∀ (epsilon : ℝ),\n              0 < epsilon →\n                ∃ delta₀,\n                  0 < delta₀ ∧\n                    delta₀ ≤ 1 / lambda ∧\n                      ∀ (delta : ℝ),\n                        0 < delta →\n                          delta ≤ delta₀ →\n                            ∀ (family : Set Kakeya.Cinematic.C2Function),\n                              Kakeya.Cinematic.IsCinematicFamily family K D →\n                                Kakeya.Cinematic.HasUniformC2Bound family M →\n                                  ∀ (F : Kakeya.Cinematic.FiniteFunctionFamily),\n                                    F.carrier ⊆ family →\n                                      F.IsDeltaSeparated delta →\n                                        F.HasKatzTaoBound delta C_KT →\n                                          MeasureTheory.eLpNorm (Kakeya.Cinematic.multiplicity F (lambda * delta))\n                                              (3 / 2) MeasureTheory.volume ≤\n                                            ENNReal.ofReal (delta.rpow (-epsilon))",
+        "is_proof": true,
+        "is_proposition": false,
+        "kind": "theorem",
+        "line": 152,
+        "module": "MyLeanRepo.Kakeya.Cinematic.Section5.UniformC2ConcreteAssembly",
+        "name": "Kakeya.Cinematic.wz2_uniformC2_input",
+        "type": "Kakeya.Cinematic.WZ2UniformC2Input",
+        "file": "MyLeanRepo/Kakeya/Cinematic/Section5/UniformC2ConcreteAssembly.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Cinematic.WZ2UniformC2Input",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Cinematic/WZ2UniformC2Input.lean",
+          "line": 26
+        },
+        {
+          "name": "Kakeya.Cinematic.wz2_uniformC2_input",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Cinematic/Section5/UniformC2ConcreteAssembly.lean",
+          "line": 152
+        }
+      ]
+    },
+    {
+      "id": "W2P7_1",
+      "paper": "WZ2 Proposition 7.1",
+      "roadmap_statement": "For every $\\varepsilon>0$ choose $\\eta,\\delta_0>0$.\nFor $0<\\delta\\le\\delta_0$, Tube-Wolff error $\\delta^{-\\eta}$, $\\delta^\\eta$-dense shading and a nonsingular slope imply\n$|\\bigcup_T\\pi_f(Y(T))|\\ge\\delta^\\varepsilon$.\nThis is the stronger Section 7 statement that proves Proposition 6.8.",
+      "primary": "Kakeya.Assouad.pure_wz2_proposition7_1_dilated_tube_wolff",
+      "status": "used-proof",
+      "correspondence": "The adopted Proposition 7.1 uses finite coarse capsules of axis length 32, while the given fine unit segments retain arbitrary longitudinal positions. In the bounded vertical chart their parameter Frostman constant is 128000 times the physical Tube Wolff constant. The fixed loss is absorbed before the runtime family and normalized slope, then the complete one-step/GridOS/telescoping engine proves the bound; packing removes the cardinality premise. This correction and f(0)=0 are explicit Remarks, with actual-terminal normalization proved upstream. No implication from literal unit-length tests to length-32 tests is claimed. The counterexamples separately refute unrestricted offsets and the literal unit-length arbitrary-position claim even for f(z)=z; neither asserts CWA or occurs in a positive proof. Common-height ordinary and full-line alternatives remain independently proved. The general externally supplied chart scope is not claimed.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": null,
+        "expanded_type": "∀ (cardExponent : ℝ),\n  0 < cardExponent →\n    ∀ (epsilon : ℝ),\n      0 < epsilon →\n        ∃ eta delta₀,\n          0 < eta ∧\n            eta ≤ epsilon ∧\n              eta ≤ 1 ∧\n                0 < delta₀ ∧\n                  delta₀ < 1 ∧\n                    ∀ (delta : ℝ),\n                      0 < delta →\n                        delta ≤ delta₀ →\n                          ∀ (F : Kakeya.Streamlined.TubeFamily delta),\n                            F.Nonempty →\n                              Kakeya.Assouad.HasBoundedBase F 4 →\n                                Kakeya.Assouad.IsInVerticalChart F →\n                                  F.enncard ≤ Kakeya.realRpowENN delta (-cardExponent) →\n                                    Kakeya.Assouad.DilatedTubeWolffVolumeBound F 32 (Kakeya.realRpowENN delta (-eta)) →\n                                      ∀ (Y : Kakeya.Streamlined.TubeShading F),\n                                        Kakeya.Streamlined.Shading.IsLambdaDense Y (Kakeya.realRpowENN delta eta) →\n                                          Kakeya.Assouad.IsInSlopeWindow Y →\n                                            ∀ (f : Kakeya.Assouad.SlopeFunction),\n                                              f.IsNonsingular →\n                                                f.toFun 0 = 0 →\n                                                  Kakeya.realRpowENN delta epsilon ≤\n                                                    MeasureTheory.volume (Kakeya.Assouad.twistedUnion Y f)",
+        "is_proof": true,
+        "is_proposition": false,
+        "kind": "theorem",
+        "line": 25,
+        "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.DilatedTubeWolffLowerBound",
+        "name": "Kakeya.Assouad.pure_wz2_proposition7_1_dilated_tube_wolff",
+        "type": "∀ (cardExponent : ℝ),\n  0 < cardExponent →\n    ∀ (epsilon : ℝ),\n      0 < epsilon →\n        ∃ eta delta₀,\n          0 < eta ∧\n            eta ≤ epsilon ∧\n              eta ≤ 1 ∧\n                0 < delta₀ ∧\n                  delta₀ < 1 ∧\n                    ∀ (delta : ℝ),\n                      0 < delta →\n                        delta ≤ delta₀ →\n                          ∀ (F : Kakeya.Streamlined.TubeFamily delta),\n                            F.Nonempty →\n                              Kakeya.Assouad.HasBoundedBase F 4 →\n                                Kakeya.Assouad.IsInVerticalChart F →\n                                  F.enncard ≤ Kakeya.realRpowENN delta (-cardExponent) →\n                                    Kakeya.Assouad.DilatedTubeWolffVolumeBound F 32 (Kakeya.realRpowENN delta (-eta)) →\n                                      ∀ (Y : Kakeya.Streamlined.TubeShading F),\n                                        Kakeya.Streamlined.Shading.IsLambdaDense Y (Kakeya.realRpowENN delta eta) →\n                                          Kakeya.Assouad.IsInSlopeWindow Y →\n                                            ∀ (f : Kakeya.Assouad.SlopeFunction),\n                                              f.IsNonsingular →\n                                                f.toFun 0 = 0 →\n                                                  Kakeya.realRpowENN delta epsilon ≤\n                                                    MeasureTheory.volume (Kakeya.Assouad.twistedUnion Y f)",
+        "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/DilatedTubeWolffLowerBound.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.TwistedProjectionParameterFrostmanEstimateStatement",
+          "status": "unused-interface",
+          "reached": false,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/Statements.lean",
+          "line": 2562
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_twisted_projection_parameter_frostman_lower_bound",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/ParameterFrostmanLowerBound.lean",
+          "line": 24
+        },
+        {
+          "name": "Kakeya.Assouad.TwistedProjectionParameterFrostmanPolynomialEstimateStatement",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/TwistedProjectionScale/GridOSParameterFrostmanEstimateStatements.lean",
+          "line": 44
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_proposition7_1_parameter_frostman",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/ParameterFrostmanLowerBound.lean",
+          "line": 17
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_parameter_frostman_lower_bound_of_essentially_distinct",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/NormalizedProjectionLowerBound.lean",
+          "line": 27
+        },
+        {
+          "name": "Kakeya.Assouad.FullLineTubeWolffBound",
+          "status": "unused-interface",
+          "reached": false,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/FullLineTubeWolff.lean",
+          "line": 25
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_proposition7_1_full_line_tube_wolff",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/FullLineTubeWolffLowerBound.lean",
+          "line": 18
+        },
+        {
+          "name": "Kakeya.Assouad.tubeParameterFrostmanBound_of_fullLineTubeWolffBound",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/FullLineTubeWolff.lean",
+          "line": 132
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_full_line_tube_wolff_lower_bound_in_vertical_chart",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/NormalizedProjectionLowerBound.lean",
+          "line": 78
+        },
+        {
+          "name": "Kakeya.Assouad.tubeParameterFrostman_to_centered_tubeWolff",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/CenteredTubeWolff.lean",
+          "line": 78
+        },
+        {
+          "name": "Kakeya.Assouad.planarTubeGrid_parameter_frostman",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/PlanarTubeGrid.lean",
+          "line": 196
+        },
+        {
+          "name": "Kakeya.Assouad.planarTubeGrid_in_unitBall",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/PlanarTubeGridWolff.lean",
+          "line": 36
+        },
+        {
+          "name": "Kakeya.Assouad.planarTubeGrid_ordinary_distinct",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/PlanarTubeGridWolff.lean",
+          "line": 157
+        },
+        {
+          "name": "Kakeya.Assouad.offsetObstruction_projection_volume_le",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/SlopeOffsetObstructionGeometry.lean",
+          "line": 123
+        },
+        {
+          "name": "Kakeya.Assouad.exists_ordinary_tubeWolff_slope_offset_counterexample",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/SlopeOffsetCounterexample.lean",
+          "line": 108
+        },
+        {
+          "name": "Kakeya.Assouad.not_pureWZ2UnrestrictedTubeWolffProjectionStatement",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/SlopeOffsetCounterexample.lean",
+          "line": 141
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_proposition7_1_ordinary_tube_wolff",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/OrdinaryTubeWolffLowerBound.lean",
+          "line": 38
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_ordinary_tube_wolff_lower_bound_in_common_height_chart",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/OrdinaryTubeWolffLowerBound.lean",
+          "line": 97
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_ordinary_tube_wolff_lower_bound_in_unit_ball",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/OrdinaryTubeWolffLowerBound.lean",
+          "line": 173
+        },
+        {
+          "name": "Kakeya.Assouad.tubeParameterFrostmanBound_of_commonHeightOrdinaryTubeWolff",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/OrdinaryTubeWolffLowerBound.lean",
+          "line": 21
+        },
+        {
+          "name": "Kakeya.Assouad.ordinary_capsule_midpoint_dist_of_subset",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/OrdinaryCapsuleMidpoint.lean",
+          "line": 16
+        },
+        {
+          "name": "Kakeya.Assouad.ordinary_capsule_pair_parameter_bounds",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/OrdinaryCapsuleParameterBounds.lean",
+          "line": 11
+        },
+        {
+          "name": "Kakeya.Assouad.longitudinalTubeGrid_in_unitBall",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LongitudinalTubeGridGeometry.lean",
+          "line": 10
+        },
+        {
+          "name": "Kakeya.Assouad.longitudinalTubeGrid_ordinary_distinct",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LongitudinalTubeGridDistinct.lean",
+          "line": 65
+        },
+        {
+          "name": "Kakeya.Assouad.longitudinalTubeGrid_tubeWolff",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LongitudinalTubeGridWolff.lean",
+          "line": 81
+        },
+        {
+          "name": "Kakeya.Assouad.longitudinalTubeGrid_projection_volume",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LongitudinalTubeGridGeometry.lean",
+          "line": 112
+        },
+        {
+          "name": "Kakeya.Assouad.exists_normalized_ordinary_tubeWolff_longitudinal_counterexample",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LongitudinalTubeWolffObstruction.lean",
+          "line": 43
+        },
+        {
+          "name": "Kakeya.Assouad.not_pureWZ2NormalizedOrdinaryTubeWolffProjectionStatement",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/LongitudinalTubeWolffObstruction.lean",
+          "line": 111
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_proposition7_1_dilated_tube_wolff",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/DilatedTubeWolffLowerBound.lean",
+          "line": 25
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_dilated_tube_wolff_lower_bound_in_vertical_chart",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/DilatedTubeWolffLowerBound.lean",
+          "line": 82
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_dilated_tube_wolff_lower_bound_in_unit_ball",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/DilatedTubeWolffLowerBound.lean",
+          "line": 157
+        },
+        {
+          "name": "Kakeya.Assouad.tubeParameterFrostmanBound_of_dilatedTubeWolffBound",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/DilatedTubeWolff.lean",
+          "line": 119
+        }
+      ]
+    },
+    {
+      "id": "W2P6_8",
+      "paper": "WZ2 Proposition 6.8",
+      "roadmap_statement": "For every $\\varepsilon>0$, convex-Wolff error $\\delta^{-\\eta}$ and $\\delta^\\eta$-dense shading imply\n$|\\bigcup_T\\pi_f(Y(T))|\\ge\\delta^\\varepsilon$ for any nonsingular $C^2$ slope and all sufficiently small $\\delta$.\nThe required $\\eta,\\delta_0$ depend on $\\varepsilon$.\nUse convex Wolff $\\Rightarrow$ Tube Wolff, then Proposition 7.1.",
+      "primary": "Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_via_dilated_tubes",
+      "status": "used-proof",
+      "correspondence": "The final endpoint follows CWA -> finite length-32 coarse-capsule volume tests -> corrected Proposition 7.1 -> parameter iteration on the actual normalized left terminal. Every coarse test is convex, so CWA supplies it on exactly the given family; packing removes the cardinality premise. Bounded bases, vertical chart, shading window and normalized nonsingular slope are proved by the same terminal transport. Arbitrary longitudinal positions are allowed and no common-height lower-bound hypothesis remains. The final proof uses neither the full-line projection theorem nor the direct CWA-to-parameter shortcut. Those APIs and the common-height ordinary-capsule alternative retain their statements and independent audits. Remarks record the model correction and the broader paper/chart scope without adding hypotheses to Theorem 5.2.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": null,
+        "expanded_type": "∀ (epsilon : ℝ),\n  0 < epsilon →\n    ∃ eta delta₀,\n      0 < eta ∧\n        eta ≤ epsilon ∧\n          0 < delta₀ ∧\n            delta₀ < 1 ∧\n              ∀ (delta : ℝ),\n                0 < delta →\n                  delta ≤ delta₀ →\n                    ∀ (F : Kakeya.Streamlined.TubeFamily delta),\n                      F.Nonempty →\n                        Kakeya.Assouad.HasBoundedBase F 4 →\n                          F.IsEssentiallyDistinct →\n                            Kakeya.Assouad.IsInVerticalChart F →\n                              Kakeya.Assouad.ConvexWolffBound F (Kakeya.realRpowENN delta (-eta)) →\n                                ∀ (Y : Kakeya.Streamlined.TubeShading F),\n                                  Kakeya.Streamlined.Shading.IsLambdaDense Y (Kakeya.realRpowENN delta eta) →\n                                    Kakeya.Assouad.IsInSlopeWindow Y →\n                                      ∀ (f : Kakeya.Assouad.SlopeFunction),\n                                        f.IsNonsingular →\n                                          f.toFun 0 = 0 →\n                                            Kakeya.realRpowENN delta epsilon ≤\n                                              MeasureTheory.volume (Kakeya.Assouad.twistedUnion Y f)",
+        "is_proof": true,
+        "is_proposition": false,
+        "kind": "theorem",
+        "line": 132,
+        "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.DilatedTubeWolffLowerBound",
+        "name": "Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_via_dilated_tubes",
+        "type": "∀ (epsilon : ℝ),\n  0 < epsilon →\n    ∃ eta delta₀,\n      0 < eta ∧\n        eta ≤ epsilon ∧\n          0 < delta₀ ∧\n            delta₀ < 1 ∧\n              ∀ (delta : ℝ),\n                0 < delta →\n                  delta ≤ delta₀ →\n                    ∀ (F : Kakeya.Streamlined.TubeFamily delta),\n                      F.Nonempty →\n                        Kakeya.Assouad.HasBoundedBase F 4 →\n                          F.IsEssentiallyDistinct →\n                            Kakeya.Assouad.IsInVerticalChart F →\n                              Kakeya.Assouad.ConvexWolffBound F (Kakeya.realRpowENN delta (-eta)) →\n                                ∀ (Y : Kakeya.Streamlined.TubeShading F),\n                                  Kakeya.Streamlined.Shading.IsLambdaDense Y (Kakeya.realRpowENN delta eta) →\n                                    Kakeya.Assouad.IsInSlopeWindow Y →\n                                      ∀ (f : Kakeya.Assouad.SlopeFunction),\n                                        f.IsNonsingular →\n                                          f.toFun 0 = 0 →\n                                            Kakeya.realRpowENN delta epsilon ≤\n                                              MeasureTheory.volume (Kakeya.Assouad.twistedUnion Y f)",
+        "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/DilatedTubeWolffLowerBound.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_in_vertical_chart",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/NormalizedProjectionLowerBound.lean",
+          "line": 131
+        },
+        {
+          "name": "Kakeya.Assouad.tubeWolffBound_of_convexWolffBound",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Section7Nonconcentration.lean",
+          "line": 21
+        },
+        {
+          "name": "Kakeya.Assouad.tubeParameterFrostmanBound_of_convexWolffBound",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Section7Nonconcentration.lean",
+          "line": 92
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_in_unit_ball",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/PaperNormalizedProjectionLowerBound.lean",
+          "line": 23
+        },
+        {
+          "name": "Kakeya.Assouad.tubeParameterFrostmanBound_of_bodyConvexWolffBound",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Section7Nonconcentration.lean",
+          "line": 49
+        },
+        {
+          "name": "Kakeya.Assouad.fullLineTubeWolffBound_of_convexWolffBound",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/FullLineTubeWolff.lean",
+          "line": 44
+        },
+        {
+          "name": "Kakeya.Assouad.fullLineTubeWolffBound_of_bodyConvexWolffBound",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/FullLineTubeWolff.lean",
+          "line": 36
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_proposition7_1_full_line_tube_wolff",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/FullLineTubeWolffLowerBound.lean",
+          "line": 18
+        },
+        {
+          "name": "Kakeya.Assouad.ordinaryTubeWolffVolumeBound_of_convexWolffBound",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/OrdinaryTubeWolff.lean",
+          "line": 28
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_in_common_height_chart",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/OrdinaryTubeWolffLowerBound.lean",
+          "line": 147
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_proposition7_1_ordinary_tube_wolff",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/OrdinaryTubeWolffLowerBound.lean",
+          "line": 38
+        },
+        {
+          "name": "Kakeya.Assouad.dilatedTubeWolffVolumeBound_of_bodyConvexWolffBound",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/DilatedTubeWolff.lean",
+          "line": 32
+        },
+        {
+          "name": "Kakeya.Assouad.dilatedTubeWolffVolumeBound_of_convexWolffBound",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/DilatedTubeWolff.lean",
+          "line": 40
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_via_dilated_tubes",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/DilatedTubeWolffLowerBound.lean",
+          "line": 132
+        },
+        {
+          "name": "Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_in_unit_ball_via_dilated_tubes",
+          "status": "unused-proof",
+          "reached": false,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/DilatedTubeWolffLowerBound.lean",
+          "line": 200
+        }
+      ]
+    },
+    {
+      "id": "W2T5_2",
+      "paper": "WZ2 Theorem 5.2",
+      "roadmap_statement": "For every $\\varepsilon>0$ there exist $\\eta,\\delta_0>0$ such that for every $0<\\delta\\le\\delta_0$:\nif $\\mathcal T$ satisfies the convex Wolff axioms at every scale with error $\\delta^{-\\eta}$ and $Y$ is $\\delta^\\eta$-dense, then\n\\[\\left|\\bigcup_{T\\in\\mathcal T}Y(T)\\right|\\ge\\delta^\\varepsilon.\\]\nThis is the sole root theorem. No Hausdorff/Assouad-dimension deduction is part of the graph.",
+      "primary": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
+      "status": "used-proof",
+      "correspondence": "The unchanged public theorem has no external proof arguments. Critical extraction and the retained left construction feed one normalized CWA terminal to the corrected finite-coarse-capsule lower bound. Both sides use its literal family, shading and slope. The completed constructive Core route uses the explicitly recorded intermediate scopes, including prepared Lemma 6.6 and the length-32 correction to Proposition 7.1; it does not claim all generic printed intermediate statements.",
+      "primary_declaration": {
+        "axioms": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "definition": null,
+        "expanded_type": "∀ (epsilon : ℝ),\n  0 < epsilon →\n    ∃ eta delta₀,\n      0 < eta ∧\n        0 < delta₀ ∧\n          delta₀ ≤ 1 ∧\n            ∀ (delta : ℝ),\n              0 < delta →\n                delta ≤ delta₀ →\n                  ∀ (family : Kakeya.Streamlined.TubeFamily delta),\n                    family.Nonempty →\n                      Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales family (Kakeya.realRpowENN delta (-eta)) →\n                        ∀ (shading : Kakeya.Streamlined.TubeShading family),\n                          Kakeya.Streamlined.Shading.IsLambdaDense shading (Kakeya.realRpowENN delta eta) →\n                            Kakeya.realRpowENN delta epsilon ≤\n                              MeasureTheory.volume (Kakeya.Streamlined.Shading.union shading)",
+        "is_proof": true,
+        "is_proposition": false,
+        "kind": "theorem",
+        "line": 46,
+        "module": "MyLeanRepo.Kakeya.Assouad.PureWZ2.Theorem5_2Unconditional",
+        "name": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
+        "type": "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
+        "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Theorem5_2Unconditional.lean"
+      },
+      "versions": [
+        {
+          "name": "Kakeya.Assouad.PureWZ2Theorem5_2Statement",
+          "status": "used-interface",
+          "reached": true,
+          "is_proof": false,
+          "is_proposition": true,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Core.lean",
+          "line": 24
+        },
+        {
+          "name": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
+          "status": "used-proof",
+          "reached": true,
+          "is_proof": true,
+          "is_proposition": false,
+          "file": "MyLeanRepo/Kakeya/Assouad/PureWZ2/Theorem5_2Unconditional.lean",
+          "line": 46
+        }
+      ]
+    }
+  ],
+  "roadmap_comparisons": [
+    {
+      "from": "W2MW",
+      "to": "W2L2_13",
+      "expert_kind": "core",
+      "expert_note": "W2MW → W2L2_13: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "unmapped",
+      "path": [],
+      "reason": "At least one expert operation has no independently identified primary Lean declaration."
+    },
+    {
+      "from": "W2Sigma",
+      "to": "W2D6_1",
+      "expert_kind": "core",
+      "expert_note": "W2Sigma → W2D6_1: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "different-route",
+      "path": [],
+      "reason": "Both selected versions are reached, but the consumer has no path to the prerequisite in the complete projected kernel graph."
+    },
+    {
+      "from": "W2L2_13",
+      "to": "W2P6_2",
+      "expert_kind": "core",
+      "expert_note": "W2L2_13 → W2P6_2: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "unmapped",
+      "path": [],
+      "reason": "At least one expert operation has no independently identified primary Lean declaration."
+    },
+    {
+      "from": "W2D6_1",
+      "to": "W2P6_2",
+      "expert_kind": "core",
+      "expert_note": "W2D6_1 → W2P6_2: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node03_rich_prop62_kernel",
+          "to": "Kakeya.Assouad.PureWZ2RichProp62KernelStatement",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2RichProp62KernelStatement",
+          "to": "Kakeya.Assouad.PureWZ2CriticalPackage",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CriticalPackage",
+          "to": "Kakeya.Assouad.PureWZ2CriticalPackage.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CriticalPackage.mk",
+          "to": "Kakeya.Assouad.PureWZ2ExtremalConfiguration",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ExtremalConfiguration",
+          "to": "Kakeya.Assouad.PureWZ2ExtremalConfiguration.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ExtremalConfiguration.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+          "kind": "type"
+        }
+      ],
+      "reason": "A path of compiled kernel references supports this connection."
+    },
+    {
+      "from": "W2P6_2",
+      "to": "W2P6_3",
+      "expert_kind": "core",
+      "expert_note": "W2P6_2 → W2P6_3: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node04_reentrant_grains",
+          "to": "Kakeya.Assouad.pure_wz2_node03_rich_prop62_kernel",
+          "kind": "value"
+        }
+      ],
+      "reason": "A path of compiled kernel references supports this connection."
+    },
+    {
+      "from": "W2P6_3",
+      "to": "W2P6_4",
+      "expert_kind": "core",
+      "expert_note": "W2P6_3 → W2P6_4: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_left_line_c2_grains",
+          "to": "Kakeya.Assouad.pure_wz2_node04_reentrant_grains",
+          "kind": "value"
+        }
+      ],
+      "reason": "A path of compiled kernel references supports this connection."
+    },
+    {
+      "from": "T5_2",
+      "to": "W2P6_4",
+      "expert_kind": "compressed",
+      "expert_note": "T5_2 → W2P6_4: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "outside-root",
+      "path": [],
+      "reason": "At least one selected Lean version is not in the sticky root's dependency closure. No global nondependence claim is made about unused proofs."
+    },
+    {
+      "from": "W2P6_4",
+      "to": "W2L6_6",
+      "expert_kind": "compressed",
+      "expert_note": "W2P6_4 → W2L6_6: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "different-route",
+      "path": [],
+      "reason": "Both selected versions are reached, but the consumer has no path to the prerequisite in the complete projected kernel graph."
+    },
+    {
+      "from": "W2L6_6",
+      "to": "W2P6_5",
+      "expert_kind": "compressed",
+      "expert_note": "W2L6_6 → W2P6_5: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_left_line_large_slope_retained",
+          "to": "Kakeya.Assouad.pure_wz2_node06_large_slope_retained",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node06_large_slope_retained",
+          "to": "Kakeya.Assouad.pureWZ2_direct_halfOffset_large_slope_retained",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_direct_halfOffset_large_slope_retained",
+          "to": "Kakeya.Assouad.pureWZ2_direct_commonY_source_assembly",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_direct_commonY_source_assembly",
+          "to": "Kakeya.Assouad.pureWZ2_lemma31_derivative_assembly_of_scale_producer",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_lemma31_derivative_assembly_of_scale_producer",
+          "to": "Kakeya.Assouad.pureWZ2_lemma31_derivative_assembly_with_eta_of_scale_producer",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_lemma31_derivative_assembly_with_eta_of_scale_producer",
+          "to": "Kakeya.Assouad.pure_wz2_lemma66_prepared",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_lemma66_prepared",
+          "to": "Kakeya.Assouad.pure_wz2_lemma66_prepared_interval",
+          "kind": "value"
+        }
+      ],
+      "reason": "A path of compiled kernel references supports this connection."
+    },
+    {
+      "from": "W2P6_5",
+      "to": "W2L6_7",
+      "expert_kind": "core",
+      "expert_note": "W2P6_5 → W2L6_7: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_left_line_normalized_projection",
+          "to": "Kakeya.Assouad.pure_wz2_left_line_large_slope_retained",
+          "kind": "value"
+        }
+      ],
+      "reason": "A path of compiled kernel references supports this connection."
+    },
+    {
+      "from": "W2L6_7",
+      "to": "W2Zero",
+      "expert_kind": "core",
+      "expert_note": "W2L6_7 → W2Zero: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_no_critical_package",
+          "to": "Kakeya.Assouad.pure_wz2_left_line_normalized_projection",
+          "kind": "value"
+        }
+      ],
+      "reason": "A path of compiled kernel references supports this connection."
+    },
+    {
+      "from": "W2JetCount",
+      "to": "W2L7_12",
+      "expert_kind": "compressed",
+      "expert_note": "W2JetCount → W2L7_12: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman_sharp_density",
+          "to": "Kakeya.Assouad.parameter_block_representative_cinematic_pullback",
+          "kind": "value"
+        }
+      ],
+      "reason": "A path of compiled kernel references supports this connection."
+    },
+    {
+      "from": "T7_2",
+      "to": "W2L7_12",
+      "expert_kind": "compressed",
+      "expert_note": "T7_2 → W2L7_12: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman_sharp_density",
+          "to": "Kakeya.Assouad.pyz_input",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pyz_input",
+          "to": "Kakeya.Cinematic.wz2_uniformC2_input",
+          "kind": "value"
+        }
+      ],
+      "reason": "A path of compiled kernel references supports this connection."
+    },
+    {
+      "from": "W2L7_12",
+      "to": "W2P7_1",
+      "expert_kind": "compressed",
+      "expert_note": "W2L7_12 → W2P7_1: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_proposition7_1_dilated_tube_wolff",
+          "to": "Kakeya.Assouad.pure_wz2_proposition7_1_parameter_frostman",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_proposition7_1_parameter_frostman",
+          "to": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman",
+          "to": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman_sharp_density",
+          "kind": "value"
+        }
+      ],
+      "reason": "A path of compiled kernel references supports this connection."
+    },
+    {
+      "from": "W2P7_1",
+      "to": "W2P6_8",
+      "expert_kind": "core",
+      "expert_note": "W2P7_1 → W2P6_8: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_via_dilated_tubes",
+          "to": "Kakeya.Assouad.pure_wz2_dilated_tube_wolff_lower_bound_in_vertical_chart",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_dilated_tube_wolff_lower_bound_in_vertical_chart",
+          "to": "Kakeya.Assouad.pure_wz2_proposition7_1_dilated_tube_wolff",
+          "kind": "value"
+        }
+      ],
+      "reason": "A path of compiled kernel references supports this connection."
+    },
+    {
+      "from": "W2P6_8",
+      "to": "W2Zero",
+      "expert_kind": "core",
+      "expert_note": "W2P6_8 → W2Zero: Core proof path; full prerequisites are on the node cards and detailed diagrams.",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_no_critical_package",
+          "to": "Kakeya.Assouad.pure_wz2_no_critical_package_of_normalized_projection",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_no_critical_package_of_normalized_projection",
+          "to": "Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_via_dilated_tubes",
+          "kind": "value"
+        }
+      ],
+      "reason": "A path of compiled kernel references supports this connection."
+    },
+    {
+      "from": "W2Zero",
+      "to": "W2T5_2",
+      "expert_kind": "core",
+      "expert_note": "W2T5_2 | WZ2 Theorem 5.2 | Discrete union estimate for multi-scale convex Wolff tubes",
+      "expert_view": "overview",
+      "expert_view_title": "Core proof DAG",
+      "classification": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
+          "to": "Kakeya.Assouad.pure_wz2_no_critical_package",
+          "kind": "value"
+        }
+      ],
+      "reason": "A path of compiled kernel references supports this connection."
+    }
+  ],
+  "lean_edges": [
+    {
+      "from": "W2MW",
+      "to": "W2Sigma",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2Admissible",
+          "to": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+          "kind": "value"
+        }
+      ],
+      "diff": "agree",
+      "role": "api",
+      "role_origin": "declaration"
+    },
+    {
+      "from": "W2Zero",
+      "to": "W2T5_2",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.PureWZ2Theorem5_2Unconditional",
+          "to": "Kakeya.Assouad.pure_wz2_no_critical_package",
+          "kind": "value"
+        }
+      ],
+      "diff": "agree",
+      "role": "core",
+      "role_origin": "roadmap"
+    },
+    {
+      "from": "W2MW",
+      "to": "W2D6_1",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+          "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperPureIsExtremal.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+          "kind": "type"
+        }
+      ],
+      "diff": "agree",
+      "role": "api",
+      "role_origin": "declaration"
+    },
+    {
+      "from": "W2P7_1",
+      "to": "W2P6_8",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_via_dilated_tubes",
+          "to": "Kakeya.Assouad.pure_wz2_dilated_tube_wolff_lower_bound_in_vertical_chart",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_dilated_tube_wolff_lower_bound_in_vertical_chart",
+          "to": "Kakeya.Assouad.pure_wz2_proposition7_1_dilated_tube_wolff",
+          "kind": "value"
+        }
+      ],
+      "diff": "agree",
+      "role": "core",
+      "role_origin": "roadmap"
+    },
+    {
+      "from": "W2Sigma",
+      "to": "W2P6_4",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_left_line_c2_grains",
+          "to": "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node02_critical_extraction",
+          "to": "Kakeya.Assouad.pure_wz2_non_admissible_spec",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_non_admissible_spec",
+          "to": "Kakeya.Assouad.PureWZ2Admissible",
+          "kind": "value"
+        }
+      ],
+      "diff": "agree",
+      "role": "api",
+      "role_origin": "declaration"
+    },
+    {
+      "from": "W2P6_3",
+      "to": "W2P6_4",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_left_line_c2_grains",
+          "to": "Kakeya.Assouad.pure_wz2_node04_reentrant_grains",
+          "kind": "value"
+        }
+      ],
+      "diff": "agree",
+      "role": "core",
+      "role_origin": "roadmap"
+    },
+    {
+      "from": "W2P6_4",
+      "to": "W2P6_5",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_left_line_large_slope_retained",
+          "to": "Kakeya.Assouad.pure_wz2_left_line_c2_grains",
+          "kind": "value"
+        }
+      ],
+      "diff": "agree",
+      "role": "core",
+      "role_origin": "kernel-path"
+    },
+    {
+      "from": "W2L6_6",
+      "to": "W2P6_5",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_left_line_large_slope_retained",
+          "to": "Kakeya.Assouad.pure_wz2_node06_large_slope_retained",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node06_large_slope_retained",
+          "to": "Kakeya.Assouad.pureWZ2_direct_halfOffset_large_slope_retained",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_direct_halfOffset_large_slope_retained",
+          "to": "Kakeya.Assouad.pureWZ2_direct_commonY_source_assembly",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_direct_commonY_source_assembly",
+          "to": "Kakeya.Assouad.pureWZ2_lemma31_derivative_assembly_of_scale_producer",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_lemma31_derivative_assembly_of_scale_producer",
+          "to": "Kakeya.Assouad.pureWZ2_lemma31_derivative_assembly_with_eta_of_scale_producer",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pureWZ2_lemma31_derivative_assembly_with_eta_of_scale_producer",
+          "to": "Kakeya.Assouad.pure_wz2_lemma66_prepared",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_lemma66_prepared",
+          "to": "Kakeya.Assouad.pure_wz2_lemma66_prepared_interval",
+          "kind": "value"
+        }
+      ],
+      "diff": "agree",
+      "role": "compressed",
+      "role_origin": "roadmap"
+    },
+    {
+      "from": "W2P6_5",
+      "to": "W2L6_7",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_left_line_normalized_projection",
+          "to": "Kakeya.Assouad.pure_wz2_left_line_large_slope_retained",
+          "kind": "value"
+        }
+      ],
+      "diff": "agree",
+      "role": "core",
+      "role_origin": "roadmap"
+    },
+    {
+      "from": "W2MW",
+      "to": "W2L6_6",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_lemma66_prepared_interval",
+          "to": "Kakeya.Assouad.PureWZ2Lemma66PreparedInterval",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2Lemma66PreparedInterval",
+          "to": "Kakeya.Assouad.PureWZ2Lemma66PreparedInterval.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2Lemma66PreparedInterval.mk",
+          "to": "Kakeya.Assouad.PureWZ2C2GrainConfiguration",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2C2GrainConfiguration",
+          "to": "Kakeya.Assouad.PureWZ2C2GrainConfiguration.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2C2GrainConfiguration.mk",
+          "to": "Kakeya.Assouad.WZ2PaperCroppedIsExtremal",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperCroppedIsExtremal",
+          "to": "Kakeya.Assouad.WZ2PaperCroppedIsExtremal.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.WZ2PaperCroppedIsExtremal.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureCWAAtNearbyScales",
+          "kind": "type"
+        }
+      ],
+      "diff": "agree",
+      "role": "api",
+      "role_origin": "declaration"
+    },
+    {
+      "from": "W2JetCount",
+      "to": "W2L7_12",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman_sharp_density",
+          "to": "Kakeya.Assouad.parameter_block_representative_cinematic_pullback",
+          "kind": "value"
+        }
+      ],
+      "diff": "agree",
+      "role": "compressed",
+      "role_origin": "roadmap"
+    },
+    {
+      "from": "T7_2",
+      "to": "W2L7_12",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman_sharp_density",
+          "to": "Kakeya.Assouad.pyz_input",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pyz_input",
+          "to": "Kakeya.Cinematic.wz2_uniformC2_input",
+          "kind": "value"
+        }
+      ],
+      "diff": "agree",
+      "role": "compressed",
+      "role_origin": "roadmap"
+    },
+    {
+      "from": "W2P6_8",
+      "to": "W2Zero",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_no_critical_package",
+          "to": "Kakeya.Assouad.pure_wz2_no_critical_package_of_normalized_projection",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_no_critical_package_of_normalized_projection",
+          "to": "Kakeya.Assouad.pure_wz2_convex_wolff_lower_bound_via_dilated_tubes",
+          "kind": "value"
+        }
+      ],
+      "diff": "agree",
+      "role": "core",
+      "role_origin": "roadmap"
+    },
+    {
+      "from": "W2L6_7",
+      "to": "W2Zero",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_no_critical_package",
+          "to": "Kakeya.Assouad.pure_wz2_left_line_normalized_projection",
+          "kind": "value"
+        }
+      ],
+      "diff": "agree",
+      "role": "core",
+      "role_origin": "roadmap"
+    },
+    {
+      "from": "W2D6_1",
+      "to": "W2P6_2",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node03_rich_prop62_kernel",
+          "to": "Kakeya.Assouad.PureWZ2RichProp62KernelStatement",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2RichProp62KernelStatement",
+          "to": "Kakeya.Assouad.PureWZ2CriticalPackage",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CriticalPackage",
+          "to": "Kakeya.Assouad.PureWZ2CriticalPackage.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2CriticalPackage.mk",
+          "to": "Kakeya.Assouad.PureWZ2ExtremalConfiguration",
+          "kind": "type"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ExtremalConfiguration",
+          "to": "Kakeya.Assouad.PureWZ2ExtremalConfiguration.mk",
+          "kind": "structural"
+        },
+        {
+          "from": "Kakeya.Assouad.PureWZ2ExtremalConfiguration.mk",
+          "to": "Kakeya.Assouad.WZ2PaperPureIsExtremal",
+          "kind": "type"
+        }
+      ],
+      "diff": "agree",
+      "role": "api",
+      "role_origin": "declaration"
+    },
+    {
+      "from": "W2P6_2",
+      "to": "W2P6_3",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_node04_reentrant_grains",
+          "to": "Kakeya.Assouad.pure_wz2_node03_rich_prop62_kernel",
+          "kind": "value"
+        }
+      ],
+      "diff": "agree",
+      "role": "core",
+      "role_origin": "roadmap"
+    },
+    {
+      "from": "W2L7_12",
+      "to": "W2P7_1",
+      "kind": "actual",
+      "path": [
+        {
+          "from": "Kakeya.Assouad.pure_wz2_proposition7_1_dilated_tube_wolff",
+          "to": "Kakeya.Assouad.pure_wz2_proposition7_1_parameter_frostman",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_proposition7_1_parameter_frostman",
+          "to": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman",
+          "kind": "value"
+        },
+        {
+          "from": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman",
+          "to": "Kakeya.Assouad.pure_wz2_lemma7_12_parameter_frostman_sharp_density",
+          "kind": "value"
+        }
+      ],
+      "diff": "agree",
+      "role": "compressed",
+      "role_origin": "roadmap"
+    }
+  ],
+  "added_core_pairs": [
+    [
+      "W2MW",
+      "W2D6_1"
+    ],
+    [
+      "W2MW",
+      "W2L6_6"
+    ],
+    [
+      "W2MW",
+      "W2Sigma"
+    ],
+    [
+      "W2P6_4",
+      "W2P6_5"
+    ],
+    [
+      "W2Sigma",
+      "W2P6_4"
+    ]
+  ],
+  "removed_core_pairs": [
+    [
+      "T5_2",
+      "W2P6_4"
+    ],
+    [
+      "W2L2_13",
+      "W2P6_2"
+    ],
+    [
+      "W2MW",
+      "W2L2_13"
+    ],
+    [
+      "W2P6_4",
+      "W2L6_6"
+    ],
+    [
+      "W2Sigma",
+      "W2D6_1"
+    ]
+  ],
+  "c2_specific_projection": {
+    "target": "Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion",
+    "path": [
+      {
+        "from": "Kakeya.Assouad.pure_wz2_left_line_c2_grains",
+        "to": "Kakeya.Assouad.pureWZ2_c2_grains_from_reentrant",
+        "kind": "value"
+      },
+      {
+        "from": "Kakeya.Assouad.pureWZ2_c2_grains_from_reentrant",
+        "to": "Kakeya.Assouad.exists_pureWZ2C2RichEndpointClosureSchedule",
+        "kind": "value"
+      },
+      {
+        "from": "Kakeya.Assouad.exists_pureWZ2C2RichEndpointClosureSchedule",
+        "to": "Kakeya.Assouad.pureWZ2_reentrantTerminal_paperOrderSchedule",
+        "kind": "value"
+      },
+      {
+        "from": "Kakeya.Assouad.pureWZ2_reentrantTerminal_paperOrderSchedule",
+        "to": "Kakeya.Assouad.pureWZ2_reentrantTerminal_kernelSchedule",
+        "kind": "value"
+      },
+      {
+        "from": "Kakeya.Assouad.pureWZ2_reentrantTerminal_kernelSchedule",
+        "to": "Kakeya.Assouad.pureWZ2_reentrantTerminal_scalarSchedule",
+        "kind": "value"
+      },
+      {
+        "from": "Kakeya.Assouad.pureWZ2_reentrantTerminal_scalarSchedule",
+        "to": "Kakeya.Assouad.pureWZ2_terminalExact_projection_threshold",
+        "kind": "value"
+      },
+      {
+        "from": "Kakeya.Assouad.pureWZ2_terminalExact_projection_threshold",
+        "to": "Kakeya.Assouad.wz1_well_separated_projection_union",
+        "kind": "value"
+      },
+      {
+        "from": "Kakeya.Assouad.wz1_well_separated_projection_union",
+        "to": "Kakeya.Assouad.WZ1WellSeparatedProjectionUnionConclusion",
+        "kind": "type"
+      }
+    ]
+  }
+}
